@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    tools:context=".MainActivity">
+
+    <!-- Check to see if commit works!-->
+
+    <TextView
+        android:id="@+id/liftsSummary"
+        android:text="@string/summary_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:singleLine="true"/>
+
+    <TextView
+        android:id="@+id/squatSummary"
+        android:text="@string/squat_txthldr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@+id/liftsSummary"
+        />
+
+    <TextView
+        android:id="@+id/benchSummary"
+        android:text="@string/bench_txthldr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@+id/squatSummary"
+        />
+
+    <TextView
+        android:id="@+id/deadSummary"
+        android:text="@string/dead_txthldr"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@+id/benchSummary"
+        />
+
+    <EditText
+        android:id="@+id/prInput"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:layout_width="0dp"
+        android:singleLine="true"
+        android:autofillHints="@string/input_txthldr"
+        android:hint="@string/input_txthldr"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@+id/deadSummary"
+        android:imeOptions="actionDone"
+        />
+
+    <Spinner
+        android:id="@+id/liftsSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/prInput"
+        app:layout_constraintStart_toEndOf="@+id/prInput" />
+
+    <Button
+        android:id="@+id/addPR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="29dp"
+        tools:layout_editor_absoluteY="222dp" />
+
+</android.support.constraint.ConstraintLayout>
