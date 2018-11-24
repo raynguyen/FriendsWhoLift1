@@ -62,18 +62,13 @@
         android:imeOptions="actionDone"
         />
 
-    <Spinner
-        android:id="@+id/liftsSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/prInput"
-        app:layout_constraintStart_toEndOf="@+id/prInput" />
 
     <Button
-        android:id="@+id/addPR"
+        android:id="@+id/promptPR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="@string/new_pr"
+        app:layout_constraintTop_toBottomOf="@+id/prInput"
         tools:layout_editor_absoluteX="29dp"
         tools:layout_editor_absoluteY="222dp" />
 

@@ -1,10 +1,17 @@
 package apps.raymond.friendswholift;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         TextView squatView = findViewById(R.id.squatSummary);
         TextView benchView = findViewById(R.id.benchSummary);
         TextView deadView = findViewById(R.id.deadSummary);
+        Button promptPR = findViewById(R.id.promptPR);
 
         squatPR = 245;//You will have to check the server for the correct value here.
         benchPR = 145;
@@ -51,19 +59,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*The snippet below creates the spinner dropdown to select the lift type.
-          The dropdown is populated from an array-string that is defined the in strings resource.
-          ToDo: Need to learn more about adapters! An adapter needs to be created.
-        */
-        Spinner liftsSpinner = findViewById(R.id.liftsSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.array_liftsSpinner,android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        liftsSpinner.setAdapter(adapter);
+        promptPR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder dBuilder = new AlertDialog.Builder(MainActivity.this);
+                View dView = getLayoutInflater().inflate(R.layout.pr_dialog, null);
+                dBuilder.setTitle("Define your new PR");
+
+                final Spinner liftsSpinner = dView.findViewById(R.id.liftsSpinner);
+                ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+                        MainActivity.this,android.R.layout.simple_spinner_dropdown_item,
+                        getResources().getStringArray(R.array.array_liftsSpinner));
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                liftsSpinner.setAdapter(adapter);
+
+                dBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(liftsSpinner.getSelectedItem().toString().equalsIgnoreCase("")){
+                            Toast.makeText(MainActivity.this,
+                                    liftsSpinner.getSelectedItem().toString(),
+                                    Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+
+                    }
+                });
+
+                dBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+            }
+        });
+
+
 
 
         //ToDo: Need to implement onItemSelectedListener for the Spinner and execute according to selection
         //The plan is to store and overwrite data according to selection.
+        //The snippet below builds a Spinner on the main activity screen
+        /*Spinner liftsSpinner = findViewById(R.id.liftsSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.array_liftsSpinner,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        liftsSpinner.setAdapter(adapter);*/
+
     }
+
+    /*public void addPR() {
+        Intent intent =
+
+    }*/
+
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

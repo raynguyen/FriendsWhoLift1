@@ -9,8 +9,9 @@
     <string name="bench_txthldr">Your benchpress details here</string>
     <string name="dead_txthldr">Your deadlift details here</string>
     <string name="input_txthldr">Enter your new PR here!</string>
-
+    <string name ="new_pr">"Add PR</string>
     <string-array name="array_liftsSpinner">
+        <item>Choose a lift</item>
         <item>Bench Press</item>
         <item>Deadlift</item>
         <item>Squat</item>
