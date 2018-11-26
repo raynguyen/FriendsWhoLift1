@@ -22,6 +22,8 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     long squatPR, benchPR, deadPR;
+    String newPR_type;
+    Button promptPR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button promptPR = findViewById(R.id.promptPR);
-        promptPR.setOnClickListener(new View.OnClickListener() {
+        promptPR = findViewById(R.id.promptPR);
+        promptPR.setOnClickListener(mainListener);
+
+        /*promptPR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -84,13 +88,6 @@ public class MainActivity extends AppCompatActivity {
                         //Body of onClick has been moved outside of onCreate.
                         //When a button is clicked the common button handler forwards the click event to
                         //whatever handler you passed in setButton() then calls dismisses the dialog.
-
-                        /*if(liftsSpinner.getSelectedItem().toString().equalsIgnoreCase(
-                                getResources().getStringArray(R.array.array_liftsSpinner)[0])){
-                            Toast.makeText(MainActivity.this,
-                                    liftsSpinner.getSelectedItem().toString(),Toast.LENGTH_SHORT)
-                                    .show();
-                        }*/
                     }
                 });
 
@@ -102,48 +99,91 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 dBuilder.setView(dView);
-                final AlertDialog dialog = dBuilder.create(); //'dialog' here is not the same as those inside the onclick voids
+                //'dialog' here is not the same as those inside the onclick voids
+                final AlertDialog dialog = dBuilder.create();
                 dialog.show();
 
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
                                 if(liftsSpinner.getSelectedItem().toString().equalsIgnoreCase(
-                                getResources().getStringArray(R.array.array_liftsSpinner)[0])){
-                                Toast.makeText(MainActivity.this,
-                                    liftsSpinner.getSelectedItem().toString(),Toast.LENGTH_SHORT)
-                                    .show();
+                                    getResources().getStringArray(R.array.array_liftsSpinner)[0])){
+                                    Toast.makeText(MainActivity.this,
+                                        liftsSpinner.getSelectedItem().toString(),
+                                            Toast.LENGTH_SHORT).show();
                                 } else {
                                     dialog.dismiss();
                                 }
-
                             }
                         });
-
-
             }
-
-        });
-
-
-
-
-        //ToDo: Need to implement onItemSelectedListener for the Spinner and execute according to selection
-        //The plan is to store and overwrite data according to selection.
-        //The snippet below builds a Spinner on the main activity screen
-        /*Spinner liftsSpinner = findViewById(R.id.liftsSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.array_liftsSpinner,android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        liftsSpinner.setAdapter(adapter);*/
-
+        });*/
     }
 
-    /*public void addPR() {
-        Intent intent =
+    private View.OnClickListener mainListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            final AlertDialog.Builder dBuilder = new AlertDialog.Builder(
+                    MainActivity.this);
 
-    }*/
+            View dView = getLayoutInflater().inflate(R.layout.pr_dialog, null);
+            dBuilder.setTitle("Define your new PR");
+
+            final Spinner liftsSpinner = dView.findViewById(R.id.liftsSpinner);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    MainActivity.this,android.R.layout.simple_spinner_item,
+                    getResources().getStringArray(R.array.array_liftsSpinner));
+
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            liftsSpinner.setAdapter(adapter);
+
+            dBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                //Body of onClick has been moved outside of onCreate.
+                //When a button is clicked the common button handler forwards the click event to
+                //whatever handler you passed in setButton() then calls dismisses the dialog.
+                }
+                });
+
+            dBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            dBuilder.setView(dView);
+            //'dialog' here is not the same as those inside the onclick voids
+            final AlertDialog dialog = dBuilder.create();
+            dialog.show();
+
+            final int position = liftsSpinner.getSelectedItemPosition();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            switch (position){
+                                case 0:
+                                    Toast.makeText(MainActivity.this,
+                                            liftsSpinner.getSelectedItem().toString(),
+                                            Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 1:
+                                    newPR_type = liftsSpinner.getSelectedItem().toString();
+                                    dialog.dismiss();
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
+                                    break;
+                            }
+                        }
+                    });
+        }
+    };
+
 
 
     /*@Override
