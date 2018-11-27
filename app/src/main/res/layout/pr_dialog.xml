@@ -11,7 +11,6 @@
         android:id="@+id/prInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/liftsSpinner"
         android:autofillHints="@string/input_txthldr"
         android:gravity="center"
         android:hint="@string/input_txthldr"
@@ -23,9 +22,10 @@
         android:id="@+id/liftsSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:textSize="15pt"
-        app:layout_constraintBottom_toBottomof="@id+/prInput"
-        app:layout_constraintLeft_toLeftof="@+id/prInput" />
+        android:layout_alignBottom="@+id/prInput"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/prInput"
+        android:textSize="15pt" />
 
 </RelativeLayout>
