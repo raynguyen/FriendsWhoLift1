@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     String newPR_type;
     Button promptPR;
     int pos;
+    Boolean prflag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,17 +68,34 @@ public class MainActivity extends AppCompatActivity {
         });*/
 
         promptPR = findViewById(R.id.promptPR);
-        promptPR.setOnClickListener(mainListener);
+        promptPR.setOnClickListener(prupdate_dialog);
 
     }
 
-    private View.OnClickListener mainListener = new View.OnClickListener() {
+    public View.OnClickListener prupdate_dialog = new View.OnClickListener() {
+
         public void onClick(View v) {
             final AlertDialog.Builder dBuilder = new AlertDialog.Builder(
                     MainActivity.this);
 
             View dView = getLayoutInflater().inflate(R.layout.pr_dialog, null);
             dBuilder.setTitle("Define your new PR");
+
+            final EditText prEditText = findViewById(R.id.prInput);
+            final String prinput = prEditText.getText().toString();
+
+            prEditText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(TextUtils.isEmpty(prinput)) {
+                        prEditText.setError("ARE YOU WEAK?");//You can attach a drawing to setError()
+                        prflag = false;
+                    } else {
+                        prflag = true;
+                    }
+                }
+            });
 
             final Spinner liftsSpinner = dView.findViewById(R.id.liftsSpinner);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -121,9 +140,10 @@ public class MainActivity extends AppCompatActivity {
             final AlertDialog dialog = dBuilder.create();
             dialog.show();
 
+            // ToDo: Unable to construct the PROnClickListener object and pass prflag parameters. FIX
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new PROnClickListener(prflag));
 
-
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
+            /*dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -134,20 +154,35 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                     break;
                                 case 1:
+
                                     newPR_type = liftsSpinner.getSelectedItem().toString();
-                                    dialog.dismiss();
+                                    //need a check before dialog is dismissed
+                                    //dialog.dismiss();
                                     break;
                                 case 2:
+                                    newPR_type = liftsSpinner.getSelectedItem().toString();
                                     break;
                                 case 3:
+                                    newPR_type = liftsSpinner.getSelectedItem().toString();
                                     break;
                             }
                         }
-                    });
+                    });*/
         }
     };
 
+    public class PROnClickListener implements View.OnClickListener {
+        boolean prflag = false;
 
+        public void PROnClickListener(boolean prflag) {
+            this.prflag = false;
+        }
+
+        @Override
+        public void onClick(View v){
+
+        }
+    }
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
