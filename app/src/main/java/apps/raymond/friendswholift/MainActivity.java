@@ -3,10 +3,14 @@ package apps.raymond.friendswholift;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.Tag;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,13 +26,14 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputListener {
 
     long squatPR, benchPR, deadPR;
     String newPR_type;
     Button promptPR;
     int pos;
     Boolean prflag = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +80,18 @@ public class MainActivity extends AppCompatActivity {
     public View.OnClickListener prupdate_dialog = new View.OnClickListener() {
 
         public void onClick(View v) {
+
+            /*
+                Call to instantiate an AlertDialog here
+             */
+            //Log.d(Html.TagHandler, "Attempting to create AlertDialog Fragment");
+            PRDialogClass dialog = new PRDialogClass();
+            dialog.show(getSupportFragmentManager(), "MyPRDialog");
+
             final AlertDialog.Builder dBuilder = new AlertDialog.Builder(
                     MainActivity.this);
 
+            /*
             View dView = getLayoutInflater().inflate(R.layout.pr_dialog, null);
             dBuilder.setTitle("Define your new PR");
 
@@ -119,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+            /*
             dBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -140,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
             final AlertDialog dialog = dBuilder.create();
             dialog.show();
 
-            // ToDo: Unable to construct the PROnClickListener object and pass prflag parameters. FIX
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new PROnClickListener(prflag));
+            //ToDo: Unable to construct the PROnClickListener object and pass prflag parameters. FIX
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new PROnClickListener());
 
             /*dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
                     new View.OnClickListener() {
@@ -171,18 +185,28 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public class PROnClickListener implements View.OnClickListener {
+    @Override
+    public void storePr(String input) {
+
+        Toast.makeText(MainActivity.this, "hello", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+
+    /*
+    public class PROnClickListener implements DialogInterface.OnClickListener {
         boolean prflag = false;
+
+        @Override
+        public void onClick(DialogInterface dialog, int BUTTON_POSITIVE){
+
+        }
 
         public void PROnClickListener(boolean prflag) {
             this.prflag = false;
         }
-
-        @Override
-        public void onClick(View v){
-
-        }
-    }
+    }*/
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

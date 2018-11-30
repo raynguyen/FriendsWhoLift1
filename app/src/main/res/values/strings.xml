@@ -10,6 +10,10 @@
     <string name="dead_txthldr">Your deadlift details here</string>
     <string name="input_txthldr">Enter new PR</string>
     <string name ="new_pr">"Add PR</string>
+    <string name="definePR">"Define your new PR</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>
         <item>Bench Press</item>
