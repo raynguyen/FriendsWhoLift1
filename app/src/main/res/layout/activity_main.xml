@@ -60,4 +60,14 @@
         app:layout_constraintTop_toBottomOf="@+id/deadSummary"
         />
 
+    <Button
+        android:id="@+id/checkprefs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="View PRS"
+        app:layout_constraintBottom_toBottomOf="@+id/promptPR"
+        app:layout_constraintEnd_toStartOf="@+id/promptPR"
+        />
+
 </android.support.constraint.ConstraintLayout>

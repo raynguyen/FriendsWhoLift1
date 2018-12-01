@@ -20,7 +20,7 @@ public class PRDialogClass extends DialogFragment {
     private Button cancelbut, prsavebut;
 
     public interface OnPRInputListener{
-        //This method sends whatever arguements it has to the main activity!
+        //This method sends whatever arguments it has to the main activity!
         void storePr(String input);
     }
 

@@ -1,8 +1,10 @@
 package apps.raymond.friendswholift;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -28,35 +30,32 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputListener {
 
-    long squatPR, benchPR, deadPR;
-    String newPR_type;
-    Button promptPR;
-    int pos;
-    Boolean prflag = false;
+    public static final String BenchPress = "Bench Press";
+    public static final String DeadLift = "Dead Lift";
+    public static final String Squat = "Squat";
 
+    TextView textview, squatview, benchview, deadview;
+    Button promptPR, checkPrefs;
+
+    SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView textView = findViewById(R.id.liftsSummary);
-        TextView squatView = findViewById(R.id.squatSummary);
-        TextView benchView = findViewById(R.id.benchSummary);
-        TextView deadView = findViewById(R.id.deadSummary);
+        textview = findViewById(R.id.liftsSummary);
+        squatview = findViewById(R.id.squatSummary);
+        benchview = findViewById(R.id.benchSummary);
+        deadview = findViewById(R.id.deadSummary);
 
-        squatPR = 245;//You will have to check the server for the correct value here.
-        benchPR = 145;
-        deadPR = 315;
+        textview.setText(R.string.summary_title);
+        //squatview.setText(squat_message);
+        //benchview.setText(bench_message);
+        //deadview.setText(dead_message);
 
-        String squat_message = "Squat 1RM is : " + squatPR;
-        String bench_message = "Benchpress 1RM is : " + benchPR;
-        String dead_message = "Deadlift 1RM is : " + deadPR;
-
-        textView.setText(R.string.summary_title);
-        squatView.setText(squat_message);
-        benchView.setText(bench_message);
-        deadView.setText(dead_message);
+        sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
 
         /*
         EditText prInput = findViewById(R.id.prInput);
@@ -73,7 +72,9 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         });*/
 
         promptPR = findViewById(R.id.promptPR);
+        checkPrefs = findViewById(R.id.checkprefs);
         promptPR.setOnClickListener(prupdate_dialog);
+        checkPrefs.setOnClickListener(checkprlistener);
 
     }
 
@@ -185,11 +186,41 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         }
     };
 
+    public View.OnClickListener checkprlistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //may have to reconstruct the sharedpreferences here.
+            //sharedpreferences = getSharedPreferences("",Context.MODE_PRIVATE);
+            String benchpr = sharedpreferences.getString(BenchPress,"");
+            String deadpr = sharedpreferences.getString(DeadLift,"");
+            String squatpr = sharedpreferences.getString(Squat,"");
+            benchview.setText(benchpr);
+            squatview.setText(squatpr);
+            deadview.setText(deadpr);
+
+        }
+    };
+
     @Override
     public void storePr(String input) {
-
-        Toast.makeText(MainActivity.this, "hello", Toast.LENGTH_SHORT).show();
-
+        editor = sharedpreferences.edit();
+        switch(input){
+            case "Bench Press":
+                Toast.makeText(MainActivity.this, input, Toast.LENGTH_SHORT).show();
+                editor.putString(BenchPress,input);
+                benchview.setText(input);
+                break;
+            case "Dead Lift":
+                editor.putString(DeadLift, input);
+                deadview.setText(input);
+                break;
+            case "Squat":
+                editor.putString(Squat,input);
+                squatview.setText(input);
+                break;
+        }
+        //apply() changed the xml file in the background whereas commit() does it immediately
+        editor.apply();
     }
 
 
