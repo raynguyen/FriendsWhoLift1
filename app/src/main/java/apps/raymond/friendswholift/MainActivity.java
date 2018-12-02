@@ -1,44 +1,29 @@
 package apps.raymond.friendswholift;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.Tag;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
-
 
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputListener {
-
+    SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
     public static final String BenchPress = "Bench Press";
     public static final String DeadLift = "Dead Lift";
     public static final String Squat = "Squat";
+    public String cursquatpr = R.string.squat_line +
+            sharedpreferences.getString(Squat,"N/A");
+    public String curbenchpr = R.string.bench_line +
+            sharedpreferences.getString(BenchPress,"N/A");
+    public String curdeadpr = R.string.dead_line +
+            sharedpreferences.getString(DeadLift,"N/A");
 
     TextView textview, squatview, benchview, deadview;
     Button promptPR, checkPrefs;
-
-    SharedPreferences sharedpreferences;
-    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,25 +36,10 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         deadview = findViewById(R.id.deadSummary);
 
         textview.setText(R.string.summary_title);
-        //squatview.setText(squat_message);
-        //benchview.setText(bench_message);
-        //deadview.setText(dead_message);
-
+        squatview.setText(cursquatpr);
+        benchview.setText(curbenchpr);
+        deadview.setText(curdeadpr);
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
-
-        /*
-        EditText prInput = findViewById(R.id.prInput);
-        prInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView prInput, int inputDone, KeyEvent event) {
-                if (inputDone == EditorInfo.IME_ACTION_DONE){
-                    //Stores the value user inputs if user hits the done button
-                    String inputString = prInput.getText().toString();
-                    Toast.makeText(MainActivity.this, "Your pr input is: " + inputString, Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        });*/
 
         promptPR = findViewById(R.id.promptPR);
         checkPrefs = findViewById(R.id.checkprefs);
@@ -82,15 +52,9 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
 
         public void onClick(View v) {
 
-            /*
-                Call to instantiate an AlertDialog here
-             */
             //Log.d(Html.TagHandler, "Attempting to create AlertDialog Fragment");
             PRDialogClass dialog = new PRDialogClass();
             dialog.show(getSupportFragmentManager(), "MyPRDialog");
-
-            final AlertDialog.Builder dBuilder = new AlertDialog.Builder(
-                    MainActivity.this);
 
             /*
             View dView = getLayoutInflater().inflate(R.layout.pr_dialog, null);
@@ -112,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
                 }
             });
 
-            final Spinner liftsSpinner = dView.findViewById(R.id.liftsSpinner);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     MainActivity.this,android.R.layout.simple_spinner_item,
                     getResources().getStringArray(R.array.array_liftsSpinner));
@@ -135,20 +98,6 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
 
 
             /*
-            dBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                //When a button is clicked the common button handler forwards the click event to
-                //whatever handler you passed in setButton() then calls dismisses the dialog.
-                }
-                });
-
-            dBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
 
             dBuilder.setView(dView);
             //'dialog' here is not the same as those inside the onclick voids
@@ -189,37 +138,31 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
     public View.OnClickListener checkprlistener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //may have to reconstruct the sharedpreferences here.
-            //sharedpreferences = getSharedPreferences("",Context.MODE_PRIVATE);
-            String benchpr = sharedpreferences.getString(BenchPress,"");
-            String deadpr = sharedpreferences.getString(DeadLift,"");
-            String squatpr = sharedpreferences.getString(Squat,"");
-            benchview.setText(benchpr);
-            squatview.setText(squatpr);
-            deadview.setText(deadpr);
-
+            //Maybe just open another fragment that reads from the SharedPreferences xml?
+            Toast.makeText(MainActivity.this,"Hello",Toast.LENGTH_LONG).show();
         }
     };
 
+    //storePr is defined on the DialogFragment
     @Override
-    public void storePr(String input) {
+    public void storePr(String input, String prtype) {
         editor = sharedpreferences.edit();
-        switch(input){
+        switch(prtype){
             case "Bench Press":
                 Toast.makeText(MainActivity.this, input, Toast.LENGTH_SHORT).show();
                 editor.putString(BenchPress,input);
-                benchview.setText(input);
+                benchview.setText(curbenchpr);
                 break;
             case "Dead Lift":
                 editor.putString(DeadLift, input);
-                deadview.setText(input);
+                deadview.setText(curdeadpr);
                 break;
             case "Squat":
                 editor.putString(Squat,input);
-                squatview.setText(input);
+                squatview.setText(cursquatpr);
                 break;
         }
-        //apply() changed the xml file in the background whereas commit() does it immediately
+        //apply() changes the xml file in the background whereas commit() does it immediately
         editor.apply();
     }
 

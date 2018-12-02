@@ -2,9 +2,9 @@
     <string name="app_name">LiftWithMe</string>
     <string name="action_settings">Settings</string>
     <string name="summary_title">Weekly Summary</string>
-    <string name="squat_line">Squat PR here</string>
-    <string name="bench_line">Bench PR here</string>
-    <string name="dead_line">Dead PR here</string>
+    <string name="squat_line">Squat 1RM: </string>
+    <string name="bench_line">Bench Press 1RM: </string>
+    <string name="dead_line">Dead Lift 1RM: </string>
     <string name="squat_txthldr">Your squat details here</string>
     <string name="bench_txthldr">Your benchpress details here</string>
     <string name="dead_txthldr">Your deadlift details here</string>
