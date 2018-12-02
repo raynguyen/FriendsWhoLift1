@@ -15,12 +15,12 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
     public static final String BenchPress = "Bench Press";
     public static final String DeadLift = "Dead Lift";
     public static final String Squat = "Squat";
-    public String cursquatpr = R.string.squat_line +
-            sharedpreferences.getString(Squat,"N/A");
-    public String curbenchpr = R.string.bench_line +
-            sharedpreferences.getString(BenchPress,"N/A");
-    public String curdeadpr = R.string.dead_line +
-            sharedpreferences.getString(DeadLift,"N/A");
+    public String cursquatpr;//+
+            //sharedpreferences.getString(Squat,"N/A");
+    public String curbenchpr = "shalom"; //(R.string.bench_line); //+
+            //sharedpreferences.getString(BenchPress,"N/A");
+    public String curdeadpr = "hi";//getString(R.string.dead_line); //+
+            //sharedpreferences.getString(DeadLift,"N/A");
 
     TextView textview, squatview, benchview, deadview;
     Button promptPR, checkPrefs;
@@ -36,10 +36,13 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         deadview = findViewById(R.id.deadSummary);
 
         textview.setText(R.string.summary_title);
+
+        sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
+        cursquatpr = getString(R.string.squat_line) + sharedpreferences.getString(Squat, "N/A");
+
         squatview.setText(cursquatpr);
         benchview.setText(curbenchpr);
         deadview.setText(curdeadpr);
-        sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
 
         promptPR = findViewById(R.id.promptPR);
         checkPrefs = findViewById(R.id.checkprefs);
@@ -55,83 +58,6 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
             //Log.d(Html.TagHandler, "Attempting to create AlertDialog Fragment");
             PRDialogClass dialog = new PRDialogClass();
             dialog.show(getSupportFragmentManager(), "MyPRDialog");
-
-            /*
-            View dView = getLayoutInflater().inflate(R.layout.pr_dialog, null);
-            dBuilder.setTitle("Define your new PR");
-
-            final EditText prEditText = findViewById(R.id.prInput);
-            final String prinput = prEditText.getText().toString();
-
-            prEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if(TextUtils.isEmpty(prinput)) {
-                        prEditText.setError("ARE YOU WEAK?");//You can attach a drawing to setError()
-                        prflag = false;
-                    } else {
-                        prflag = true;
-                    }
-                }
-            });
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    MainActivity.this,android.R.layout.simple_spinner_item,
-                    getResources().getStringArray(R.array.array_liftsSpinner));
-
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-            liftsSpinner.setAdapter(adapter);
-
-            liftsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    pos = parent.getSelectedItemPosition();
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-
-
-
-            /*
-
-            dBuilder.setView(dView);
-            //'dialog' here is not the same as those inside the onclick voids
-            final AlertDialog dialog = dBuilder.create();
-            dialog.show();
-
-            //ToDo: Unable to construct the PROnClickListener object and pass prflag parameters. FIX
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new PROnClickListener());
-
-            /*dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            switch (pos){
-                                case 0:
-                                    Toast.makeText(MainActivity.this,
-                                            liftsSpinner.getSelectedItem().toString(),
-                                            Toast.LENGTH_SHORT).show();
-                                    break;
-                                case 1:
-
-                                    newPR_type = liftsSpinner.getSelectedItem().toString();
-                                    //need a check before dialog is dismissed
-                                    //dialog.dismiss();
-                                    break;
-                                case 2:
-                                    newPR_type = liftsSpinner.getSelectedItem().toString();
-                                    break;
-                                case 3:
-                                    newPR_type = liftsSpinner.getSelectedItem().toString();
-                                    break;
-                            }
-                        }
-                    });*/
         }
     };
 

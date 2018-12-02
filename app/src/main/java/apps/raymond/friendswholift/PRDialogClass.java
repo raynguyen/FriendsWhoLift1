@@ -44,7 +44,9 @@ public class PRDialogClass extends DialogFragment {
                 getResources().getStringArray(R.array.array_liftsSpinner)
         );
 
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         prspinner.setAdapter(adapter);
+
         prsavebut.setOnClickListener(saveprclicked);
         cancelbut.setOnClickListener(cancelprclicked);
         prspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){

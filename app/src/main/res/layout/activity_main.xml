@@ -64,8 +64,8 @@
         android:id="@+id/checkprefs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:text="View PRS"
+        android:layout_marginEnd="0dp"
+        android:text="@string/checkprs"
         app:layout_constraintBottom_toBottomOf="@+id/promptPR"
         app:layout_constraintEnd_toStartOf="@+id/promptPR"
         />
