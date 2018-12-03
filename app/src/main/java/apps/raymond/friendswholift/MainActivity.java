@@ -9,18 +9,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputListener {
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     public static final String BenchPress = "Bench Press";
     public static final String DeadLift = "Dead Lift";
     public static final String Squat = "Squat";
-    public String cursquatpr;//+
-            //sharedpreferences.getString(Squat,"N/A");
-    public String curbenchpr = "shalom"; //(R.string.bench_line); //+
-            //sharedpreferences.getString(BenchPress,"N/A");
-    public String curdeadpr = "hi";//getString(R.string.dead_line); //+
-            //sharedpreferences.getString(DeadLift,"N/A");
+
+    public String cursquatpr, curbenchpr, curdeadpr;
+
 
     TextView textview, squatview, benchview, deadview;
     Button promptPR, checkPrefs;
@@ -38,11 +36,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         textview.setText(R.string.summary_title);
 
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
-        cursquatpr = getString(R.string.squat_line) + sharedpreferences.getString(Squat, "N/A");
-
-        squatview.setText(cursquatpr);
-        benchview.setText(curbenchpr);
-        deadview.setText(curdeadpr);
+        UpdateMainAct();
 
         promptPR = findViewById(R.id.promptPR);
         checkPrefs = findViewById(R.id.checkprefs);
@@ -61,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         }
     };
 
+    //ToDo: Use this button to open up another activity to view historical data!
     public View.OnClickListener checkprlistener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -69,31 +64,40 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         }
     };
 
-    //storePr is defined on the DialogFragment
     @Override
-    public void storePr(String input, String prtype) {
+    public void StorePR(String input, String prtype) {
         editor = sharedpreferences.edit();
         switch(prtype){
+            //ToDo: Current case matching is not programmatic. Update this.
             case "Bench Press":
-                Toast.makeText(MainActivity.this, input, Toast.LENGTH_SHORT).show();
                 editor.putString(BenchPress,input);
-                benchview.setText(curbenchpr);
                 break;
             case "Dead Lift":
                 editor.putString(DeadLift, input);
-                deadview.setText(curdeadpr);
                 break;
             case "Squat":
                 editor.putString(Squat,input);
-                squatview.setText(cursquatpr);
                 break;
         }
         //apply() changes the xml file in the background whereas commit() does it immediately
         editor.apply();
+        UpdateMainAct();
     }
 
+    public void UpdateMainAct(){
+        //ToDo: Refactor updatemainact to determine what TextViews require updating.
+        cursquatpr = getString(R.string.squat_line) +
+                sharedpreferences.getString(Squat, "N/A");
+        curbenchpr = getString(R.string.bench_line) +
+                sharedpreferences.getString(BenchPress, "N/A");
+        curdeadpr = getString(R.string.dead_line) +
+                sharedpreferences.getString(DeadLift, "N/A");
 
+        benchview.setText(curbenchpr);
+        deadview.setText(curdeadpr);
+        squatview.setText(cursquatpr);
 
+    }
     /*
     public class PROnClickListener implements DialogInterface.OnClickListener {
         boolean prflag = false;

@@ -26,7 +26,7 @@ public class PRDialogClass extends DialogFragment {
 
     public interface OnPRInputListener {
         //This method sends whatever arguments it has to the main activity!
-        void storePr(String input, String prtype);
+        void StorePR(String input, String prtype);
     }
 
     @Nullable
@@ -71,7 +71,7 @@ public class PRDialogClass extends DialogFragment {
                     break;
                 default:
                     String input = prinput.getText().toString();
-                    prInputListener.storePr(input, prtype);
+                    prInputListener.StorePR(input, prtype);
                     getDialog().dismiss();
             }
         }
