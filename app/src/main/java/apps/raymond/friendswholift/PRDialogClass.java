@@ -20,7 +20,6 @@ public class PRDialogClass extends DialogFragment {
 
     private EditText prinput;
     private Spinner prspinner;
-    private Button cancelbut, prsavebut;
     public String prtype;
     public OnPRInputListener prInputListener;
 
@@ -34,10 +33,11 @@ public class PRDialogClass extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pr_dialog, container, false);
+        Button cancelbut = view.findViewById(R.id.cancel_button);
+        Button prsavebut = view.findViewById(R.id.prsave_button);
         prinput = view.findViewById(R.id.prInput);
         prspinner = view.findViewById(R.id.liftsSpinner);
-        cancelbut = view.findViewById(R.id.cancel_button);
-        prsavebut = view.findViewById(R.id.prsave_button);
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
           getActivity().getBaseContext(), android.R.layout.simple_spinner_item,

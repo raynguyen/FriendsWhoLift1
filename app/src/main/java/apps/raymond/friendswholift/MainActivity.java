@@ -1,6 +1,7 @@
 package apps.raymond.friendswholift;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         public void onClick(View v) {
             //Maybe just open another fragment that reads from the SharedPreferences xml?
             Toast.makeText(MainActivity.this,"Hello",Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
         }
     };
 
