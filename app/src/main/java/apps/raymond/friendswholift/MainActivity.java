@@ -3,13 +3,12 @@ package apps.raymond.friendswholift;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputListener {
     SharedPreferences sharedpreferences;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
 
             //Log.d(Html.TagHandler, "Attempting to create AlertDialog Fragment");
             PRDialogClass dialog = new PRDialogClass();
+            dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
             dialog.show(getSupportFragmentManager(), "MyPRDialog");
         }
     };
@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
     public View.OnClickListener checkprlistener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //Maybe just open another fragment that reads from the SharedPreferences xml?
-            Toast.makeText(MainActivity.this,"Hello",Toast.LENGTH_LONG).show();
             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
             startActivity(intent);
         }
@@ -101,19 +99,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         squatview.setText(cursquatpr);
 
     }
-    /*
-    public class PROnClickListener implements DialogInterface.OnClickListener {
-        boolean prflag = false;
 
-        @Override
-        public void onClick(DialogInterface dialog, int BUTTON_POSITIVE){
-
-        }
-
-        public void PROnClickListener(boolean prflag) {
-            this.prflag = false;
-        }
-    }*/
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -137,3 +123,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         return super.onOptionsItemSelected(item);
     }*/
 }
+/**
+ * ToDo: Update PRDialogClass such that the TextView Header is uneditable.
+ * ToDo: Add tabs to top of HomeActivity to indicate which Fragment user has active.
+ **/
