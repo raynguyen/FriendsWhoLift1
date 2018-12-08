@@ -53,7 +53,7 @@
 
 
     <Button
-        android:id="@+id/promptPR"
+        android:id="@+id/addPR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -69,8 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="0dp"
         android:text="@string/checkprs"
-        app:layout_constraintBottom_toBottomOf="@+id/promptPR"
-        app:layout_constraintEnd_toStartOf="@+id/promptPR"
+        app:layout_constraintBottom_toBottomOf="@+id/addPR"
+        app:layout_constraintEnd_toStartOf="@+id/addPR"
         />
 
 </android.support.constraint.ConstraintLayout>

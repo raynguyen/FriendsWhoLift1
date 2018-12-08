@@ -10,36 +10,36 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class DataBaseHandler extends SQLiteOpenHelper {
+public class DBHandler extends SQLiteOpenHelper {
 
-    public static final String LIFTSTABLE_NAME = "liftstable";
-    public static final String LIFTTABLE_DATE_COL = "liftdate";
+    public static final String TABLE_NAME = "LIFTSTABLE";
+    public static final String DATE_COL = "liftdate";
+    public static final String TYPE_COL = "lifttype";
+    public static final String WEIGHT_COL = "liftweight";
 
-    public DataBaseHandler(Context context){
+    public DBHandler(Context context){
         super(context,"LiftsDataBase.db",null,1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase liftsdb){
-        liftsdb.execSQL(
-                "create table liftstable" +
-                        "(id integer primary key, type text, weight text)"
-        );
+        //What exactly is does this String do in PHP?
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, TODO TEXT, DETAIL TEXT)";
+        liftsdb.execSQL(createTable);
     }
 
     public void onUpgrade(SQLiteDatabase liftsdb, int oldVersion, int newVersion){
-        liftsdb.execSQL(
-                "DROP TABLE IF EXISTS liftstable"
-        );
+        liftsdb.execSQL("DROP TABLE IF EXISTS liftstable");
         onCreate(liftsdb);
     }
 
-    public boolean insertlift(String type, String weight){
+    public boolean insertlift(String type, String date, String weight){
         SQLiteDatabase liftsdb = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("type", type);
+        contentValues.put("date", date);
         contentValues.put("weight", weight);
-        liftsdb.insert(LIFTSTABLE_NAME,null,contentValues);
+        liftsdb.insert(TABLE_NAME,null,contentValues);
         return true;
     }
 
@@ -51,22 +51,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public int numberOfRows(){
         SQLiteDatabase liftsdb = this.getReadableDatabase();
-        int numrows = (int) DatabaseUtils.queryNumEntries(liftsdb,LIFTSTABLE_NAME);
+        int numrows = (int) DatabaseUtils.queryNumEntries(liftsdb,TABLE_NAME);
         return numrows;
     }
 
-    public boolean updateLift(Integer id, String type, String weight){
+    public boolean updateLift(Integer id, String type, String date, String weight){
         SQLiteDatabase liftsdb = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("type", type);
+        contentValues.put("date", date);
         contentValues.put("weight", weight);
-        liftsdb.update(LIFTSTABLE_NAME,contentValues,"id = ? ",new String[]{Integer.toString(id)});
+        liftsdb.update(TABLE_NAME,contentValues,"id = ? ",new String[]{Integer.toString(id)});
         return true;
     }
 
     public Integer deleteLift(Integer id){
         SQLiteDatabase liftsdb = this.getWritableDatabase();
-        return liftsdb.delete(LIFTSTABLE_NAME,"id = ? ",new String[]{ Integer.toString(id)});
+        return liftsdb.delete(TABLE_NAME,"id = ? ",new String[]{ Integer.toString(id)});
     }
 
     public ArrayList<String> getLiftsHistory(){
@@ -77,7 +78,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while(!res.isAfterLast()){
-            lifts_array.add(res.getString(res.getColumnIndex(LIFTTABLE_DATE_COL)));
+            lifts_array.add(res.getString(res.getColumnIndex(DATE_COL)));
             res.moveToNext();
         }
         return lifts_array;

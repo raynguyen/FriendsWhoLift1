@@ -3,6 +3,7 @@ package apps.raymond.friendswholift;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputInterface {
+
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     public static final String BenchPress = "Bench Press";
@@ -21,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
 
 
     TextView textview, squatview, benchview, deadview;
-    Button promptPR, checkPrefs;
+    Button addPR, checkPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +40,11 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
         UpdateMainAct();
 
-        promptPR = findViewById(R.id.promptPR);
+
+
+        addPR = findViewById(R.id.addPR);
         checkPrefs = findViewById(R.id.checkprefs);
-        promptPR.setOnClickListener(prupdate_dialog);
+        addPR.setOnClickListener(prupdate_dialog);
         checkPrefs.setOnClickListener(checkprlistener);
 
     }
