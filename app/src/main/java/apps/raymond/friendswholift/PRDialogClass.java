@@ -21,9 +21,9 @@ public class PRDialogClass extends DialogFragment {
     private EditText prinput;
     private Spinner prspinner;
     public String prtype;
-    public OnPRInputListener prInputListener;
+    public OnPRInputInterface prInputListener;
 
-    public interface OnPRInputListener {
+    public interface OnPRInputInterface {
         //This method sends whatever arguments it has to the main activity!
         void StorePR(String input, String prtype);
     }
@@ -91,7 +91,7 @@ public class PRDialogClass extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            prInputListener = (OnPRInputListener) getActivity();
+            prInputListener = (OnPRInputInterface) getActivity();
         } catch (ClassCastException e){
             Log.e("PRDialogClass", "ClassCastException: " + e.getMessage() );
         }
