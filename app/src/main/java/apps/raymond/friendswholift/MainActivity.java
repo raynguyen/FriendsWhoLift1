@@ -3,7 +3,6 @@ package apps.raymond.friendswholift;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
 
 
     TextView textview, squatview, benchview, deadview;
-    Button addPR, checkPrefs;
+    Button addPR, addBench, addDead, addSquat, checkPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +39,17 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
         UpdateMainAct();
 
-
-
         addPR = findViewById(R.id.addPR);
         checkPrefs = findViewById(R.id.checkprefs);
+        addBench = findViewById(R.id.addbench);
+        addDead = findViewById(R.id.adddead);
+        addSquat = findViewById(R.id.addsquat);
+
+
+        //addBench.setOnClickListener();
+        //addDead.setOnClickListener();
+        //addSquat.setOnClickListener();
+
         addPR.setOnClickListener(prupdate_dialog);
         checkPrefs.setOnClickListener(checkprlistener);
 

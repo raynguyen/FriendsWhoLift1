@@ -10,27 +10,47 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class DBHandler extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
+    private static final String DATABASE_NAME = "liftsdb";
     public static final String TABLE_NAME = "LIFTSTABLE";
-    public static final String DATE_COL = "liftdate";
+
     public static final String TYPE_COL = "lifttype";
+    public static final String DATE_COL = "liftdate";
     public static final String WEIGHT_COL = "liftweight";
 
-    public DBHandler(Context context){
-        super(context,"LiftsDataBase.db",null,1);
+    public static final String CREATE_LIFTS_TABLE = "CREATE TABLE " +
+            TABLE_NAME + "(" + DATE_COL + " INTEGER PRIMARY KEY, " +
+            WEIGHT_COL + " TEXT" + ")";
+
+    private static DBHelper instance;
+
+    public static synchronized DBHelper getHelper(Context context){
+        if(instance==null){
+            instance = new DBHelper(context);
+        }
+        return instance;
+    }
+
+    private DBHelper(Context context){
+        //calls the constructor for DBHelper class.
+        //super refers to the parent class.
+        super(context, DATABASE_NAME, null, 1);
+    }
+
+    public void onOpen(SQLiteDatabase db){
+        super.onOpen(db);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase liftsdb){
+    public void onCreate(SQLiteDatabase db){
         //What exactly is does this String do in PHP?
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, TODO TEXT, DETAIL TEXT)";
-        liftsdb.execSQL(createTable);
+        db.execSQL(CREATE_LIFTS_TABLE);
     }
 
-    public void onUpgrade(SQLiteDatabase liftsdb, int oldVersion, int newVersion){
-        liftsdb.execSQL("DROP TABLE IF EXISTS liftstable");
-        onCreate(liftsdb);
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+        db.execSQL("DROP TABLE IF EXISTS liftstable");
+        onCreate(db);
     }
 
     public boolean insertlift(String type, String date, String weight){

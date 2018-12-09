@@ -11,57 +11,59 @@
 
     <TextView
         android:id="@+id/liftsSummary"
-        android:text="@string/summary_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:background="#37AEE4"
+        android:maxLines="1"
+        android:text="@string/summary_title"
         android:textSize="40sp"
-        android:singleLine="true"/>
-
-    <TextView
-        android:id="@+id/squatSummary"
-        android:text="@string/squat_txthldr"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:singleLine="true"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/liftsSummary"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/benchSummary"
-        android:text="@string/bench_txthldr"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         android:singleLine="true"
+        android:text="@string/bench_txthldr"
         android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/squatSummary"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/addbench"
+        app:layout_constraintTop_toTopOf="@id/addbench" />
 
     <TextView
         android:id="@+id/deadSummary"
-        android:text="@string/dead_txthldr"
         android:layout_width="0dp"
-        android:layout_weight="0.5"
         android:layout_height="wrap_content"
+        android:layout_weight="0.5"
         android:singleLine="true"
+        android:text="@string/dead_txthldr"
         android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/benchSummary"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/adddead"
+        app:layout_constraintTop_toTopOf="@id/adddead" />
 
+    <TextView
+        android:id="@+id/squatSummary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:singleLine="true"
+        android:text="@string/squat_txthldr"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/addsquat"
+        app:layout_constraintTop_toTopOf="@+id/addsquat" />
 
     <Button
         android:id="@+id/addPR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="148dp"
         android:text="@string/new_pr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deadSummary"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/deadSummary" />
 
     <Button
         android:id="@+id/checkprefs"
@@ -70,7 +72,36 @@
         android:layout_marginEnd="0dp"
         android:text="@string/checkprs"
         app:layout_constraintBottom_toBottomOf="@+id/addPR"
-        app:layout_constraintEnd_toStartOf="@+id/addPR"
-        />
+        app:layout_constraintEnd_toStartOf="@+id/addPR" />
+
+    <Button
+        android:id="@+id/addbench"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:maxLines="1"
+        android:text="@string/addbench"
+        app:layout_constraintEnd_toEndOf="@id/addsquat"
+        app:layout_constraintTop_toBottomOf="@id/liftsSummary" />
+
+    <Button
+        android:id="@+id/adddead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="@string/adddead"
+        app:layout_constraintEnd_toEndOf="@id/addsquat"
+        app:layout_constraintTop_toBottomOf="@+id/addbench"
+        tools:layout_editor_absoluteX="179dp" />
+
+    <Button
+        android:id="@+id/addsquat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="@string/addsquat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adddead" />
+
 
 </android.support.constraint.ConstraintLayout>
