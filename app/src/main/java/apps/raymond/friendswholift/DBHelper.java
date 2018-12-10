@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -19,13 +17,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String DATE_COL = "liftdate";
     public static final String WEIGHT_COL = "liftweight";
 
-    public static final String CREATE_LIFTS_TABLE = "CREATE TABLE " +
+    private static final String CREATE_LIFTS_TABLE = "CREATE TABLE " +
             TABLE_NAME + "(" + DATE_COL + " INTEGER PRIMARY KEY, " +
             WEIGHT_COL + " TEXT" + ")";
 
     private static DBHelper instance;
 
-    public static synchronized DBHelper getHelper(Context context){
+    static synchronized DBHelper getHelper(Context context){
         if(instance==null){
             instance = new DBHelper(context);
         }

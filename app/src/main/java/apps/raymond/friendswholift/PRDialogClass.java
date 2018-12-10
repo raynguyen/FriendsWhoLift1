@@ -26,7 +26,7 @@ public class PRDialogClass extends DialogFragment {
     public String prtype;
     public OnPRInputInterface prInputListener;
     private SQLiteDatabase liftsdb;
-    private DBHandler dbHandler;
+    public DBHelper dbHelper;
     private int spos;
 
     public interface OnPRInputInterface {
@@ -67,8 +67,7 @@ public class PRDialogClass extends DialogFragment {
             }
         });
 
-        dbHandler = new DBHandler(getActivity().getBaseContext());
-        liftsdb = dbHandler.getWritableDatabase();
+        liftsdb = dbHelper.getWritableDatabase();
 
         return view;
     }
