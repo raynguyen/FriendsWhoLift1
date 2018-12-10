@@ -21,4 +21,9 @@ public class LiftsDAO {
             dbHelper = DBHelper.getHelper(mContext);
         database = dbHelper.getWritableDatabase();
     }
+
+    public void close(){
+        dbHelper.close();
+        database = null;
+    }
 }
