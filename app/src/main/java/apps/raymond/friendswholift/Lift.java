@@ -5,7 +5,8 @@ import android.os.Parcelable;
 import java.util.Date;
 
 public class Lift implements Parcelable {
-    private int id, weight;
+    private int id;
+    private String weight;
     private Date date;
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
@@ -22,7 +23,7 @@ public class Lift implements Parcelable {
         super();
     }
 
-    public void setWeight(int weight){
+    public void setWeight(String weight){
         this.weight = weight;
     }
 
@@ -34,7 +35,7 @@ public class Lift implements Parcelable {
         this.id = id;
     }
 
-    public int getWeight(){
+    public String getWeight(){
         return weight;
     }
 
@@ -49,7 +50,7 @@ public class Lift implements Parcelable {
     private Lift(Parcel in){
         super();
         this.id = in.readInt();
-        this.weight = in.readInt();
+        this.weight = in.readString();
         this.date = new Date(in.readLong());
     }
 
@@ -69,7 +70,7 @@ public class Lift implements Parcelable {
 
     public void writeToParcel(Parcel parcel, int flags){
         parcel.writeInt(getId());
-        parcel.writeInt(getWeight());
+        parcel.writeString(getWeight());
         parcel.writeLong(getDate().getTime());
     }
 
