@@ -14,6 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "LIFTSTABLE";
 
     public static final String TYPE_COL = "lifttype";
+    public static final String ID_COL = "id";
     public static final String DATE_COL = "liftdate";
     public static final String WEIGHT_COL = "liftweight";
 
