@@ -48,7 +48,7 @@ public class LiftAddFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.fragment_addbench, container,false);
+        View rootView = inflater.inflate(R.layout.fragment_addlift, container,false);
 
         dateText = rootView.findViewById(R.id.input_date);
         weightText = rootView.findViewById(R.id.input_value);
