@@ -18,6 +18,7 @@ public class LiftDAO extends LiftsDBDAO{
         super(context);
     }
 
+    //The id of the object in the database is a datatype long/
     public long save(Lift lift){
         ContentValues values = new ContentValues();
         values.put(DBHelper.DATE_COL, dateformat.format(lift.getDate()));
@@ -25,7 +26,7 @@ public class LiftDAO extends LiftsDBDAO{
         return database.insert(DBHelper.TABLE_NAME, null, values);
     }
 
-    private ArrayList<Lift> getLifts() {
+    public ArrayList<Lift> getLifts() {
         ArrayList<Lift> lifts = new ArrayList<Lift>();
 
         Cursor cursor = database.query(DBHelper.TABLE_NAME,

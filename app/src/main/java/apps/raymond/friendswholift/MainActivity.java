@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputInterface {
+public class MainActivity extends AppCompatActivity implements PRDialogClassObs.OnPRInputInterface {
 
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         public void onClick(View v) {
 
             //Log.d(Html.TagHandler, "Attempting to create AlertDialog Fragment");
-            PRDialogClass dialog = new PRDialogClass();
+            PRDialogClassObs dialog = new PRDialogClassObs();
             dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
             dialog.show(getSupportFragmentManager(), "MyPRDialog");
         }
@@ -134,6 +134,6 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
     }*/
 }
 /**
- * ToDo: Update PRDialogClass such that the TextView Header is uneditable.
+ * ToDo: Update PRDialogClassObs such that the TextView Header is uneditable.
  * ToDo: Add tabs to top of HomeActivity to indicate which Fragment user has active.
  **/

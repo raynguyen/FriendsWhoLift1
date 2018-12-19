@@ -6,7 +6,7 @@
     android:background="#EDEDED">
 
     <ListView
-        android:id="@+id/list_bench"
+        android:id="@+id/list_lifts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/transparent"

@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
-public class PRDialogClass extends DialogFragment {
+public class PRDialogClassObs extends DialogFragment {
 
     private EditText prinput;
     private Spinner prspinner;
@@ -106,7 +106,7 @@ public class PRDialogClass extends DialogFragment {
         try{
             prInputListener = (OnPRInputInterface) getActivity();
         } catch (ClassCastException e){
-            Log.e("PRDialogClass", "ClassCastException: " + e.getMessage() );
+            Log.e("PRDialogClassObs", "ClassCastException: " + e.getMessage() );
         }
     }
 }
