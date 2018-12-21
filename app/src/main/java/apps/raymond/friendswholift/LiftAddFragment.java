@@ -51,7 +51,7 @@ public class LiftAddFragment extends Fragment implements View.OnClickListener {
         View rootView = inflater.inflate(R.layout.fragment_addlift, container,false);
 
         dateText = rootView.findViewById(R.id.input_date);
-        weightText = rootView.findViewById(R.id.input_value);
+        weightText = rootView.findViewById(R.id.input_weight);
         saveButton = rootView.findViewById(R.id.save_button);
         cancelButton = rootView.findViewById(R.id.cancel_button);
 
@@ -136,7 +136,7 @@ public class LiftAddFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume(){
         getActivity().setTitle(R.string.add_lift);
-        getActivity().getActionBar().setTitle(R.string.add_lift);
+        //getActivity().getActionBar().setTitle(R.string.add_lift);
         super.onResume();
     }
 

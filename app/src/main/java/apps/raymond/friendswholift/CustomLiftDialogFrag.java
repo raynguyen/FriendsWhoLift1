@@ -52,7 +52,7 @@ public class CustomLiftDialogFrag extends DialogFragment {
         builder.setView(customDialogView);
 
         liftDateText = (EditText) customDialogView.findViewById(R.id.input_date);
-        liftWeightText = (EditText) customDialogView.findViewById(R.id.input_value);
+        liftWeightText = (EditText) customDialogView.findViewById(R.id.input_weight);
         submitLayout.setVisibility(View.GONE);
 
         setValue();

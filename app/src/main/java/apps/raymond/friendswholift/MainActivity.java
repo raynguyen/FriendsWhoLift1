@@ -3,14 +3,159 @@ package apps.raymond.friendswholift;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Trace;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements PRDialogClassObs.OnPRInputInterface {
+import android.content.DialogInterface;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+
+public class MainActivity extends FragmentActivity implements
+        CustomLiftDialogFrag.LiftDialogFragmentListener{
+
+    private Fragment contentFragment;
+    private LiftListFragment liftListFragment;
+    private LiftAddFragment liftAddFragment;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_temp);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        //On orientation change
+        if (savedInstanceState != null){
+            if (savedInstanceState.containsKey("content")){
+                String content= savedInstanceState.getString("content");
+                if (content.equals(LiftAddFragment.ARG_ITEM_ID)){
+                    if (fragmentManager.findFragmentByTag(LiftAddFragment.ARG_ITEM_ID) != null){
+                        setFragmentTitle(R.string.add_lift);
+                        contentFragment = fragmentManager.findFragmentByTag(
+                                LiftAddFragment.ARG_ITEM_ID);
+                    }
+                }
+            }
+            if (fragmentManager.findFragmentByTag(LiftListFragment.ARG_ITEM_ID) != null){
+                liftListFragment = (LiftListFragment) fragmentManager.findFragmentByTag(
+                        LiftListFragment.ARG_ITEM_ID);
+                contentFragment = liftListFragment;
+            }
+        } else {
+            liftListFragment = new LiftListFragment();
+            setFragmentTitle(R.string.app_name);
+            switchContent(liftListFragment, LiftListFragment.ARG_ITEM_ID);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        if (contentFragment instanceof LiftAddFragment){
+            outState.putString("content", LiftAddFragment.ARG_ITEM_ID);
+        } else {
+            outState.putString("content",LiftListFragment.ARG_ITEM_ID);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    //This menu will hold the action button to add a lift object to the database.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.action_add:
+                setFragmentTitle(R.string.add_lift);
+                liftAddFragment = new LiftAddFragment();
+                switchContent(liftAddFragment, LiftAddFragment.ARG_ITEM_ID);
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    //Not entirely sure what is going on here....
+    public void switchContent(Fragment fragment, String tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        while (fragmentManager.popBackStackImmediate())
+            ;
+
+        if (fragment != null) {
+            FragmentTransaction transaction = fragmentManager
+                    .beginTransaction();
+            transaction.replace(R.id.content_frame, fragment, tag);
+            // Only EmpAddFragment is added to the back stack.
+            if (!(fragment instanceof LiftListFragment)) {
+                transaction.addToBackStack(tag);
+            }
+            transaction.commit();
+            contentFragment = fragment;
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0){
+            super.onBackPressed();
+        } else if (contentFragment instanceof LiftListFragment || fm.getBackStackEntryCount() ==0){
+            onShowQuitDialog();
+        }
+    }
+
+    public void onShowQuitDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+
+        builder.setMessage("Do you want to quit?");
+        builder.setPositiveButton(android.R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+        builder.setNegativeButton(android.R.string.no,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
+    }
+
+    protected void setFragmentTitle(int resourceId) {
+        setTitle(resourceId);
+        //getActionBar().setTitle(resourceId);
+    }
+
+    @Override
+    public void onFinishDialog(){
+        if (liftListFragment != null) {
+            liftListFragment.updateView();
+        }
+    }
+}
+
+//BELOW IS THE OLD MAINACTIVITY
+/*public class MainActivity extends AppCompatActivity implements PRDialogClassObs.OnPRInputInterface {
 
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
@@ -110,6 +255,8 @@ public class MainActivity extends AppCompatActivity implements PRDialogClassObs.
 
     }
 
+}*/
+
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,8 +279,3 @@ public class MainActivity extends AppCompatActivity implements PRDialogClassObs.
 
         return super.onOptionsItemSelected(item);
     }*/
-}
-/**
- * ToDo: Update PRDialogClassObs such that the TextView Header is uneditable.
- * ToDo: Add tabs to top of HomeActivity to indicate which Fragment user has active.
- **/

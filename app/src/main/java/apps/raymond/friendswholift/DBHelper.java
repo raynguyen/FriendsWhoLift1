@@ -13,14 +13,15 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "liftsdb";
     public static final String TABLE_NAME = "LIFTSTABLE";
 
-    public static final String TYPE_COL = "lifttype";
     public static final String ID_COL = "id";
     public static final String DATE_COL = "liftdate";
     public static final String WEIGHT_COL = "liftweight";
 
     private static final String CREATE_LIFTS_TABLE = "CREATE TABLE " +
-            TABLE_NAME + "(" + DATE_COL + " INTEGER PRIMARY KEY, " +
-            WEIGHT_COL + " TEXT" + ")";
+            TABLE_NAME + "("
+            + ID_COL + " INTEGER PRIMARY KEY,"
+            + DATE_COL + " DATE,"
+            + WEIGHT_COL + " TEXT" + ")";
 
     private static DBHelper instance;
 
@@ -55,7 +56,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean insertlift(String type, String date, String weight){
         SQLiteDatabase liftsdb = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("type", type);
         contentValues.put("date", date);
         contentValues.put("weight", weight);
         liftsdb.insert(TABLE_NAME,null,contentValues);

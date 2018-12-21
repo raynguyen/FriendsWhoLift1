@@ -45,21 +45,20 @@ public class LiftListFragment extends Fragment implements AdapterView.OnItemClic
         task = new GetLiftTask(activity);
         task.execute((Void) null);
 
-        liftListView.setOnItemClickListener(this);
-        liftListView.setOnItemLongClickListener(this);
+        //liftListView.setOnItemClickListener(this);
+        //liftListView.setOnItemLongClickListener(this);
 
         return view;
     }
 
+    //Use AsyncTask to delete from database.
+    //Have not implemented delete method for LiftDAO.
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long arg3){
     Lift lift = (Lift) parent.getItemAtPosition(position);
-
-    //Use AsyncTask to delete from database.
-    //Have not implemented delete method for LiftDAO.
-    //liftDAO.delete(lift);
-    liftListAdapter.remove(lift);
-    return true;
+        liftDAO.delete(lift);
+        liftListAdapter.remove(lift);
+        return true;
     }
 
     @Override
@@ -78,7 +77,7 @@ public class LiftListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onResume(){
         getActivity().setTitle(R.string.app_name);
-        getActivity().getActionBar().setTitle(R.string.app_name);
+        //getActivity().getActionBar().setTitle(R.string.app_name);
         super.onResume();
     }
 
