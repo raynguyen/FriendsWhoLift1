@@ -12,19 +12,22 @@
             android:id="@+id/input_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
             android:autofillHints="@string/date_field"
             android:hint="@string/date_field"
-            android:text="@string/date_field"
-            android:inputType="date"/>
+            android:inputType="date"
+            />
 
         <EditText
             android:id="@+id/input_weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="37dp"
             android:autofillHints="@string/input_field"
             android:hint="@string/input_field"
-            android:text="@string/input_field"
-            android:inputType="numberDecimal"/>
+            android:inputType="numberDecimal"
+            android:layout_below="@+id/input_date"/>
 
         <LinearLayout
             android:id="@+id/button_view"

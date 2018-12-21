@@ -19,14 +19,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
-public class PRDialogClassObs extends DialogFragment {
+public class PRDialogClass extends DialogFragment {
 
     private EditText prinput;
     private Spinner prspinner;
     public String prtype;
     public OnPRInputInterface prInputListener;
     private SQLiteDatabase liftsdb;
-    public DBHelper dbHelper;
     private int spos;
 
     public interface OnPRInputInterface {
@@ -67,8 +66,6 @@ public class PRDialogClassObs extends DialogFragment {
             }
         });
 
-        liftsdb = dbHelper.getWritableDatabase();
-
         return view;
     }
 
@@ -106,7 +103,7 @@ public class PRDialogClassObs extends DialogFragment {
         try{
             prInputListener = (OnPRInputInterface) getActivity();
         } catch (ClassCastException e){
-            Log.e("PRDialogClassObs", "ClassCastException: " + e.getMessage() );
+            Log.e("PRDialogClass", "ClassCastException: " + e.getMessage() );
         }
     }
 }
