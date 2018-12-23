@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputInterface {
 
@@ -28,6 +29,12 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Instantiate liftsdb here.
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+        dataBaseHelper.getWritableDatabase();
+
+        Toast.makeText(this,"made database",Toast.LENGTH_LONG).show();
 
         textview = findViewById(R.id.liftsSummary);
         squatview = findViewById(R.id.squatSummary);
