@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputInterface {
 
+    DataBaseHelper dataBaseHelper;
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     public static final String BenchPress = "Bench Press";
@@ -21,8 +22,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
 
     public String cursquatpr, curbenchpr, curdeadpr;
 
-
-    TextView textview, squatview, benchview, deadview;
+    TextView titletext, squatview, benchview, deadview;
     Button addPR, addBench, addDead, addSquat, checkPrefs;
 
     @Override
@@ -31,41 +31,38 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         setContentView(R.layout.activity_main);
 
         //Instantiate liftsdb here.
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+        dataBaseHelper = new DataBaseHelper(this);
         dataBaseHelper.getWritableDatabase();
 
         Toast.makeText(this,"made database",Toast.LENGTH_LONG).show();
 
-        textview = findViewById(R.id.liftsSummary);
-        squatview = findViewById(R.id.squatSummary);
-        benchview = findViewById(R.id.benchSummary);
-        deadview = findViewById(R.id.deadSummary);
+        FindViews();
 
-        textview.setText(R.string.summary_title);
+        titletext.setText(R.string.summary_title);
 
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
         UpdateMainAct();
+
+        addPR.setOnClickListener(prupdate_dialog);
+        checkPrefs.setOnClickListener(checkprlistener);
+    }
+
+    public void FindViews(){
+        titletext = findViewById(R.id.liftsSummary);
+        squatview = findViewById(R.id.squatSummary);
+        benchview = findViewById(R.id.benchSummary);
+        deadview = findViewById(R.id.deadSummary);
 
         addPR = findViewById(R.id.addPR);
         checkPrefs = findViewById(R.id.checkprefs);
         addBench = findViewById(R.id.addbench);
         addDead = findViewById(R.id.adddead);
         addSquat = findViewById(R.id.addsquat);
-
-
-        //addBench.setOnClickListener();
-        //addDead.setOnClickListener();
-        //addSquat.setOnClickListener();
-
-        addPR.setOnClickListener(prupdate_dialog);
-        checkPrefs.setOnClickListener(checkprlistener);
-
     }
 
     public View.OnClickListener prupdate_dialog = new View.OnClickListener() {
 
         public void onClick(View v) {
-
             //Log.d(Html.TagHandler, "Attempting to create AlertDialog Fragment");
             PRDialogClass dialog = new PRDialogClass();
             dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
@@ -102,14 +99,19 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         UpdateMainAct();
     }
 
+    @Override
+    public void AddData(String weight, String prtype){
+        dataBaseHelper.AddLift(weight, prtype);
+    }
+
     public void UpdateMainAct(){
         //ToDo: Refactor updatemainact to determine what TextViews require updating.
-        cursquatpr = getString(R.string.squat_line) +
-                sharedpreferences.getString(Squat, "N/A");
         curbenchpr = getString(R.string.bench_line) +
                 sharedpreferences.getString(BenchPress, "N/A");
         curdeadpr = getString(R.string.dead_line) +
                 sharedpreferences.getString(DeadLift, "N/A");
+        cursquatpr = getString(R.string.squat_line) +
+                sharedpreferences.getString(Squat, "N/A");
 
         benchview.setText(curbenchpr);
         deadview.setText(curdeadpr);

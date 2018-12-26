@@ -18,7 +18,7 @@
     <string name="addbench">Update Bench</string>
     <string name="adddead">Update Dead</string>
     <string name="input_field">Add weight here.</string>
-    <string name="date_field">Date of lift?</string>
+    <string name="date_field">Date of lift.</string>
     <string name="add_lift">Add Lift</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>

@@ -29,8 +29,9 @@ public class PRDialogClass extends DialogFragment {
     private int spos;
 
     public interface OnPRInputInterface {
-        //This method sends whatever arguments it has to the main activity!
+        //This interface calls a method from MainActivity (i.e. StorePR).
         void StorePR(String input, String prtype);
+        void AddData(String input, String prtype);
     }
 
     @Nullable
@@ -82,7 +83,10 @@ public class PRDialogClass extends DialogFragment {
                         Toast.LENGTH_LONG).show();
             } else {
                 String input = prinput.getText().toString();
+                Log.d("Storing input", "Stored " + input + " as our input value");
+                //Calls the StorePR method from the MainActivity via the Interface.
                 prInputListener.StorePR(input, prtype);
+                prInputListener.AddData(input, prtype);
                 getDialog().dismiss();
             }
         }
@@ -95,7 +99,6 @@ public class PRDialogClass extends DialogFragment {
         }
 
     };
-
 
     @Override
     public void onAttach(Context context) {
