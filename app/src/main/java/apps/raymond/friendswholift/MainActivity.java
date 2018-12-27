@@ -3,6 +3,7 @@ package apps.raymond.friendswholift;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,7 +12,8 @@ import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements PRDialogClass.OnPRInputInterface {
+public class MainActivity extends AppCompatActivity implements
+        PRDialogClass.OnPRInputInterface, View.OnClickListener {
 
     DataBaseHelper dataBaseHelper;
     SharedPreferences sharedpreferences;
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
     public String cursquatpr, curbenchpr, curdeadpr;
 
     TextView titletext, squatview, benchview, deadview;
-    Button addPR, addBench, addDead, addSquat, checkPrefs;
+    Button addPR, addBench, addDead, addSquat, checkPrefs, liftsLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,27 @@ public class MainActivity extends AppCompatActivity implements PRDialogClass.OnP
         addBench = findViewById(R.id.addbench);
         addDead = findViewById(R.id.adddead);
         addSquat = findViewById(R.id.addsquat);
+        liftsLog = findViewById(R.id.Lift_History);
+
+        liftsLog.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Button b = (Button) v;
+        switch (b.getId()){
+            case R.id.Lift_History:
+                Toast.makeText(this,"You clicked log!",Toast.LENGTH_SHORT).show();
+                //ToDo: Consider moving below code into a seperate method?
+                //ToDo: List all the contents of our table into a ListView.
+                Cursor res = dataBaseHelper.getAllLifts();
+                if(res.getCount() == 0){
+                    //SHOW ERROR
+                    return;
+                }
+                break;
+        }
+
     }
 
     public View.OnClickListener prupdate_dialog = new View.OnClickListener() {

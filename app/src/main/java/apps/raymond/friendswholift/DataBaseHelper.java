@@ -60,6 +60,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return lift;
     }
 
+    public Cursor getAllLifts(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
+        return res;
+    }
+
     //This method is only called when the db version is incremented.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
