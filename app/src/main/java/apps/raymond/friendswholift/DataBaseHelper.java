@@ -17,6 +17,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_ID = "_ID";
     private static final String COL_TYPE = "type";
     private static final String COL_WEIGHT = "weight";
+    private static final String COL_DATE = "date";
 
     public DataBaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,11 +28,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Log.d ("DBCREATION","Create table in database.");
         String CREATE_TABLE_LIFTS = "CREATE TABLE "
                 + TABLE_NAME + " (" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL_TYPE + " TEXT, " + COL_WEIGHT + " REAL)";
+                + COL_TYPE + " TEXT, " + COL_WEIGHT + " REAL, " + COL_DATE + " STRING)";
         db.execSQL(CREATE_TABLE_LIFTS);
     }
 
-    public long AddLift(String weight, String type){
+    public boolean AddLift(String weight, String type){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_TYPE,type);
@@ -39,9 +40,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //if db.insert returns an error, the function call returns a '-1'
         long result = db.insert(TABLE_NAME, null, contentValues);
         if(result == -1){
-            return 0;
+            return false;
         } else {
-            return 1;
+            return true;
         }
     }
 
@@ -61,7 +62,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAllLifts(){
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
         return res;
     }
