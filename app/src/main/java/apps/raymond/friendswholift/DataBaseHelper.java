@@ -14,9 +14,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "Lifts_db";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME = "lifts_table";
-    private static final String COL_ID = "_ID";
+    private static final String COL_ID = "_id";
     private static final String COL_TYPE = "type";
-    private static final String COL_WEIGHT = "weight";
+    public static final String COL_WEIGHT = "weight";
     private static final String COL_DATE = "date";
 
     public DataBaseHelper(Context context){
@@ -49,8 +49,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public LiftObject getLift(long id){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NAME,new String[]{COL_ID,COL_TYPE,COL_WEIGHT},COL_ID + "=?",
-                new String[]{String.valueOf(id)},null,null,null,null);
+        Cursor cursor = db.query(TABLE_NAME,new String[]{COL_ID,COL_TYPE,COL_WEIGHT},
+                COL_ID + "=?", new String[]{String.valueOf(id)},
+                null,null,null,null);
 
         if (cursor == null){
             cursor.moveToFirst();
@@ -58,6 +59,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         LiftObject lift = new LiftObject(cursor.getInt(cursor.getColumnIndex(COL_ID)),
                 cursor.getString(cursor.getColumnIndex(COL_TYPE)),
                 cursor.getDouble(cursor.getColumnIndex(COL_WEIGHT)));
+
         return lift;
     }
 
