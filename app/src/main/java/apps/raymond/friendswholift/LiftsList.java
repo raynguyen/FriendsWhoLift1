@@ -1,5 +1,7 @@
 package apps.raymond.friendswholift;
 
+import android.app.ListActivity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class LiftsList extends AppCompatActivity {
     final String[] from = {"type", "weight"};
@@ -18,17 +19,16 @@ public class LiftsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lift_list);
 
-        Toast.makeText(this,"yolo",Toast.LENGTH_SHORT).show();
-
-
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        ListView listView = (ListView) findViewById(R.id.list_lifts);
         //This cursor contains all the data from our SQLite database lifts table.
         Log.d("Tag","Populating cursor.");
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
         Cursor data = dataBaseHelper.getAllLifts();
 
-        CustomLiftAdapter customLiftAdapter = new CustomLiftAdapter(this,R.layout.lift_list,
-                data,from,to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        ListView listView = (ListView) findViewById(R.id.list);
+
+        CustomLiftAdapter customLiftAdapter = new CustomLiftAdapter(this,
+                R.layout.lift_details,data, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
 
         listView.setAdapter(customLiftAdapter);
 

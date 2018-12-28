@@ -10,14 +10,12 @@ import android.widget.TextView;
 
 public class CustomLiftAdapter extends SimpleCursorAdapter {
     private static final String yes = "Temporary.";
-    private int layout;
     private Context context;
 
-    public CustomLiftAdapter(Context context, int layout, Cursor c, String[] from, int[] to,
-                             int flags) {
+    public CustomLiftAdapter(Context context, int layout, Cursor c, String[] from,
+                             int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         this.context = context;
-        this.layout = layout;
     }
 
     @Override
@@ -37,10 +35,5 @@ public class CustomLiftAdapter extends SimpleCursorAdapter {
         dateText.setText(yes);
         typeText.setText(cursor.getString(cursor.getColumnIndex("type")));
         weightText.setText(cursor.getString(cursor.getColumnIndex("weight")));
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        return convertView;
     }
 }
