@@ -23,20 +23,20 @@ public class CustomLiftAdapter extends SimpleCursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent){
         LayoutInflater inflater = LayoutInflater.from(context);
-        final View view = inflater.inflate(layout,parent,false);
+        final View view = inflater.inflate(R.layout.lift_details, parent,false);
         return view;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-    TextView dateText = (TextView) view.findViewById(R.id.date_text);
-    TextView typeText = (TextView) view.findViewById(R.id.type_text);
-    TextView weightText = (TextView) view.findViewById(R.id.weight_text);
+        TextView dateText = (TextView) view.findViewById(R.id.date_text);
+        TextView typeText = (TextView) view.findViewById(R.id.type_text);
+        TextView weightText = (TextView) view.findViewById(R.id.weight_text);
 
-    //dateText.setText(cursor.getString(cursor.getColumnIndex("date")));
-    dateText.setText(yes);
-    typeText.setText(cursor.getString(cursor.getColumnIndex("type")));
-    weightText.setText(cursor.getString(cursor.getColumnIndex("weight")));
+        //dateText.setText(cursor.getString(cursor.getColumnIndex("date")));
+        dateText.setText(yes);
+        typeText.setText(cursor.getString(cursor.getColumnIndex("type")));
+        weightText.setText(cursor.getString(cursor.getColumnIndex("weight")));
     }
 
     @Override

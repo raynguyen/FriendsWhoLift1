@@ -12,10 +12,12 @@ import android.widget.Toast;
 public class LiftsList extends AppCompatActivity {
     final String[] from = {"type", "weight"};
     final int[] to = {R.id.type_text, R.id.weight_text};
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lift_list);
+
         Toast.makeText(this,"yolo",Toast.LENGTH_SHORT).show();
 
 
@@ -25,16 +27,19 @@ public class LiftsList extends AppCompatActivity {
         Log.d("Tag","Populating cursor.");
         Cursor data = dataBaseHelper.getAllLifts();
 
-        while(data.moveToNext()){
-            String type = data.getString(data.getColumnIndex("type"));
-            String weight = data.getString(data.getColumnIndex("weight"));
-            Toast.makeText(this,"Type: " + type + "Weight: " + weight,Toast.LENGTH_SHORT).show();
-        }
-
         CustomLiftAdapter customLiftAdapter = new CustomLiftAdapter(this,R.layout.lift_list,
                 data,from,to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         listView.setAdapter(customLiftAdapter);
+
+
+
+
+
+
+
+
+
 
         //We can overwrite/update the old cursor with a new cursor via:
         /*
