@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,6 +33,13 @@ public class PRDialogClass extends DialogFragment {
         //This interface calls a method from MainActivity (i.e. StorePR).
         void StorePR(String input, String prtype);
         void AddData(String input, String prtype);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        getDialog().getWindow().setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
     @Nullable
@@ -69,7 +77,6 @@ public class PRDialogClass extends DialogFragment {
 
         return view;
     }
-
 
     public View.OnClickListener saveprclicked = new View.OnClickListener() {
         @Override

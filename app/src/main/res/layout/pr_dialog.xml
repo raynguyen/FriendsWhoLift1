@@ -3,49 +3,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:id="@+id/prRoot">
+    android:id="@+id/prRoot"
+    android:padding="10dp">
 
-    <EditText
-        android:id="@+id/prInput"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/inputlayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:autofillHints="@string/input_txthldr"
-        android:hint="@string/input_txthldr"
-        android:imeOptions="actionDone"
-        android:inputType="numberDecimal"
-        android:singleLine="true"
-        android:layout_margin="10dp"/>
+        android:orientation="horizontal"
+        android:weightSum="1">
 
-    <Spinner
-        android:id="@+id/liftsSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/prInput"
-        android:layout_marginStart="0dp"
-        android:layout_toEndOf="@+id/prInput"
-        android:textSize="15pt" />
+        <EditText
+            android:id="@+id/prInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_weight="0.6"
+            android:autofillHints="@string/input_txthldr"
+            android:hint="@string/input_txthldr"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:singleLine="true" />
 
-    <Button
-        android:id="@+id/prsave_button"
-        android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/liftsSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_weight="0.4"
+            android:textSize="15pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonlayout"
+        android:layout_below="@+id/inputlayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="0dp"
-        android:layout_alignTop="@+id/cancel_button"
-        android:text="@string/save" />
-    <Button
-        android:id="@+id/cancel_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/prInput"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:text="@string/cancel" />
+        android:weightSum="1">
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@android:color/holo_red_light"
+            style="@android:style/Widget.Holo.Button.Borderless"
+            android:layout_weight="0.5"/>
+        <Button
+            android:id="@+id/prsave_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:background="@android:color/holo_green_light"
+            style="@android:style/Widget.Holo.Button.Borderless"
+            android:layout_weight="0.5"/>
+    </LinearLayout>
+
 
 </RelativeLayout>
