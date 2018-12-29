@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(listintent);
                 break;
             case R.id.addPR:
-                PRDialogClass dialog = new PRDialogClass();
-                dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
-                dialog.show(getSupportFragmentManager(), "MyPRDialog");
+                PRDialogClass PRdialog = new PRDialogClass();
+                PRdialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
+                PRdialog.show(getSupportFragmentManager(), "MyPRDialog");
                 break;
             case R.id.checkprefs:
                 Intent homeintent = new Intent(MainActivity.this, HomeActivity.class);

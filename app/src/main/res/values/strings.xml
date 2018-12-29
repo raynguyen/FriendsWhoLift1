@@ -27,6 +27,12 @@
     <string name="update_lift">Update Lift</string>
     <string name="Delete">Delete</string>
     <string name="Edit">Edit</string>
+
+    <string name="Temp">Temporary string.</string>
+
+
+
+
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>
         <item>Bench Press</item>
