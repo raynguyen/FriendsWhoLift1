@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import apps.raymond.friendswholift.LiftObject.LiftObject;
 
@@ -45,6 +46,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+
+    /*
+    This method is called onLongItemClick of our ListView.
+     */
+    public boolean RemoveLift(Context context,long id){
+        Toast.makeText(context,"You clicked on id: "+id, Toast.LENGTH_SHORT).show();
+
+        //If there was an error removing the lift, return false, if the item is deleted, return true.
+        return true;
+    }
+
 
     public LiftObject getLift(long id){
         SQLiteDatabase db = this.getReadableDatabase();

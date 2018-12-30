@@ -1,5 +1,6 @@
 package apps.raymond.friendswholift;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,9 +21,12 @@ import apps.raymond.friendswholift.DialogFragments.EditListItem;
 /*
 Class that generates the ListView view when 'Log' button is clicked.
  */
-public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLongClickListener {
+public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLongClickListener,
+        AdapterView.OnItemClickListener {
     final String[] from = {"type", "weight"};
     final int[] to = {R.id.type_text, R.id.weight_text};
+
+    DataBaseHelper dataBaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +45,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
 
         listView.setAdapter(customLiftAdapter);
         listView.setClickable(true);
+        listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
     }
 
@@ -48,6 +53,12 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
     onItemLongClick will open a dialog that will prompt user for Removal of the item from table.
     OnItemClick will open a dialog (the same input_pr dialog) for the user to edit the item.
      */
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long arg3){
+        Toast.makeText(LiftsList.this, "You clicked an item for short time.",Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -64,4 +75,21 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         Toast.makeText(LiftsList.this, "You clicked an item for long time.",Toast.LENGTH_SHORT).show();
         return false;
     }
+
+    //@Override
+    public void DeleteItem(Context context, long id){
+        //The id is passed from ListView via Interface.
+        boolean deleteLift = dataBaseHelper.RemoveLift(context, id);
+
+        if (deleteLift == true){
+            Toast.makeText(LiftsList.this, "Lift deleted.",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(LiftsList.this, "There was an error updating the database.",Toast.LENGTH_SHORT).show();
+        }
+    }
 }
+
+/*
+onItemLongClick will open a dialog, depending on input received in dialog, we have to delete item or not.
+Therefore, the dialog needs an interface to call the delete method on the item. The databasehelper will have have delete method.
+ */
