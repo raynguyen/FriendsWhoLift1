@@ -57,7 +57,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-
     public LiftObject getLift(long id){
         SQLiteDatabase db = this.getReadableDatabase();
 

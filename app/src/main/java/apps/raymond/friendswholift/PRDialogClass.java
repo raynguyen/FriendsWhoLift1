@@ -26,7 +26,6 @@ public class PRDialogClass extends DialogFragment {
     private Spinner prspinner;
     public String prtype;
     public OnPRInputInterface prInputListener;
-    private SQLiteDatabase liftsdb;
     private int spos;
 
     public interface OnPRInputInterface {
@@ -104,7 +103,6 @@ public class PRDialogClass extends DialogFragment {
         public void onClick(View v){
             getDialog().dismiss();
         }
-
     };
 
     @Override

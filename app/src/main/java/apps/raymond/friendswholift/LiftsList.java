@@ -22,10 +22,11 @@ import apps.raymond.friendswholift.DialogFragments.EditListItem;
 Class that generates the ListView view when 'Log' button is clicked.
  */
 public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLongClickListener,
-        AdapterView.OnItemClickListener {
+        AdapterView.OnItemClickListener,EditListItem.MyInterface {
+
     final String[] from = {"type", "weight"};
     final int[] to = {R.id.type_text, R.id.weight_text};
-
+    private DialogFragment newFragment;
     DataBaseHelper dataBaseHelper;
 
     @Override
@@ -41,7 +42,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         ListView listView = (ListView) findViewById(R.id.list);
 
         CustomLiftAdapter customLiftAdapter = new CustomLiftAdapter(this,
-                R.layout.lift_details,data, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                R.layout.lift_details, data, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         listView.setAdapter(customLiftAdapter);
         listView.setClickable(true);
@@ -69,7 +70,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         }
         ft.addToBackStack(null);
 
-        DialogFragment newFragment = EditListItem.newInstance();
+        newFragment = EditListItem.newInstance();
         newFragment.show(ft, "EditItemDialog");
 
         Toast.makeText(LiftsList.this, "You clicked an item for long time.",Toast.LENGTH_SHORT).show();
@@ -81,11 +82,16 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         //The id is passed from ListView via Interface.
         boolean deleteLift = dataBaseHelper.RemoveLift(context, id);
 
-        if (deleteLift == true){
+        if (deleteLift){
             Toast.makeText(LiftsList.this, "Lift deleted.",Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(LiftsList.this, "There was an error updating the database.",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void TestMethod(Context context){
+        Toast.makeText(context,"test",Toast.LENGTH_SHORT).show();
+        newFragment.dismiss();
     }
 }
 

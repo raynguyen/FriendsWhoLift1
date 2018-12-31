@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,12 @@ Depending on button clicked the user will be allowed to modify the database lift
  */
 public class EditListItem extends DialogFragment {
 
-    public interface myInterface{
+    public MyInterface myInterface;
+    public Context context;
+
+    public interface MyInterface{
         void DeleteItem(Context context, long id);
+        void TestMethod(Context context);
     }
 
     /*
@@ -35,9 +40,21 @@ public class EditListItem extends DialogFragment {
         return editListItem;
     }
 
+    //ToDo: Research about the onAttach method. Why is this required to use Interfaces?
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            myInterface = (MyInterface) getActivity();
+        } catch (ClassCastException e){
+            Log.e("MyInterface", "ClassCastException: " + e.getMessage() );
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getActivity();
         setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
     }
 
@@ -51,8 +68,6 @@ public class EditListItem extends DialogFragment {
 
         cancelBut.setOnClickListener(cancelClick);
         deleteBut.setOnClickListener(deleteClick);
-        //ToDo: These listeners have to be set up still.
-        //What is the difference between DialogInterface.OnClickListener vs View.OnClickListener?
 
         return v;
     }
@@ -60,7 +75,7 @@ public class EditListItem extends DialogFragment {
     private View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            myInterface.TestMethod(context);
         }
     };
 
@@ -68,7 +83,7 @@ public class EditListItem extends DialogFragment {
         @Override
         public void onClick(View v) {
             Toast.makeText(getActivity(),"Clicked delete",Toast.LENGTH_SHORT).show();
+
         }
     };
-
 }
