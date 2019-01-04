@@ -14,20 +14,22 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import apps.raymond.friendswholift.DialogFragments.EditListItem;
 
 /*
 Class that generates the ListView view when 'Log' button is clicked.
+ToDo: Convert activity to a fragment.
  */
 public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLongClickListener,
-        AdapterView.OnItemClickListener,EditListItem.MyInterface {
+        AdapterView.OnItemClickListener, EditListItem.MyInterface {
 
+    private String itemID;
     final String[] from = {"type", "weight"};
     final int[] to = {R.id.type_text, R.id.weight_text};
     private DialogFragment newFragment;
-    DataBaseHelper dataBaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
+        itemID = ((TextView) view.findViewById(R.id.id_text)).getText().toString();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("EditItemDialog");
         if (prev != null){
@@ -77,16 +79,21 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         return false;
     }
 
-    //@Override
-    public void DeleteItem(Context context, long id){
+    @Override
+    public void DeleteItem(Context context){
         //The id is passed from ListView via Interface.
-        boolean deleteLift = dataBaseHelper.RemoveLift(context, id);
+        Log.d("Tag","Attempting to delete SQLite table item id: " + itemID);
+
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+        boolean deleteLift = dataBaseHelper.RemoveLift(context, itemID);
 
         if (deleteLift){
-            Toast.makeText(LiftsList.this, "Lift deleted.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(LiftsList.this, "Entry deleted.",Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(LiftsList.this, "There was an error updating the database.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(LiftsList.this, "Error occurred.",Toast.LENGTH_SHORT).show();
         }
+
+        newFragment.dismiss();
     }
 
     public void TestMethod(Context context){

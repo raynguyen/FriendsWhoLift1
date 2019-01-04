@@ -13,6 +13,7 @@
     <string name="definePR">"Define your new PR</string>
     <string name="checkprs">Check PRs</string>
     <string name="selecttype">You must select a lift type.</string>
+    <string name="id">ID</string>
     <string name="date">Date</string>
     <string name="weight">Weight</string>
     <string name="type">Type</string>
