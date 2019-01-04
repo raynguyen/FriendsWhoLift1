@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+
 public class CustomLiftAdapter extends SimpleCursorAdapter {
-    private static final String yes = "Temporary.";
+
     private Context context;
 
     public CustomLiftAdapter(Context context, int layout, Cursor c, String[] from,
@@ -27,12 +28,12 @@ public class CustomLiftAdapter extends SimpleCursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView dateText = (TextView) view.findViewById(R.id.date_text);
+        TextView dateText = (TextView) view.findViewById(R.id.id_text);
         TextView typeText = (TextView) view.findViewById(R.id.type_text);
         TextView weightText = (TextView) view.findViewById(R.id.weight_text);
 
         //dateText.setText(cursor.getString(cursor.getColumnIndex("date")));
-        dateText.setText(yes);
+        dateText.setText(String.valueOf(cursor.getLong(cursor.getColumnIndex("_id"))));
         typeText.setText(cursor.getString(cursor.getColumnIndex("type")));
         weightText.setText(cursor.getString(cursor.getColumnIndex("weight")));
     }

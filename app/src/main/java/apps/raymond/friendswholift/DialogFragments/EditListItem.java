@@ -24,7 +24,7 @@ public class EditListItem extends DialogFragment {
     public Context context;
 
     public interface MyInterface{
-        void DeleteItem(Context context, long id);
+        void DeleteItem(Context context);
         void TestMethod(Context context);
     }
 
@@ -83,7 +83,7 @@ public class EditListItem extends DialogFragment {
         @Override
         public void onClick(View v) {
             Toast.makeText(getActivity(),"Clicked delete",Toast.LENGTH_SHORT).show();
-
+            myInterface.DeleteItem(context);
         }
     };
 }

@@ -51,8 +51,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     This method is called onLongItemClick of our ListView.
      */
     public boolean RemoveLift(Context context,long id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("Tag","DataBaseHelper will delete the item at id: "+id);
         Toast.makeText(context,"You clicked on id: "+id, Toast.LENGTH_SHORT).show();
-
+        db.close();
         //If there was an error removing the lift, return false, if the item is deleted, return true.
         return true;
     }
@@ -70,12 +72,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         LiftObject lift = new LiftObject(cursor.getInt(cursor.getColumnIndex(COL_ID)),
                 cursor.getString(cursor.getColumnIndex(COL_TYPE)),
                 cursor.getDouble(cursor.getColumnIndex(COL_WEIGHT)));
-
+        db.close();
         return lift;
     }
 
     public Cursor getAllLifts(){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
         return res;
     }
