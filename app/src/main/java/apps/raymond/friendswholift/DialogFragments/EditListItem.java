@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import apps.raymond.friendswholift.MyInterfaces.MyInterface;
 import apps.raymond.friendswholift.R;
 
 /*
@@ -22,11 +23,6 @@ public class EditListItem extends DialogFragment {
 
     public MyInterface myInterface;
     public Context context;
-
-    public interface MyInterface{
-        void DeleteItem(Context context);
-        void TestMethod(Context context);
-    }
 
     /*
     Using this object of EditListItem, you can pass arguments from the Activity from which it is

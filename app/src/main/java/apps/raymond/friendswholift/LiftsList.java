@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,13 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import apps.raymond.friendswholift.DialogFragments.EditListItem;
+import apps.raymond.friendswholift.MyInterfaces.MyInterface;
 
 /*
 Class that generates the ListView view when 'Log' button is clicked.
 ToDo: Convert activity to a fragment.
  */
 public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLongClickListener,
-        AdapterView.OnItemClickListener, EditListItem.MyInterface {
+        AdapterView.OnItemClickListener, MyInterface {
 
     private String itemID;
     final String[] from = {"type", "weight"};
@@ -84,6 +84,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         //The id is passed from ListView via Interface.
         Log.d("Tag","Attempting to delete SQLite table item id: " + itemID);
 
+        //Why do I have to instantiate a new DataBaseHelper here?
         DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
         boolean deleteLift = dataBaseHelper.RemoveLift(context, itemID);
 
