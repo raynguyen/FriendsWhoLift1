@@ -1,5 +1,5 @@
 # FriendsWhoLift1
-Simple Android app to track weightlifting and running progress. Future refactorting to work with any sport and allow certain users to add  parameters to track.
+Simple Android app to track weightlifting and running progress. Future refactoring to work with any sport and allow certain users to add  parameters to track.
 
 ## Concept and Inspiration
 The inspiration for this app came from my need to create my own project to learn and familiarize myself with then android development environment.
