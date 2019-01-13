@@ -11,7 +11,7 @@
     <string name="input_txthldr">Enter new PR</string>
     <string name="new_pr">"Add PR</string>
     <string name="definePR">"Define your new PR</string>
-    <string name="checkprs">Check PRs</string>
+    <string name="checkPRs">Check PRs</string>
     <string name="selecttype">You must select a lift type.</string>
     <string name="id">ID</string>
     <string name="date">Date</string>

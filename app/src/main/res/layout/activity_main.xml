@@ -71,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="0dp"
-        android:text="@string/checkprs"
+        android:text="@string/checkPRs"
         app:layout_constraintBottom_toBottomOf="@+id/addPR"
         app:layout_constraintEnd_toStartOf="@+id/addPR" />
 
