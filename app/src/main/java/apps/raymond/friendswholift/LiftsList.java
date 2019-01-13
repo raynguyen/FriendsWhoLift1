@@ -30,20 +30,21 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
     final String[] from = {"type", "weight"};
     final int[] to = {R.id.type_text, R.id.weight_text};
     private DialogFragment newFragment;
-
+    private DataBaseHelper dataBaseHelper;
+    private CustomLiftAdapter customLiftAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lift_list);
 
         //This cursor contains all the data from our SQLite database lifts table.
-        Log.d("Tag","Populating cursor.");
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+        Log.d("Tag","Instantiating databasehelper.");
+        this.dataBaseHelper = new DataBaseHelper(this);
         Cursor data = dataBaseHelper.getAllLifts();
 
         ListView listView = (ListView) findViewById(R.id.list);
 
-        CustomLiftAdapter customLiftAdapter = new CustomLiftAdapter(this,
+        customLiftAdapter = new CustomLiftAdapter(this,
                 R.layout.lift_details, data, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         listView.setAdapter(customLiftAdapter);
@@ -52,18 +53,17 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         listView.setOnItemLongClickListener(this);
     }
 
-    /*
-    onItemLongClick will open a dialog that will prompt user for Removal of the item from table.
-    OnItemClick will open a dialog (the same input_pr dialog) for the user to edit the item.
-     */
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long arg3){
         Toast.makeText(LiftsList.this, "You clicked an item for short time.",Toast.LENGTH_SHORT).show();
     }
 
+    /*
+    Opens a dialog that will prompt the user if they want to delete an entry to the database.
+     */
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        //We retrieve the id of the item in order to delete it from the database.
         itemID = ((TextView) view.findViewById(R.id.id_text)).getText().toString();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("EditItemDialog");
@@ -77,6 +77,19 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
 
         Toast.makeText(LiftsList.this, "You clicked an item for long time.",Toast.LENGTH_SHORT).show();
         return false;
+    }
+
+    /*
+    Once an entry is deleted from the database, we need to instantiate a new cursor to reflect the
+    change in the database. The old cursor simply contains a copy of the data at the time of its instantiation so it does
+    not know when the database is updated.
+    Calling changecursor on our adapter will replace the old cursor and close it.
+     */
+    public void UpdateListView(){
+        //We need to create a new Cursor and recollect the data, then switch the old cursor with the new.
+        Cursor newcursor = dataBaseHelper.getAllLifts();
+        customLiftAdapter.changeCursor(newcursor);
+        Toast.makeText(LiftsList.this, "Ran UpdateScreen",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -93,6 +106,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         } else {
             Toast.makeText(LiftsList.this, "Error occurred.",Toast.LENGTH_SHORT).show();
         }
+        UpdateListView();
 
         newFragment.dismiss();
     }
@@ -102,8 +116,3 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         newFragment.dismiss();
     }
 }
-
-/*
-onItemLongClick will open a dialog, depending on input received in dialog, we have to delete item or not.
-Therefore, the dialog needs an interface to call the delete method on the item. The databasehelper will have have delete method.
- */
