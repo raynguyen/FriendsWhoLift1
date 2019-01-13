@@ -21,9 +21,9 @@ public class MainActivity extends AppCompatActivity implements
     public static final String DeadLift = "Dead Lift";
     public static final String Squat = "Squat";
 
-    public String cursquatpr, curbenchpr, curdeadpr;
+    public String curSquatPR, curBenchPR, curDeadPR;
 
-    TextView titletext, squatview, benchview, deadview;
+    TextView titleText, squatView, benchView, deadView;
     Button addPR, addBench, addDead, addSquat, checkPrefs, liftsLog;
 
     @Override
@@ -39,17 +39,17 @@ public class MainActivity extends AppCompatActivity implements
 
         FindViews();
 
-        titletext.setText(R.string.summary_title);
+        titleText.setText(R.string.summary_title);
 
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
         UpdateMainAct();
     }
 
     public void FindViews(){
-        titletext = findViewById(R.id.liftsSummary);
-        squatview = findViewById(R.id.squatSummary);
-        benchview = findViewById(R.id.benchSummary);
-        deadview = findViewById(R.id.deadSummary);
+        titleText = findViewById(R.id.liftsSummary);
+        squatView = findViewById(R.id.squatSummary);
+        benchView = findViewById(R.id.benchSummary);
+        deadView = findViewById(R.id.deadSummary);
 
         addPR = findViewById(R.id.addPR);
         checkPrefs = findViewById(R.id.checkprefs);
@@ -68,17 +68,17 @@ public class MainActivity extends AppCompatActivity implements
         Button b = (Button) v;
         switch (b.getId()){
             case R.id.Lift_History:
-                Intent listintent = new Intent(MainActivity.this, LiftsList.class);
-                startActivity(listintent);
+                Intent listIntent = new Intent(MainActivity.this, LiftsList.class);
+                startActivity(listIntent);
                 break;
             case R.id.addPR:
-                PRDialogClass PRdialog = new PRDialogClass();
-                PRdialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
-                PRdialog.show(getSupportFragmentManager(), "MyPRDialog");
+                PRDialogClass dialogPR = new PRDialogClass();
+                dialogPR.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
+                dialogPR.show(getSupportFragmentManager(), "MyPRDialog");
                 break;
             case R.id.checkprefs:
-                Intent homeintent = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(homeintent);
+                Intent homeIntent = new Intent(MainActivity.this, TestActivity.class); //CHANGE TestActivity back to HomeActivity
+                startActivity(homeIntent);
                 break;
         }
     }
@@ -115,16 +115,16 @@ public class MainActivity extends AppCompatActivity implements
 
     public void UpdateMainAct(){
         //ToDo: Refactor updatemainact to determine what TextViews require updating.
-        curbenchpr = getString(R.string.bench_line) +
+        curBenchPR = getString(R.string.bench_line) +
                 sharedpreferences.getString(BenchPress, "N/A");
-        curdeadpr = getString(R.string.dead_line) +
+        curDeadPR = getString(R.string.dead_line) +
                 sharedpreferences.getString(DeadLift, "N/A");
-        cursquatpr = getString(R.string.squat_line) +
+        curSquatPR = getString(R.string.squat_line) +
                 sharedpreferences.getString(Squat, "N/A");
 
-        benchview.setText(curbenchpr);
-        deadview.setText(curdeadpr);
-        squatview.setText(cursquatpr);
+        benchView.setText(curBenchPR);
+        deadView.setText(curDeadPR);
+        squatView.setText(curSquatPR);
 
     }
 
