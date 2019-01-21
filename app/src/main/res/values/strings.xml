@@ -23,7 +23,7 @@
     <string name="input_field">Add weight here.</string>
     <string name="date_field">Date of lift.</string>
     <string name="add_lift">Add Lift</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">CANCEL</string>
     <string name="save">Save</string>
     <string name="update_lift">Update Lift</string>
     <string name="Delete">Delete</string>
@@ -33,7 +33,11 @@
 
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="repassword">Confirm Password</string>
+    <string name="signup">Signup</string>
 
+    <string name="register">REGISTER</string>
 
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements
                 dialogPR.show(getSupportFragmentManager(), "MyPRDialog");
                 break;
             case R.id.checkprefs:
-                Intent homeIntent = new Intent(MainActivity.this, TestActivity.class); //CHANGE TestActivity back to HomeActivity
+                Intent homeIntent = new Intent(MainActivity.this, LoginAct.class); //CHANGE TestActivity back to HomeActivity
                 startActivity(homeIntent);
                 break;
         }

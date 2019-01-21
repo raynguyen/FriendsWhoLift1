@@ -22,7 +22,7 @@ public class LoginPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new LoginFrag();
             case 1:
-                //return new SignupFrag();
+                return new SignUpFrag();
             default:
                 return null;
         }
