@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "935647818979",
+    "firebase_url": "https://friendswholift-ae511.firebaseio.com",
+    "project_id": "friendswholift-ae511",
+    "storage_bucket": "friendswholift-ae511.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935647818979:android:03637d268f909e56",
+        "android_client_info": {
+          "package_name": "apps.raymond.friendswholift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935647818979-hugk0m2n5imvt27ok169a2c79693qvmu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "apps.raymond.friendswholift",
+            "certificate_hash": "9cc4d42e872af2452b5f550ee4daa493d4c96391"
+          }
+        },
+        {
+          "client_id": "935647818979-6o864cdvt3tpqtm9ucgagap43vq0rdf0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoDYmvctEry1-Iycns4LBItYZyL4rqxns"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "935647818979-6o864cdvt3tpqtm9ucgagap43vq0rdf0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
