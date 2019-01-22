@@ -1,5 +1,6 @@
 package apps.raymond.friendswholift.Login;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +16,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,13 +24,19 @@ import com.google.firebase.auth.FirebaseUser;
 import apps.raymond.friendswholift.R;
 
 public class LoginFrag extends Fragment implements View.OnClickListener{
-
     private static final String TAG = "LoginFrag";
     private static final int NUM_FIELDS = 2;
+
     Button login_Btn, signUp_Btn;
     TextInputEditText username_Txt, password_Txt;
     TextInputEditText[] inputFields;
     FirebaseAuth mAuth;
+
+    public SignedIn signedIn;
+
+    public interface SignedIn {
+        void authorized();
+    }
 
     @Nullable
     @Override
@@ -56,6 +62,17 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
     }
 
     @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            //We need to get an instance of the Class that will execute our interface method.
+            signedIn = (SignedIn) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         int i = v.getId();
 
@@ -71,17 +88,19 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
                 }
                 username = username_Txt.getText().toString();
                 password = password_Txt.getText().toString();
-                //Authorize the user in a separate thread.
                 mAuth.signInWithEmailAndPassword(username,password)
                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>(){
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task){
                                 if(task.isSuccessful()){
-                                    Log.d(TAG,"Successfully logged in user.");
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    Log.d(TAG,"Successfully logged in " + user);
+
                                     //ToDo: Stop LoginAct and start the MainAct.
+                                    signedIn.authorized();
                                 } else {
-                                    Log.w(TAG, "Failed to log in user.");
+                                    Log.e(TAG, "Failed to log in user." +
+                                            task.getException().getMessage());
                                     Toast.makeText(getContext(),"Authentication failed.",
                                             Toast.LENGTH_LONG).show();
                                 }
@@ -112,4 +131,6 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         }
         return b;
     }
+
+
 }

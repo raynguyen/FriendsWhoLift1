@@ -1,12 +1,16 @@
 package apps.raymond.friendswholift;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import apps.raymond.friendswholift.Login.LoginFrag;
 import apps.raymond.friendswholift.Login.LoginPagerAdapter;
 
-public class LoginAct extends AppCompatActivity {
+public class LoginAct extends AppCompatActivity implements LoginFrag.SignedIn {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceStance){
@@ -20,5 +24,12 @@ public class LoginAct extends AppCompatActivity {
         ViewPager mViewPager = (ViewPager) findViewById(R.id.login_container);
         //We set the Adapter for this ViewPager (defined in login_screen.xml).
         mViewPager.setAdapter(loginAdapter);
+    }
+
+    @Override
+    public void authorized(){
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        startActivity(mainIntent);
+        finish();
     }
 }
