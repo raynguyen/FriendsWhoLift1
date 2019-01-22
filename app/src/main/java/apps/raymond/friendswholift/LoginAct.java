@@ -4,11 +4,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-
 import apps.raymond.friendswholift.Login.LoginPagerAdapter;
-import apps.raymond.friendswholift.R;
 
 public class LoginAct extends AppCompatActivity {
 
