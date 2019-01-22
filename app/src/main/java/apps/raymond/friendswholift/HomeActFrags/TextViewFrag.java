@@ -43,7 +43,7 @@ public class TextViewFrag extends Fragment {
         benchTV.setText(test1);
         deadTV.setText(test2);
         squatTV.setText(test3);
-        Toast.makeText(getContext(),"Inside UpdateTV",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(),"Inside UpdateTV",Toast.LENGTH_SHORT).show();
     }
     /*
     The textviews should be updated with only the largest value stored for that type in the database.

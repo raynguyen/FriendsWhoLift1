@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import apps.raymond.friendswholift.Login.LoginFrag;
 import apps.raymond.friendswholift.Login.LoginPagerAdapter;
@@ -28,7 +27,7 @@ public class LoginAct extends AppCompatActivity implements LoginFrag.SignedIn {
 
     @Override
     public void authorized(){
-        Intent mainIntent = new Intent(this, MainActivity.class);
+        Intent mainIntent = new Intent(this, MainActivityOld.class);
         startActivity(mainIntent);
         finish();
     }

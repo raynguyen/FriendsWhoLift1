@@ -29,7 +29,7 @@ public class PRDialogClass extends DialogFragment {
     private int spos;
 
     public interface OnPRInputInterface {
-        //This interface calls a method from MainActivity (i.e. StorePR).
+        //This interface calls a method from MainActivityOld (i.e. StorePR).
         void StorePR(String input, String prtype);
         void AddData(String input, String prtype);
     }
@@ -90,7 +90,7 @@ public class PRDialogClass extends DialogFragment {
             } else {
                 String input = prinput.getText().toString();
                 Log.d("Storing input", "Stored " + input + " as our input value");
-                //Calls the StorePR method from the MainActivity via the Interface.
+                //Calls the StorePR method from the MainActivityOld via the Interface.
                 prInputListener.StorePR(input, prtype);
                 prInputListener.AddData(input, prtype);
                 getDialog().dismiss();
