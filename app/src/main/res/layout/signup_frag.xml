@@ -79,7 +79,7 @@
         tools:layout_editor_absoluteY="391dp" />
 
     <Button
-        android:id="@+id/cancel_btn"
+        android:id="@+id/login_btn"
         style="@style/Base.Widget.AppCompat.ButtonBar"
         android:layout_width="88dp"
         android:layout_height="wrap_content"

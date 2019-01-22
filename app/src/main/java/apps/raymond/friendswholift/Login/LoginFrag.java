@@ -23,10 +23,8 @@ import apps.raymond.friendswholift.R;
 public class LoginFrag extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "LoginFrag";
-    Button login_Btn;
-    Button signUp_Btn;
-    TextInputEditText username_Txt;
-    TextInputEditText password_Txt;
+    Button login_Btn, signUp_Btn;
+    TextInputEditText username_Txt, password_Txt;
     FirebaseAuth mAuth;
 
     @Nullable
@@ -56,29 +54,32 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         String username;
         String password;
 
-        if(TextUtils.isEmpty(username_Txt.getText().toString()) ||
-                TextUtils.isEmpty(password_Txt.getText().toString())){
-            username_Txt.setError("This field cannot be empty.");
-            return;
-        } else {
-            username = username_Txt.getText().toString();
-            password = password_Txt.getText().toString();
-            Toast.makeText(getContext(),username + password,Toast.LENGTH_LONG).show();
-        }
-
         switch(i){
             case R.id.login_btn:
-                /**/
+                //setError should not trigger unless the login btn is clicked.
+                if(TextUtils.isEmpty(username_Txt.getText().toString()) ||
+                        TextUtils.isEmpty(password_Txt.getText().toString())){
+                    username_Txt.setError("This field cannot be empty.");
+                    return; //This return is required because if we don't return when the fields are
+                            // empty, we will try to login using the blank credentials.
+                } else {
+                    username = username_Txt.getText().toString();
+                    password = password_Txt.getText().toString();
+                    Toast.makeText(getContext(),username + password,Toast.LENGTH_LONG).show();
+                }
                 mAuth.createUserWithEmailAndPassword(username,password)
                         .addOnCompleteListener(getActivity(), new OnCompleteListener< AuthResult >(){
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
                                     Log.d(TAG,"createUserWithEmail:success");
-                                    Toast.makeText(getContext(),"Successfully added user.",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(),"Successfully added user.",
+                                            Toast.LENGTH_LONG).show();
                                 } else {
-                                    Log.w(TAG,"createUserWithEmail:failure",task.getException());
-                                    Toast.makeText(getContext(),"Failed to add user.",Toast.LENGTH_LONG).show();
+                                    Log.w(TAG,"createUserWithEmail:failure",
+                                            task.getException());
+                                    Toast.makeText(getContext(),"Failed to add user.",
+                                            Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
