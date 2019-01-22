@@ -11,6 +11,10 @@ import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity implements
         PRDialogClass.OnPRInputInterface, View.OnClickListener {
 
@@ -26,10 +30,15 @@ public class MainActivity extends AppCompatActivity implements
     TextView titleText, squatView, benchView, deadView;
     Button addPR, addBench, addDead, addSquat, checkPrefs, liftsLog;
 
+    FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseApp.initializeApp(this);
+        //Firebase Authenticator
+        mAuth = FirebaseAuth.getInstance();
 
         //Instantiate liftsdb here.
         dataBaseHelper = new DataBaseHelper(this);
@@ -43,6 +52,18 @@ public class MainActivity extends AppCompatActivity implements
 
         sharedpreferences = getSharedPreferences("myprprogress", Context.MODE_PRIVATE);
         UpdateMainAct();
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        //Check if user is already signed in (i.e. non-null) and launch the login Activity if not.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            Intent loginIntent = new Intent(MainActivity.this, LoginAct.class);
+            startActivity(loginIntent);
+        }
     }
 
     public void FindViews(){
@@ -106,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void AddData(String weight, String prtype){
         boolean addData = dataBaseHelper.AddLift(weight, prtype);
-        if (addData == true){
+        if (addData){
             Toast.makeText(this, "New Lift stored!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Error occurred!", Toast.LENGTH_SHORT).show();
