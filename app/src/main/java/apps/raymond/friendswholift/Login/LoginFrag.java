@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import apps.raymond.friendswholift.R;
 
@@ -31,11 +30,10 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
     TextInputEditText username_Txt, password_Txt;
     TextInputEditText[] inputFields;
     FirebaseAuth mAuth;
+    SignIn signIn;
 
-    public SignedIn signedIn;
-
-    public interface SignedIn {
-        void authorized();
+    public interface SignIn {
+        void emailSignIn(final String username, final String password);
     }
 
     @Nullable
@@ -47,10 +45,10 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         mAuth = FirebaseAuth.getInstance();
 
         View v = inflater.inflate(R.layout.login_frag, container, false);
-        login_Btn = (Button) v.findViewById(R.id.login_btn);
-        signUp_Btn = (Button) v.findViewById(R.id.signup_btn);
-        username_Txt = (TextInputEditText) v.findViewById(R.id.login_txt);
-        password_Txt = (TextInputEditText) v.findViewById(R.id.password_txt);
+        login_Btn = v.findViewById(R.id.login_btn);
+        signUp_Btn = v.findViewById(R.id.signup_btn);
+        username_Txt = v.findViewById(R.id.login_txt);
+        password_Txt = v.findViewById(R.id.password_txt);
 
         login_Btn.setOnClickListener(this);
         signUp_Btn.setOnClickListener(this);
@@ -61,12 +59,16 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         return v;
     }
 
+    /*
+    When the fragment is created, it must attach to the host activity. When this occurs, we
+    specify that this host Activity implements our interface.
+    */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
         try{
             //We need to get an instance of the Class that will execute our interface method.
-            signedIn = (SignedIn) getActivity();
+            signIn = (SignIn) getActivity();
         } catch (ClassCastException e) {
             Log.e(TAG,"Class cast exception." + e.getMessage());
         }
@@ -75,38 +77,15 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         int i = v.getId();
-
-        String username;
-        String password;
-
         switch (i) {
             case R.id.login_btn:
-
                 if (!validate(inputFields)) {
                     Log.d(TAG, "One or more input parameters empty.");
                     return;
                 }
-                username = username_Txt.getText().toString();
-                password = password_Txt.getText().toString();
-                mAuth.signInWithEmailAndPassword(username,password)
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>(){
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task){
-                                if(task.isSuccessful()){
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Log.d(TAG,"Successfully logged in " + user);
-
-                                    //ToDo: Stop LoginAct and start the MainAct.
-                                    signedIn.authorized();
-                                } else {
-                                    Log.e(TAG, "Failed to log in user." +
-                                            task.getException().getMessage());
-                                    Toast.makeText(getContext(),"Authentication failed.",
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                Log.d(TAG, "Successfully authorized user.");
+                signIn.emailSignIn(username_Txt.getText().toString(),
+                        password_Txt.getText().toString());
+                //login();
                 break;
             case R.id.signup_btn:
                 //Displays SignUp fragment when 'SIGNUP' is clicked.
@@ -116,6 +95,11 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         }
     }
 
+    /*
+    The validate method checks all the EditText fields for empty inputs. Any empty inputs will
+    receive the .setError with a message saying it must not be empty.
+    Returns True when there are no empty fields and False otherwise.
+     */
     private boolean validate(@NonNull TextInputEditText[] inputFields){
         //False means there is at least one empty field.
         int i = 0;

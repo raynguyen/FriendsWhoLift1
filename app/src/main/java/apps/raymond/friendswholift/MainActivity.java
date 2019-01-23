@@ -11,21 +11,18 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-//Remove the back stack on log out.
-
-//The Login button still launches the wrong activity.
 //Implement the FirebaseUI login practices.
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
+
     FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener authStateListener;
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -33,10 +30,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
-        //Firebase Authenticator
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
-        Toolbar top_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if(currentUser == null){
+                    Log.e(TAG,"There is no signed in user.:");
+                    Intent loginIntent = new Intent(MainActivity.this, LoginAct.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(loginIntent);
+                    finish();
+                } else {
+                    Log.d(TAG,"Current user:" + mAuth.getCurrentUser().getEmail());
+                }
+            }
+        };
+
+        Toolbar top_toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(top_toolbar);
     }
 
@@ -44,15 +58,18 @@ public class MainActivity extends AppCompatActivity {
     public void onStart(){
         super.onStart();
 
-        //Check if user is already signed in (i.e. non-null) and launch the login Activity if not.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser == null){
-            Log.d(TAG,"No current user signed in.");
-            Intent loginIntent = new Intent(MainActivity.this, LoginAct.class);
-            startActivity(loginIntent);
-        } else {
-            Log.d(TAG,"Current user:" + mAuth.getCurrentUser().getEmail());
-        }
+        /*
+        Listener monitors for changes in the User. This listener will trigger even if we are outside
+        the MainActivity.
+         */
+        mAuth.addAuthStateListener(authStateListener);
+
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d(TAG,"MainActivity is shutting down.");
     }
 
     @Override
@@ -64,21 +81,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
+            //Handle the logout Menu click here.
             case R.id.action_logout:
-                Log.d(TAG,"Logging out user:" + mAuth.getCurrentUser().getEmail());
-                AuthUI.getInstance().signOut(this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.d(TAG,"Successfully logged out.");
-                                startActivity(new Intent(
-                                        MainActivity.this,LoginAct.class));
-                            }
-                        });
+                logout();
+                break;
+            case R.id.action_settings:
+                //Toast.makeText(this,mAuth.getCurrentUser().getEmail(),Toast.LENGTH_SHORT).show();
+                openSettings();
+                break;
         }
-
-        Toast.makeText(this,mAuth.getCurrentUser().getEmail(),Toast.LENGTH_SHORT).show();
-        //Handle the logout Menu click here.
         return true;
+    }
+    /*
+    This method is called when the user clicks the 'Logout' item on the toolbar.
+     */
+    public void logout(){
+        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        AuthUI.getInstance().signOut(this);
+    }
+
+    public void openSettings(){
+        Toast.makeText(this,"clicked Settings", Toast.LENGTH_SHORT).show();
     }
 }

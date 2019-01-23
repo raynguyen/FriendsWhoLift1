@@ -31,15 +31,12 @@ public class TextViewFrag extends Fragment {
         benchTV = (TextView) view.findViewById(R.id.benchTxt);
         deadTV = (TextView) view.findViewById(R.id.deadTxt);
         squatTV = (TextView) view.findViewById(R.id.squatTxt);
-
-        Log.d("Before UpdateTV","Attempting to call UpdateTV");
         UpdateTV();
 
         return view;
     }
 
     private void UpdateTV(){
-        Log.d("MethodDebug","Inside UpdateTV method");
         benchTV.setText(test1);
         deadTV.setText(test2);
         squatTV.setText(test3);

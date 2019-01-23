@@ -1,5 +1,6 @@
 package apps.raymond.friendswholift.Login;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +33,11 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
     TextInputEditText[] inputFields;
     FirebaseAuth mAuth;
 
+    SignIn signIn;
+    public interface SignIn {
+        void emailSignIn(final String userName, final String password);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -53,16 +59,23 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
         inputFields[0] = username_Txt;
         inputFields[1] = password_Txt;
         inputFields[2] = repassword_Txt;
-
         return v;
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            //We need to get an instance of the Class that will execute our interface method.
+            signIn = (SignIn) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
     }
 
     @Override
     public void onClick(View v){
         int i = v.getId();
-
-        String username;
-        String password;
 
         switch(i){
             case R.id.register_btn:
@@ -71,25 +84,11 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                     Log.d(TAG,"Empty or incorrect input in SignUp fields.");
                     return;
                 }
+                String username,password;
                 username = username_Txt.getText().toString();
                 password = password_Txt.getText().toString();
-                //ToDo: This should be completed on a new thread.
-                mAuth.createUserWithEmailAndPassword(username,password)
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>(){
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    Log.d(TAG,"createUserWithEmail:success");
-                                    Toast.makeText(getContext(),"Successfully registered user.",
-                                            Toast.LENGTH_LONG).show();
-                                } else {
-                                    Log.w(TAG,"createUserWithEmail:failure",
-                                            task.getException());
-                                    Toast.makeText(getContext(),"Failed to add user.",
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                signUp(username, password);
+                signIn.emailSignIn(username,password);
                 break;
             case R.id.login_btn:
                 //Returns to the Login fragment when 'LOGIN' is clicked.
@@ -120,5 +119,24 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
             b = false;
         }
         return b;
+    }
+
+    private void signUp(final String username, final String password){
+        mAuth.createUserWithEmailAndPassword(username,password)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>(){
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG,"createUserWithEmail:success");
+                            Toast.makeText(getContext(),"Successfully registered user.",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.w(TAG,"createUserWithEmail:failure",
+                                    task.getException());
+                            Toast.makeText(getContext(),"Failed to add user.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }
