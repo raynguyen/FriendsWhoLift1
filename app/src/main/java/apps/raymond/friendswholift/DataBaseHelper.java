@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-import apps.raymond.friendswholift.LiftObject.LiftObject;
+import apps.raymond.friendswholift.RoomClasses.StatEntity;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
@@ -60,7 +60,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public LiftObject getLift(long id){
+    public StatEntity getLift(long id){
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME,new String[]{COL_ID,COL_TYPE,COL_WEIGHT},
@@ -70,7 +70,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if (cursor == null){
             cursor.moveToFirst();
         }
-        LiftObject lift = new LiftObject(cursor.getInt(cursor.getColumnIndex(COL_ID)),
+        StatEntity lift = new StatEntity(cursor.getInt(cursor.getColumnIndex(COL_ID)),
                 cursor.getString(cursor.getColumnIndex(COL_TYPE)),
                 cursor.getDouble(cursor.getColumnIndex(COL_WEIGHT)));
         db.close();

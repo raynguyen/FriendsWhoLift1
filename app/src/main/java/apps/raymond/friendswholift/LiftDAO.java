@@ -1,8 +1,10 @@
 package apps.raymond.friendswholift;
 
+import android.arch.persistence.room.Dao;
 import android.content.Context;
 
-public class LiftDAO {
+@Dao
+public interface LiftDAO {
     private Context mContext;
     private static LiftDAO mLiftDAOInstance = null;
 
