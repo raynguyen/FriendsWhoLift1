@@ -8,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -15,14 +17,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-//Implement the FirebaseUI login practices.
-
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MainActivity";
 
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
+
+    Button checkPRS_Btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -52,18 +54,20 @@ public class MainActivity extends AppCompatActivity{
 
         Toolbar top_toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(top_toolbar);
+
+        checkPRS_Btn = findViewById(R.id.checkpr_btn);
+        checkPRS_Btn.setOnClickListener(this);
     }
 
     @Override
     public void onStart(){
         super.onStart();
-
         /*
         Listener monitors for changes in the User. This listener will trigger even if we are outside
         the MainActivity.
          */
         mAuth.addAuthStateListener(authStateListener);
-
+        Log.d(TAG,"Creating instance of AuthStateListener.");
     }
 
     @Override
@@ -76,6 +80,18 @@ public class MainActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.home_actionbar, menu);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i){
+            case R.id.checkpr_btn:
+                Log.d(TAG,"Creating intent to start ManagaStatsActivity.");
+                Intent intent = new Intent(MainActivity.this, ManageStatsActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
     @Override
@@ -92,9 +108,8 @@ public class MainActivity extends AppCompatActivity{
         }
         return true;
     }
-    /*
-    This method is called when the user clicks the 'Logout' item on the toolbar.
-     */
+
+    //This method is called when the user clicks the 'Logout' item on the toolbar.
     public void logout(){
         Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
         AuthUI.getInstance().signOut(this);

@@ -28,9 +28,9 @@ public class TextViewFrag extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.main_textviewfrag, container, false);
 
-        benchTV = (TextView) view.findViewById(R.id.benchTxt);
-        deadTV = (TextView) view.findViewById(R.id.deadTxt);
-        squatTV = (TextView) view.findViewById(R.id.squatTxt);
+        benchTV = view.findViewById(R.id.benchTxt);
+        deadTV = view.findViewById(R.id.deadTxt);
+        squatTV = view.findViewById(R.id.squatTxt);
         UpdateTV();
 
         return view;

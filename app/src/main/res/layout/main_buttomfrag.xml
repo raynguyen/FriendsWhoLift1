@@ -8,7 +8,7 @@
     android:weightSum="1">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/cancel_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cancel"
@@ -16,7 +16,7 @@
         />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/checkpr_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/checkPRs"

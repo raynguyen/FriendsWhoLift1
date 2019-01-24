@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,19 +15,11 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <fragment
-        android:id="@+id/text_frag"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/allStats_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:name="apps.raymond.friendswholift.HomeActFrags.TextViewFrag"/>
-
-    <fragment
-        android:id="@+id/button_frag"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_frag"
-        android:name="apps.raymond.friendswholift.HomeActFrags.ButtonFrag"
-        />
-</android.support.constraint.ConstraintLayout>
+        android:padding="10dp"
+        android:layout_below="@+id/my_toolbar">
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>

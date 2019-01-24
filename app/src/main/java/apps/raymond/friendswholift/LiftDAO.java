@@ -4,7 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.content.Context;
 
 @Dao
-public interface LiftDAO {
+public class LiftDAO {
     private Context mContext;
     private static LiftDAO mLiftDAOInstance = null;
 
