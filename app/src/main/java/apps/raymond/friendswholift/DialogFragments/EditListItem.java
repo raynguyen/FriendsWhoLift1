@@ -59,8 +59,8 @@ public class EditListItem extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.edit_item_dialog,container,false);
-        Button cancelBut = (Button) v.findViewById(R.id.cancel_button);
-        Button deleteBut = (Button) v.findViewById(R.id.delete_button);
+        Button cancelBut = v.findViewById(R.id.cancel_button);
+        Button deleteBut = v.findViewById(R.id.delete_button);
 
         cancelBut.setOnClickListener(cancelClick);
         deleteBut.setOnClickListener(deleteClick);

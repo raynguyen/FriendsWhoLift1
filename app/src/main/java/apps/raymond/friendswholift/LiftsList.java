@@ -42,7 +42,7 @@ public class LiftsList extends AppCompatActivity implements AdapterView.OnItemLo
         this.dataBaseHelper = new DataBaseHelper(this);
         Cursor data = dataBaseHelper.getAllLifts();
 
-        ListView listView = (ListView) findViewById(R.id.list);
+        ListView listView = findViewById(R.id.list);
 
         customLiftAdapter = new CustomLiftAdapter(this,
                 R.layout.lift_details, data, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);

@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-import apps.raymond.friendswholift.RoomClasses.StatEntity;
-
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Lifts_db";
@@ -40,11 +38,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_WEIGHT, weight);
         //if db.insert returns an error, the function call returns a '-1'
         long result = db.insert(TABLE_NAME, null, contentValues);
-        if(result == -1){
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     /*
@@ -59,7 +53,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //If there was an error removing the lift, return false, if the item is deleted, return true.
         return true;
     }
-
+    /*
     public StatEntity getLift(long id){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -75,7 +69,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 cursor.getDouble(cursor.getColumnIndex(COL_WEIGHT)));
         db.close();
         return lift;
-    }
+    }*/
 
     Cursor getAllLifts(){
         SQLiteDatabase db = this.getReadableDatabase();
