@@ -14,8 +14,7 @@ public abstract class StatRoomDatabase extends RoomDatabase {
     //Singleton class to ensure there is only ever one instance of our database open for this app.
     private static volatile StatRoomDatabase INSTANCE;
 
-
-    static StatRoomDatabase getDataBase(final Context context){
+    public static StatRoomDatabase getDataBase(final Context context){
         if (INSTANCE == null){
             synchronized (StatRoomDatabase.class){
                 if(INSTANCE == null){

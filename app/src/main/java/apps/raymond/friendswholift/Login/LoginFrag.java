@@ -104,7 +104,7 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         //False means there is at least one empty field.
         int i = 0;
         boolean b = true;
-        for(TextInputEditText field : inputFields) {
+        for(TextInputEditText field : inputFields) { // ToDo: Storing the fields into array is probably overkill.
             if (TextUtils.isEmpty(field.getText().toString())) {
                 field.setError("This field cannot be empty.");
                 ++i;

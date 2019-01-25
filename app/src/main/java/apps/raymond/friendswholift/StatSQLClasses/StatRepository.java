@@ -40,7 +40,7 @@ public class StatRepository {
         return mAllStats; //This member variable is the data provided by our DAO.
     }
 
-    public void insert(StatEntity statEntity){
+    void insert(StatEntity statEntity){
         new insertAsyncTask(mStatDAO).execute(statEntity);
     }
 

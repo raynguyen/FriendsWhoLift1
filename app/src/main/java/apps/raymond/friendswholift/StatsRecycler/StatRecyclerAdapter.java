@@ -59,6 +59,11 @@ public class StatRecyclerAdapter extends RecyclerView.Adapter<StatRecyclerAdapte
         }
     }
 
+    public void setStats(List<StatEntity> stats){
+        mStats = stats;
+        notifyDataSetChanged(); // Notifies any attached observers that the data has changed.
+    }
+
     @Override
     public int getItemCount() {
         if (mStats != null){

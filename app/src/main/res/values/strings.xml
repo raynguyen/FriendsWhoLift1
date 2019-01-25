@@ -36,8 +36,12 @@
     <string name="login">Login</string>
     <string name="repassword">Confirm Password</string>
     <string name="signup">Signup</string>
-
     <string name="register">REGISTER</string>
+
+    <string name="new_type">Add New Type</string>
+    <string name="value">Add Value</string>
+
+
 
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>

@@ -33,6 +33,7 @@ public class StatEntity {
         return this.id;
     }
 
+    // ToDo: Check if we actually need these setters as they are set when the constructor is called.
     public void setType(String type){
         this.type = type;
     }
