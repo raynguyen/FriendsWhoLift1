@@ -3,6 +3,7 @@ package apps.raymond.friendswholift;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,9 +18,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import apps.raymond.friendswholift.HomeActFrags.AddStatFrag;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MainActivity";
-
+    private static final String ADD_DIALOG = "AddStatDialog";
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
@@ -87,9 +90,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int i = v.getId();
         switch (i){
             case R.id.checkpr_btn:
-                Log.d(TAG,"Creating intent to start ManagaStatsActivity.");
+                Log.d(TAG,"Creating intent to start ManageStatsActivity.");
                 Intent intent = new Intent(MainActivity.this, ManageStatsActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.cancel_btn:
+                AddStatFrag addStatFrag = new AddStatFrag();
+                addStatFrag.setStyle(DialogFragment.STYLE_NORMAL,R.style.CustomDialog);
+                addStatFrag.show(getSupportFragmentManager(),ADD_DIALOG);
                 break;
         }
     }

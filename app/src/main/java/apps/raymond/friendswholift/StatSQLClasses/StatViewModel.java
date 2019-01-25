@@ -24,7 +24,7 @@ public class StatViewModel extends AndroidViewModel {
         mAllStats = mRepository.getAllStats(); //We retrieve a list of Stats from the repository.
     }
 
-    LiveData<List<StatEntity>> getAllStats(){
+    public LiveData<List<StatEntity>> getAllStats(){
         return mAllStats;
     }
 

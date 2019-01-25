@@ -83,7 +83,7 @@ public class PRDialogClass extends DialogFragment {
 
             if(TextUtils.isEmpty(prinput.getText().toString())){
                 prinput.setError("This field cannot be empty.");
-                return;
+                //return;
             } else if(spos == 0) {
                 Toast.makeText(getActivity().getBaseContext(),"SELECT A TYPE",
                         Toast.LENGTH_LONG).show();
