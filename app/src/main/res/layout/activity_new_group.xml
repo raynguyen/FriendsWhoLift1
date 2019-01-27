@@ -16,14 +16,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:hint="@string/group_name"
+            android:textAllCaps="true"/>
     </android.support.design.widget.TextInputLayout>
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:hint="Description of Group."/>
+        android:hint="@string/descriptor"
+        android:layout_marginTop="24dp"
+        android:inputType="textMultiLine"
+        android:importantForAutofill="no"/>
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -31,22 +36,56 @@
         android:orientation="horizontal"
         android:layout_marginRight="48dp"
         android:layout_marginLeft="48dp"
-        android:background="@drawable/switch_border">
+        android:background="@drawable/switch_border"
+        android:layout_marginTop="24dp">
 
         <RadioButton
             android:id="@+id/private_rBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:button="@null"/>
+            android:button="@null"
+            android:layout_weight="1"
+            android:background="@drawable/switch_button"
+            android:textColor="@color/browser_actions_bg_grey"
+            android:text="@string/private_txt"
+            android:textAllCaps="true"
+            android:gravity="center"/>
 
         <RadioButton
             android:id="@+id/public_rBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:button="@null"/>
-
+            android:button="@null"
+            android:layout_weight="1"
+            android:background="@drawable/switch_button"
+            android:text="@string/public_txt"
+            android:textAllCaps="true"
+            android:gravity="center"/>
     </RadioGroup>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/authorized_invite"/>
+        <Spinner
+            android:id="@+id/invite_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+        </Spinner>
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/users_spinner"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </Spinner>
 </LinearLayout>

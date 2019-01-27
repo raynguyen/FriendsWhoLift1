@@ -41,7 +41,17 @@
     <string name="new_type">Add New Type</string>
     <string name="value">Add Value</string>
 
-
+    <!-- Strings that are used in activity_new_group -->
+    <string name="group_name">Group Name</string>
+    <string name="descriptor">Description for the group.</string>
+    <string name="private_txt">Private</string>
+    <string name="public_txt">Public</string>
+    <string name="authorized_invite">Who can invite users?</string>
+    <string-array name="array_invite_authorize">
+        <item>Owner</item>
+        <item>Admins and owner</item>
+        <item>Any member</item>
+    </string-array>
 
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>
