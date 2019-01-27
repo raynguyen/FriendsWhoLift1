@@ -30,4 +30,13 @@
         app:layout_constraintTop_toBottomOf="@id/text_frag"
         android:name="apps.raymond.friendswholift.HomeActFrags.ButtonFrag"
         />
+
+    <Button
+        android:id="@+id/new_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_frag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </android.support.constraint.ConstraintLayout>

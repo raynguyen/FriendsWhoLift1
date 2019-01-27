@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
 
-    Button checkPRS_Btn, cancel_Btn;
+    Button checkPRS_Btn, cancel_Btn, new_group_Btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -61,9 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         checkPRS_Btn = findViewById(R.id.checkpr_btn);
         cancel_Btn = findViewById(R.id.cancel_btn);
+        new_group_Btn = findViewById(R.id.new_group);
 
         checkPRS_Btn.setOnClickListener(this);
         cancel_Btn.setOnClickListener(this);
+        new_group_Btn.setOnClickListener(this);
     }
 
     @Override
@@ -95,14 +97,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (i){
             case R.id.checkpr_btn:
                 Log.d(TAG,"Creating intent to start ManageStatsActivity.");
-                Intent intent = new Intent(MainActivity.this, ManageStatsActivity.class);
-                startActivity(intent);
+                Intent manage_intent = new Intent(MainActivity.this,
+                        ManageStatsActivity.class);
+                startActivity(manage_intent);
                 break;
             case R.id.cancel_btn:
                 Log.d(TAG,"Starting AddStatFragment.");
                 TempAddStat addStatFrag = new TempAddStat();
                 addStatFrag.setStyle(DialogFragment.STYLE_NORMAL,R.style.CustomDialog);
                 addStatFrag.show(getSupportFragmentManager(),ADD_DIALOG);
+                break;
+            case R.id.new_group:
+                Log.d(TAG, "Starting activity to create new group.");
+                Intent new_group_intent = new Intent(MainActivity.this,
+                        NewGroupActivity.class);
+                startActivity(new_group_intent);
                 break;
         }
     }
