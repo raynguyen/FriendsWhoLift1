@@ -18,7 +18,8 @@
             android:paddingTop="12dp"
             android:focusable="true"
             android:hint="@string/group_name"
-            android:textAllCaps="true"/>
+            android:textAllCaps="true"
+            android:inputType="text"/>
     </android.support.design.widget.TextInputLayout>
 
     <EditText
@@ -82,10 +83,42 @@
         </Spinner>
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/users_spinner"
-        android:layout_marginTop="24dp"
+    <!-- The TextView should be able to contain the tag objects inside of it-->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </Spinner>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!-- Some sort of container that holds the possible tags -->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        >
+        <Button
+            android:id="@+id/discard_grp_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            style="@style/Widget.AppCompat.ButtonBar"
+            android:text="@string/discard"
+            android:textAllCaps="true"
+            android:textColor="@color/common_google_signin_btn_text_light"/>
+
+        <Button
+            android:id="@+id/create_grp_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            style="@style/Base.Widget.AppCompat.ButtonBar"
+            android:text="@string/create_group"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimaryDark"/>
+    </LinearLayout>
 </LinearLayout>

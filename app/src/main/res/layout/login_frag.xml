@@ -27,7 +27,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/username"
             android:inputType="textEmailAddress"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:focusable="true"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout

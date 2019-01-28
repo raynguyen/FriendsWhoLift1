@@ -17,6 +17,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import apps.raymond.friendswholift.HomeActFrags.AddStatFrag;
 import apps.raymond.friendswholift.HomeActFrags.TempAddStat;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
-
+    FirebaseFirestore fireDB;
     Button checkPRS_Btn, cancel_Btn, new_group_Btn;
 
     @Override
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
+        fireDB = FirebaseFirestore.getInstance();
+
         currentUser = mAuth.getCurrentUser();
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
