@@ -13,7 +13,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".LoginAct">
+            android:name=".LoginActivity">
         </activity>
 
         <activity android:name=".MainActivity"

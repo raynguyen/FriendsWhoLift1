@@ -14,6 +14,12 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        <!--
+    <fragment
+        android:id="@+id/group_event_container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar"/>-->
 
     <fragment
         android:id="@+id/text_frag"

@@ -1,3 +1,16 @@
+/*
+ * ToDo:
+ * 1) In the event that a user is unable to connect to the internet and therefore our Firebase db,
+ *  there should be a queue of tasks to execute to the Firebase db once a connection is established.
+ * 2) On back press of NewGroupActivity, it should store the current state in the backstack.
+ * 3) When clicking out of a User Input field, we should unfocus the view and close the keyboard.
+ * 4) Make a new activity for Groups with a swipe user interface:
+ * one shown a CardView with recycler view for all groups attached to the user
+ * another for creating group.
+ * 5) Obtain the 'Membership' authorization from the radio button and pass to the 'Group' document.
+ * 6) Obtain the 'Invite' power from the spinner item and pass to document group.
+ */
+
 package apps.raymond.friendswholift;
 
 import android.content.Intent;
@@ -19,7 +32,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import apps.raymond.friendswholift.HomeActFrags.AddStatFrag;
 import apps.raymond.friendswholift.HomeActFrags.TempAddStat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -48,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if(currentUser == null){
                     Log.e(TAG,"There is no signed in user.:");
-                    Intent loginIntent = new Intent(MainActivity.this, LoginAct.class);
+                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(loginIntent);

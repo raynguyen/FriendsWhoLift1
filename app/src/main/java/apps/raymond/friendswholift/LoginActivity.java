@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -18,8 +17,8 @@ import apps.raymond.friendswholift.Login.LoginFrag;
 import apps.raymond.friendswholift.Login.LoginPagerAdapter;
 import apps.raymond.friendswholift.Login.SignUpFrag;
 
-public class LoginAct extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn {
-    private static final String TAG = "LoginAct";
+public class LoginActivity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn {
+    private static final String TAG = "LoginActivity";
     public FirebaseAuth mAuth;
 
     @Override
@@ -41,24 +40,24 @@ public class LoginAct extends AppCompatActivity implements LoginFrag.SignIn, Sig
     @Override
     public void onStart(){
         super.onStart();
-        Log.d(TAG,"LoginAct started.");
+        Log.d(TAG,"LoginActivity started.");
     }
     @Override
     public void emailSignIn(final String username, final String password){
         Log.d(TAG,"Attempting to sign in via emailSignIn");
         mAuth.signInWithEmailAndPassword(username,password)
-                .addOnCompleteListener(LoginAct.this, new OnCompleteListener<AuthResult>(){
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task){
                         if(task.isSuccessful()){
-                            Intent mainIntent = new Intent(LoginAct.this,
+                            Intent mainIntent = new Intent(LoginActivity.this,
                                     MainActivity.class);
                             startActivity(mainIntent);
                             finish();
                         } else {
                             Log.e(TAG, "Failed to log in user." +
                                     task.getException().getMessage());
-                            Toast.makeText(LoginAct.this,"Authentication failed.",
+                            Toast.makeText(LoginActivity.this,"Authentication failed.",
                                     Toast.LENGTH_LONG).show();
                         }
                     }

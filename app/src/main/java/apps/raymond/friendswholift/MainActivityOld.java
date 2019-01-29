@@ -61,7 +61,7 @@ public class MainActivityOld extends AppCompatActivity implements
         //Check if user is already signed in (i.e. non-null) and launch the login Activity if not.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
-            Intent loginIntent = new Intent(MainActivityOld.this, LoginAct.class);
+            Intent loginIntent = new Intent(MainActivityOld.this, LoginActivity.class);
             startActivity(loginIntent);
         }
     }
