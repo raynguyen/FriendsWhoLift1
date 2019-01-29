@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
-import apps.raymond.friendswholift.NewGroup.GroupPagerAdapter;
+import apps.raymond.friendswholift.Groups.GroupPagerAdapter;
 
 public class Groups_Activity extends AppCompatActivity {
     private static final String TAG = "Group_Activity";

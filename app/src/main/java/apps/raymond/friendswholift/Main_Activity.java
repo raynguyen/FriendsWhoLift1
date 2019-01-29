@@ -1,8 +1,9 @@
 /*
  * ToDo:
+ * 0) Get the current user and save it as the title for the home screen!
  * 1) In the event that a user is unable to connect to the internet and therefore our Firebase db,
  *  there should be a queue of tasks to execute to the Firebase db once a connection is established.
- * 2) On back press of NewGroupActivityOld, it should store the current state in the backstack.
+ * 2) On back press of NewGroup, it should store the current state in the backstack.
  * 3) When clicking out of a User Input field, we should unfocus the view and close the keyboard.
  * 4) Make a new activity for Groups with a swipe user interface:
  * one shown a CardView with recycler view for all groups attached to the user
@@ -28,10 +29,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 import apps.raymond.friendswholift.HomeActFrags.TempAddStat;
 
@@ -42,7 +47,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
     FirebaseFirestore fireDB;
-    Button checkPRS_Btn, cancel_Btn, new_group_Btn;
+    Button checkPRS_Btn, cancel_Btn, new_group_Btn, test_Btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -78,10 +83,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         checkPRS_Btn = findViewById(R.id.checkpr_btn);
         cancel_Btn = findViewById(R.id.cancel_btn);
         new_group_Btn = findViewById(R.id.new_group);
+        test_Btn = findViewById(R.id.group_info);
 
         checkPRS_Btn.setOnClickListener(this);
         cancel_Btn.setOnClickListener(this);
         new_group_Btn.setOnClickListener(this);
+        test_Btn.setOnClickListener(this);
     }
 
     @Override
@@ -126,9 +133,22 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             case R.id.new_group:
                 Log.d(TAG, "Starting activity to create new group.");
                 Intent new_group_intent = new Intent(Main_Activity.this,
-                        Groups_Activity.class);//NewGroupActivityOld.class);
+                        Groups_Activity.class);
                 startActivity(new_group_intent);
                 break;
+            case R.id.group_info:
+                FirebaseFirestore.getInstance().collection("Groups").document("qweqwe")
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    Log.d(TAG, "Cached document data: " + document.getData()); //.get("invite")) allows access to a key's value.
+                                } else {
+                                    Log.d(TAG, "Cached get failed: ", task.getException());
+                                }
+                            }
+                        });
         }
     }
 

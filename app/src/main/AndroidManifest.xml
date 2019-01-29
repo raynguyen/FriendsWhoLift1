@@ -25,7 +25,6 @@
         </activity>
 
         <activity android:name=".ManageStats_Activity"/>
-        <activity android:name=".NewGroupActivityOld"/>
 
         <activity
             android:name=".MainActivityOld"
