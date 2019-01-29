@@ -1,7 +1,7 @@
 /*
  * Potentially combine both the GroupPager and the LoginPager?
  */
-package apps.raymond.friendswholift.NewGroup;
+package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;

@@ -1,8 +1,9 @@
 /*
  * ToDo:
+ * 0) Get the current user and save it as the title for the home screen!
  * 1) In the event that a user is unable to connect to the internet and therefore our Firebase db,
  *  there should be a queue of tasks to execute to the Firebase db once a connection is established.
- * 2) On back press of NewGroupActivityOld, it should store the current state in the backstack.
+ * 2) On back press of NewGroup, it should store the current state in the backstack.
  * 3) When clicking out of a User Input field, we should unfocus the view and close the keyboard.
  * 4) Make a new activity for Groups with a swipe user interface:
  * one shown a CardView with recycler view for all groups attached to the user
@@ -126,7 +127,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             case R.id.new_group:
                 Log.d(TAG, "Starting activity to create new group.");
                 Intent new_group_intent = new Intent(Main_Activity.this,
-                        Groups_Activity.class);//NewGroupActivityOld.class);
+                        Groups_Activity.class);
                 startActivity(new_group_intent);
                 break;
         }

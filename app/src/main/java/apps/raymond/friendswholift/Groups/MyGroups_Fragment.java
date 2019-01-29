@@ -1,4 +1,4 @@
-package apps.raymond.friendswholift.NewGroup;
+package apps.raymond.friendswholift.Groups;
 
 import android.support.v4.app.Fragment;
 
