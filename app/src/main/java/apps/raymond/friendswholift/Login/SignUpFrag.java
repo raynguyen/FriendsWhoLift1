@@ -113,6 +113,10 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
         if(i != 0){
             b = false;
         }
+        if(inputFields[1].getText().length() < 6){
+            inputFields[1].setError("Your password must be at least 6 characters.");
+            b = false;
+        }
         if(!inputFields[1].getText().toString()
                 .equals(inputFields[2].getText().toString())){
             inputFields[2].setError("Passwords do not match.");
