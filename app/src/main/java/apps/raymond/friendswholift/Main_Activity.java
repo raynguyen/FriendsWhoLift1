@@ -2,13 +2,14 @@
  * ToDo:
  * 1) In the event that a user is unable to connect to the internet and therefore our Firebase db,
  *  there should be a queue of tasks to execute to the Firebase db once a connection is established.
- * 2) On back press of NewGroupActivity, it should store the current state in the backstack.
+ * 2) On back press of NewGroupActivityOld, it should store the current state in the backstack.
  * 3) When clicking out of a User Input field, we should unfocus the view and close the keyboard.
  * 4) Make a new activity for Groups with a swipe user interface:
  * one shown a CardView with recycler view for all groups attached to the user
  * another for creating group.
  * 5) Obtain the 'Membership' authorization from the radio button and pass to the 'Group' document.
  * 6) Obtain the 'Invite' power from the spinner item and pass to document group.
+ * 7) Consider merging both the Login pager adapter and the group pager adapter.
  */
 
 package apps.raymond.friendswholift;
@@ -34,8 +35,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import apps.raymond.friendswholift.HomeActFrags.TempAddStat;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private static final String TAG = "MainActivity";
+public class Main_Activity extends AppCompatActivity implements View.OnClickListener{
+    private static final String TAG = "Main_Activity";
     private static final String ADD_DIALOG = "AddStatDialog";
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener authStateListener;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if(currentUser == null){
                     Log.e(TAG,"There is no signed in user.:");
-                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                    Intent loginIntent = new Intent(Main_Activity.this, Login_Activity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(loginIntent);
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStart();
         /*
         Listener monitors for changes in the User. This listener will trigger even if we are outside
-        the MainActivity.
+        the Main_Activity.
          */
         mAuth.addAuthStateListener(authStateListener);
         Log.d(TAG,"Creating instance of AuthStateListener.");
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.d(TAG,"MainActivity is shutting down.");
+        Log.d(TAG,"Main_Activity is shutting down.");
     }
 
     @Override
@@ -111,9 +112,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int i = v.getId();
         switch (i){
             case R.id.checkpr_btn:
-                Log.d(TAG,"Creating intent to start ManageStatsActivity.");
-                Intent manage_intent = new Intent(MainActivity.this,
-                        ManageStatsActivity.class);
+                Log.d(TAG,"Creating intent to start ManageStats_Activity.");
+                Intent manage_intent = new Intent(Main_Activity.this,
+                        ManageStats_Activity.class);
                 startActivity(manage_intent);
                 break;
             case R.id.cancel_btn:
@@ -124,8 +125,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.new_group:
                 Log.d(TAG, "Starting activity to create new group.");
-                Intent new_group_intent = new Intent(MainActivity.this,
-                        NewGroupActivity.class);
+                Intent new_group_intent = new Intent(Main_Activity.this,
+                        Groups_Activity.class);//NewGroupActivityOld.class);
                 startActivity(new_group_intent);
                 break;
         }

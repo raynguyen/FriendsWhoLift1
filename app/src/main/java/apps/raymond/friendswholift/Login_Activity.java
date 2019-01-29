@@ -17,8 +17,8 @@ import apps.raymond.friendswholift.Login.LoginFrag;
 import apps.raymond.friendswholift.Login.LoginPagerAdapter;
 import apps.raymond.friendswholift.Login.SignUpFrag;
 
-public class LoginActivity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn {
-    private static final String TAG = "LoginActivity";
+public class Login_Activity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn {
+    private static final String TAG = "Login_Activity";
     public FirebaseAuth mAuth;
 
     @Override
@@ -40,24 +40,24 @@ public class LoginActivity extends AppCompatActivity implements LoginFrag.SignIn
     @Override
     public void onStart(){
         super.onStart();
-        Log.d(TAG,"LoginActivity started.");
+        Log.d(TAG,"Login_Activity started.");
     }
     @Override
     public void emailSignIn(final String username, final String password){
         Log.d(TAG,"Attempting to sign in via emailSignIn");
         mAuth.signInWithEmailAndPassword(username,password)
-                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
+                .addOnCompleteListener(Login_Activity.this, new OnCompleteListener<AuthResult>(){
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task){
                         if(task.isSuccessful()){
-                            Intent mainIntent = new Intent(LoginActivity.this,
-                                    MainActivity.class);
+                            Intent mainIntent = new Intent(Login_Activity.this,
+                                    Main_Activity.class);
                             startActivity(mainIntent);
                             finish();
                         } else {
                             Log.e(TAG, "Failed to log in user." +
                                     task.getException().getMessage());
-                            Toast.makeText(LoginActivity.this,"Authentication failed.",
+                            Toast.makeText(Login_Activity.this,"Authentication failed.",
                                     Toast.LENGTH_LONG).show();
                         }
                     }

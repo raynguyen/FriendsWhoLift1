@@ -18,15 +18,16 @@ import android.util.Log;
 public class YesNoDialog extends DialogFragment{
     private static final String TAG = "YesNoDialog";
 
-    YesNoInterface yesNoInterface;
+    YesNoInterface callback;
 
     public interface YesNoInterface {
         void positiveClick();
         void negativeClick();
     }
 
-    public YesNoDialog(){
-        //Empty Constructor
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @NonNull
@@ -42,13 +43,13 @@ public class YesNoDialog extends DialogFragment{
                 .setPositiveButton("Positive", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        yesNoInterface.positiveClick();
+                        callback.positiveClick();
                     }
                 })
                 .setNegativeButton("Negative", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        yesNoInterface.negativeClick();
+                        callback.negativeClick();
                     }
                 })
                 .create();
@@ -58,9 +59,9 @@ public class YesNoDialog extends DialogFragment{
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            yesNoInterface = (YesNoInterface) getActivity();
+            callback = (YesNoInterface) getTargetFragment();
         } catch (ClassCastException e) {
-        Log.e(TAG,"Class cast exception:" + e.getMessage());
+            Log.e(TAG,"Class cast exception:" + e.getMessage());
         }
     }
 }

@@ -15,7 +15,7 @@ import apps.raymond.friendswholift.StatSQLClasses.StatEntity;
 import apps.raymond.friendswholift.StatSQLClasses.StatViewModel;
 import apps.raymond.friendswholift.StatsRecycler.StatRecyclerAdapter;
 
-public class ManageStatsActivity extends AppCompatActivity {
+public class ManageStats_Activity extends AppCompatActivity {
     private static final String TAG = "ManageStatsAct";
 
     StatViewModel mStatViewModel;
@@ -27,9 +27,9 @@ public class ManageStatsActivity extends AppCompatActivity {
         setContentView(R.layout.allstats_container);
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.allStats_recycler);
-        final StatRecyclerAdapter adapter = new StatRecyclerAdapter(ManageStatsActivity.this);
+        final StatRecyclerAdapter adapter = new StatRecyclerAdapter(ManageStats_Activity.this);
         mRecyclerView.setAdapter(adapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(ManageStatsActivity.this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(ManageStats_Activity.this));
 
         mStatViewModel = ViewModelProviders.of(this).get(StatViewModel.class);
         mStatViewModel.getAllStats().observe(this, new Observer<List<StatEntity>>() {

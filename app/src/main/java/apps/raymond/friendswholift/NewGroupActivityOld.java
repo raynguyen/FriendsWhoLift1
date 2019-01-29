@@ -6,7 +6,6 @@
  */
 package apps.raymond.friendswholift;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,9 +34,9 @@ import java.util.Map;
 
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 
-public class NewGroupActivity extends AppCompatActivity implements
+public class NewGroupActivityOld extends AppCompatActivity implements
         AdapterView.OnItemSelectedListener, View.OnClickListener, YesNoDialog.YesNoInterface {
-    private static final String TAG = "NewGroupActivity";
+    private static final String TAG = "NewGroupActivityOld";
     private static final String GROUP_COLLECTION = "Groups";
     private static final String USER_COLLECTION = "Users";
 
@@ -45,13 +45,13 @@ public class NewGroupActivity extends AppCompatActivity implements
     Spinner invite_Spinner;
     Button new_group_Btn;
     private TextInputEditText groupName_Txt;
-    TextView desc_Txt;
+    EditText desc_Txt;
     FirebaseUser currentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_group);
+        setContentView(R.layout.new_group);
         groupName_Txt = findViewById(R.id.group_name_txt);
         desc_Txt = findViewById(R.id.desc_txt);
 
@@ -60,7 +60,7 @@ public class NewGroupActivity extends AppCompatActivity implements
 
         invite_Spinner = findViewById(R.id.invite_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(NewGroupActivity.this, R.array.array_invite_authorize,
+                .createFromResource(NewGroupActivityOld.this, R.array.array_invite_authorize,
                         android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         invite_Spinner.setAdapter(adapter);
