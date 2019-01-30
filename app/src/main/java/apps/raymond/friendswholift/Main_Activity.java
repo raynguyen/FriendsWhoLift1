@@ -11,6 +11,7 @@
  * 5) Obtain the 'Membership' authorization from the radio button and pass to the 'Group' document.
  * 6) Obtain the 'Invite' power from the spinner item and pass to document group.
  * 7) Consider merging both the Login pager adapter and the group pager adapter.
+ * 8) Should we abstract the sign in and create user with FirebsaeAuth to the repository?
  */
 
 package apps.raymond.friendswholift;

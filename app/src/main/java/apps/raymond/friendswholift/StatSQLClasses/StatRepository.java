@@ -18,11 +18,7 @@ import android.os.AsyncTask;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.StatSQLClasses.StatDAO;
-import apps.raymond.friendswholift.StatSQLClasses.StatEntity;
-import apps.raymond.friendswholift.StatSQLClasses.StatRoomDatabase;
-
-public class StatRepository {
+class StatRepository {
 
     private StatDAO mStatDAO;
     private LiveData<List<StatEntity>> mAllStats;

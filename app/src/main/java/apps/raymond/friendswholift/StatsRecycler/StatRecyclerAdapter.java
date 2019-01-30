@@ -6,6 +6,7 @@ package apps.raymond.friendswholift.StatsRecycler;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.StatSQLClasses.StatEntity;
 
 public class StatRecyclerAdapter extends RecyclerView.Adapter<StatRecyclerAdapter.StatViewHolder> {
-
+    private static final String TAG = "StatRecyclerAdapter";
     private Context mContext;
 
     public StatRecyclerAdapter(Context context){
@@ -37,6 +38,10 @@ public class StatRecyclerAdapter extends RecyclerView.Adapter<StatRecyclerAdapte
 
     private List<StatEntity> mStats; // Cached copy of StatEntity items.
 
+    /*
+     * This method is called every time a new ViewHolder is needed (i.e. there is data we want to
+     * present on in the RecyclerView still.
+     */
     @NonNull
     @Override
     public StatRecyclerAdapter.StatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,6 +50,10 @@ public class StatRecyclerAdapter extends RecyclerView.Adapter<StatRecyclerAdapte
         return new StatViewHolder(view);
     }
 
+    /*
+     * This method is called following every onCreateViewHolder. It simply binds the information for
+     * the recently created ViewHolder.
+     */
     @Override
     public void onBindViewHolder(@NonNull StatRecyclerAdapter.StatViewHolder holder, int position) {
         //get element from your dataset at this position

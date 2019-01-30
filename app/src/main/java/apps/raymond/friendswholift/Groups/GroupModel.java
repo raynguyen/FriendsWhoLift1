@@ -8,7 +8,6 @@ import android.media.Image;
 
 public class GroupModel extends GroupBase{
 
-    private String[] tags;
     private Image image;
 
 

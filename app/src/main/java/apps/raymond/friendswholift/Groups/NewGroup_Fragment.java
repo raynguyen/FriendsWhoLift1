@@ -24,8 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
@@ -47,7 +45,7 @@ public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.new_group,container,false);
+        View view = inflater.inflate(R.layout.group_new,container,false);
 
         Button discard_Btn = view.findViewById(R.id.discard_grp_btn);
         Button create_Btn = view.findViewById(R.id.create_grp_btn);
