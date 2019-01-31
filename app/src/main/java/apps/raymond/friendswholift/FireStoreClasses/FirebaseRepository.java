@@ -9,7 +9,7 @@
  * error.
  */
 
-package apps.raymond.friendswholift.Groups;
+package apps.raymond.friendswholift.FireStoreClasses;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -25,6 +25,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+
+import apps.raymond.friendswholift.Groups.GroupBase;
+import apps.raymond.friendswholift.Groups.MyGroupsFragment;
 
 
 public class FirebaseRepository {
@@ -73,6 +76,8 @@ public class FirebaseRepository {
     /*
      * This method will query our FireStore for a key set of the Groups current user is attached to.
      * It shall return a LiveData object of Set<String> to its caller.
+     * ToDo:
+     * If the document does not exist, .get() will return a null pointer error. Need to handle this!
      */
     public void getGroups(final MyGroupsFragment.FireStoreCallBack fireStoreCallBack){
         Log.i(TAG,"Attempting to retrieve a user's groups.");

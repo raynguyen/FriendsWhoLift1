@@ -3,12 +3,10 @@
  * FireStore and display the information in a CardView.
  */
 
-package apps.raymond.friendswholift.Groups;
+package apps.raymond.friendswholift.FireStoreClasses;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import java.util.List;
 import java.util.Set;
 
 public class FirebaseViewModel extends ViewModel {

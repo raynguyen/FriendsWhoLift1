@@ -19,7 +19,7 @@ import apps.raymond.friendswholift.R;
 public class MyGroupsFragment extends Fragment {
 
     private static final String TAG = "MygroupsFragment";
-    FirebaseUserViewModel mUserViewModel;
+    GroupsViewModel mUserViewModel;
 
     TextView testTextView;
     @Nullable
@@ -28,7 +28,7 @@ public class MyGroupsFragment extends Fragment {
         View view = inflater.inflate(R.layout.groups_cardview_container,container,false);
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
 
-        mUserViewModel = new FirebaseUserViewModel();
+        mUserViewModel = new GroupsViewModel();
 
         Button testBtn = view.findViewById(R.id.testButton);
         testBtn.setOnClickListener(new View.OnClickListener() {

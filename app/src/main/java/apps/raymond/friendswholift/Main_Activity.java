@@ -12,6 +12,8 @@
  * 6) Obtain the 'Invite' power from the spinner item and pass to document group.
  * 7) Consider merging both the Login pager adapter and the group pager adapter.
  * 8) Should we abstract the sign in and create user with FirebsaeAuth to the repository?
+ * 9) Should the FireStore Repository be a singleton class and have all Activities and Fragments
+ *  communicate with a single instance of it?
  */
 
 package apps.raymond.friendswholift;

@@ -33,6 +33,8 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
     TextInputEditText[] inputFields;
     FirebaseAuth mAuth;
 
+    LoginViewModel mLoginViewModel;
+
     SignIn signIn;
     public interface SignIn {
         void emailSignIn(final String userName, final String password);
@@ -59,6 +61,8 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
         inputFields[0] = username_Txt;
         inputFields[1] = password_Txt;
         inputFields[2] = repassword_Txt;
+
+        mLoginViewModel = new LoginViewModel();
         return v;
     }
 
@@ -134,6 +138,8 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                             Log.d(TAG,"createUserWithEmail:success");
                             Toast.makeText(getContext(),"Successfully registered user.",
                                     Toast.LENGTH_LONG).show();
+                            // OnSuccessful signup, we also want to create a Document for the user in our FireStore.
+                            mLoginViewModel.createUserDoc();
                         } else {
                             Log.w(TAG,"createUserWithEmail:failure",
                                     task.getException());
@@ -143,4 +149,5 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                     }
                 });
     }
+
 }
