@@ -9,14 +9,17 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
+import java.util.Set;
 
 public class FirebaseViewModel extends ViewModel {
 
     private static FirebaseRepository fbRepository;
-    private static LiveData<List<GroupBase>> mAllGroups;
+    private static Set<String> groupKeys;
 
     public FirebaseViewModel(){
         fbRepository = new FirebaseRepository();
         //mAllGroups = fbRepository.;
     }
+
+
 }

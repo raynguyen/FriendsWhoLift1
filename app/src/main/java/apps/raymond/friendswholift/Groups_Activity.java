@@ -1,3 +1,8 @@
+/*
+ * When the activity starts, we want to attach listeners to all of our Documents of concern.
+ * When paused we want to remove all listeners.
+ */
+
 package apps.raymond.friendswholift;
 
 import android.os.Bundle;

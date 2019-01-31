@@ -48,6 +48,4 @@ public interface StatDAO {
     @Query("SELECT * from stats_table ORDER BY statValue ASC") //Retrieves list of Stats from the table.
     LiveData<List<StatEntity>> getAllStats();
 
-
-
 }
