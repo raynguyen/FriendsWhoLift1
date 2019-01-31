@@ -147,6 +147,9 @@ public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
             Log.i(TAG,"Attempting to attach the new group as a field in the User document.");
             FirebaseFirestore.getInstance().collection(USER_COLLECTION).
                     document(currentUser.getUid()).update(groupName, "Add authorization here");
+            Log.i(TAG,"The User Document contains these tags: " +
+                    FirebaseFirestore.getInstance().collection(USER_COLLECTION).
+                            document(currentUser.getUid()).get());
         } catch (NullPointerException npe){
             Log.w(TAG,"Unable to attach new group to the current user.");
             Toast.makeText(getContext(),"There was an error resolving the group. Please try again shortly!",Toast.LENGTH_SHORT).show();
