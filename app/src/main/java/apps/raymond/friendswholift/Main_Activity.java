@@ -132,7 +132,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 addStatFrag.show(getSupportFragmentManager(),ADD_DIALOG);
                 break;
             case R.id.new_group:
-                Log.d(TAG, "Starting activity to create new group.");
+                Log.d(TAG, "Starting activity to view groups.");
                 Intent new_group_intent = new Intent(Main_Activity.this,
                         Groups_Activity.class);
                 startActivity(new_group_intent);

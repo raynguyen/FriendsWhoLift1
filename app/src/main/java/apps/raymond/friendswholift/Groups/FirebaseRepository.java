@@ -3,6 +3,10 @@
  * MVVM principles.
  *
  * We are not implementing a FireBase DAO, not sure if it is required.
+ *
+ * ToDo:
+ * When attempting the .get() call on a Document, if the document does not exist it returns a null
+ * error.
  */
 
 package apps.raymond.friendswholift.Groups;
@@ -21,8 +25,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-
-import java.util.Set;
 
 
 public class FirebaseRepository {
@@ -72,7 +74,7 @@ public class FirebaseRepository {
      * This method will query our FireStore for a key set of the Groups current user is attached to.
      * It shall return a LiveData object of Set<String> to its caller.
      */
-    public void getGroups(final TestGroupGetFragment.FirestoreCallBack firestoreCallBack){
+    public void getGroups(final MyGroupsFragment.FireStoreCallBack fireStoreCallBack){
         Log.i(TAG,"Attempting to retrieve a user's groups.");
         userCollection.document(currentUser.getUid()).get().addOnCompleteListener(
                 new OnCompleteListener<DocumentSnapshot>() {
@@ -81,7 +83,7 @@ public class FirebaseRepository {
                         if (task.isSuccessful()){
                             DocumentSnapshot document = task.getResult();
                             Log.i(TAG,"Success inside the onComplete method of our document .get() and retrieved: "+ document.getData().keySet());
-                            firestoreCallBack.onCallBack(document.getData().keySet());
+                            fireStoreCallBack.onCallBack(document.getData().keySet());
                         } else {
                             Log.d(TAG,"The .get() failed for document: " + currentUser.getUid(), task.getException());
                         }
@@ -90,47 +92,4 @@ public class FirebaseRepository {
         Log.i(TAG, "Added onCompleteListener to our document.");
     }
 
-
-
 }
-            /*
-            userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        DocumentSnapshot document = task.getResult();
-                        if(document.exists()){
-                            List<String> list = new ArrayList<>();
-                            Map<String, Object> map = document.getData();
-                            if(map != null){
-                                for (Map.Entry<String, Object> entry : map.entrySet()){
-                                    list.add(entry.getKey());
-                                    Log.d(TAG,entry.getKey());
-                                }
-                            }
-                        }
-                    }
-                }
-            });*/
-
-
-
-
-
-        /*
-        userCollection.document(currentUser.getUid())
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null){
-                            Log.w(TAG,"Listen failed.", e);
-                        }
-                        if (snapshot != null && snapshot.exists() ){
-                            Log.d(TAG,"Current data: " + snapshot.getData());
-
-                        } else {
-                            Log.d(TAG,"Current data: null");
-                        }
-                    }
-                });*/
