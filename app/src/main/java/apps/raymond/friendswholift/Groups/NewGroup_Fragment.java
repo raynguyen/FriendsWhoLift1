@@ -114,33 +114,6 @@ public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
     }
 
     /*
-     * Code to create new Collection in Cloud FireStore.
-     * Whenever a new group is created, the group automatically assigns the current FireBaseUser as
-     * the owner for the group.
-     */
-    private void createGroup(@NonNull final String name){
-        GroupBase groupBase = new GroupBase(name, descText, currentUser.getUid(),"public","owner", Arrays.asList("420","sports")); //Look into this Arrays.asList thing
-        try {
-            Log.i(TAG, "Attempting to create a new Group document.");
-            FirebaseFirestore.getInstance().collection(GROUP_COLLECTION).document(name).set(groupBase)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG,"Successfully added Document: " + name);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG,"Failed to create group: " + name);
-                        }
-                    });
-        } catch (NullPointerException npe) {
-            Log.e(TAG, "NULL user when defining owner of group.");
-        }
-    }
-
-    /*
      * THIS COULD PROBABLY EXIST AS A SEPARATE METHOD! Consider future calls to save tags to users.
      * Store a user's associated groups under the database collection 'Users'.
      * The UID of each user is used to create a new document or access the existing document in
