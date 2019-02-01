@@ -11,7 +11,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +104,21 @@ public class TestFirebaseRepository {
      */
     public Task<List<GroupBase>> getGroups(List<String> myGroupTags){
 
+        final List<GroupBase> myGroups = new ArrayList<>();
+        for(String groupTag : myGroupTags){
+            groupCollection.document(groupTag).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                myGroups.add(task.getResult().toObject(GroupBase.class));
+                            }
+                        }
+                    });
+        }
+        return null; //Ignore this for now.
+    }
+        /*
         return groupCollection.document(myGroupTags.toString()).get()
                 .continueWith(new Continuation<DocumentSnapshot, List<GroupBase>>() {
                     @Override
@@ -109,5 +126,20 @@ public class TestFirebaseRepository {
                         return null;
                     }
                 });
-    }
+
+        groupCollection.get().continueWithTask(new Continuation<QuerySnapshot, Task<List<GroupBase>>>() {
+            @Override
+            public Task<List<GroupBase>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+
+                return null;
+            }
+        });*/
+
+
+
+
+
+
+
+
 }
