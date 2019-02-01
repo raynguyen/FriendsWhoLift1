@@ -21,7 +21,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new MyGroupsFragment();
             case 1:
-                return new NewGroup_Fragment();
+                return new NewGroupFragment();
             default:
                 return null;
         }

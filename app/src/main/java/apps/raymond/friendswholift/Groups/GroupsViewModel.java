@@ -4,7 +4,9 @@ import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,8 +29,7 @@ public class GroupsViewModel extends ViewModel {
         return mRepository.getGroupTags();
     }
 
-    public Task<List<GroupBase>> getGroups(List<String> myGroupTags){
+    public List<Task<DocumentSnapshot>> getGroups(List<String> myGroupTags){
         return mRepository.getGroups(myGroupTags);
-
     }
 }

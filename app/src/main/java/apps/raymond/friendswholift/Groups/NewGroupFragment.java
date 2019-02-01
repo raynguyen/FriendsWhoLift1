@@ -1,3 +1,9 @@
+/*
+ * ToDo:
+ * When the user hits the confirm button, we want to send the user back to the MyGroups screen with
+ * an updated RecyclerView that includes the new group.
+ */
+
 package apps.raymond.friendswholift.Groups;
 
 import android.os.Bundle;
@@ -28,9 +34,9 @@ import java.util.Arrays;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
+public class NewGroupFragment extends Fragment implements View.OnClickListener,
         YesNoDialog.YesNoInterface {
-    private static final String TAG = "NewGroup_Fragment";
+    private static final String TAG = "NewGroupFragment";
     private static final String GROUP_COLLECTION = "Groups";
     private static final String USER_COLLECTION = "Users";
 

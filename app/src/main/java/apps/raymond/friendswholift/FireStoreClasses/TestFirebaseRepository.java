@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -102,44 +103,23 @@ public class TestFirebaseRepository {
      * Query Firestore against a List of names. For each name in the list, retrieve the POJO of that
      * document and append it to a List that will be returned to the context Caller.
      */
-    public Task<List<GroupBase>> getGroups(List<String> myGroupTags){
+    public List<Task<DocumentSnapshot>> getGroups(List<String> myGroupTags){
+        // Consider moving the following List<String> manipulation to the Fragment or???
 
-        final List<GroupBase> myGroups = new ArrayList<>();
-        for(String groupTag : myGroupTags){
-            groupCollection.document(groupTag).get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                myGroups.add(task.getResult().toObject(GroupBase.class));
-                            }
-                        }
-                    });
+        List<DocumentReference> myDocs = new ArrayList<>();
+        for(String name : myGroupTags){
+            DocumentReference docRef = groupCollection.document(name);
+            myDocs.add(docRef);
         }
-        return null; //Ignore this for now.
+        List<Task<DocumentSnapshot>> myTasks = new ArrayList<>();
+        for(String name : myGroupTags){
+            // We don't need OnCompleteListener because it will be implemented in the calling context.
+            Task<DocumentSnapshot> snapshot = groupCollection.document(name).get();
+            myTasks.add(snapshot);
+        }
+
+        return myTasks;
     }
-        /*
-        return groupCollection.document(myGroupTags.toString()).get()
-                .continueWith(new Continuation<DocumentSnapshot, List<GroupBase>>() {
-                    @Override
-                    public List<GroupBase> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        return null;
-                    }
-                });
-
-        groupCollection.get().continueWithTask(new Continuation<QuerySnapshot, Task<List<GroupBase>>>() {
-            @Override
-            public Task<List<GroupBase>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-
-                return null;
-            }
-        });*/
-
-
-
-
-
-
 
 
 }
