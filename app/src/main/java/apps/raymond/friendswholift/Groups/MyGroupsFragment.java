@@ -114,9 +114,13 @@ public class MyGroupsFragment extends Fragment {
                             myGroups = new ArrayList<>();
                             myGroups.add(((DocumentSnapshot) object).toObject(GroupBase.class));
                             //GroupBase groupBase = ((DocumentSnapshot) object).toObject(GroupBase.class);
-                            //Log.i(TAG,groupBase.getName());
+                            //Log.i(TAG,object.getName());
                         }
                         mAdapter.setData(myGroups);
+                        // Test method to make sure we get POJO correctly
+                        for(GroupBase base : myGroups){
+                            Log.i(TAG, "The retrieval returned this object : " + base.getName());
+                        }
                     }
                 });
             }
