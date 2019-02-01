@@ -104,13 +104,7 @@ public class TestFirebaseRepository {
      * document and append it to a List that will be returned to the context Caller.
      */
     public List<Task<DocumentSnapshot>> getGroups(List<String> myGroupTags){
-        // Consider moving the following List<String> manipulation to the Fragment or???
-
-        List<DocumentReference> myDocs = new ArrayList<>();
-        for(String name : myGroupTags){
-            DocumentReference docRef = groupCollection.document(name);
-            myDocs.add(docRef);
-        }
+        // Consider moving the following List<String> manipulation to the Fragment or??
         List<Task<DocumentSnapshot>> myTasks = new ArrayList<>();
         for(String name : myGroupTags){
             // We don't need OnCompleteListener because it will be implemented in the calling context.

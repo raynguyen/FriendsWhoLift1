@@ -1,9 +1,12 @@
 package apps.raymond.friendswholift.Groups;
 
+import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,14 +38,22 @@ public class MyGroupsFragment extends Fragment {
     GroupsViewModel mGroupViewModel;
 
     List<String> myGroupTags;
+    ArrayList<GroupBase> myGroups;
     TextView testTextView;
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.groups_cardview_container, container, false);
+
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
+        cardRecycler.setItemAnimator(new DefaultItemAnimator());
+
+        // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
+        final GroupRecyclerAdapter mAdapter = new GroupRecyclerAdapter(myGroups);
+
+        cardRecycler.setAdapter(mAdapter);
+        cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mGroupViewModel = new GroupsViewModel();
 
@@ -100,14 +111,16 @@ public class MyGroupsFragment extends Fragment {
                     public void onSuccess(List<Object> objects) {
                         Log.i(TAG,"Successfully retrieved all the Groups.");
                         for(Object object : objects){
-                            GroupBase groupBase = ((DocumentSnapshot) object).toObject(GroupBase.class);
-                            Log.i(TAG,groupBase.getName());
+                            myGroups = new ArrayList<>();
+                            myGroups.add(((DocumentSnapshot) object).toObject(GroupBase.class));
+                            //GroupBase groupBase = ((DocumentSnapshot) object).toObject(GroupBase.class);
+                            //Log.i(TAG,groupBase.getName());
                         }
+                        mAdapter.setData(myGroups);
                     }
                 });
             }
         });
-
         return view;
     }
 }

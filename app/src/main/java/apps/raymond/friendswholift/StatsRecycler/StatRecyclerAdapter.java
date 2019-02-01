@@ -44,7 +44,7 @@ public class StatRecyclerAdapter extends RecyclerView.Adapter<StatRecyclerAdapte
      */
     @NonNull
     @Override
-    public StatRecyclerAdapter.StatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StatRecyclerAdapter.StatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_stat_item,
                 parent,false);
         return new StatViewHolder(view);
@@ -53,6 +53,7 @@ public class StatRecyclerAdapter extends RecyclerView.Adapter<StatRecyclerAdapte
     /*
      * This method is called following every onCreateViewHolder. It simply binds the information for
      * the recently created ViewHolder.
+     * Position is an integer counter of the ViewHolder in it's parent view group.
      */
     @Override
     public void onBindViewHolder(@NonNull StatRecyclerAdapter.StatViewHolder holder, int position) {
