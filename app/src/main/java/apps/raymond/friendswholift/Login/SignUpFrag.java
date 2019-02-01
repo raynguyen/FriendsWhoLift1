@@ -139,7 +139,10 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                             Toast.makeText(getContext(),"Successfully registered user.",
                                     Toast.LENGTH_LONG).show();
                             // OnSuccessful signup, we also want to create a Document for the user in our FireStore.
-                            mLoginViewModel.createUserDoc();
+                            Log.i(TAG, "Calling on Repository to create user's Document.");
+                            //Have to get the curernt user first before calling the createUserDoc.
+                            mLoginViewModel.createUserDoc(username);
+
                         } else {
                             Log.w(TAG,"createUserWithEmail:failure",
                                     task.getException());

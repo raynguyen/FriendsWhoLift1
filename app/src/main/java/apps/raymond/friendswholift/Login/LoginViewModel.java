@@ -2,17 +2,17 @@ package apps.raymond.friendswholift.Login;
 
 import android.arch.lifecycle.ViewModel;
 
-import apps.raymond.friendswholift.FireStoreClasses.FirebaseRepository;
+import apps.raymond.friendswholift.FireStoreClasses.TestFirebaseRepository;
 
 public class LoginViewModel extends ViewModel {
 
-    private FirebaseRepository mFirebaseRepository;
+    private TestFirebaseRepository mFirebaseRepository;
 
     public LoginViewModel(){
-        this.mFirebaseRepository = new FirebaseRepository();
+        this.mFirebaseRepository = new TestFirebaseRepository();
     }
 
-    public void createUserDoc(){
-        mFirebaseRepository.createUserDoc();
+    public void createUserDoc(String userName){
+        mFirebaseRepository.createUserDoc(userName);
     }
 }

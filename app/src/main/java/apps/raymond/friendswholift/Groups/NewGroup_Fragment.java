@@ -40,6 +40,7 @@ public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
     EditText desc_Txt;
     private TextInputEditText name_Txt;
     private FirebaseUser currentUser;
+    private GroupsViewModel mGroupViewModel;
 
     @Nullable
     @Override
@@ -63,6 +64,7 @@ public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
         invite_Spinner.setAdapter(adapter);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mGroupViewModel = new GroupsViewModel();
         return view;
     }
 
@@ -98,8 +100,11 @@ public class NewGroup_Fragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void positiveClick() {
+        Log.i(TAG, "Attempting to create a group Document of name: " + groupName);
         Toast.makeText(getContext(),"Clicked on the positive button", Toast.LENGTH_SHORT).show();
-        createGroup(this.groupName);
+        GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", Arrays.asList("420","sports")); //Look into this Arrays.asList thing
+        mGroupViewModel.createGroup(groupName, groupBase);
+        //createGroup(this.groupName);
         attachGroup(this.groupName);
     }
 

@@ -30,28 +30,58 @@ public class MyGroupsFragment extends Fragment {
 
         mUserViewModel = new GroupsViewModel();
 
-        Button testBtn = view.findViewById(R.id.testButton);
-        testBtn.setOnClickListener(new View.OnClickListener() {
+        Button createUserDocBtn = view.findViewById(R.id.testButton1);
+        Button updateFieldBtn = view.findViewById(R.id.testButton2);
+        Button getfieldsBtn = view.findViewById(R.id.testButton3);
+        Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
+
+        createUserDocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testMethod();
+                //testMethod();
             }
         });
+
+        createUserDocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        updateFieldBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        getfieldsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        getGroupPojoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
         testTextView = view.findViewById(R.id.testTextView);
 
         return view;
     }
 
+    /*
     public void testMethod(){
         Log.i(TAG,"Inside testMethod.");
-        mUserViewModel.getGroups(new FireStoreCallBack() {
+        mUserViewModel.createGroup(new FireStoreCallBack() {
             @Override
             public void onCallBack(Set<String> keySet) {
                 Log.i(TAG,"Inside testMethod of our Fragment and retrieved: " + keySet);
                 testTextView.setText(keySet.toString());
             }
         });
-    }
+    }*/
 
     public interface FireStoreCallBack {
         void onCallBack(Set<String> keySet);
