@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class TestFirebaseRepository {
     private static final String USER_COLLECTION = "Users";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

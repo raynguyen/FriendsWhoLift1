@@ -1,5 +1,8 @@
 package apps.raymond.friendswholift.Groups;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,13 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +34,7 @@ import java.util.Set;
 
 import apps.raymond.friendswholift.R;
 
-public class MyGroupsFragment extends Fragment {
+public class MyGroupsFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "MygroupsFragment";
     GroupsViewModel mGroupViewModel;
@@ -35,13 +42,13 @@ public class MyGroupsFragment extends Fragment {
     List<String> myGroupTags;
     ArrayList<GroupBase> myGroups;
     TextView testTextView;
-
+    ImageView mImage;
     GroupRecyclerAdapter mAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.groups_cardview_container, container, false);
+        View view = inflater.inflate(R.layout.groups_mygroups, container, false);
 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
         cardRecycler.setItemAnimator(new DefaultItemAnimator());
@@ -56,7 +63,11 @@ public class MyGroupsFragment extends Fragment {
 
         Button getfieldsBtn = view.findViewById(R.id.testButton3);
         Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
+        getGroupPojoBtn.setOnClickListener(this);
+
+
         testTextView = view.findViewById(R.id.testTextView);
+        mImage = view.findViewById(R.id.testImage);
 
         /*
          * When the fragment is created, we need to run the snippet inside this onclickListener.
@@ -69,7 +80,6 @@ public class MyGroupsFragment extends Fragment {
                 createGroupCards(myGroupTags);
             }
         });
-
         return view;
     }
 
@@ -88,5 +98,31 @@ public class MyGroupsFragment extends Fragment {
                 mAdapter.setData(myGroups);
             }
         });
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i){
+            case R.id.testButton4:
+                Log.i(TAG, "Clicked on testButton4.");
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                storageRef.child("TestGroup1/dogpic.jpg").getBytes(1024*1024)
+                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                Log.i(TAG,"Attaching testImage ImageView with downloaded file");
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                mImage.setImageBitmap(bitmap);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG,"Unable to retrieve the requested filed.", e);
+                    }
+                });
+                break;
+        }
     }
 }
