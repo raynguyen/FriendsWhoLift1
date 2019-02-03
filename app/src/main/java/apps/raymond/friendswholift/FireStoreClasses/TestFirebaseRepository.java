@@ -5,16 +5,13 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -25,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import apps.raymond.friendswholift.Groups.GroupBase;
-import apps.raymond.friendswholift.Groups.GroupModel;
 
 public class TestFirebaseRepository {
 
@@ -153,9 +149,9 @@ public class TestFirebaseRepository {
                         public Task<byte[]> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                             Log.i(TAG,"Attempting to retrieve the photo via URI of: "+name);
                             String documentURI = task.getResult().getString("gcsURI");
-                            Task<byte[]> groupPhoto = myStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2); //This means 2MB
+                            //Task<byte[]> groupPhoto = myStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2); //This means 2MB
                             //myGroupsTest.add(groupPhoto);
-                            return groupPhoto;
+                            return myStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2);
                         }
                     });
             myGroupsTest.add(myGroup);

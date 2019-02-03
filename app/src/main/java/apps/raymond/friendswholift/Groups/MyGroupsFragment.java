@@ -2,7 +2,6 @@ package apps.raymond.friendswholift.Groups;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,7 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +136,14 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
                 Tasks.whenAllComplete(listGroups).addOnSuccessListener(new OnSuccessListener<List<Task<?>>>() {
                     @Override
                     public void onSuccess(List<Task<?>> tasks) {
+                        Log.i(TAG,"Retrieved all groups attached to the User.");
                         Toast.makeText(getContext(),"Successfully retrieved all groups!",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG,"Unable to retrieve the groups attached to User.",e);
+                        Toast.makeText(getContext(),"There was an error retrieving the groups.",Toast.LENGTH_SHORT).show();
                     }
                 });
         }
