@@ -12,6 +12,7 @@ public class GroupBase {
     private String owner;
     private String visibility;
     private String invite;
+    private String gcsURI;
     private List<String> tags;
 
     // Empty constructor as required by FireBase.
@@ -49,5 +50,9 @@ public class GroupBase {
 
     public List<String> getTags(){
         return tags;
+    }
+
+    public String getGcsURI(){
+        return gcsURI;
     }
 }

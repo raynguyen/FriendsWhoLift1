@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +38,7 @@ public class TestFirebaseRepository {
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+    private FirebaseStorage myStorage = FirebaseStorage.getInstance();
 
     /*
      * Method call to create a Document under the 'Users' Collection. This collection will contain
@@ -130,44 +132,35 @@ public class TestFirebaseRepository {
     }
 
 
-    public List<Task<DocumentSnapshot>> getGroupsTest(List<String> myGroupTags){
+    public List<Task<byte[]>> getGroupsTest(List<String> myGroupTags){
 
         List<Task<DocumentSnapshot>> myGroups = new ArrayList<>();
+        final List<Task<byte[]>> myGroupsTest = new ArrayList<>();
 
         for(final String name : myGroupTags){
             Log.i(TAG, "Attempting to get Group: " + name);
 
-            Task<DocumentSnapshot> myGroup =  groupCollection.document(name).get();
-
-                //Add continuation here to retrieve the photos.\
-
-            myGroups.add(myGroup);
-
-
-            //BELOW WILL RETRIEVE PHOTOS FROM STORAGE
-            storageRef.child("TestGroup1/"+name+".JPG").getBytes(1024*1024*10)
-                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            // Get the Group Document first, then once the document is retrieved, get the gcsURI and use that to retrieve the photo.
+            Task<byte[]> myGroup =  groupCollection.document(name).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void onSuccess(byte[] bytes) {
-                            Log.i(TAG, "Successfully retrieved photo for: " + name);
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Log.i(TAG,"Successfully retrieved DocumentSnapshot of: " + name);
+                        }
+                    })
+                    .continueWithTask(new Continuation<DocumentSnapshot, Task<byte[]>>() {
+                        @Override
+                        public Task<byte[]> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                            Log.i(TAG,"Attempting to retrieve the photo via URI of: "+name);
+                            String documentURI = task.getResult().getString("gcsURI");
+                            Task<byte[]> groupPhoto = myStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2); //This means 2MB
+                            //myGroupsTest.add(groupPhoto);
+                            return groupPhoto;
                         }
                     });
-            /*
-                    .continueWith(new Continuation<byte[], Task<DocumentSnapshot>>() {
-                        @Override
-                        public Task<DocumentSnapshot> then(@NonNull Task<byte[]> task) throws Exception {
-                            Log.i(TAG, "Now attempting to retrieve from the Group Document for: " + name);
-                            groupCollection.document(name).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    Log.i(TAG, "RETRIEVED A SNAPSHOT FOR: "+ name);
-                                }
-                            });
-                            return null;
-                        }
-            });*/
+            myGroupsTest.add(myGroup);
         }
-        return myGroups;
+        return myGroupsTest;
 
     }
 

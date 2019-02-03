@@ -110,8 +110,6 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -136,7 +134,13 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.testButton3:
                 Log.i(TAG, "Clicked on testButton3.");
-                mGroupViewModel.testMethod(myGroupTags);
+                List<Task<byte[]>> listGroups = mGroupViewModel.testMethod(myGroupTags);
+                Tasks.whenAllComplete(listGroups).addOnSuccessListener(new OnSuccessListener<List<Task<?>>>() {
+                    @Override
+                    public void onSuccess(List<Task<?>> tasks) {
+                        Toast.makeText(getContext(),"Successfully retrieved all groups!",Toast.LENGTH_SHORT).show();
+                    }
+                });
         }
     }
 
