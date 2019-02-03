@@ -1,3 +1,7 @@
+/*
+ * Consider using continueWithTask after finishing the signUp method to sign the user in!
+ */
+
 package apps.raymond.friendswholift.Login;
 
 import android.content.Context;

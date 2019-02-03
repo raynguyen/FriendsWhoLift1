@@ -10,6 +10,6 @@ public class GroupModel extends GroupBase{
 
     private Image image;
 
-
-
+    public GroupModel(){
+    }
 }

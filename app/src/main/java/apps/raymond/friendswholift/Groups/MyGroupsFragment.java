@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,10 +36,9 @@ import java.util.Set;
 import apps.raymond.friendswholift.R;
 
 public class MyGroupsFragment extends Fragment implements View.OnClickListener {
-
     private static final String TAG = "MygroupsFragment";
-    GroupsViewModel mGroupViewModel;
 
+    GroupsViewModel mGroupViewModel;
     List<String> myGroupTags;
     ArrayList<GroupBase> myGroups;
     TextView testTextView;
@@ -64,7 +64,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         Button getfieldsBtn = view.findViewById(R.id.testButton3);
         Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
         getGroupPojoBtn.setOnClickListener(this);
-
+        getfieldsBtn.setOnClickListener(this);
 
         testTextView = view.findViewById(R.id.testTextView);
         mImage = view.findViewById(R.id.testImage);
@@ -83,8 +83,18 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    /*
+     * What I want to implement is a single Repository function that will get the photo and the fields
+     * for each String in the User Document.
+     *
+     * Potentially have a List<Task<GroupModel>> where the Task collects and creates the GroupModel objects.
+     *
+     * Currently:
+     * Two seperate Repository methods; one for retrieving the fields and another for the photos.
+     * Once both of these Tasks are complete, the Fragment will construct the object and then create
+     * the appropriate CardView.
+     */
     private void createGroupCards(List<String> myGroupTags){
-
         // getGroups() will return a List<Tasks>. We will implement whenAllSuccess here to know when we retrieved all the groups.
         final List<Task<DocumentSnapshot>> myTasks = mGroupViewModel.getGroups(myGroupTags);
         Tasks.whenAllSuccess(myTasks).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
@@ -101,14 +111,15 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
             case R.id.testButton4:
                 Log.i(TAG, "Clicked on testButton4.");
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                storageRef.child("TestGroup1/dogpic.jpg").getBytes(1024*1024)
+                String testString = "dogpic";
+                FirebaseStorage.getInstance().getReference().child("TestGroup1/"+testString+".jpg").getBytes(1024*1024)
                         .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                             @Override
                             public void onSuccess(byte[] bytes) {
@@ -123,6 +134,11 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
                     }
                 });
                 break;
+            case R.id.testButton3:
+                Log.i(TAG, "Clicked on testButton3.");
+                mGroupViewModel.testMethod(myGroupTags);
         }
     }
+
+
 }

@@ -30,4 +30,13 @@ public class GroupsViewModel extends ViewModel {
     public List<Task<DocumentSnapshot>> getGroups(List<String> myGroupTags){
         return mRepository.getGroups(myGroupTags);
     }
+
+    public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
+        return mRepository.getPhotos(myGroupTags);
+    }
+
+
+     public List<Task<byte[]>> testMethod(List<String> myGroupTags){
+        return mRepository.getGroupsTest(myGroupTags);
+     }
 }

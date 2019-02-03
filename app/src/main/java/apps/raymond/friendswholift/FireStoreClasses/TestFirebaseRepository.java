@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import apps.raymond.friendswholift.Groups.GroupBase;
+import apps.raymond.friendswholift.Groups.GroupModel;
 
 public class TestFirebaseRepository {
 
@@ -30,10 +33,10 @@ public class TestFirebaseRepository {
     private static final String USER_COLLECTION = "Users";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
     /*
      * Method call to create a Document under the 'Users' Collection. This collection will contain
@@ -113,9 +116,59 @@ public class TestFirebaseRepository {
             Task<DocumentSnapshot> snapshot = groupCollection.document(name).get();
             myTasks.add(snapshot);
         }
-
         return myTasks;
     }
 
+    public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
+        List<Task<byte[]>> myPhotos = new ArrayList<>();
+        for(String name : myGroupTags){
+            // We don't need OnCompleteListener because it will be implemented in the calling context.
+            Task<byte[]> photo = storageRef.child("TestGroup1/"+name+".jpg").getBytes(1024*1024);
+            myPhotos.add(photo);
+        }
+        return myPhotos;
+    }
+
+
+    public List<Task<DocumentSnapshot>> getGroupsTest(List<String> myGroupTags){
+
+        List<Task<DocumentSnapshot>> myGroups = new ArrayList<>();
+
+        for(final String name : myGroupTags){
+            Log.i(TAG, "Attempting to get Group: " + name);
+
+            Task<DocumentSnapshot> myGroup =  groupCollection.document(name).get();
+
+                //Add continuation here to retrieve the photos.\
+
+            myGroups.add(myGroup);
+
+
+            //BELOW WILL RETRIEVE PHOTOS FROM STORAGE
+            storageRef.child("TestGroup1/"+name+".JPG").getBytes(1024*1024*10)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Log.i(TAG, "Successfully retrieved photo for: " + name);
+                        }
+                    });
+            /*
+                    .continueWith(new Continuation<byte[], Task<DocumentSnapshot>>() {
+                        @Override
+                        public Task<DocumentSnapshot> then(@NonNull Task<byte[]> task) throws Exception {
+                            Log.i(TAG, "Now attempting to retrieve from the Group Document for: " + name);
+                            groupCollection.document(name).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Log.i(TAG, "RETRIEVED A SNAPSHOT FOR: "+ name);
+                                }
+                            });
+                            return null;
+                        }
+            });*/
+        }
+        return myGroups;
+
+    }
 
 }
