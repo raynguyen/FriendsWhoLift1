@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public class TestFirebaseRepository {
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    private FirebaseStorage myStorage = FirebaseStorage.getInstance();
+    private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
 
     /*
      * Method call to create a Document under the 'Users' Collection. This collection will contain
@@ -127,17 +128,38 @@ public class TestFirebaseRepository {
         return myPhotos;
     }
 
+    // Can simply just retrieve a object and create it here. Then in the Fragment call upon each item to retrieve its photo in a separate method.
+    public List<Task<GroupBase>> getGroupsTest(List<String> myGroupTags){
 
-    public List<Task<byte[]>> getGroupsTest(List<String> myGroupTags){
-
-        List<Task<DocumentSnapshot>> myGroups = new ArrayList<>();
-        final List<Task<byte[]>> myGroupsTest = new ArrayList<>();
+        final List<Task<GroupBase>> myGroupsTest = new ArrayList<>();
 
         for(final String name : myGroupTags){
             Log.i(TAG, "Attempting to get Group: " + name);
-
             // Get the Group Document first, then once the document is retrieved, get the gcsURI and use that to retrieve the photo.
-            Task<byte[]> myGroup =  groupCollection.document(name).get()
+
+            //GroupBase myGroupTask;
+            Task<GroupBase> myGroupTask = groupCollection.document(name).get()
+                    .continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
+                        @Override
+                        public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                            Log.i(TAG,"Creating Group: " + name);
+                            GroupBase myGroup = task.getResult().toObject(GroupBase.class);
+                            return myGroup;
+                        }
+                    });
+                    /*
+                    .continueWithTask(new Continuation<GroupBase, Task<GroupBase>>() {
+                        @Override
+                        public Task<GroupBase> then(@NonNull Task<GroupBase> task) throws Exception {
+                            String photoURI = task.getResult().getGcsURI();
+                            Task<byte[]> getPhotoTask = firebaseStorage.getReferenceFromUrl(photoURI).getBytes(1024*1024*2);
+                            return null;
+                        }
+                    });
+                    */
+
+            /*
+            Task<byte[]> groupPhotoTask =  groupCollection.document(name).get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -149,15 +171,24 @@ public class TestFirebaseRepository {
                         public Task<byte[]> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                             Log.i(TAG,"Attempting to retrieve the photo via URI of: "+name);
                             String documentURI = task.getResult().getString("gcsURI");
-                            //Task<byte[]> groupPhoto = myStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2); //This means 2MB
+                            //Task<byte[]> groupPhoto = firebaseStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2); //This means 2MB
                             //myGroupsTest.add(groupPhoto);
-                            return myStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2);
+                            final GroupBase myGroup = task.getResult().toObject(GroupBase.class);
+                            Task<byte[]> groupPhoto = firebaseStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2);
+                            return groupPhoto;
+                        }
+                    }).continueWith(new Continuation<byte[], GroupBase>() {
+                        @Override
+                        public GroupBase then(@NonNull Task<byte[]> task) throws Exception {
+                            return new byte[0];
                         }
                     });
-            myGroupsTest.add(myGroup);
-        }
-        return myGroupsTest;
+            */
 
+            myGroupsTest.add(myGroupTask);
+        }
+
+        return myGroupsTest;
     }
 
 }

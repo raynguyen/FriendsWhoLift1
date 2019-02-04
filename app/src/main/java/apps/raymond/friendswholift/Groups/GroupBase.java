@@ -14,6 +14,7 @@ public class GroupBase {
     private String invite;
     private String gcsURI;
     private List<String> tags;
+    private byte[] photo;
 
     // Empty constructor as required by FireBase.
     public GroupBase() {
@@ -52,7 +53,19 @@ public class GroupBase {
         return tags;
     }
 
+    public String setGcsURI(){
+        return gcsURI;
+    }
+
     public String getGcsURI(){
         return gcsURI;
+    }
+
+    public void setPhoto(byte[] photo){
+        this.photo = photo;
+    }
+
+    public byte[] getPhoto(){
+        return photo;
     }
 }

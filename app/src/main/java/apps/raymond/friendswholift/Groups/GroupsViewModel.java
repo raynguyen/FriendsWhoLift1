@@ -36,7 +36,7 @@ public class GroupsViewModel extends ViewModel {
     }
 
 
-     public List<Task<byte[]>> testMethod(List<String> myGroupTags){
+     public List<Task<GroupBase>> testMethod(List<String> myGroupTags){
         return mRepository.getGroupsTest(myGroupTags);
      }
 }

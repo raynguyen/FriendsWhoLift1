@@ -75,11 +75,13 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
             public void onComplete(@NonNull Task<Set<String>> task) {
                 // Can only access the data once the task is complete.
                 myGroupTags = new ArrayList<>(task.getResult()); // Convert to a list object since I don't know how to handle Sets.
-                createGroupCards(myGroupTags);
+                //createGroupCards(myGroupTags);
             }
         });
         return view;
     }
+
+    // CAN COMPLETELY SKIP THE GETTAGS CALL. SIMPLY ADD TO THE CALL CONTINUEWITHTASK AND CONVERT IT TO GROUPS
 
     /*
      * What I want to implement is a single Repository function that will get the photo and the fields
@@ -132,12 +134,16 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.testButton3:
                 Log.i(TAG, "Clicked on testButton3.");
-                List<Task<byte[]>> listGroups = mGroupViewModel.testMethod(myGroupTags);
-                Tasks.whenAllComplete(listGroups).addOnSuccessListener(new OnSuccessListener<List<Task<?>>>() {
+                List<Task<GroupBase>> listGroups = mGroupViewModel.testMethod(myGroupTags);
+                Tasks.whenAllSuccess(listGroups).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                     @Override
-                    public void onSuccess(List<Task<?>> tasks) {
-                        Log.i(TAG,"Retrieved all groups attached to the User.");
+                    public void onSuccess(List<Object> objects) {
+                        Log.i(TAG,"Created GroupBase Group objects for all attached tags.");
                         Toast.makeText(getContext(),"Successfully retrieved all groups!",Toast.LENGTH_SHORT).show();
+                        for(Object object:objects){
+                            myGroups.add((GroupBase) object);
+                        }
+                        mAdapter.setData(myGroups);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -151,3 +157,14 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
 
 
 }
+
+/*
+ * Create a Repository method that:
+ *  Retrieves the tags for the user then
+ *  Retrieves the Documents for each tag.
+ *  on whenAllSuccess, create Groupbase for each returned object.
+ *  Create a GroupBase object for each Document received.
+ *  >>>> List<Task<GroupBase>>
+ *
+ *  Once Group is created, get pictures for each in a separate repository method call.
+ */
