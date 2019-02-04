@@ -15,11 +15,11 @@ public class GroupsViewModel extends ViewModel {
 
     private TestFirebaseRepository mRepository;
 
-    public GroupsViewModel(){
+    GroupsViewModel(){
         this.mRepository = new TestFirebaseRepository();
     }
 
-    public void createGroup(String name, GroupBase groupBase){
+    void createGroup(String name, GroupBase groupBase){
         mRepository.createGroupDoc(name, groupBase); //Requires a string that will be the name of the Document
     }
 
@@ -27,16 +27,13 @@ public class GroupsViewModel extends ViewModel {
         return mRepository.getGroupTags();
     }
 
-    public List<Task<DocumentSnapshot>> getGroups(List<String> myGroupTags){
-        return mRepository.getGroups(myGroupTags);
-    }
 
     public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
         return mRepository.getPhotos(myGroupTags);
     }
 
 
-     public List<Task<GroupBase>> testMethod(List<String> myGroupTags){
-        return mRepository.getGroupsTest(myGroupTags);
+     Task<List<Task<DocumentSnapshot>>> testMethod1(){
+        return mRepository.testMethod1();
      }
 }

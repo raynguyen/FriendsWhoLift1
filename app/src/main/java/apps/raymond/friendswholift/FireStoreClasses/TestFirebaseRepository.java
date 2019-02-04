@@ -1,4 +1,12 @@
+/*
+ *Repository modules handle data operations. They provide a clean API so that the rest of the app
+ * can retrieve this data easily. They know where to get the data from and what API calls to make
+ * when data is updated. You can consider repositories to be mediators between different data
+ * sources, such as persistent models, web services, and caches
+*/
+
 package apps.raymond.friendswholift.FireStoreClasses;
+
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -7,6 +15,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -15,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +101,7 @@ public class TestFirebaseRepository {
                     public Set<String> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                         DocumentSnapshot document = task.getResult();
                         if(document.exists()){
-                            Log.i(TAG,"Successfully retrieved the document.");
+                            Log.i(TAG,"Successfully retrieved User document.");
                             return document.getData().keySet();
                         } else {
                             Log.w(TAG, "Error when retrieving the Document.");
@@ -103,11 +111,47 @@ public class TestFirebaseRepository {
                 });
     }
 
+
+    public Task<List<Task<DocumentSnapshot>>> testMethod1(){
+
+        //First thing to do is retrieve the Group tags from current user.
+        return userCollection.document(currentUser.getEmail()).get()
+                .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
+                    @Override
+                    public Set<String> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                        Log.i(TAG,"Fetching the Set containing our Group tags");
+                        DocumentSnapshot document = task.getResult();
+                        if(document!=null){
+                            Log.i(TAG,"Successfully retrieved Group key set.");
+                            return task.getResult().getData().keySet();
+                        } else {
+                            Log.i(TAG,"Document for user does not exist.");
+                            return null;
+                        }
+                    }
+                })
+                //Next, using the key set, we want to retrieve the groups from the Group collection.
+                .continueWith(new Continuation<Set<String>, List<Task<DocumentSnapshot>>>() {
+                    @Override
+                    public List<Task<DocumentSnapshot>> then(@NonNull Task<Set<String>> task) throws Exception {
+                        List<Task<DocumentSnapshot>> fetchGroupsTaskList = new ArrayList<>();
+                        Log.i(TAG,"Fetching the Group Documents for these groups: " + task.getResult().toString());
+                        List<String> keyList = new ArrayList<>(task.getResult());
+                        for(String key : keyList){
+                            Log.i(TAG,"Creating Task to fetch Group Document: "+ key);
+                            fetchGroupsTaskList.add(groupCollection.document(key).get());
+                        }
+                        return fetchGroupsTaskList;
+                    }
+                });
+
+    }
+
     /*
      * Query Firestore against a List of names. For each name in the list, retrieve the POJO of that
      * document and append it to a List that will be returned to the context Caller.
      */
-    public List<Task<DocumentSnapshot>> getGroups(List<String> myGroupTags){
+    public List<Task<DocumentSnapshot>> getGroupsOld(List<String> myGroupTags){
         // Consider moving the following List<String> manipulation to the Fragment or??
         List<Task<DocumentSnapshot>> myTasks = new ArrayList<>();
         for(String name : myGroupTags){
@@ -126,69 +170,6 @@ public class TestFirebaseRepository {
             myPhotos.add(photo);
         }
         return myPhotos;
-    }
-
-    // Can simply just retrieve a object and create it here. Then in the Fragment call upon each item to retrieve its photo in a separate method.
-    public List<Task<GroupBase>> getGroupsTest(List<String> myGroupTags){
-
-        final List<Task<GroupBase>> myGroupsTest = new ArrayList<>();
-
-        for(final String name : myGroupTags){
-            Log.i(TAG, "Attempting to get Group: " + name);
-            // Get the Group Document first, then once the document is retrieved, get the gcsURI and use that to retrieve the photo.
-
-            //GroupBase myGroupTask;
-            Task<GroupBase> myGroupTask = groupCollection.document(name).get()
-                    .continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
-                        @Override
-                        public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                            Log.i(TAG,"Creating Group: " + name);
-                            GroupBase myGroup = task.getResult().toObject(GroupBase.class);
-                            return myGroup;
-                        }
-                    });
-                    /*
-                    .continueWithTask(new Continuation<GroupBase, Task<GroupBase>>() {
-                        @Override
-                        public Task<GroupBase> then(@NonNull Task<GroupBase> task) throws Exception {
-                            String photoURI = task.getResult().getGcsURI();
-                            Task<byte[]> getPhotoTask = firebaseStorage.getReferenceFromUrl(photoURI).getBytes(1024*1024*2);
-                            return null;
-                        }
-                    });
-                    */
-
-            /*
-            Task<byte[]> groupPhotoTask =  groupCollection.document(name).get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            Log.i(TAG,"Successfully retrieved DocumentSnapshot of: " + name);
-                        }
-                    })
-                    .continueWithTask(new Continuation<DocumentSnapshot, Task<byte[]>>() {
-                        @Override
-                        public Task<byte[]> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                            Log.i(TAG,"Attempting to retrieve the photo via URI of: "+name);
-                            String documentURI = task.getResult().getString("gcsURI");
-                            //Task<byte[]> groupPhoto = firebaseStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2); //This means 2MB
-                            //myGroupsTest.add(groupPhoto);
-                            final GroupBase myGroup = task.getResult().toObject(GroupBase.class);
-                            Task<byte[]> groupPhoto = firebaseStorage.getReferenceFromUrl(documentURI).getBytes(1024*1024*2);
-                            return groupPhoto;
-                        }
-                    }).continueWith(new Continuation<byte[], GroupBase>() {
-                        @Override
-                        public GroupBase then(@NonNull Task<byte[]> task) throws Exception {
-                            return new byte[0];
-                        }
-                    });
-            */
-
-            myGroupsTest.add(myGroupTask);
-        }
-
-        return myGroupsTest;
     }
 
 }

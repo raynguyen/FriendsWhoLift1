@@ -29,7 +29,6 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import apps.raymond.friendswholift.R;
 
@@ -43,6 +42,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
     ImageView mImage;
     GroupRecyclerAdapter mAdapter;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,7 +53,6 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         cardRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
         mAdapter = new GroupRecyclerAdapter(myGroups);
-
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -67,45 +66,27 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         testTextView = view.findViewById(R.id.testTextView);
         mImage = view.findViewById(R.id.testImage);
 
-        /*
-         * When the fragment is created, we need to run the snippet inside this onclickListener.
-         */
-        mGroupViewModel.getGroupTags().addOnCompleteListener(new OnCompleteListener<Set<String>>() {
-            @Override
-            public void onComplete(@NonNull Task<Set<String>> task) {
-                // Can only access the data once the task is complete.
-                myGroupTags = new ArrayList<>(task.getResult()); // Convert to a list object since I don't know how to handle Sets.
-                //createGroupCards(myGroupTags);
-            }
-        });
+        updateCardViews();
+
         return view;
     }
 
-    // CAN COMPLETELY SKIP THE GETTAGS CALL. SIMPLY ADD TO THE CALL CONTINUEWITHTASK AND CONVERT IT TO GROUPS
-
-    /*
-     * What I want to implement is a single Repository function that will get the photo and the fields
-     * for each String in the User Document.
-     *
-     * Potentially have a List<Task<GroupModel>> where the Task collects and creates the GroupModel objects.
-     *
-     * Currently:
-     * Two seperate Repository methods; one for retrieving the fields and another for the photos.
-     * Once both of these Tasks are complete, the Fragment will construct the object and then create
-     * the appropriate CardView.
-     */
-    private void createGroupCards(List<String> myGroupTags){
-        // getGroups() will return a List<Tasks>. We will implement whenAllSuccess here to know when we retrieved all the groups.
-        final List<Task<DocumentSnapshot>> myTasks = mGroupViewModel.getGroups(myGroupTags);
-        Tasks.whenAllSuccess(myTasks).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+    private void updateCardViews(){
+        mGroupViewModel.testMethod1().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
             @Override
-            public void onSuccess(List<Object> objects) {
-                myGroups = new ArrayList<>();
-                Log.i(TAG,"Successfully retrieved all the Groups.");
-                for(Object object : objects){
-                    myGroups.add(((DocumentSnapshot) object).toObject(GroupBase.class));
-                }
-                mAdapter.setData(myGroups);
+            public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
+                Log.i(TAG,"Finished retrieving a List of tasks.");
+                Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                    @Override
+                    public void onSuccess(List<Object> objects) {
+                        myGroups = new ArrayList<>();
+                        Log.i(TAG,"Successfully retrieved all the Groups.");
+                        for(Object object : objects){
+                            myGroups.add(((DocumentSnapshot) object).toObject(GroupBase.class));
+                        }
+                        mAdapter.setData(myGroups);
+                    }
+                });
             }
         });
     }
@@ -134,37 +115,8 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.testButton3:
                 Log.i(TAG, "Clicked on testButton3.");
-                List<Task<GroupBase>> listGroups = mGroupViewModel.testMethod(myGroupTags);
-                Tasks.whenAllSuccess(listGroups).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
-                    @Override
-                    public void onSuccess(List<Object> objects) {
-                        Log.i(TAG,"Created GroupBase Group objects for all attached tags.");
-                        Toast.makeText(getContext(),"Successfully retrieved all groups!",Toast.LENGTH_SHORT).show();
-                        for(Object object:objects){
-                            myGroups.add((GroupBase) object);
-                        }
-                        mAdapter.setData(myGroups);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"Unable to retrieve the groups attached to User.",e);
-                        Toast.makeText(getContext(),"There was an error retrieving the groups.",Toast.LENGTH_SHORT).show();
-                    }
-                });
         }
     }
 
 
 }
-
-/*
- * Create a Repository method that:
- *  Retrieves the tags for the user then
- *  Retrieves the Documents for each tag.
- *  on whenAllSuccess, create Groupbase for each returned object.
- *  Create a GroupBase object for each Document received.
- *  >>>> List<Task<GroupBase>>
- *
- *  Once Group is created, get pictures for each in a separate repository method call.
- */
