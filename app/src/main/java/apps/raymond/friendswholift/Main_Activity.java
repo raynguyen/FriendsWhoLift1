@@ -36,9 +36,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Source;
 
-import apps.raymond.friendswholift.HomeActFrags.TempAddStat;
+import apps.raymond.friendswholift.Activity_Main.TempAddStat;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "Main_Activity";

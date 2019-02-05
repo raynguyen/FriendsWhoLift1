@@ -1,4 +1,4 @@
-package apps.raymond.friendswholift.HomeActFrags;
+package apps.raymond.friendswholift.Activity_Main;
 
 import android.content.Context;
 import android.database.Cursor;

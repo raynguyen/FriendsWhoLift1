@@ -1,6 +1,5 @@
-package apps.raymond.friendswholift.HomeActFrags;
+package apps.raymond.friendswholift.Activity_Main;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,14 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import apps.raymond.friendswholift.R;
-import apps.raymond.friendswholift.StatSQLClasses.StatDAO;
 import apps.raymond.friendswholift.StatSQLClasses.StatEntity;
-import apps.raymond.friendswholift.StatSQLClasses.StatRoomDatabase;
 import apps.raymond.friendswholift.StatSQLClasses.StatViewModel;
 
 public class TempAddStat extends DialogFragment implements View.OnClickListener {

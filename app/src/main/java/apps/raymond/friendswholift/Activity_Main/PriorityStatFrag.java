@@ -1,4 +1,4 @@
-package apps.raymond.friendswholift.HomeActFrags;
+package apps.raymond.friendswholift.Activity_Main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
