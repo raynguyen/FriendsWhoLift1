@@ -1,4 +1,10 @@
+/*
+ * ToDo:
+ * 1)Implement the swiperefresher that updates the RecyclerView CardViews.
+ */
+
 package apps.raymond.friendswholift.Groups;
+
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,8 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,19 +42,24 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MygroupsFragment";
 
     GroupsViewModel mGroupViewModel;
-    List<String> myGroupTags;
     ArrayList<GroupBase> myGroups;
     TextView testTextView;
     ImageView mImage;
     GroupRecyclerAdapter mAdapter;
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.groups_mygroups, container, false);
 
+        Button getfieldsBtn = view.findViewById(R.id.testButton3);
+        Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
+        getGroupPojoBtn.setOnClickListener(this);
+        getfieldsBtn.setOnClickListener(this);
+
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
+        SearchView groupSearchView = view.findViewById(R.id.groupSearchView);
+
         cardRecycler.setItemAnimator(new DefaultItemAnimator());
         cardRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
@@ -56,21 +67,34 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mGroupViewModel = new GroupsViewModel();
+        groupSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mAdapter.filter(query);
+                return false;
+            }
 
-        Button getfieldsBtn = view.findViewById(R.id.testButton3);
-        Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
-        getGroupPojoBtn.setOnClickListener(this);
-        getfieldsBtn.setOnClickListener(this);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.filter(newText);
+                return false;
+            }
+        });
+
+
+        mGroupViewModel = new GroupsViewModel();
 
         testTextView = view.findViewById(R.id.testTextView);
         mImage = view.findViewById(R.id.testImage);
 
         updateCardViews();
-
         return view;
     }
 
+    /*
+     * To truly follow SoC principle, the Fragment should not do the conversion from
+     * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
+     */
     private void updateCardViews(){
         mGroupViewModel.testMethod1().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
             @Override

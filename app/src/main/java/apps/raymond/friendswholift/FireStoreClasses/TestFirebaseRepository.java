@@ -8,6 +8,8 @@
 package apps.raymond.friendswholift.FireStoreClasses;
 
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -19,8 +21,11 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -29,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import apps.raymond.friendswholift.Groups.GroupBase;
 
@@ -44,6 +51,7 @@ public class TestFirebaseRepository {
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    private MutableLiveData<Set<String>> groupKeys;
 
     /*
      * Method call to create a Document under the 'Users' Collection. This collection will contain
@@ -86,6 +94,7 @@ public class TestFirebaseRepository {
                 });
     }
 
+
     /*
      * Collects the fields of a User document and returns them as a Set<String>.
      * The actual method call returns a Task to gather the fields of our Document. Once this task is
@@ -112,8 +121,8 @@ public class TestFirebaseRepository {
     }
 
 
+    //this one works.
     public Task<List<Task<DocumentSnapshot>>> testMethod1(){
-
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(currentUser.getEmail()).get()
                 .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
@@ -173,3 +182,26 @@ public class TestFirebaseRepository {
     }
 
 }
+
+    /*
+     * Attaches a listener to the current user's Document for real-time updates on the User's
+     * attached groups. When a change in the document is detected, the listener will return a
+     * DocumentSnapshot of the document's new state.
+
+    public void attachUserListener(){
+        userCollection.document(currentUser.getEmail()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                Log.i(TAG,"User had their associated Groups modified.");
+
+                if(documentSnapshot !=null && documentSnapshot.exists()){
+                    groupKeys = new MutableLiveData<Set<String>>(documentSnapshot.getData().keySet());
+                    Log.i(TAG,"Listener modified UserGroupList to " + groupKeys.toString());
+                    return;
+                }
+                if(!documentSnapshot.exists() || e!=null){
+                    Log.d(TAG,"There is an error with the User's document.",e);
+                }
+            }
+        });
+    }*/

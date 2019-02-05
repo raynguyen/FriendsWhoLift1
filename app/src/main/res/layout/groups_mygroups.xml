@@ -6,6 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/myGroupParent">
 
+    <android.support.v7.widget.SearchView
+        android:id="@+id/groupSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/myGroupParent">
+    </android.support.v7.widget.SearchView>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresher"
         android:layout_width="wrap_content"
@@ -13,7 +20,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/restofview"
-        app:layout_constraintTop_toTopOf="@id/myGroupParent">
+        app:layout_constraintTop_toBottomOf="@id/groupSearchView">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/card_container"
@@ -26,9 +33,9 @@
     <RelativeLayout
         android:id="@+id/restofview"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/myGroupParent"
         app:layout_constraintTop_toBottomOf="@+id/swipeRefresher">
 
         <ImageView

@@ -5,9 +5,6 @@
  *  there should be a queue of tasks to execute to the Firebase db once a connection is established.
  * 2) On back press of NewGroup, it should store the current state in the backstack.
  * 3) When clicking out of a User Input field, we should unfocus the view and close the keyboard.
- * 4) Make a new activity for Groups with a swipe user interface:
- * one shown a CardView with recycler view for all groups attached to the user
- * another for creating group.
  * 5) Obtain the 'Membership' authorization from the radio button and pass to the 'Group' document.
  * 6) Obtain the 'Invite' power from the spinner item and pass to document group.
  * 7) Consider merging both the Login pager adapter and the group pager adapter.

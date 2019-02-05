@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.friendswholift.R;
@@ -37,7 +38,6 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     public GroupRecyclerAdapter.GroupViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.group_cardview, viewGroup, false);
-
         return new GroupViewHolder(view);
     }
 
@@ -65,4 +65,17 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
         }
     }
 
+    public void filter(String searchText){
+        List<GroupBase> myGroupsCopy = new ArrayList<>();
+        myGroupsCopy.clear();
+        if(searchText.isEmpty()){
+            myGroupsCopy.addAll(myGroups);
+        } else {
+            for(GroupBase group:myGroupsCopy){
+                if(group.getName().toLowerCase().contains(searchText)){
+                    myGroupsCopy.add(group);
+                }
+            }
+        }
+    }
 }

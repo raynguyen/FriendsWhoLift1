@@ -119,7 +119,7 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         Toast.makeText(getContext(),"Clicked on the negative button", Toast.LENGTH_SHORT).show();
     }
 
-    /*
+    /* Todo: This has to be moved to the Repository
      * THIS COULD PROBABLY EXIST AS A SEPARATE METHOD! Consider future calls to save tags to users.
      * Store a user's associated groups under the database collection 'Users'.
      * The UID of each user is used to create a new document or access the existing document in
@@ -130,10 +130,8 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         try{
             Log.i(TAG,"Attempting to attach the new group as a field in the User document.");
             FirebaseFirestore.getInstance().collection(USER_COLLECTION).
-                    document(currentUser.getUid()).update(groupName, "Add authorization here");
-            Log.i(TAG,"The User Document contains these tags: " +
-                    FirebaseFirestore.getInstance().collection(USER_COLLECTION).
-                            document(currentUser.getUid()).get());
+                    document(currentUser.getEmail()).update(groupName, "Add authorization here");
+            Log.i(TAG,"The User Document contains these tags: "+FirebaseFirestore.getInstance().collection(USER_COLLECTION).document(currentUser.getUid()).get().toString());
 
         } catch (NullPointerException npe){
             Log.w(TAG,"Unable to attach new group to the current user.");
