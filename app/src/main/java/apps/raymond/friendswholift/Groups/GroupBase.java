@@ -15,7 +15,7 @@ public class GroupBase {
     private String gcsURI;
     private List<String> tags;
     private byte[] photo;
-
+    private List<GroupEvent> events;
     // Empty constructor as required by FireBase.
     public GroupBase() {
     }
@@ -67,5 +67,13 @@ public class GroupBase {
 
     public byte[] getPhoto(){
         return photo;
+    }
+
+    public void addEvent(GroupEvent newEvent){
+        this.events.add(newEvent);
+    }
+
+    public List<GroupEvent> getEvents(){
+        return events;
     }
 }

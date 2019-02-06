@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import apps.raymond.friendswholift.MyInterfaces.MyInterface;
+import apps.raymond.friendswholift.Interfaces.MyInterface;
 import apps.raymond.friendswholift.R;
 
 /*

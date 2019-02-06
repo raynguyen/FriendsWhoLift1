@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import apps.raymond.friendswholift.DialogFragments.EditListItem;
-import apps.raymond.friendswholift.MyInterfaces.MyInterface;
+import apps.raymond.friendswholift.Interfaces.MyInterface;
 
 /*
 Class that generates the ListView view when 'Log' button is clicked.

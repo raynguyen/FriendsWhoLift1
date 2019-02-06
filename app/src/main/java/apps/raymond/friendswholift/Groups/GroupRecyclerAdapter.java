@@ -2,7 +2,6 @@ package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +10,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
 public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdapter.GroupViewHolder>{
     private static final String TAG = "GROUP RECYCLER ADAPTER";
     private List<GroupBase> myGroups;
+    private EventClickListener eventClickListener;
 
-    GroupRecyclerAdapter(List<GroupBase> myGroups){
+    GroupRecyclerAdapter(List<GroupBase> myGroups, EventClickListener eventClickListener){
         this.myGroups = myGroups;
+        this.eventClickListener =  eventClickListener;
     }
 
     static class GroupViewHolder extends RecyclerView.ViewHolder {

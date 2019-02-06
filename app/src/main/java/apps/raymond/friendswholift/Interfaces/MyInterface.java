@@ -1,4 +1,4 @@
-package apps.raymond.friendswholift.MyInterfaces;
+package apps.raymond.friendswholift.Interfaces;
 
 import android.content.Context;
 

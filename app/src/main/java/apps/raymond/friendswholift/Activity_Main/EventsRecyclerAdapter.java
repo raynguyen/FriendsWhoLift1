@@ -2,27 +2,31 @@ package apps.raymond.friendswholift.Activity_Main;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Date;
 import java.util.List;
 
 import apps.raymond.friendswholift.Groups.GroupEvent;
+import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
-public class EventsRecylcerAdapter extends RecyclerView.Adapter<EventsRecylcerAdapter.EventViewHolder> {
+public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.EventViewHolder> {
+    private static final String TAG = "EventsRecyclerAdapter";
     private List<GroupEvent> eventsList;
+    private EventClickListener eventClickListener;
 
-    public EventsRecylcerAdapter(List<GroupEvent> eventsList){
+    EventsRecyclerAdapter(List<GroupEvent> eventsList, EventClickListener eventClickListener){
+        Log.i(TAG,"Creating an instance of the event Recycler.");
         this.eventsList = eventsList;
+        this.eventClickListener = eventClickListener;
     }
+
     static class EventViewHolder extends RecyclerView.ViewHolder{
-
         private TextView eventName, eventDesc, eventDay, eventMonth;
-
         private EventViewHolder(View view){
             super(view);
             eventName = view.findViewById(R.id.event_title);
@@ -34,13 +38,14 @@ public class EventsRecylcerAdapter extends RecyclerView.Adapter<EventsRecylcerAd
 
     @NonNull
     @Override
-    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_event_frag,viewGroup,false);
+    public EventsRecyclerAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.event_cardview,viewGroup,false);
         return new EventViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventViewHolder eventViewHolder, int i) {
+    public void onBindViewHolder(@NonNull EventsRecyclerAdapter.EventViewHolder eventViewHolder, int i) {
         if(eventsList!=null){
             GroupEvent currEvent = eventsList.get(i);
             eventViewHolder.eventName.setText(currEvent.getName());

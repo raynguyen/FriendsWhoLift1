@@ -36,9 +36,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
-public class MyGroupsFragment extends Fragment implements View.OnClickListener {
+public class MyGroupsFragment extends Fragment implements View.OnClickListener, EventClickListener {
     private static final String TAG = "MygroupsFragment";
 
     GroupsViewModel mGroupViewModel;
@@ -47,10 +48,25 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
     ImageView mImage;
     GroupRecyclerAdapter mAdapter;
 
+    public MyGroupsFragment(){
+        //Required empty fragment. Not sure why it is needed.
+    }
+
+    public MyGroupsFragment newInstance(){
+        return new MyGroupsFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.groups_mygroups, container, false);
+        return view;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         Button getfieldsBtn = view.findViewById(R.id.testButton3);
         Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
@@ -63,7 +79,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
         cardRecycler.setItemAnimator(new DefaultItemAnimator());
         cardRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
-        mAdapter = new GroupRecyclerAdapter(myGroups);
+        mAdapter = new GroupRecyclerAdapter(myGroups, this);
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -81,15 +97,14 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-
         mGroupViewModel = new GroupsViewModel();
 
         testTextView = view.findViewById(R.id.testTextView);
         mImage = view.findViewById(R.id.testImage);
 
         updateCardViews();
-        return view;
     }
+
 
     /*
      * To truly follow SoC principle, the Fragment should not do the conversion from
@@ -113,6 +128,11 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener {
                 });
             }
         });
+    }
+
+    @Override
+    public void onEventClick(int position, GroupEvent groupEvent) {
+        // When an event is clicked we want to open a new eventPagerFragment to display the contents of our events.
     }
 
     @Override
