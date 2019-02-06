@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Groups.GroupEvent;
+import apps.raymond.friendswholift.Events.EventDetailFragment;
+import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
@@ -34,12 +35,17 @@ public class GroupEventsFrag extends Fragment implements EventClickListener {
         myEvents = new ArrayList<>();
         testCreateEvent();
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsRecyclerAdapter(myEvents, this);
         eventsRecycler.setAdapter(mAdapter);
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        return view;
     }
 
     private void testCreateEvent(){
@@ -57,6 +63,15 @@ public class GroupEventsFrag extends Fragment implements EventClickListener {
 
     @Override
     public void onEventClick(int position, GroupEvent groupEvent) {
-
+        Log.i(TAG,"Event CardView was clicked. Position: "+position);
+        //Handle Event Clicks here
+        Fragment eventDetailFragment = EventDetailFragment.newInstance(groupEvent);
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.event_FrameLayout,eventDetailFragment)
+                //.add(eventDetailFragment,null)
+                .addToBackStack(null)
+                .show(eventDetailFragment)
+                .commit();
     }
 }

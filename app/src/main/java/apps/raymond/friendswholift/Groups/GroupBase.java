@@ -5,6 +5,8 @@ package apps.raymond.friendswholift.Groups;
 
 import java.util.List;
 
+import apps.raymond.friendswholift.Events.GroupEvent;
+
 public class GroupBase {
 
     private String name;

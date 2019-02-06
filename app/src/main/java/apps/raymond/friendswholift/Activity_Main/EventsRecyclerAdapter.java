@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.Groups.GroupEvent;
+import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
@@ -38,21 +38,30 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
     @NonNull
     @Override
-    public EventsRecyclerAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public EventsRecyclerAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.event_cardview,viewGroup,false);
         return new EventViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventsRecyclerAdapter.EventViewHolder eventViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final EventsRecyclerAdapter.EventViewHolder eventViewHolder, int position) {
+        final GroupEvent groupEvent = eventsList.get(position);
+
         if(eventsList!=null){
-            GroupEvent currEvent = eventsList.get(i);
+            GroupEvent currEvent = eventsList.get(position);
             eventViewHolder.eventName.setText(currEvent.getName());
             eventViewHolder.eventDesc.setText(currEvent.getDesc());
             eventViewHolder.eventMonth.setText(currEvent.getMonth());
             eventViewHolder.eventDay.setText(currEvent.getDay());
         }
+
+        eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventClickListener.onEventClick(eventViewHolder.getAdapterPosition(),groupEvent);
+            }
+        });
     }
 
     @Override

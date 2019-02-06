@@ -1,6 +1,6 @@
 package apps.raymond.friendswholift.Interfaces;
 
-import apps.raymond.friendswholift.Groups.GroupEvent;
+import apps.raymond.friendswholift.Events.GroupEvent;
 
 public interface EventClickListener {
 
