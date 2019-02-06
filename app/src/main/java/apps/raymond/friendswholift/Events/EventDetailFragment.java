@@ -24,11 +24,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 
-import org.w3c.dom.Text;
-
-import java.security.acl.Group;
-
 import apps.raymond.friendswholift.R;
+
 
 public class EventDetailFragment extends Fragment {
     private static final String TAG = "EventDetailFragment";

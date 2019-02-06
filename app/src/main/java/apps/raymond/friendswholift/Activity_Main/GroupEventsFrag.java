@@ -4,22 +4,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.Events.CreateEventFragment;
 import apps.raymond.friendswholift.Events.EventDetailFragment;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
-public class GroupEventsFrag extends Fragment implements EventClickListener {
+public class GroupEventsFrag extends Fragment implements EventClickListener, View.OnClickListener {
     private static final String TAG = "GroupEventsFrag";
 
     RecyclerView eventsRecycler;
@@ -42,9 +45,12 @@ public class GroupEventsFrag extends Fragment implements EventClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ImageButton addEventBtn = view.findViewById(R.id.create_event);
+        addEventBtn.setOnClickListener(this);
         eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsRecyclerAdapter(myEvents, this);
         eventsRecycler.setAdapter(mAdapter);
+        eventsRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
@@ -73,5 +79,21 @@ public class GroupEventsFrag extends Fragment implements EventClickListener {
                 .addToBackStack(null)
                 .show(eventDetailFragment)
                 .commit();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i){
+            case R.id.create_event:
+                Log.i(TAG,"Clicked on button to create new event.");
+                Fragment createEventFragment = CreateEventFragment.newInstance();
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.event_FrameLayout,createEventFragment)
+                        .show(createEventFragment)
+                        .commit();
+                break;
+        }
     }
 }
