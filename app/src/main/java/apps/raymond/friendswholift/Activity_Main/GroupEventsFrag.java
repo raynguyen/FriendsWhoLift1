@@ -66,9 +66,9 @@ public class GroupEventsFrag extends Fragment implements EventClickListener {
         Log.i(TAG,"Event CardView was clicked. Position: "+position);
         //Handle Event Clicks here
         Fragment eventDetailFragment = EventDetailFragment.newInstance(groupEvent);
-        getFragmentManager()
+        getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.event_FrameLayout,eventDetailFragment)
+                .add(R.id.event_FrameLayout,eventDetailFragment)
                 //.add(eventDetailFragment,null)
                 .addToBackStack(null)
                 .show(eventDetailFragment)

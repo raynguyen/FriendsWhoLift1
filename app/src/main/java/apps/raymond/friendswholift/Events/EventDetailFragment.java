@@ -49,13 +49,14 @@ public class EventDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.i(TAG,"Creating view for GroupEvent details.");
         return inflater.inflate(R.layout.event_detail_frag,container,false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.i(TAG,"View successfully created.");
         GroupEvent groupEvent = getArguments().getParcelable(EXTRA_EVENT_ITEM);
 
         TextView eventName = view.findViewById(R.id.event_title);
