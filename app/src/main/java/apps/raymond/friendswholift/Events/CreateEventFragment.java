@@ -53,7 +53,9 @@ public class CreateEventFragment extends Fragment {
                         descTxt.getText().toString(),
                         monthTxt.getText().toString(),
                         dayTxt.getText().toString());
-                Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getName().toString());
+                Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getName());
+
+                // When clicking create, call the repository method to add the event to the group document.
             }
         });
     }

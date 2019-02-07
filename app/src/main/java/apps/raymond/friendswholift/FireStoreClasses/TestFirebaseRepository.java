@@ -12,9 +12,11 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -26,6 +28,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -37,6 +40,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
 
 public class TestFirebaseRepository {
@@ -181,27 +185,18 @@ public class TestFirebaseRepository {
         return myPhotos;
     }
 
-}
-
-    /*
-     * Attaches a listener to the current user's Document for real-time updates on the User's
-     * attached groups. When a change in the document is detected, the listener will return a
-     * DocumentSnapshot of the document's new state.
-
-    public void attachUserListener(){
-        userCollection.document(currentUser.getEmail()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+    public void addEventToGroup(String groupName, GroupEvent groupEvent){
+        groupCollection.document(groupName).set(groupEvent, SetOptions.merge())
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.i(TAG,"Event added to Group Document.");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                Log.i(TAG,"User had their associated Groups modified.");
-
-                if(documentSnapshot !=null && documentSnapshot.exists()){
-                    groupKeys = new MutableLiveData<Set<String>>(documentSnapshot.getData().keySet());
-                    Log.i(TAG,"Listener modified UserGroupList to " + groupKeys.toString());
-                    return;
-                }
-                if(!documentSnapshot.exists() || e!=null){
-                    Log.d(TAG,"There is an error with the User's document.",e);
-                }
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Error adding event to Group Document.",e);
             }
         });
-    }*/
+    }
+}

@@ -1,8 +1,11 @@
 /*
  * A model class for a Group.
+ *
+ * Change the default constructor to only require mandatory fields.
  */
 package apps.raymond.friendswholift.Groups;
 
+import java.util.Arrays;
 import java.util.List;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
@@ -18,6 +21,7 @@ public class GroupBase {
     private List<String> tags;
     private byte[] photo;
     private List<GroupEvent> events;
+
     // Empty constructor as required by FireBase.
     public GroupBase() {
     }
@@ -71,9 +75,6 @@ public class GroupBase {
         return photo;
     }
 
-    public void addEvent(GroupEvent newEvent){
-        this.events.add(newEvent);
-    }
 
     public List<GroupEvent> getEvents(){
         return events;
