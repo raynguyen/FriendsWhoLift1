@@ -17,6 +17,7 @@ import android.util.Log;
 
 public class YesNoDialog extends DialogFragment{
     private static final String TAG = "YesNoDialog";
+    public static final String DISCARD_CHANGES = "Leaving now will discard any changes you have made. \nAre you sure you want to cancel?";
 
     YesNoInterface callback;
 
@@ -24,6 +25,8 @@ public class YesNoDialog extends DialogFragment{
         void positiveClick();
         void negativeClick();
     }
+
+    public YesNoDialog(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,18 +38,16 @@ public class YesNoDialog extends DialogFragment{
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Log.i(TAG, "Creating a YesNoDialog.");
 
-        Bundle args = getArguments();
-
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Note!")
-                .setMessage("shit")
-                .setPositiveButton("Positive", new DialogInterface.OnClickListener() {
+                .setTitle("Warning!")
+                .setMessage(DISCARD_CHANGES)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         callback.positiveClick();
                     }
                 })
-                .setNegativeButton("Negative", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         callback.negativeClick();

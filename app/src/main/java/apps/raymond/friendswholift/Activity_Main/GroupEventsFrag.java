@@ -1,5 +1,6 @@
 package apps.raymond.friendswholift.Activity_Main;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,18 +8,33 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.friendswholift.Events.CreateEventFragment;
 import apps.raymond.friendswholift.Events.EventDetailFragment;
+import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
+import apps.raymond.friendswholift.Groups.GroupBase;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
@@ -28,7 +44,8 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     RecyclerView eventsRecycler;
     List<GroupEvent> myEvents;
     EventsRecyclerAdapter mAdapter;
-
+    EventViewModel eventViewModel;
+    List<String> myEventNames;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -36,7 +53,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         View view = inflater.inflate(R.layout.main_event_frag, container,false);
 
         myEvents = new ArrayList<>();
-        testCreateEvent();
+        //testCreateEvent();
 
         return view;
     }
@@ -44,6 +61,14 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        /*eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+        eventViewModel.getEvents().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<GroupEvent>> task) {
+                Log.i(TAG,"Completed the getEvents method.");
+            }
+        });*/
 
         ImageButton addEventBtn = view.findViewById(R.id.create_event);
         addEventBtn.setOnClickListener(this);
@@ -86,13 +111,68 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         int i = v.getId();
         switch (i){
             case R.id.create_event:
+
+                final List<String> myEvents = new ArrayList<>();
+                Task<List<Task<DocumentSnapshot>>> myGroupEvents;
+
+                //Test method to see if we can return a List of the Document names from the Events Collection **WORKS
+                final FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
+                myGroupEvents = FirebaseFirestore.getInstance().collection("Users").document(currUser.getEmail()).collection("Events").get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()){
+                                     for(QueryDocumentSnapshot event:task.getResult()){
+                                         myEvents.add(event.getId());
+                                         Log.i(TAG, myEvents.toString());
+                                     }
+                                }
+                            }
+                            //This continuation will try to collect all the GroupEvent objects from the
+                        }).continueWith(new Continuation<QuerySnapshot, List<Task<DocumentSnapshot>>>() {
+                    @Override
+                    public List<Task<DocumentSnapshot>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        Log.i(TAG,"Continuing to get the GroupEvents ");
+                        final List<Task<DocumentSnapshot>> myGroupEvents;
+                        myGroupEvents = new ArrayList<>();
+                        for(String eventName : myEvents){
+                            Log.i(TAG,"Attempting to retrieve GroupEvent POJO named: "+eventName);
+                            myGroupEvents.add(FirebaseFirestore.getInstance().collection("Groups").document(currUser.getEmail()).collection("Events").document(eventName).get());
+                        }
+                        return myGroupEvents;
+                    }
+                });
+
+                // From this we can conclude that myGroupEvents returns a List of tasks to retrieve documents.
+                myGroupEvents.addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
+                        Tasks.whenAllSuccess(task.getResult()).addOnCompleteListener(new OnCompleteListener<List<Object>>() {
+                            @Override
+                            public void onComplete(@NonNull Task<List<Object>> task) {
+                                if(task.isSuccessful()){
+                                    for(Object object: task.getResult()){
+                                        Log.i(TAG,"Retrieved: " + object.toString());
+
+                                    }
+                                }
+
+                            }
+                        });
+                    }
+                });
+
+
+
+
+                /*
                 Log.i(TAG,"Clicked on button to create new event.");
                 Fragment createEventFragment = CreateEventFragment.newInstance();
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.event_FrameLayout,createEventFragment)
                         .show(createEventFragment)
-                        .commit();
+                        .commit();*/
                 break;
         }
     }

@@ -28,6 +28,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -185,18 +187,56 @@ public class TestFirebaseRepository {
         return myPhotos;
     }
 
-    public void addEventToGroup(String groupName, GroupEvent groupEvent){
-        groupCollection.document(groupName).set(groupEvent, SetOptions.merge())
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
+    public Task<DocumentSnapshot> addEventToGroup(final String groupName, final GroupEvent groupEvent){
+        final DocumentReference eventRef = groupCollection.document(groupName).collection("Events").document(groupEvent.getName());
+        return eventRef.set(groupEvent, SetOptions.merge())
+                .continueWithTask(new Continuation<Void, Task<DocumentSnapshot>>() {
+                    @Override
+                    public Task<DocumentSnapshot> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Successfully added event to Group.");
+                            return eventRef.get();
+                        } else {
+                            Log.w(TAG,"Error retrieving the new event.");
+                        }
+                        return null;
+                    }
+                });
+    }
+
+    public Task<DocumentSnapshot> addEventToUser(String eventName){
+        Log.i(TAG,"Adding event to User Document.");
+        final DocumentReference docRef = userCollection.document(currentUser.getEmail()).collection("Events").document(eventName);
+        Map<String,String> testMap = new HashMap<>();
+        testMap.put("Access","Owner");
+        return docRef.set(testMap, SetOptions.merge())
+                .continueWithTask(new Continuation<Void, Task<DocumentSnapshot>>() {
                 @Override
-                public void onSuccess(Void aVoid) {
-                    Log.i(TAG,"Event added to Group Document.");
+                public Task<DocumentSnapshot> then(@NonNull Task<Void> task) throws Exception {
+                    if(task.isSuccessful()){
+                        return docRef.get();
+                    }
+                    return null;
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error adding event to Group Document.",e);
-            }
         });
+    }
+
+    public Task<List<QueryDocumentSnapshot>> getEvents(){
+        final List<String> myEventNames = new ArrayList<>();
+
+        userCollection.document(currentUser.getEmail()).collection("Events").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document:task.getResult()){
+                                myEventNames.add(document.getId());
+                                Log.i(TAG,"myEventNames contains: " + myEventNames.toString());
+                            }
+                        }
+                    }
+                });
+
+        return null;
     }
 }

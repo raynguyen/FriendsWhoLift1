@@ -7,46 +7,52 @@
     android:padding="12dp"
     android:clickable="true">
 
-    <LinearLayout
-        android:id="@+id/input_layout"
-        android:layout_width="match_parent"
+
+    <EditText
+        android:id="@+id/event_name_txt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:textSize="20sp"
+        android:text="NAME"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:orientation="vertical">
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <EditText
-            android:id="@+id/event_name_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:text="NAME"/>
+    <EditText
+        android:id="@+id/event_desc_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DESCRIPTION"
+        app:layout_constraintTop_toBottomOf="@id/event_name_txt"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/event_desc_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DESCRIPTION"/>
 
-        <EditText
-            android:id="@+id/event_day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DAY"/>
 
-        <EditText
-            android:id="@+id/event_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MONTH"/>
+    <EditText
+        android:id="@+id/event_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MONTH"
+        app:layout_constraintTop_toBottomOf="@id/event_desc_txt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    </LinearLayout>
+    <EditText
+        android:id="@+id/event_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DAY"
+        app:layout_constraintTop_toBottomOf="@id/event_month"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/input_layout">
+        app:layout_constraintTop_toBottomOf="@+id/event_day">
 
         <Button
             android:id="@+id/cancel_btn"

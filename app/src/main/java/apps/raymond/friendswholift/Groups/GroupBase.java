@@ -75,7 +75,6 @@ public class GroupBase {
         return photo;
     }
 
-
     public List<GroupEvent> getEvents(){
         return events;
     }

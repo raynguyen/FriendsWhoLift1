@@ -6,6 +6,8 @@
 package apps.raymond.friendswholift.Groups;
 
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -64,7 +66,6 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         return view;
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -98,7 +99,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
-        mGroupViewModel = new GroupsViewModel();
+        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);//new GroupsViewModel();
 
         testTextView = view.findViewById(R.id.testTextView);
         mImage = view.findViewById(R.id.testImage);

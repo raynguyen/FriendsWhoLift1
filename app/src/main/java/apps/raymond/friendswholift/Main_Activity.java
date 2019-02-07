@@ -42,10 +42,11 @@ import apps.raymond.friendswholift.Activity_Main.TempAddStat;
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "Main_Activity";
     private static final String ADD_DIALOG = "AddStatDialog";
+
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
-    FirebaseFirestore fireDB;
+    public FirebaseFirestore fireDB;
     Button checkPRS_Btn, cancel_Btn, new_group_Btn, test_Btn;
 
     @Override

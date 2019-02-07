@@ -6,6 +6,7 @@
 
 package apps.raymond.friendswholift.Groups;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -70,7 +71,7 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         invite_Spinner.setAdapter(adapter);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mGroupViewModel = new GroupsViewModel();
+        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
         return view;
     }
 
@@ -96,9 +97,7 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
     }
 
     private void confirmDialog(){
-        /*
-        Create the body for the dialog here as an argument and pass it over.
-         */
+
         DialogFragment dialog = new YesNoDialog();
         dialog.setTargetFragment(this, 0);
         dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
@@ -110,7 +109,6 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         Toast.makeText(getContext(),"Clicked on the positive button", Toast.LENGTH_SHORT).show();
         GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", Arrays.asList("420","sports")); //Look into this Arrays.asList thing
         mGroupViewModel.createGroup(groupName, groupBase);
-        //createGroup(this.groupName);
         attachGroup(this.groupName);
     }
 
