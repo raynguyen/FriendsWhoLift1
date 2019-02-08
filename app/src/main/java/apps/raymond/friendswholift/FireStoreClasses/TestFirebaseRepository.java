@@ -1,5 +1,9 @@
 /*
- *Repository modules handle data operations. They provide a clean API so that the rest of the app
+ * There appears to be an error where onSuccessListeners will trigger even if there is no collection or document of the requested name.
+ * --NOTE: When we create a Task to retrieve documents from Firestore, if the document or the document path does not exist,
+ * it will return a NULL document but will still SUCCEED. This is why the onSuccessListener is triggered.
+ *
+ * Repository modules handle data operations. They provide a clean API so that the rest of the app
  * can retrieve this data easily. They know where to get the data from and what API calls to make
  * when data is updated. You can consider repositories to be mediators between different data
  * sources, such as persistent models, web services, and caches
@@ -50,10 +54,12 @@ public class TestFirebaseRepository {
     private static final String TAG = "TestFirebaseRepository";
     private static final String GROUP_COLLECTION = "Groups";
     private static final String USER_COLLECTION = "Users";
+    private static final String EVENT_COLLECTION = "Events";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
+    private CollectionReference eventCollection = db.collection(EVENT_COLLECTION);
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
@@ -126,8 +132,6 @@ public class TestFirebaseRepository {
                 });
     }
 
-
-    //this one works.
     public Task<List<Task<DocumentSnapshot>>> testMethod1(){
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(currentUser.getEmail()).get()
@@ -160,21 +164,6 @@ public class TestFirebaseRepository {
                     }
                 });
 
-    }
-
-    /*
-     * Query Firestore against a List of names. For each name in the list, retrieve the POJO of that
-     * document and append it to a List that will be returned to the context Caller.
-     */
-    public List<Task<DocumentSnapshot>> getGroupsOld(List<String> myGroupTags){
-        // Consider moving the following List<String> manipulation to the Fragment or??
-        List<Task<DocumentSnapshot>> myTasks = new ArrayList<>();
-        for(String name : myGroupTags){
-            // We don't need OnCompleteListener because it will be implemented in the calling context.
-            Task<DocumentSnapshot> snapshot = groupCollection.document(name).get();
-            myTasks.add(snapshot);
-        }
-        return myTasks;
     }
 
     public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
@@ -221,22 +210,35 @@ public class TestFirebaseRepository {
         });
     }
 
-    public Task<List<QueryDocumentSnapshot>> getEvents(){
-        final List<String> myEventNames = new ArrayList<>();
-
-        userCollection.document(currentUser.getEmail()).collection("Events").get()
+    public Task<List<Task<DocumentSnapshot>>> getEvents(){
+           // First task retrieves a list of the Groups from the User Document.
+        return userCollection.document(currentUser.getEmail()).collection("Events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot document:task.getResult()){
-                                myEventNames.add(document.getId());
-                                Log.i(TAG,"myEventNames contains: " + myEventNames.toString());
-                            }
+                        for(QueryDocumentSnapshot document:task.getResult()){
+                            //Log.i(TAG,"Retrieved this document from the task: "+document.getId());
                         }
                     }
+                })
+                // Second task will return a List of tasks to retrieve a document pertaining to each document retrieved from the first task.
+                .continueWith(new Continuation<QuerySnapshot, List<Task<DocumentSnapshot>>>() {
+                    @Override
+                    public List<Task<DocumentSnapshot>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Task<DocumentSnapshot>> groupEvents = new ArrayList<>();
+                        for(QueryDocumentSnapshot document:task.getResult()){
+                            Task<DocumentSnapshot> myEvent = eventCollection.document(document.getId()).get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            //Convert to POJO OBJECT HERE?
+                                            Log.i(TAG,"Retrieved this document from the task: "+documentSnapshot.toString());
+                                        }
+                                    });
+                            groupEvents.add(myEvent);
+                        }
+                        return groupEvents;
+                    }
                 });
-
-        return null;
     }
 }

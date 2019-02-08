@@ -47,6 +47,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     EventsRecyclerAdapter mAdapter;
     EventViewModel eventViewModel;
     List<String> myEventNames;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -63,7 +64,8 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        /*eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+        eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+        /*
         eventViewModel.getEvents().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
             @Override
             public void onComplete(@NonNull Task<List<GroupEvent>> task) {
@@ -112,10 +114,11 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         int i = v.getId();
         final FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
         final List<String> myEvents = new ArrayList<>();
+        final List<GroupEvent> groupEvents = new ArrayList<>();
         final Task<List<Task<DocumentSnapshot>>> myGroupEvents;
 
         switch (i){
-            case R.id.create_event://create_event
+            case R.id.cancel_btn://create_event
                 //Test method to see if we can return a List of the Document names from the Events Collection **WORKS
 
 
@@ -133,7 +136,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                             //The above will get us a list of the Event names in the User's Event Collection.
                             //Use this list to retrieve the appropriate POJO document from our Groups Collection.
 
-                            
+
                             //This continuation will try to collect all the GroupEvent objects from the
                         }).continueWith(new Continuation<QuerySnapshot, List<Task<DocumentSnapshot>>>() {
                             @Override
@@ -182,7 +185,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                         .show(createEventFragment)
                         .commit();*/
                 break;
-            case R.id.cancel_btn: // This method shows that we are unable to continue if the Document reference does not exist.
+            case R.id.save_btn: // This method shows that we are unable to continue if the Document reference does not exist.
                 FirebaseFirestore.getInstance().collection("Users").document("WHACKATTACK").collection("Events").get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -201,6 +204,27 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                     }
                 });
                 break;
+            case R.id.create_event:
+                eventViewModel.getEvents().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
+                        if(task.isSuccessful()){
+                            Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                                @Override
+                                public void onSuccess(List<Object> objects) {
+                                    for(Object object:objects){
+                                        if( ((DocumentSnapshot)object).exists())
+                                        groupEvents.add(((DocumentSnapshot) object).toObject(GroupEvent.class));
+                                    }
+                                    Log.i(TAG,"Our List<GroupEvent> contains: " + groupEvents.toString());
+                                    mAdapter.setData(groupEvents);
+                                }
+                            });
+                        } else {
+                            Log.w(TAG,"Unable to retrieve the Events for the user.");
+                        }
+                    }
+                });
         }
     }
 }

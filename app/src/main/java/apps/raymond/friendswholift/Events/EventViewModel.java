@@ -23,8 +23,8 @@ public class EventViewModel extends ViewModel {
     public Task<DocumentSnapshot> addEventToUser(String eventName){
         return mRepository.addEventToUser(eventName);
     }
-    /*
-    public Task<List<GroupEvent>> getEvents(){
+
+    public Task<List<Task<DocumentSnapshot>>> getEvents(){
         return mRepository.getEvents();
-    }*/
+    }
 }
