@@ -176,21 +176,31 @@ public class TestFirebaseRepository {
         return myPhotos;
     }
 
-    public Task<DocumentSnapshot> addEventToGroup(final String groupName, final GroupEvent groupEvent){
-        final DocumentReference eventRef = groupCollection.document(groupName).collection("Events").document(groupEvent.getName());
-        return eventRef.set(groupEvent, SetOptions.merge())
-                .continueWithTask(new Continuation<Void, Task<DocumentSnapshot>>() {
+    /*
+     * Adds a GroupEvent POJO to a Document with the POJO's name.
+     */
+    public void createEvent(final GroupEvent groupEvent){
+        eventCollection.document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public Task<DocumentSnapshot> then(@NonNull Task<Void> task) throws Exception {
+                    public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Log.i(TAG,"Successfully added event to Group.");
-                            return eventRef.get();
+                            Log.i(TAG,"Added event " + groupEvent.getName() + " to the Events.");
                         } else {
-                            Log.w(TAG,"Error retrieving the new event.");
+                            Log.w(TAG,"Unable to add Event to the Events collection.");
                         }
-                        return null;
                     }
-                });
+                }).continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                if(task.isSuccessful()){
+                    addEventToUser(groupEvent.getName());
+                } else {
+                    Log.w(TAG,"Unable to store the Event in the Events collection. ");
+                }
+                return null;
+            }
+        });
     }
 
     public Task<DocumentSnapshot> addEventToUser(String eventName){
@@ -210,14 +220,14 @@ public class TestFirebaseRepository {
         });
     }
 
-    public Task<List<Task<DocumentSnapshot>>> getEvents(){
-           // First task retrieves a list of the Groups from the User Document.
+    public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
+        // First task retrieves a list of the Groups from the User Document.
         return userCollection.document(currentUser.getEmail()).collection("Events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for(QueryDocumentSnapshot document:task.getResult()){
-                            //Log.i(TAG,"Retrieved this document from the task: "+document.getId());
+                            Log.i(TAG,"User's events include: "+document.getId());
                         }
                     }
                 })

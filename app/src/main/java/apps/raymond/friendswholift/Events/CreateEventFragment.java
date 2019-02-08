@@ -8,7 +8,6 @@ package apps.raymond.friendswholift.Events;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -21,12 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
-import apps.raymond.friendswholift.Main_Activity;
 import apps.raymond.friendswholift.R;
 
 public class CreateEventFragment extends Fragment implements View.OnClickListener, YesNoDialog.YesNoInterface {
@@ -78,33 +72,14 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
                 Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getName());
 
                 EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
-
-                // Need to add a dropdown or spinner of the groups this user is attached to OR make a self-hosted event.
-                // Use the value of the selected item to determine what Group Document to add the event to.
-
-                eventViewModel.addEventToGroup("TestGroup2",newEvent)
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                Log.i(TAG,"Successfully added new Event.");
-                            }
-                        });
-
-                eventViewModel.addEventToUser(nameTxt.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                Log.i(TAG,"Added the event to the User document." + task.getResult().toString());
-                            }
-                        });
-                // ToDo: figure out how to add the dismiss fragment only in the onComplete above.
+                eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
                 getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
+
             case R.id.cancel_btn:
                 DialogFragment dialog = new YesNoDialog();
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
-
                 break;
         }
     }

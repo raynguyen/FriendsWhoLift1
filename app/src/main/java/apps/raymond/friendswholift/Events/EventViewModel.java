@@ -16,15 +16,15 @@ public class EventViewModel extends ViewModel {
         this.mRepository = new TestFirebaseRepository();
     }
 
-    public Task<DocumentSnapshot> addEventToGroup(String groupName,GroupEvent groupEvent){
-        return mRepository.addEventToGroup(groupName,groupEvent);
+    public void createEvent(GroupEvent groupEvent){
+        mRepository.createEvent(groupEvent);
     }
 
     public Task<DocumentSnapshot> addEventToUser(String eventName){
         return mRepository.addEventToUser(eventName);
     }
 
-    public Task<List<Task<DocumentSnapshot>>> getEvents(){
-        return mRepository.getEvents();
+    public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
+        return mRepository.getUsersEvents();
     }
 }

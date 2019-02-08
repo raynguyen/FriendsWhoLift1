@@ -5,7 +5,6 @@
  */
 package apps.raymond.friendswholift.Groups;
 
-import java.util.Arrays;
 import java.util.List;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
