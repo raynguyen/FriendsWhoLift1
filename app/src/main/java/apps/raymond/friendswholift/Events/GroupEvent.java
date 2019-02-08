@@ -19,6 +19,10 @@ public class GroupEvent implements Parcelable {
         }
     };
 
+    // Empty constructor as required by FireBase.
+    public GroupEvent(){
+    }
+
     private String name;
     private String desc;
     private String month;
