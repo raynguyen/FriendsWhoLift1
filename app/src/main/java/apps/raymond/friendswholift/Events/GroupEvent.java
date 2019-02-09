@@ -30,10 +30,10 @@ public class GroupEvent implements Parcelable {
 
     private GroupEvent(Parcel in){
         Log.i(TAG,"Creating GroupEvent instance: " +name + " via Parcel.");
-        name = in.readString();
-        desc = in.readString();
-        month = in.readString();
-        day = in.readString();
+        this.name = in.readString();
+        this.desc = in.readString();
+        this.month = in.readString();
+        this.day = in.readString();
     }
 
     public GroupEvent(String name, String desc, String month, String day){
