@@ -260,6 +260,10 @@ public class TestFirebaseRepository {
                 });
     }
 
+    public Task<GroupBase> getGroup(){
+
+        return null;
+    }
 
     // Not sure how to get this to pass on an action to the fragment (i.e. onEvent trigger update the RecyclerView).
     public Task<DocumentSnapshot> listenToUsersEvents(){

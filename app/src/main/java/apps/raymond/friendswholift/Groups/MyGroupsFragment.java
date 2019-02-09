@@ -132,7 +132,10 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onGroupClick(int position, GroupBase groupBase) {
         Log.i(TAG,"Clicked on a Group inside the RecyclerView at position: "+ position);
-        Fragment detailedGroup = DetailedGroupFragment.newInstance(groupBase);
+        Fragment detailedGroup = DetailedGroupFragment.newInstance();
+        Bundle args = new Bundle();
+        args.putParcelable("GroupObject",groupBase);
+        detailedGroup.setArguments(args);
         getFragmentManager().beginTransaction()
                 .add(R.id.groups_FrameLayout,detailedGroup)
                 .addToBackStack(null)

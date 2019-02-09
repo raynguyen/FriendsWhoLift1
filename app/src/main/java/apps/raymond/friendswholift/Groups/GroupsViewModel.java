@@ -21,13 +21,15 @@ public class GroupsViewModel extends ViewModel {
         mRepository.createGroupDoc(name, groupBase); //Requires a string that will be the name of the Document
     }
 
-
     public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
         return mRepository.getPhotos(myGroupTags);
     }
 
-
-     Task<List<Task<DocumentSnapshot>>> getUsersGroups(){
+    Task<List<Task<DocumentSnapshot>>> getUsersGroups(){
         return mRepository.getUsersGroups();
-     }
+    }
+
+    public Task<GroupBase> getGroup(){
+        return mRepository.getGroup();
+    }
 }
