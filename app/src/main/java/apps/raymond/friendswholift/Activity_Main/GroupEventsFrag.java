@@ -43,33 +43,23 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     List<GroupEvent> myEvents;
     EventsRecyclerAdapter mAdapter;
     EventViewModel eventViewModel;
-    List<String> myEventNames;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_event_frag, container,false);
-
+        eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
         myEvents = new ArrayList<>();
-
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
-        /*
-        eventViewModel.getUsersEvents().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<GroupEvent>> task) {
-                Log.i(TAG,"Completed the getUsersEvents method.");
-            }
-        });*/
         ImageButton addEventBtn = view.findViewById(R.id.create_event);
         addEventBtn.setOnClickListener(this);
+
         eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsRecyclerAdapter(myEvents, this);
         eventsRecycler.setAdapter(mAdapter);
@@ -78,6 +68,19 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
 
         updateEventCards();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        eventViewModel.attachListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        eventViewModel.removeListener(); //Doesn't do anything yet.
+    }
+
     /*
      * Will retrieve the User's events to populate the RecyclerView.
      * Only updates when the Fragment is first started. Need to figure out how to wrap the data in LiveData to trigger automatic updates.
@@ -96,6 +99,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                                 myEvents.add(((DocumentSnapshot) object).toObject(GroupEvent.class));
                             }
                             mAdapter.setData(myEvents);
+                            mAdapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -134,27 +138,6 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                         .add(R.id.event_FrameLayout,createEventFragment)
                         .show(createEventFragment)
                         .commit();
-                /*
-                eventViewModel.getUsersEvents().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
-                        if(task.isSuccessful()){
-                            Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
-                                @Override
-                                public void onSuccess(List<Object> objects) {
-                                    for(Object object:objects){
-                                        if( ((DocumentSnapshot)object).exists())
-                                        groupEvents.add(((DocumentSnapshot) object).toObject(GroupEvent.class));
-                                    }
-                                    Log.i(TAG,"Our List<GroupEvent> contains: " + groupEvents.toString());
-                                    mAdapter.setData(groupEvents);
-                                }
-                            });
-                        } else {
-                            Log.w(TAG,"Unable to retrieve the Events for the user.");
-                        }
-                    }
-                });*/
         }
     }
 }

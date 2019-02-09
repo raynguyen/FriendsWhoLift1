@@ -27,7 +27,7 @@ public class GroupsViewModel extends ViewModel {
     }
 
 
-     Task<List<Task<DocumentSnapshot>>> testMethod1(){
-        return mRepository.testMethod1();
+     Task<List<Task<DocumentSnapshot>>> getUsersGroups(){
+        return mRepository.getUsersGroups();
      }
 }

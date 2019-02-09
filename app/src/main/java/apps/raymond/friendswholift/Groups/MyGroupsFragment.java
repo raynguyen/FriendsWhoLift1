@@ -6,7 +6,6 @@
 package apps.raymond.friendswholift.Groups;
 
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,11 +36,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Events.GroupEvent;
-import apps.raymond.friendswholift.Interfaces.EventClickListener;
+import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
-public class MyGroupsFragment extends Fragment implements View.OnClickListener, EventClickListener {
+public class MyGroupsFragment extends Fragment implements View.OnClickListener, GroupClickListener {
     private static final String TAG = "MygroupsFragment";
 
     GroupsViewModel mGroupViewModel;
@@ -78,11 +75,11 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
         SearchView groupSearchView = view.findViewById(R.id.groupSearchView);
 
-        cardRecycler.setItemAnimator(new DefaultItemAnimator());
-        cardRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
-        // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
         mAdapter = new GroupRecyclerAdapter(myGroups, this);
+        //cardRecycler.setItemAnimator(new DefaultItemAnimator());
+        // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
         cardRecycler.setAdapter(mAdapter);
+        cardRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         groupSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -113,7 +110,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
      */
     private void updateCardViews(){
-        mGroupViewModel.testMethod1().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
+        mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
                 Log.i(TAG,"Finished retrieving a List of tasks.");
@@ -133,8 +130,14 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onEventClick(int position, GroupEvent groupEvent) {
-        // When an event is clicked we want to open a new eventPagerFragment to display the contents of our events.
+    public void onGroupClick(int position, GroupBase groupBase) {
+        Log.i(TAG,"Clicked on a Group inside the RecyclerView at position: "+ position);
+        Fragment detailedGroup = DetailedGroupFragment.newInstance(groupBase);
+        getFragmentManager().beginTransaction()
+                .add(R.id.groups_FrameLayout,detailedGroup)
+                .addToBackStack(null)
+                .show(detailedGroup)
+                .commit();
     }
 
     @Override

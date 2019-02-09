@@ -47,22 +47,19 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
     @Override
     public void onBindViewHolder(@NonNull final EventsRecyclerAdapter.EventViewHolder eventViewHolder, int position) {
-        final GroupEvent groupEvent = eventsList.get(position);
-
         if(eventsList!=null){
-            GroupEvent currEvent = eventsList.get(position);
+            final GroupEvent currEvent = eventsList.get(position);
             eventViewHolder.eventName.setText(currEvent.getName());
             eventViewHolder.eventDesc.setText(currEvent.getDesc());
             eventViewHolder.eventMonth.setText(currEvent.getMonth());
             eventViewHolder.eventDay.setText(currEvent.getDay());
+            eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    eventClickListener.onEventClick(eventViewHolder.getAdapterPosition(),currEvent);
+                }
+            });
         }
-
-        eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eventClickListener.onEventClick(eventViewHolder.getAdapterPosition(),groupEvent);
-            }
-        });
     }
 
     @Override

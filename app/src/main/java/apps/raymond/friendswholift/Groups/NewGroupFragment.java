@@ -24,8 +24,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -53,7 +51,7 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.group_new,container,false);
+        View view = inflater.inflate(R.layout.group_new_frag,container,false);
 
         Button discard_Btn = view.findViewById(R.id.discard_grp_btn);
         Button create_Btn = view.findViewById(R.id.create_grp_btn);

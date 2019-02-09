@@ -32,6 +32,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -131,8 +133,10 @@ public class TestFirebaseRepository {
                     }
                 });
     }
-
-    public Task<List<Task<DocumentSnapshot>>> testMethod1(){
+    /*
+     * ToDo: We are moving the user's groups from Fields of the document to a Collection.
+     */
+    public Task<List<Task<DocumentSnapshot>>> getUsersGroups(){
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(currentUser.getEmail()).get()
                 .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
@@ -220,6 +224,10 @@ public class TestFirebaseRepository {
         });
     }
 
+    /*
+     * Called when we want to retrieve GroupEvent objects that are listed under the User's groups.
+     * This method does not update the adapter when there is a change in the data.
+     */
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
         // First task retrieves a list of the Groups from the User Document.
         return userCollection.document(currentUser.getEmail()).collection("Events").get()
@@ -251,4 +259,27 @@ public class TestFirebaseRepository {
                     }
                 });
     }
+
+
+    // Not sure how to get this to pass on an action to the fragment (i.e. onEvent trigger update the RecyclerView).
+    public Task<DocumentSnapshot> listenToUsersEvents(){
+        Log.i(TAG,"Adding a listener to the User's events.");
+        Query eventsQuery = userCollection.document(currentUser.getEmail()).collection("Events");
+
+        ListenerRegistration eventListener = eventsQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                Log.i(TAG,"There was an event.");
+                for(QueryDocumentSnapshot document:queryDocumentSnapshots){
+                    Log.i(TAG,"The collection contains: " + document.getId());
+                }
+            }
+        });
+        return null;
+    }
+
+    public void removeListener(){
+    }
+
 }

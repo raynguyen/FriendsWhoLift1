@@ -2,6 +2,7 @@ package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,21 +11,20 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Interfaces.EventClickListener;
+import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
 public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdapter.GroupViewHolder>{
     private static final String TAG = "GROUP RECYCLER ADAPTER";
-    private List<GroupBase> myGroups;
-    private EventClickListener eventClickListener;
+    private List<GroupBase> groupsList;
+    private GroupClickListener groupClickListener;
 
-    GroupRecyclerAdapter(List<GroupBase> myGroups, EventClickListener eventClickListener){
-        this.myGroups = myGroups;
-        this.eventClickListener =  eventClickListener;
+    GroupRecyclerAdapter(List<GroupBase> myGroups, GroupClickListener groupClickListener){
+        this.groupsList = myGroups;
+        this.groupClickListener =  groupClickListener;
     }
 
     static class GroupViewHolder extends RecyclerView.ViewHolder {
-
         TextView nameTxt, descTxt, tagsTxt;
         private GroupViewHolder(View groupCardView){
             super(groupCardView);
@@ -45,23 +45,30 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
 
     // Called immediately after onCreateViewHolder. Binds our data to the new ViewHolder.
     @Override
-    public void onBindViewHolder(@NonNull GroupRecyclerAdapter.GroupViewHolder viewHolder, int position) {
-        if(myGroups!=null){
-            GroupBase currentGroup = myGroups.get(position);
+    public void onBindViewHolder(@NonNull final GroupRecyclerAdapter.GroupViewHolder viewHolder, int position) {
+        if(groupsList !=null){
+            final GroupBase currentGroup = groupsList.get(position);
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.descTxt.setText(currentGroup.getDescription());
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    groupClickListener.onGroupClick(viewHolder.getAdapterPosition(),currentGroup);
+                }
+            });
         }
     }
 
     public void setData(List<GroupBase> myGroups){
-        this.myGroups = myGroups;
+        this.groupsList = myGroups;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        if (myGroups!=null){
-            return myGroups.size();
+        if (groupsList !=null){
+            return groupsList.size();
         } else {
             return 0;
         }
@@ -71,7 +78,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
         List<GroupBase> myGroupsCopy = new ArrayList<>();
         myGroupsCopy.clear();
         if(searchText.isEmpty()){
-            myGroupsCopy.addAll(myGroups);
+            myGroupsCopy.addAll(groupsList);
         } else {
             for(GroupBase group:myGroupsCopy){
                 if(group.getName().toLowerCase().contains(searchText)){
