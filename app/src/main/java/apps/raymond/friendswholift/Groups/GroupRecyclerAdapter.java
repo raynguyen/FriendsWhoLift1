@@ -2,10 +2,10 @@ package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,12 +25,15 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     }
 
     static class GroupViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTxt, descTxt, tagsTxt;
+        private TextView nameTxt, descTxt, tagsTxt;
+        private ImageView groupImage;
+
         private GroupViewHolder(View groupCardView){
             super(groupCardView);
             nameTxt = groupCardView.findViewById(R.id.group_name_txt);
             descTxt = groupCardView.findViewById(R.id.desc_txt);
             tagsTxt = groupCardView.findViewById(R.id.tags_txt);
+            groupImage = groupCardView.findViewById(R.id.group_image);
         }
     }
 
@@ -50,7 +53,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
             final GroupBase currentGroup = groupsList.get(position);
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.descTxt.setText(currentGroup.getDescription());
-
+            //viewHolder.groupImage.setImageBitmap();
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

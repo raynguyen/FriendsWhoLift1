@@ -110,6 +110,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
      */
     private void updateCardViews(){
+        /*
         mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
@@ -126,6 +127,25 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
                     }
                 });
             }
+        });*/
+        mGroupViewModel.getUsersGroupsTest().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Task<GroupBase>>> task) {
+                Log.i(TAG,"Finished retrieving a List of tasks.");
+                Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                    @Override
+                    public void onSuccess(List<Object> objects) {
+                        myGroups = new ArrayList<>();
+                        for(Object object:objects){
+                            myGroups.add((GroupBase) object);
+                        }
+                        for(GroupBase object:myGroups){
+                            Log.i(TAG,"We have the following GroupBase objects:" +object.getName());
+                        }
+                        mAdapter.setData(myGroups);
+                    }
+                });
+            }
         });
     }
 
@@ -137,7 +157,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         args.putParcelable("GroupObject",groupBase);
         detailedGroup.setArguments(args);
         getFragmentManager().beginTransaction()
-                .add(R.id.groups_FrameLayout,detailedGroup)
+                .replace(R.id.groups_FrameLayout,detailedGroup)
                 .addToBackStack(null)
                 .show(detailedGroup)
                 .commit();
@@ -150,7 +170,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
             case R.id.testButton4:
                 Log.i(TAG, "Clicked on testButton4.");
                 String testString = "dogpic";
-                FirebaseStorage.getInstance().getReference().child("TestGroup1/"+testString+".jpg").getBytes(1024*1024)
+                FirebaseStorage.getInstance().getReferenceFromUrl("gs://friendswholift-ae511.appspot.com/TestGroup1/dogpic.jpg").getBytes(1024*1024)
                         .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                             @Override
                             public void onSuccess(byte[] bytes) {

@@ -29,6 +29,10 @@ public class GroupsViewModel extends ViewModel {
         return mRepository.getUsersGroups();
     }
 
+    Task<List<Task<GroupBase>>> getUsersGroupsTest(){
+        return mRepository.getUsersGroupsTest();
+    }
+
     public Task<GroupBase> getGroup(){
         return mRepository.getGroup();
     }

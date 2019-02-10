@@ -5,6 +5,7 @@
  */
 package apps.raymond.friendswholift.Groups;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -19,22 +20,23 @@ public class GroupBase implements Parcelable {
     private String owner;
     private String visibility;
     private String invite;
-    private String gcsURI;
+    private String imageURI;
     private List<String> tags;
     private byte[] photo;
     private List<GroupEvent> events;
+    private byte[] byteArray;
 
     // Empty constructor as required by FireBase.
     public GroupBase() {
     }
 
-    public GroupBase(String name, String description, String owner, String visibility, String invite, List<String> tags){
+    public GroupBase(String name, String description, String owner, String visibility, String invite, String imageURI){
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.visibility = visibility;
         this.invite = invite;
-        this.tags = tags; //Check what I do for this.
+        this.imageURI = imageURI;
     }
 
     public GroupBase(Parcel in){
@@ -43,6 +45,7 @@ public class GroupBase implements Parcelable {
         this.owner = in.readString();
         this.visibility = in.readString();
         this.invite = in.readString();
+        this.imageURI = in.readString();
     }
 
     public static final Parcelable.Creator<GroupBase> CREATOR = new Parcelable.Creator<GroupBase>(){
@@ -64,10 +67,7 @@ public class GroupBase implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
     }
-
-
 
     public String getName(){
         return name;
@@ -89,24 +89,21 @@ public class GroupBase implements Parcelable {
         return invite;
     }
 
+    public String getImageURI(){
+        return imageURI;
+    }
+
+    public void setByteArray(byte[] byteArray){
+        this.byteArray = byteArray;
+        //notifyAll();
+    }
+
+    public byte[] getByteArray(){
+        return byteArray;
+    }
+
     public List<String> getTags(){
         return tags;
-    }
-
-    public String setGcsURI(){
-        return gcsURI;
-    }
-
-    public String getGcsURI(){
-        return gcsURI;
-    }
-
-    public void setPhoto(byte[] photo){
-        this.photo = photo;
-    }
-
-    public byte[] getPhoto(){
-        return photo;
     }
 
     public List<GroupEvent> getEvents(){

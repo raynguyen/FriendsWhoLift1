@@ -1,5 +1,7 @@
 package apps.raymond.friendswholift.Groups;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,8 +19,7 @@ import apps.raymond.friendswholift.R;
 
 public class DetailedGroupFragment extends Fragment {
     private static final String TAG = "DetailedGroupFragment";
-    private ImageView group_image;
-    private TextView group_name;
+
     private GroupBase groupBase;
     private GroupsViewModel groupsViewModel;
     private Task<GroupBase> mGroup;
@@ -55,9 +56,15 @@ public class DetailedGroupFragment extends Fragment {
 
         TextView name = view.findViewById(R.id.group_name_txt);
         TextView desc = view.findViewById(R.id.group_desc_txt);
-
+        ImageView image = view.findViewById(R.id.group_image);
         name.setText(groupBase.getName());
         desc.setText(groupBase.getDescription());
+
+        byte[] bytes = groupBase.getByteArray();
+        if(bytes !=null){
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+            image.setImageBitmap(bitmap);
+        }
     }
 
 
