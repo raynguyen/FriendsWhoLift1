@@ -108,26 +108,10 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     /*
      * To truly follow SoC principle, the Fragment should not do the conversion from
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
+     *
+     * Need to check to see what happens if there is no photoURI in the group.
      */
     private void updateCardViews(){
-        /*
-        mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
-                Log.i(TAG,"Finished retrieving a List of tasks.");
-                Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
-                    @Override
-                    public void onSuccess(List<Object> objects) {
-                        myGroups = new ArrayList<>();
-                        Log.i(TAG,"Successfully retrieved all the Groups.");
-                        for(Object object : objects){
-                            myGroups.add(((DocumentSnapshot) object).toObject(GroupBase.class));
-                        }
-                        mAdapter.setData(myGroups);
-                    }
-                });
-            }
-        });*/
         mGroupViewModel.getUsersGroupsTest().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<GroupBase>>> task) {

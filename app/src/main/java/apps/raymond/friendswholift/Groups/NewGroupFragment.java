@@ -106,7 +106,7 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         //Add option for photo, if photo is taken, create the group, add image to storage, when the add image to storage is complete, take the uri and add it to the group's field.
         Log.i(TAG, "Attempting to create a group Document of name: " + groupName);
         Toast.makeText(getContext(),"Clicked on the positive button", Toast.LENGTH_SHORT).show();
-        GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", "HAHAHAHAIMAGE"); //Look into this Arrays.asList thing
+        GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null); //Look into this Arrays.asList thing
         mGroupViewModel.createGroup(groupName, groupBase);
         attachGroup(this.groupName);
     }

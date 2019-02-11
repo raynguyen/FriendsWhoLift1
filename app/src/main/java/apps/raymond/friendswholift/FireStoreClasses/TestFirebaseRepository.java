@@ -1,4 +1,6 @@
 /*
+ * There appears to be an error where if there is no photo, the recycler view does not retrieve all the group objects.
+ *
  * There appears to be an error where onSuccessListeners will trigger even if there is no collection or document of the requested name.
  * --NOTE: When we create a Task to retrieve documents from Firestore, if the document or the document path does not exist,
  * it will return a NULL document but will still SUCCEED. This is why the onSuccessListener is triggered.
@@ -164,7 +166,7 @@ public class TestFirebaseRepository {
                         Log.i(TAG,"Fetching the Group Documents for these groups: " + task.getResult().toString());
                         List<String> keyList = new ArrayList<>(task.getResult());
                         for(String key : keyList){
-                            Log.i(TAG,"Creating Task to fetch Group Document: "+ key);
+                            Log.i(TAG,"Creating task to fetch Group Document: "+ key);
                             fetchGroupsTaskList.add(groupCollection.document(key).get());
                         }
                         return fetchGroupsTaskList;
@@ -202,13 +204,15 @@ public class TestFirebaseRepository {
                         List<String> keyList = new ArrayList<>(task.getResult());
                         List<Task<GroupBase>> fetchGroupBases = new ArrayList<>();
                         for(final String key : keyList){
-                            Log.i(TAG,"Creating Task to fetch "+ key+" and convert to GroupBase object.");
+                            Log.i(TAG,"Creating task to fetch "+ key+" and convert to GroupBase object.");
                             fetchGroupBases.add(groupCollection.document(key).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
                                 @Override
                                 public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                    Log.i(TAG,"Retrieving photo via URI of snapshot.");
                                     final GroupBase groupBase = task.getResult().toObject(GroupBase.class);
                                     String imageURI = task.getResult().get("imageURI").toString();
                                     if(!imageURI.isEmpty()) {
+                                        Log.i(TAG,"There is an imageURI for this document.");
                                         firebaseStorage.getReferenceFromUrl(imageURI).getBytes(1024*1024*5)
                                                 .addOnCompleteListener(new OnCompleteListener<byte[]>() {
                                                     @Override
@@ -217,6 +221,7 @@ public class TestFirebaseRepository {
                                                     }
                                                 });
                                     }
+                                    Log.i(TAG,"Got to this point.");
                                     return groupBase;
                                 }
                             }));

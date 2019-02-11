@@ -40,7 +40,6 @@ public class DetailedGroupFragment extends Fragment {
             this.groupBase = bundle.getParcelable("GroupObject");
         }
 
-        //ASSUMING THE GROUPOBJECT IS NOW HERE, EXTRACT THE INFORMATION WE NEED FROM IT AND POPULATE THE TEXT AND IMAGEVIEWS!
     }
 
     @Nullable

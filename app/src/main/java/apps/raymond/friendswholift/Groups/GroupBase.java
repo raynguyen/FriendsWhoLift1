@@ -95,7 +95,6 @@ public class GroupBase implements Parcelable {
 
     public void setByteArray(byte[] byteArray){
         this.byteArray = byteArray;
-        //notifyAll();
     }
 
     public byte[] getByteArray(){
