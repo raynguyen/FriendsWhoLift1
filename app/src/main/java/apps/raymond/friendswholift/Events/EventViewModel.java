@@ -29,7 +29,8 @@ public class EventViewModel extends ViewModel {
     }
 
     public Task<DocumentSnapshot> attachListener(){
-        return mRepository.listenToUsersEvents();
+        //return mRepository.listenToUsersEvents();
+        return null;
     }
 
     public void removeListener(){

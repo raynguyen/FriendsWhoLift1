@@ -21,16 +21,8 @@ public class GroupsViewModel extends ViewModel {
         mRepository.createGroupDoc(name, groupBase); //Requires a string that will be the name of the Document
     }
 
-    public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
-        return mRepository.getPhotos(myGroupTags);
-    }
-
-    Task<List<Task<DocumentSnapshot>>> getUsersGroups(){
+    Task<List<Task<GroupBase>>> getUsersGroups(){
         return mRepository.getUsersGroups();
-    }
-
-    Task<List<Task<GroupBase>>> getUsersGroupsTest(){
-        return mRepository.getUsersGroupsTest();
     }
 
     public Task<GroupBase> getGroup(){

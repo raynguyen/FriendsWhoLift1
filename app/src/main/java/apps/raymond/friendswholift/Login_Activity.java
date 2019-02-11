@@ -1,3 +1,10 @@
+/*
+ * ToDo:
+ * Create the ViewModel for the Login and SignUp fragments in this context and access it through the
+ * fragments.
+ */
+
+
 package apps.raymond.friendswholift;
 
 import android.content.Intent;
@@ -6,11 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.Login.LoginFrag;
@@ -42,26 +45,13 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
         super.onStart();
         Log.d(TAG,"Login_Activity started.");
     }
+
     @Override
-    public void emailSignIn(final String username, final String password){
-        Log.d(TAG,"Attempting to sign in via emailSignIn");
-        mAuth.signInWithEmailAndPassword(username,password)
-                .addOnCompleteListener(Login_Activity.this, new OnCompleteListener<AuthResult>(){
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task){
-                        if(task.isSuccessful()){
-                            Intent mainIntent = new Intent(Login_Activity.this,
-                                    Main_Activity.class);
-                            startActivity(mainIntent);
-                            finish();
-                        } else {
-                            Log.e(TAG, "Failed to log in user." +
-                                    task.getException().getMessage());
-                            Toast.makeText(Login_Activity.this,"Authentication failed.",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+    public void signedIn() {
+        Log.d(TAG, "Finishing Login Activity.");
+        Intent mainIntent = new Intent(Login_Activity.this,Main_Activity.class);
+        startActivity(mainIntent);
+        finish();
     }
 
 }

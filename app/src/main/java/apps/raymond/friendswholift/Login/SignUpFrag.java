@@ -41,7 +41,7 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
 
     SignIn signIn;
     public interface SignIn {
-        void emailSignIn(final String userName, final String password);
+        void signedIn();
     }
 
     @Nullable
@@ -95,8 +95,15 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                 String username,password;
                 username = username_Txt.getText().toString();
                 password = password_Txt.getText().toString();
-                signUp(username, password);
-                signIn.emailSignIn(username,password);
+                mLoginViewModel.createUser(getContext(),username,password)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    signIn.signedIn();
+                                }
+                            }
+                        });
                 break;
             case R.id.login_btn:
                 //Returns to the Login fragment when 'LOGIN' is clicked.
@@ -131,30 +138,6 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
             b = false;
         }
         return b;
-    }
-
-    private void signUp(final String username, final String password){
-        mAuth.createUserWithEmailAndPassword(username,password)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>(){
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG,"createUserWithEmail:success");
-                            Toast.makeText(getContext(),"Successfully registered user.",
-                                    Toast.LENGTH_LONG).show();
-                            // OnSuccessful signup, we also want to create a Document for the user in our FireStore.
-                            Log.i(TAG, "Calling on Repository to create user's Document.");
-                            //Have to get the curernt user first before calling the createUserDoc.
-                            mLoginViewModel.createUserDoc(username);
-
-                        } else {
-                            Log.w(TAG,"createUserWithEmail:failure",
-                                    task.getException());
-                            Toast.makeText(getContext(),"Failed to add user.",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
     }
 
 }

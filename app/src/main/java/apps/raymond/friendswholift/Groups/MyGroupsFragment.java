@@ -26,12 +26,9 @@ import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +37,7 @@ import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
 public class MyGroupsFragment extends Fragment implements View.OnClickListener, GroupClickListener {
-    private static final String TAG = "MygroupsFragment";
+    private static final String TAG = "MyGroupsFragment";
 
     GroupsViewModel mGroupViewModel;
     ArrayList<GroupBase> myGroups;
@@ -112,7 +109,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
      * Need to check to see what happens if there is no photoURI in the group.
      */
     private void updateCardViews(){
-        mGroupViewModel.getUsersGroupsTest().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
+        mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<GroupBase>>> task) {
                 Log.i(TAG,"Finished retrieving a List of tasks.");
@@ -151,26 +148,12 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.testButton4:
-                Log.i(TAG, "Clicked on testButton4.");
-                String testString = "dogpic";
-                FirebaseStorage.getInstance().getReferenceFromUrl("gs://friendswholift-ae511.appspot.com/TestGroup1/dogpic.jpg").getBytes(1024*1024)
-                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] bytes) {
-                                Log.i(TAG,"Attaching testImage ImageView with downloaded file");
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                mImage.setImageBitmap(bitmap);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"Unable to retrieve the requested filed.", e);
-                    }
-                });
-                break;
             case R.id.testButton3:
                 Log.i(TAG, "Clicked on testButton3.");
+                break;
+            case R.id.testButton4:
+                Log.i(TAG, "Clicked on testButton4.");
+                break;
         }
     }
 

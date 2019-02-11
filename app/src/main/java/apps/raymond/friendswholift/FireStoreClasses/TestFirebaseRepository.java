@@ -14,10 +14,9 @@
 package apps.raymond.friendswholift.FireStoreClasses;
 
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,7 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -42,9 +41,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,22 +60,65 @@ public class TestFirebaseRepository {
     private static final String USER_COLLECTION = "Users";
     private static final String EVENT_COLLECTION = "Events";
 
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private CollectionReference eventCollection = db.collection(EVENT_COLLECTION);
-    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-    private MutableLiveData<Set<String>> groupKeys;
+
+
+    public Task<Void> createUser(final Context context, final String name, final String password){
+        Log.i(TAG,"Creating new user "+ name);
+        return firebaseAuth.createUserWithEmailAndPassword(name,password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        Log.i(TAG,"Successfully registered user "+ name);
+                        Toast.makeText(context,"Successfully registered "+name,Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG,"Failed to register "+ name,e);
+                        Toast.makeText(context,"Error registering "+name,Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ).continueWithTask(new Continuation<AuthResult, Task<AuthResult>>() {
+            @Override
+            public Task<AuthResult> then(@NonNull Task<AuthResult> task) throws Exception {
+                return signInWithEmail(name,password);
+            }
+        }).continueWithTask(new Continuation<AuthResult, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<AuthResult> task) throws Exception {
+                return createUserDoc(name);
+            }
+        });
+    }
+
+    public Task<AuthResult> signInWithEmail(final String name, String password){
+        return firebaseAuth.signInWithEmailAndPassword(name,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Signed in as "+name);
+                        }
+                    }
+                });
+    }
 
     /*
      * Method call to create a Document under the 'Users' Collection. This collection will contain
      * details about the user as Fields in their respective document. The Document name is currently
      * created under the user's email.
+     *
+     * Need to check if the Document exists when trying to query its contents.
      */
-    public Task<Void> createUserDoc(String name){
-        Log.i(TAG,"Creating a user Document under id: TESTID");
+    public Task<Void> createUserDoc(final String name){
+        Log.i(TAG,"Creating new user Document "+ name);
         Map<String,String> testMap = new HashMap<>();
         testMap.put("hello","test"); // ToDo need to figure out how to set a null field when creating a Document.
         return userCollection.document(name).set(testMap)
@@ -86,21 +126,23 @@ public class TestFirebaseRepository {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            Log.d(TAG, "User document successfully created.");
+                            Log.i(TAG, "Created document for user " + name);
                         } else {
-                            Log.w(TAG, "Failed to create document.");
+                            Log.w(TAG, "Failed to create document for "+name);
                         }
                     }
                 });
     }
 
+
+
     /*
      * Creates a Document under the 'Groups' Collection. The fields of this document are saved as a
      * GroupBase POJO.
      */
-    public Task<Void> createGroupDoc(String name, GroupBase groupBase){
+    public void createGroupDoc(String name, GroupBase groupBase){
         Log.i(TAG,"Creating Group Document: " + name);
-        return groupCollection.document(name).set(groupBase)
+        groupCollection.document(name).set(groupBase)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -138,42 +180,6 @@ public class TestFirebaseRepository {
                     }
                 });
     }
-    /*
-     * ToDo: We are moving the user's groups from Fields of the document to a Collection.
-     */
-    public Task<List<Task<DocumentSnapshot>>> getUsersGroups(){
-        //First thing to do is retrieve the Group tags from current user.
-        return userCollection.document(currentUser.getEmail()).get()
-                .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
-                    @Override
-                    public Set<String> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        Log.i(TAG,"Fetching the Set containing our Group tags");
-                        DocumentSnapshot document = task.getResult();
-                        if(document!=null){
-                            Log.i(TAG,"Successfully retrieved Group key set.");
-                            return task.getResult().getData().keySet();
-                        } else {
-                            Log.i(TAG,"Document for user does not exist.");
-                            return null;
-                        }
-                    }
-                })
-                //Next, using the key set, we want to retrieve the groups from the Group collection.
-                .continueWith(new Continuation<Set<String>, List<Task<DocumentSnapshot>>>() {
-                    @Override
-                    public List<Task<DocumentSnapshot>> then(@NonNull Task<Set<String>> task) throws Exception {
-                        List<Task<DocumentSnapshot>> fetchGroupsTaskList = new ArrayList<>();
-                        Log.i(TAG,"Fetching the Group Documents for these groups: " + task.getResult().toString());
-                        List<String> keyList = new ArrayList<>(task.getResult());
-                        for(String key : keyList){
-                            Log.i(TAG,"Creating task to fetch Group Document: "+ key);
-                            fetchGroupsTaskList.add(groupCollection.document(key).get());
-                        }
-                        return fetchGroupsTaskList;
-                    }
-                });
-
-    }
 
     //Want to return a Task<List<GroupBase>>
     // Steps are to get the keySet corresponding to what groups the user is registered with
@@ -181,7 +187,7 @@ public class TestFirebaseRepository {
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the documentsnapshot and the retrieved byte[] to create a groupbase object.
 
-    public Task<List<Task<GroupBase>>> getUsersGroupsTest(){
+    public Task<List<Task<GroupBase>>> getUsersGroups(){
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(currentUser.getEmail()).get()
                 .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
@@ -228,16 +234,6 @@ public class TestFirebaseRepository {
                         return fetchGroupBases;
                     }
                 });
-    }
-
-    public List<Task<byte[]>> getPhotos(List<String> myGroupTags){
-        List<Task<byte[]>> myPhotos = new ArrayList<>();
-        for(String name : myGroupTags){
-            // We don't need OnCompleteListener because it will be implemented in the calling context.
-            Task<byte[]> photo = storageRef.child("TestGroup1/"+name+".jpg").getBytes(1024*1024);
-            myPhotos.add(photo);
-        }
-        return myPhotos;
     }
 
     /*
@@ -326,6 +322,7 @@ public class TestFirebaseRepository {
     }
 
     // Not sure how to get this to pass on an action to the fragment (i.e. onEvent trigger update the RecyclerView).
+    /*
     public Task<DocumentSnapshot> listenToUsersEvents(){
         Log.i(TAG,"Adding a listener to the User's events.");
         Query eventsQuery = userCollection.document(currentUser.getEmail()).collection("Events");
@@ -342,6 +339,7 @@ public class TestFirebaseRepository {
         });
         return null;
     }
+    */
 
     public void removeListener(){
     }

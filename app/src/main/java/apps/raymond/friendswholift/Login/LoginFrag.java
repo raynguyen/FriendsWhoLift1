@@ -31,9 +31,16 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
     TextInputEditText[] inputFields;
     FirebaseAuth mAuth;
     SignIn signIn;
+    LoginViewModel mLoginViewModel;
 
     public interface SignIn {
-        void emailSignIn(final String username, final String password);
+        void signedIn();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLoginViewModel = new LoginViewModel();
     }
 
     @Nullable
@@ -79,13 +86,19 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         int i = v.getId();
         switch (i) {
             case R.id.login_btn:
-                if (!validate(inputFields)) {
-                    Log.d(TAG, "One or more input parameters empty.");
+                Log.i(TAG,"Attempting to log in.");
+                if (validate(inputFields)) {
+                    mLoginViewModel.signIn(username_Txt.getText().toString(),password_Txt.getText().toString())
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(task.isSuccessful()){
+                                    signIn.signedIn();
+                                }
+                            }
+                        });
                     return;
                 }
-                signIn.emailSignIn(username_Txt.getText().toString(),
-                        password_Txt.getText().toString());
-                //login();
                 break;
             case R.id.signup_btn:
                 //Displays SignUp fragment when 'SIGNUP' is clicked.

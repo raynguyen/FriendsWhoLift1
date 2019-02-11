@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/testImage"
                     android:layout_alignParentStart="true"
-                    android:text="getuserfields" />
+                    android:text="Testbutt3" />
 
 
                 <Button
@@ -52,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="getgrouppojo" />
+                    android:text="TestButt4" />
 
 
                 <TextView

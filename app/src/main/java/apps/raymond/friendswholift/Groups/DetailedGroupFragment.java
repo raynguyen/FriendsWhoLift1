@@ -13,16 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.Task;
-
 import apps.raymond.friendswholift.R;
 
 public class DetailedGroupFragment extends Fragment {
     private static final String TAG = "DetailedGroupFragment";
 
     private GroupBase groupBase;
-    private GroupsViewModel groupsViewModel;
-    private Task<GroupBase> mGroup;
 
     public DetailedGroupFragment(){
     }
@@ -39,7 +35,6 @@ public class DetailedGroupFragment extends Fragment {
         if(bundle!=null){
             this.groupBase = bundle.getParcelable("GroupObject");
         }
-
     }
 
     @Nullable

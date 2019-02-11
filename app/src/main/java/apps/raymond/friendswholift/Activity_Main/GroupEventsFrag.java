@@ -66,7 +66,8 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         eventsRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        updateEventCards();
+        // If there is no user currently signed in, this Fragment on the main Activity tries to populate the RecyclerView with contents of a null user!
+        //updateEventCards();
     }
 
     @Override
