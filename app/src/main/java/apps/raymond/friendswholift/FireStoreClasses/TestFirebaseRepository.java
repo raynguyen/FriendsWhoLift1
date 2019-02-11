@@ -208,12 +208,12 @@ public class TestFirebaseRepository {
                             fetchGroupBases.add(groupCollection.document(key).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
                                 @Override
                                 public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    Log.i(TAG,"Retrieving photo via URI of snapshot.");
+                                    Log.i(TAG,"Reading imageURI field of Group: "+key);
                                     final GroupBase groupBase = task.getResult().toObject(GroupBase.class);
-                                    String imageURI = task.getResult().get("imageURI").toString();
-                                    if(!imageURI.isEmpty()) {
+                                    Object objectURI = task.getResult().get("imageURI");
+                                    if(objectURI instanceof String) {
                                         Log.i(TAG,"There is an imageURI for this document.");
-                                        firebaseStorage.getReferenceFromUrl(imageURI).getBytes(1024*1024*5)
+                                        firebaseStorage.getReferenceFromUrl(objectURI.toString()).getBytes(1024*1024*5)
                                                 .addOnCompleteListener(new OnCompleteListener<byte[]>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<byte[]> task) {
@@ -221,7 +221,6 @@ public class TestFirebaseRepository {
                                                     }
                                                 });
                                     }
-                                    Log.i(TAG,"Got to this point.");
                                     return groupBase;
                                 }
                             }));
