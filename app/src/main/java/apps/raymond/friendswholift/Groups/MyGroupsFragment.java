@@ -108,6 +108,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
      *
      * Need to check to see what happens if there is no photoURI in the group.
      */
+    //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
     private void updateCardViews(){
         mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
             @Override
@@ -116,13 +117,14 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
                 Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                     @Override
                     public void onSuccess(List<Object> objects) {
-                        myGroups = new ArrayList<>();
-                        for(Object object:objects){
-                            myGroups.add((GroupBase) object);
+                        if(objects.size()>0){
+                            myGroups = new ArrayList<>();
+                            for(Object object:objects){
+                                myGroups.add((GroupBase) object);
+                                Log.i(TAG,"Added this group to our data set: "+((GroupBase) object).getName());
+                            }
                         }
-                        for(GroupBase object:myGroups){
-                            Log.i(TAG,"We have the following GroupBase objects:" +object.getName());
-                        }
+                        Log.i(TAG,"????????????????????");
                         mAdapter.setData(myGroups);
                     }
                 });

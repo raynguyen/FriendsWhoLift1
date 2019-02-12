@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.security.acl.Group;
 import java.util.List;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
@@ -21,7 +20,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     private EventClickListener eventClickListener;
 
     EventsRecyclerAdapter(List<GroupEvent> eventsList, EventClickListener eventClickListener){
-        Log.i(TAG,"Creating an instance of the event Recycler.");
         this.eventsList = eventsList;
         this.eventClickListener = eventClickListener;
     }
@@ -75,6 +73,4 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         this.eventsList = groupEvents;
         notifyDataSetChanged();
     }
-
-
 }

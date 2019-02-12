@@ -42,6 +42,7 @@
     <string name="new_type">Add New Type</string>
     <string name="value">Add Value</string>
 
+    <string name="null_events">You have no upcoming events.</string>
     <!-- Strings that are used in group_new_frag -->
     <string name="group_name">Group Name</string>
     <string name="descriptor">Description for the group.</string>

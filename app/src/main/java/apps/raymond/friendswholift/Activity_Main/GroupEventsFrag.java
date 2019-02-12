@@ -13,18 +13,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +41,14 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     List<GroupEvent> myEvents;
     EventsRecyclerAdapter mAdapter;
     EventViewModel eventViewModel;
+    FirebaseUser currUser;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        currUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    }
 
     @Nullable
     @Override
@@ -66,8 +72,9 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         eventsRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // If there is no user currently signed in, this Fragment on the main Activity tries to populate the RecyclerView with contents of a null user!
-        //updateEventCards();
+        if(currUser != null){
+            updateEventCards();
+        }
     }
 
     @Override
@@ -99,8 +106,16 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                                 Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(GroupEvent.class).getName() + " to RecyclerView.");
                                 myEvents.add(((DocumentSnapshot) object).toObject(GroupEvent.class));
                             }
-                            mAdapter.setData(myEvents);
-                            mAdapter.notifyDataSetChanged();
+                            if(myEvents.size() == 0){
+                                // If there are no upcoming events, we want to fill the fragment with a text that says No Upcoming Events.
+                                ImageView nullImage = getView().findViewById(R.id.null_data_image);
+                                TextView nullText = getView().findViewById(R.id.null_data_text);
+                                nullImage.setVisibility(View.VISIBLE);
+                                nullText.setVisibility(View.VISIBLE);
+                            } else {
+                                mAdapter.setData(myEvents);
+                                mAdapter.notifyDataSetChanged();
+                            }
                         }
                     });
                 }
