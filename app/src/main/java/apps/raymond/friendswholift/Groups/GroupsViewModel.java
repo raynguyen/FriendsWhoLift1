@@ -12,7 +12,7 @@ public class GroupsViewModel extends ViewModel {
 
     private TestFirebaseRepository mRepository;
 
-    GroupsViewModel(){
+    public GroupsViewModel(){
         this.mRepository = new TestFirebaseRepository();
     }
 

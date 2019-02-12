@@ -22,11 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import apps.raymond.friendswholift.Groups.GroupPagerAdapter;
+import apps.raymond.friendswholift.Groups.GroupsViewModel;
 
 public class Groups_Activity extends AppCompatActivity {
     private static final String TAG = "Group_Activity";
 
     public FirebaseUser currentUser;
+    public GroupsViewModel mGroupViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public class Groups_Activity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        mGroupViewModel = new GroupsViewModel();
     }
 
     @Override

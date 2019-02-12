@@ -48,8 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
 
@@ -67,6 +65,20 @@ public class TestFirebaseRepository {
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private CollectionReference eventCollection = db.collection(EVENT_COLLECTION);
+
+    // When a state change is detected, we need to launch a new activity but not sure how to do that without direct communication from Repository back to the Activity.
+    public void attachAuthListener(){
+        firebaseAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(currentUser == null){
+                    Log.i(TAG,"There is no active user.");
+                } else {
+                    Log.i(TAG,"Current user is: "+currentUser.getEmail());
+                }
+            }
+        });
+    }
 
     public Task<Void> createUser(final Context context, final String name, final String password){
         Log.i(TAG,"Creating new user "+ name);
@@ -168,7 +180,6 @@ public class TestFirebaseRepository {
                 }
             }
         });
-
         userCollection.document(currentUser.getEmail()).collection("Groups")
                 .document(groupBase.getName()).set(holderMap) //Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -289,6 +300,7 @@ public class TestFirebaseRepository {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                            if (task.isSuccessful()) {
+                               Log.i(TAG,"The user is a part of "+task.getResult().toString());
                                for (QueryDocumentSnapshot document : task.getResult()) {
                                    Log.i(TAG, "Adding to GroupBase query list: " + document.getId());
                                    groupList.add(document.getId());
@@ -304,47 +316,14 @@ public class TestFirebaseRepository {
                             taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
                                 @Override
                                 public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    Log.i(TAG,"Converting document to Group: "+group);
-                                    task.getResult().toObject(GroupBase.class);
-                                    return null;
+                                    Log.i(TAG,"Converting document to GroupBase: "+group);
+                                    return task.getResult().toObject(GroupBase.class);
                                 }
                             }));
                         }
                         return taskList;
                     }
                 });
-                /*
-                .continueWith(new Continuation<List<String>, List<Task<GroupBase>>>() {
-                    @Override
-                    public List<Task<GroupBase>> then(@NonNull Task<List<String>> task) throws Exception {
-                        Log.i(TAG,"Fetching the Group Documents for these groups: " + task.getResult().toString());
-                        List<String> keyList = new ArrayList<>(task.getResult());
-                        List<Task<GroupBase>> fetchGroupBases = new ArrayList<>();
-                        for(final String key : keyList){
-                            Log.i(TAG,"Creating task to fetch "+ key+" and convert to GroupBase object.");
-                            fetchGroupBases.add(groupCollection.document(key).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
-                                @Override
-                                public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    Log.i(TAG,"Reading imageURI field of Group: "+key);
-                                    final GroupBase groupBase = task.getResult().toObject(GroupBase.class);
-                                    Object objectURI = task.getResult().get("imageURI");
-                                    if(objectURI instanceof String) {
-                                        Log.i(TAG,"There is an imageURI for this document.");
-                                        firebaseStorage.getReferenceFromUrl(objectURI.toString()).getBytes(1024*1024*5)
-                                                .addOnCompleteListener(new OnCompleteListener<byte[]>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<byte[]> task) {
-                                                        groupBase.setByteArray(task.getResult());
-                                                    }
-                                                });
-                                    }
-                                    return groupBase;
-                                }
-                            }));
-                        }
-                        return fetchGroupBases;
-                    }
-                });*/
     }
 
     /*

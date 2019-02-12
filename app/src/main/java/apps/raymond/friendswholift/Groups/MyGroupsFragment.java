@@ -7,8 +7,6 @@ package apps.raymond.friendswholift.Groups;
 
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,6 +53,8 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.groups_mygroups, container, false);
+        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class); //new GroupsViewModel();
+        updateCardViews();
         return view;
     }
 
@@ -91,9 +91,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
-        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);//new GroupsViewModel();
 
-        updateCardViews();
     }
 
 
@@ -118,7 +116,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
                             for(Object object:objects){
                                 myGroups.add((GroupBase) object);
                             }
-                            Log.i(TAG,"size of mygroups = "+myGroups.size());
+                            Log.i(TAG,"MyGroups = "+myGroups.toString());
                             mAdapter.setData(myGroups);
                         } else {
                             // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
