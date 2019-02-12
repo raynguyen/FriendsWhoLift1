@@ -44,16 +44,28 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private static final String ADD_DIALOG = "AddStatDialog";
 
     FirebaseAuth mAuth;
-    FirebaseAuth.AuthStateListener authStateListener;
     FirebaseUser currentUser;
+    FirebaseAuth.AuthStateListener authStateListener;
     public FirebaseFirestore fireDB;
     Button checkPRS_Btn, cancel_Btn, new_group_Btn, test_Btn;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar top_toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(top_toolbar);
+
+        checkPRS_Btn = findViewById(R.id.checkpr_btn);
+        cancel_Btn = findViewById(R.id.cancel_btn);
+        new_group_Btn = findViewById(R.id.new_group);
+        test_Btn = findViewById(R.id.group_info);
+
+        checkPRS_Btn.setOnClickListener(this);
+        cancel_Btn.setOnClickListener(this);
+        new_group_Btn.setOnClickListener(this);
+        test_Btn.setOnClickListener(this);
 
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
@@ -62,6 +74,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         currentUser = mAuth.getCurrentUser();
 
         // ToDo: This needs to be moved to the repository.
+        // EventViewModel mViewModel = new EventViewModel();
+        // mViewModel.attachAuthListener();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
@@ -78,35 +92,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 }
             }
         };
-
-        Toolbar top_toolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(top_toolbar);
-
-        checkPRS_Btn = findViewById(R.id.checkpr_btn);
-        cancel_Btn = findViewById(R.id.cancel_btn);
-        new_group_Btn = findViewById(R.id.new_group);
-        test_Btn = findViewById(R.id.group_info);
-
-        checkPRS_Btn.setOnClickListener(this);
-        cancel_Btn.setOnClickListener(this);
-        new_group_Btn.setOnClickListener(this);
-        test_Btn.setOnClickListener(this);
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        /*
-        Listener monitors for changes in the User. This listener will trigger even if we are outside
-        the Main_Activity.
-         */
         mAuth.addAuthStateListener(authStateListener);
-        Log.d(TAG,"Creating instance of AuthStateListener.");
+
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
+        mAuth.removeAuthStateListener(authStateListener);
         Log.d(TAG,"Main_Activity is shutting down.");
     }
 

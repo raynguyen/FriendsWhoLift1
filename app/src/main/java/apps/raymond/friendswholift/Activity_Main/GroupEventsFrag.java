@@ -1,3 +1,8 @@
+/*
+ * ToDo:
+ * Figure out how to update the Events RecyclerView.
+ */
+
 package apps.raymond.friendswholift.Activity_Main;
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -47,7 +52,6 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currUser = FirebaseAuth.getInstance().getCurrentUser();
-
     }
 
     @Nullable
@@ -94,7 +98,6 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
      * Only updates when the Fragment is first started. Need to figure out how to wrap the data in LiveData to trigger automatic updates.
      */
     private void updateEventCards(){
-        Log.i(TAG,"Inside updateEventCards");
         eventViewModel.getUsersEvents().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {

@@ -23,7 +23,6 @@ public class GroupBase implements Parcelable {
     private String imageURI;
     private List<String> tags;
     private byte[] photo;
-    private List<GroupEvent> events;
     private byte[] byteArray;
 
     // Empty constructor as required by FireBase.
@@ -103,9 +102,5 @@ public class GroupBase implements Parcelable {
 
     public List<String> getTags(){
         return tags;
-    }
-
-    public List<GroupEvent> getEvents(){
-        return events;
     }
 }

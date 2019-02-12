@@ -2,6 +2,7 @@ package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     public void onBindViewHolder(@NonNull final GroupRecyclerAdapter.GroupViewHolder viewHolder, int position) {
         if(groupsList !=null){
             final GroupBase currentGroup = groupsList.get(position);
+
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.descTxt.setText(currentGroup.getDescription());
             //viewHolder.groupImage.setImageBitmap();

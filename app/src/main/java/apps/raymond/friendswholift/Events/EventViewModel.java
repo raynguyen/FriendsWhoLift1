@@ -1,3 +1,12 @@
+/*
+ * ViewModel that is used by the MainActivity and its Fragments.
+ * ToDo:
+ * Need to determine if there is a method of instancing one ViewModel in the Activity that the
+ * Fragments call when they need to interact with FireStore.
+ *
+ * RENAME THIS VIEWMODEL
+ */
+
 package apps.raymond.friendswholift.Events;
 
 import android.arch.lifecycle.ViewModel;
@@ -18,6 +27,10 @@ public class EventViewModel extends ViewModel {
 
     public void createEvent(GroupEvent groupEvent){
         mRepository.createEvent(groupEvent);
+    }
+
+    public void attachAuthListener(){
+        mRepository.attachAuthListener();
     }
 
     public Task<DocumentSnapshot> addEventToUser(String eventName){

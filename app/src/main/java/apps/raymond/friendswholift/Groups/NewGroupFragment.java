@@ -103,12 +103,12 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void positiveClick() {
-        //Add option for photo, if photo is taken, create the group, add image to storage, when the add image to storage is complete, take the uri and add it to the group's field.
-        Log.i(TAG, "Attempting to create a group Document of name: " + groupName);
-        Toast.makeText(getContext(),"Clicked on the positive button", Toast.LENGTH_SHORT).show();
-        GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null); //Look into this Arrays.asList thing
+        // Add option for photo, if photo is taken, create the group, add image to storage, when the
+        // add image to storage is complete, take the uri and add it to the group's field.
+        GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null);
+
+        Log.i(TAG,"Created a new GroupBase object with name " + groupBase.getName());
         mGroupViewModel.createGroup(groupBase);
-        attachGroup(this.groupName);
     }
 
     @Override
@@ -116,24 +116,5 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         Toast.makeText(getContext(),"Clicked on the negative button", Toast.LENGTH_SHORT).show();
     }
 
-    /* Todo: This has to be moved to the Repository
-     * THIS COULD PROBABLY EXIST AS A SEPARATE METHOD! Consider future calls to save tags to users.
-     * Store a user's associated groups under the database collection 'Users'.
-     * The UID of each user is used to create a new document or access the existing document in
-     * the Users collection.
-     * Avoiding using the user email as I plan to implement new authentication tools.
-     */
-    public void attachGroup(@NonNull final String groupName){
-        try{
-            Log.i(TAG,"Attempting to attach the new group as a field in the User document.");
-            FirebaseFirestore.getInstance().collection(USER_COLLECTION).
-                    document(currentUser.getEmail()).update(groupName, "Add authorization here");
-            Log.i(TAG,"The User Document contains these tags: "+FirebaseFirestore.getInstance().collection(USER_COLLECTION).document(currentUser.getUid()).get().toString());
-
-        } catch (NullPointerException npe){
-            Log.w(TAG,"Unable to attach new group to the current user.");
-            Toast.makeText(getContext(),"There was an error resolving the group. Please try again shortly!",Toast.LENGTH_SHORT).show();
-        }
-    }
 }
 
