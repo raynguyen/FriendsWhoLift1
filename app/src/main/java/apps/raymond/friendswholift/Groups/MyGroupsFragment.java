@@ -41,8 +41,6 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
 
     GroupsViewModel mGroupViewModel;
     ArrayList<GroupBase> myGroups;
-    TextView testTextView;
-    ImageView mImage;
     GroupRecyclerAdapter mAdapter;
 
     public MyGroupsFragment(){
@@ -94,9 +92,6 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         });
 
         mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);//new GroupsViewModel();
-
-        testTextView = view.findViewById(R.id.testTextView);
-        mImage = view.findViewById(R.id.testImage);
 
         updateCardViews();
     }

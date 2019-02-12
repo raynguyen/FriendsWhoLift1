@@ -43,6 +43,7 @@
     <string name="value">Add Value</string>
 
     <string name="null_events">You have no upcoming events.</string>
+
     <!-- Strings that are used in group_new_frag -->
     <string name="group_name">Group Name</string>
     <string name="descriptor">Description for the group.</string>
@@ -57,6 +58,10 @@
         <item>Any member</item>
     </string-array>
 
+    <string name="group_dialog_body">It appears that you have no tags associated with your profile.
+        These tags are used to find locale Groups that share the same interests as you and without
+    them we can not provide you any suggestions!
+    Would you like to register some tags now?</string>
     <!-- General Strings -->
     <string name="discard">Discard</string>
 

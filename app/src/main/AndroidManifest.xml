@@ -24,6 +24,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".Groups_Activity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+
         <activity android:name=".ManageStats_Activity"/>
 
         <activity
@@ -36,11 +42,6 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".Groups_Activity"
-            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity

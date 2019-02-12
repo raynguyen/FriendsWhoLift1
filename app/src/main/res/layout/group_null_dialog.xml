@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/dialog_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:longClickable="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/group_dialog_body"
+        android:textSize="14sp"
+        android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/positive_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/dialog_body"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Find tags"/>
+
+    <Button
+        android:id="@+id/negative_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/positive_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Later"/>
+
+    <CheckBox
+        android:id="@+id/show_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Do not show this dialog again."/>
+
+</android.support.constraint.ConstraintLayout>

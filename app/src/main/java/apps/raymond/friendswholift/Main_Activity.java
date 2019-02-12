@@ -49,6 +49,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     public FirebaseFirestore fireDB;
     Button checkPRS_Btn, cancel_Btn, new_group_Btn, test_Btn;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -60,6 +61,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
         currentUser = mAuth.getCurrentUser();
 
+        // ToDo: This needs to be moved to the repository.
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {

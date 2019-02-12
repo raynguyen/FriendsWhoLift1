@@ -428,29 +428,8 @@ public class TestFirebaseRepository {
     }
 
     public Task<GroupBase> getGroup(){
-
         return null;
     }
-
-    // Not sure how to get this to pass on an action to the fragment (i.e. onEvent trigger update the RecyclerView).
-    /*
-    public Task<DocumentSnapshot> listenToUsersEvents(){
-        Log.i(TAG,"Adding a listener to the User's events.");
-        Query eventsQuery = userCollection.document(currentUser.getEmail()).collection("Events");
-
-        ListenerRegistration eventListener = eventsQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                Log.i(TAG,"There was an event.");
-                for(QueryDocumentSnapshot document:queryDocumentSnapshots){
-                    Log.i(TAG,"The collection contains: " + document.getId());
-                }
-            }
-        });
-        return null;
-    }
-    */
 
     public void removeListener(){
     }
