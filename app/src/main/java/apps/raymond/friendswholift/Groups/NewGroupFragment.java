@@ -107,7 +107,7 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         Log.i(TAG, "Attempting to create a group Document of name: " + groupName);
         Toast.makeText(getContext(),"Clicked on the positive button", Toast.LENGTH_SHORT).show();
         GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null); //Look into this Arrays.asList thing
-        mGroupViewModel.createGroup(groupName, groupBase);
+        mGroupViewModel.createGroup(groupBase);
         attachGroup(this.groupName);
     }
 

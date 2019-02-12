@@ -3,7 +3,6 @@ package apps.raymond.friendswholift.Groups;
 import android.arch.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
@@ -17,12 +16,12 @@ public class GroupsViewModel extends ViewModel {
         this.mRepository = new TestFirebaseRepository();
     }
 
-    void createGroup(String name, GroupBase groupBase){
-        mRepository.createGroupDoc(name, groupBase); //Requires a string that will be the name of the Document
+    void createGroup(GroupBase groupBase){
+        mRepository.createGroup(groupBase);
     }
 
     Task<List<Task<GroupBase>>> getUsersGroups(){
-        return mRepository.getUsersGroups();
+        return mRepository.getUsersGroupsTest();
     }
 
     public Task<GroupBase> getGroup(){

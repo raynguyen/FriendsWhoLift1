@@ -13,7 +13,6 @@
 
 package apps.raymond.friendswholift.FireStoreClasses;
 
-
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.os.Parcelable;
@@ -42,6 +41,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +67,6 @@ public class TestFirebaseRepository {
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private CollectionReference eventCollection = db.collection(EVENT_COLLECTION);
-
 
     public Task<Void> createUser(final Context context, final String name, final String password){
         Log.i(TAG,"Creating new user "+ name);
@@ -126,7 +125,7 @@ public class TestFirebaseRepository {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            Log.i(TAG, "Created document for user " + name);
+                            Log.i(TAG, "Created document for user "+name);
                         } else {
                             Log.w(TAG, "Failed to create document for "+name);
                         }
@@ -134,26 +133,74 @@ public class TestFirebaseRepository {
                 });
     }
 
-
-
     /*
-     * Creates a Document under the 'Groups' Collection. The fields of this document are saved as a
-     * GroupBase POJO.
+     * Call when creating a new GroupBase object and store the details on FireStore. When storing
+     * the object for the first time, we attach a tag to User's document. This tag is used to read
+     * the groups connected to the user.
+     * Logic:
+     * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    public void createGroupDoc(String name, GroupBase groupBase){
-        Log.i(TAG,"Creating Group Document: " + name);
-        groupCollection.document(name).set(groupBase)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+    public void createGroup(final GroupBase groupBase){
+        final Map<String,String> holderMap = new HashMap<>();
+        holderMap.put("Access","Owner");
+
+        groupCollection.document(groupBase.getName()).set(groupBase)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            Log.d(TAG, "User document successfully created.");
-                        } else {
-                            Log.w(TAG, "Failed to create document.");
-                        }
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
+                    }
+                }).continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                if(task.isSuccessful()){
+                    return userCollection.document(currentUser.getEmail()).collection(GROUP_COLLECTION)
+                            .document(groupBase.getName()).set(holderMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.i(TAG,"Attached "+groupBase.getName()+" to " +currentUser.getEmail());
+                                }
+                            });
+                } else {
+                    Log.i(TAG,"Unable to create the Group.");
+                    return null;
+                }
+            }
+        });
+
+        userCollection.document(currentUser.getEmail()).collection("Groups")
+                .document(groupBase.getName()).set(holderMap) //Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void task) {
+                        Log.i(TAG,"New Group Document in user's Group sub-collection: " + groupBase.getName());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG,"Error creating document in Groups sub-collection.",e);
+                    }
+                })
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        return groupCollection.document(groupBase.getName()).set(groupBase)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void task) {
+                                        Log.i(TAG,"Created group document "+groupBase.getName());
+                                    }
+                                });
                     }
                 });
     }
+
+
+
+
+
 
 
     /*
@@ -186,7 +233,6 @@ public class TestFirebaseRepository {
     // Then we want to retrieve the Documentsnapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the documentsnapshot and the retrieved byte[] to create a groupbase object.
-
     public Task<List<Task<GroupBase>>> getUsersGroups(){
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(currentUser.getEmail()).get()
@@ -234,6 +280,71 @@ public class TestFirebaseRepository {
                         return fetchGroupBases;
                     }
                 });
+    }
+    public Task<List<Task<GroupBase>>> getUsersGroupsTest(){
+        final List<String> groupList = new ArrayList<>();
+        //First thing to do is retrieve the Group tags from current user.
+        return userCollection.document(currentUser.getEmail()).collection("Groups").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                           if (task.isSuccessful()) {
+                               for (QueryDocumentSnapshot document : task.getResult()) {
+                                   Log.i(TAG, "Adding to GroupBase query list: " + document.getId());
+                                   groupList.add(document.getId());
+                               }
+                           }
+                       }
+                }).continueWith(new Continuation<QuerySnapshot, List<Task<GroupBase>>>() {
+                    @Override
+                    public List<Task<GroupBase>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Task<GroupBase>> taskList = new ArrayList<>();
+                        for(final String group:groupList){
+                            Log.i(TAG,"Fetching document "+group);
+                            taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
+                                @Override
+                                public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                    Log.i(TAG,"Converting document to Group: "+group);
+                                    task.getResult().toObject(GroupBase.class);
+                                    return null;
+                                }
+                            }));
+                        }
+                        return taskList;
+                    }
+                });
+                /*
+                .continueWith(new Continuation<List<String>, List<Task<GroupBase>>>() {
+                    @Override
+                    public List<Task<GroupBase>> then(@NonNull Task<List<String>> task) throws Exception {
+                        Log.i(TAG,"Fetching the Group Documents for these groups: " + task.getResult().toString());
+                        List<String> keyList = new ArrayList<>(task.getResult());
+                        List<Task<GroupBase>> fetchGroupBases = new ArrayList<>();
+                        for(final String key : keyList){
+                            Log.i(TAG,"Creating task to fetch "+ key+" and convert to GroupBase object.");
+                            fetchGroupBases.add(groupCollection.document(key).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
+                                @Override
+                                public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                    Log.i(TAG,"Reading imageURI field of Group: "+key);
+                                    final GroupBase groupBase = task.getResult().toObject(GroupBase.class);
+                                    Object objectURI = task.getResult().get("imageURI");
+                                    if(objectURI instanceof String) {
+                                        Log.i(TAG,"There is an imageURI for this document.");
+                                        firebaseStorage.getReferenceFromUrl(objectURI.toString()).getBytes(1024*1024*5)
+                                                .addOnCompleteListener(new OnCompleteListener<byte[]>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<byte[]> task) {
+                                                        groupBase.setByteArray(task.getResult());
+                                                    }
+                                                });
+                                    }
+                                    return groupBase;
+                                }
+                            }));
+                        }
+                        return fetchGroupBases;
+                    }
+                });*/
     }
 
     /*
