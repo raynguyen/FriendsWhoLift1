@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.support.v7.widget.SearchView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,20 +41,16 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     GroupsViewModel mGroupViewModel;
     ArrayList<GroupBase> myGroups;
     GroupRecyclerAdapter mAdapter;
-
+    ProgressBar progressBar;
+    //Required empty fragment. Not sure why it is needed.
     public MyGroupsFragment(){
-        //Required empty fragment. Not sure why it is needed.
-    }
-
-    public MyGroupsFragment newInstance(){
-        return new MyGroupsFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.groups_mygroups, container, false);
-        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class); //new GroupsViewModel();
+        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class); //new GroupsViewModel();
         updateCardViews();
         return view;
     }
@@ -67,6 +64,8 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         getGroupPojoBtn.setOnClickListener(this);
         getfieldsBtn.setOnClickListener(this);
 
+        progressBar = view.findViewById(R.id.progress_bar);
+
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
         SearchView groupSearchView = view.findViewById(R.id.groupSearchView);
 
@@ -74,7 +73,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         //cardRecycler.setItemAnimator(new DefaultItemAnimator());
         // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
         cardRecycler.setAdapter(mAdapter);
-        cardRecycler.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         groupSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -102,28 +101,33 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
      * Need to check to see what happens if there is no photoURI in the group.
      */
     //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
-    // Have to change the getUsersGroups to only query inside the Groups subcollection.
     private void updateCardViews(){
         mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<GroupBase>>> task) {
-                Log.i(TAG,"Finished retrieving a List of tasks.");
-                Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
-                    @Override
-                    public void onSuccess(List<Object> objects) {
-                        if(objects.size()>0){
-                            myGroups = new ArrayList<>();
-                            for(Object object:objects){
-                                myGroups.add((GroupBase) object);
+                if(task.getResult()!=null){
+                    Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                        @Override
+                        public void onSuccess(List<Object> objects) {
+                            Log.i(TAG,"Fetching user's groups returned a list of size: "+objects.size());
+                            if(objects.size()>0){
+                                myGroups = new ArrayList<>();
+                                for(Object object:objects){
+                                    myGroups.add((GroupBase) object);
+                                }
+                                Log.i(TAG,"MyGroups = "+myGroups.toString());
+                                mAdapter.setData(myGroups);
+                                progressBar.setVisibility(View.GONE);
+                            } else {
+                                // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
+                                Log.i(TAG,"Current user has no Groups associated to them.");
                             }
-                            Log.i(TAG,"MyGroups = "+myGroups.toString());
-                            mAdapter.setData(myGroups);
-                        } else {
-                            // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
-                            Log.i(TAG,"Current user has no Groups associated to them.");
                         }
-                    }
-                });
+                    });
+                } else {
+                    Log.i(TAG,"Fetching Groups for the user returned null.");
+                }
+
             }
         });
     }

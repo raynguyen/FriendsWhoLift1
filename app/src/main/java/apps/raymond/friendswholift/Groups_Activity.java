@@ -27,9 +27,6 @@ import apps.raymond.friendswholift.Groups.GroupsViewModel;
 public class Groups_Activity extends AppCompatActivity {
     private static final String TAG = "Group_Activity";
 
-    public FirebaseUser currentUser;
-    public GroupsViewModel mGroupViewModel;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +42,6 @@ public class Groups_Activity extends AppCompatActivity {
 
         TabLayout tabLayout = findViewById(R.id.group_tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        mGroupViewModel = new GroupsViewModel();
     }
 
     @Override

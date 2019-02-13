@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +48,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     EventsRecyclerAdapter mAdapter;
     EventViewModel eventViewModel;
     FirebaseUser currUser;
+    ProgressBar progressBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +72,8 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         ImageButton addEventBtn = view.findViewById(R.id.create_event);
         addEventBtn.setOnClickListener(this);
 
+        progressBar = view.findViewById(R.id.progress_bar);
+
         eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsRecyclerAdapter(myEvents, this);
         eventsRecycler.setAdapter(mAdapter);
@@ -87,12 +91,6 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         eventViewModel.attachListener();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        eventViewModel.removeListener(); //Doesn't do anything yet.
-    }
-
     /*
      * Will retrieve the User's events to populate the RecyclerView.
      * Only updates when the Fragment is first started. Need to figure out how to wrap the data in LiveData to trigger automatic updates.
@@ -107,8 +105,9 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                         public void onSuccess(List<Object> objects) {
                             for(Object object:objects){
                                 Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(GroupEvent.class).getName() + " to RecyclerView.");
-                                myEvents.add(((DocumentSnapshot) object).toObject(GroupEvent.class));
+                                myEvents.add(((DocumentSnapshot) object).toObject(GroupEvent.class)); //Do the toObject in the repo
                             }
+                            progressBar.setVisibility(View.GONE);
                             if(myEvents.size() == 0){
                                 // If there are no upcoming events, we want to fill the fragment with a text that says No Upcoming Events.
                                 ImageView nullImage = getView().findViewById(R.id.null_data_image);
@@ -159,4 +158,11 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
                         .commit();
         }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        eventViewModel.removeListener(); //Doesn't do anything yet.
+    }
+
 }

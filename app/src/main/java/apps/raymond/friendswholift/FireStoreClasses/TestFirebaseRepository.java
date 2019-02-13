@@ -239,60 +239,12 @@ public class TestFirebaseRepository {
                 });
     }
 
-    //Want to return a Task<List<GroupBase>>
+    // Info below may be outdated.
     // Steps are to get the keySet corresponding to what groups the user is registered with
     // Then we want to retrieve the Documentsnapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the documentsnapshot and the retrieved byte[] to create a groupbase object.
     public Task<List<Task<GroupBase>>> getUsersGroups(){
-        //First thing to do is retrieve the Group tags from current user.
-        return userCollection.document(currentUser.getEmail()).get()
-                .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
-                    @Override
-                    public Set<String> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        Log.i(TAG,"Fetching the Set containing our Group tags");
-                        DocumentSnapshot document = task.getResult();
-                        if(document!=null){
-                            Log.i(TAG,"Successfully retrieved Group key set.");
-                            return task.getResult().getData().keySet();
-                        } else {
-                            Log.i(TAG,"Document for user does not exist.");
-                            return null;
-                        }
-                    }
-                }).continueWith(new Continuation<Set<String>, List<Task<GroupBase>>>() {
-                    @Override
-                    public List<Task<GroupBase>> then(@NonNull Task<Set<String>> task) throws Exception {
-                        Log.i(TAG,"Fetching the Group Documents for these groups: " + task.getResult().toString());
-                        List<String> keyList = new ArrayList<>(task.getResult());
-                        List<Task<GroupBase>> fetchGroupBases = new ArrayList<>();
-                        for(final String key : keyList){
-                            Log.i(TAG,"Creating task to fetch "+ key+" and convert to GroupBase object.");
-                            fetchGroupBases.add(groupCollection.document(key).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
-                                @Override
-                                public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    Log.i(TAG,"Reading imageURI field of Group: "+key);
-                                    final GroupBase groupBase = task.getResult().toObject(GroupBase.class);
-                                    Object objectURI = task.getResult().get("imageURI");
-                                    if(objectURI instanceof String) {
-                                        Log.i(TAG,"There is an imageURI for this document.");
-                                        firebaseStorage.getReferenceFromUrl(objectURI.toString()).getBytes(1024*1024*5)
-                                                .addOnCompleteListener(new OnCompleteListener<byte[]>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<byte[]> task) {
-                                                        groupBase.setByteArray(task.getResult());
-                                                    }
-                                                });
-                                    }
-                                    return groupBase;
-                                }
-                            }));
-                        }
-                        return fetchGroupBases;
-                    }
-                });
-    }
-    public Task<List<Task<GroupBase>>> getUsersGroupsTest(){
         final List<String> groupList = new ArrayList<>();
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(currentUser.getEmail()).collection("Groups").get()

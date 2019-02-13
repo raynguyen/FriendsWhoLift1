@@ -60,41 +60,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         checkPRS_Btn = findViewById(R.id.checkpr_btn);
         cancel_Btn = findViewById(R.id.cancel_btn);
         new_group_Btn = findViewById(R.id.new_group);
-        test_Btn = findViewById(R.id.group_info);
 
         checkPRS_Btn.setOnClickListener(this);
         cancel_Btn.setOnClickListener(this);
         new_group_Btn.setOnClickListener(this);
-        test_Btn.setOnClickListener(this);
 
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         fireDB = FirebaseFirestore.getInstance();
 
         currentUser = mAuth.getCurrentUser();
-
-        // ToDo: This needs to be moved to the repository.
-        // EventViewModel mViewModel = new EventViewModel();
-        // mViewModel.attachAuthListener();
-        /*
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                if(currentUser == null){
-                    Log.e(TAG,"There is no signed in user.:");
-                    Intent loginIntent = new Intent(Main_Activity.this, Login_Activity.class);
-                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(loginIntent);
-                    finish();
-                } else {
-                    Log.d(TAG,"Current user:" + mAuth.getCurrentUser().getEmail());
-                }
-            }
-        };
-        mAuth.addAuthStateListener(authStateListener);
-        */
     }
 
     @Override
@@ -132,19 +107,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         Groups_Activity.class);
                 startActivity(new_group_intent);
                 break;
-            case R.id.group_info:
-                FirebaseFirestore.getInstance().collection("Groups").document("qweqwe")
-                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    Log.d(TAG, "Cached document data: " + document.getData()); //.get("invite")) allows access to a key's value.
-                                } else {
-                                    Log.d(TAG, "Cached get failed: ", task.getException());
-                                }
-                            }
-                        });
         }
     }
 

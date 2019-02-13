@@ -11,7 +11,7 @@
         android:id="@+id/cancel_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
+        android:text="@string/add_lift"
         android:layout_weight="0.5"
         />
 
