@@ -30,7 +30,7 @@ public class Activity_Launcher extends AppCompatActivity {
                     finish();
                 } else {
                     Log.d(TAG,"Current user:" + currUser.getEmail());
-                    Intent loginIntent = new Intent(Activity_Launcher.this, Main_Activity.class);
+                    Intent loginIntent = new Intent(Activity_Launcher.this, Core_Activity.class);
                     startActivity(loginIntent);
                     finish();
                 }
