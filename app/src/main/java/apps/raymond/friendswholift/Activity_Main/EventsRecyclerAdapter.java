@@ -19,7 +19,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     private List<GroupEvent> eventsList;
     private EventClickListener eventClickListener;
 
-    EventsRecyclerAdapter(List<GroupEvent> eventsList, EventClickListener eventClickListener){
+    public EventsRecyclerAdapter(List<GroupEvent> eventsList, EventClickListener eventClickListener){
         this.eventsList = eventsList;
         this.eventClickListener = eventClickListener;
     }

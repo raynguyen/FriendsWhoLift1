@@ -5,7 +5,7 @@
 
 package apps.raymond.friendswholift.Groups;
 
-
+// IMPLEMENT CHANGING ACTION BAR FOR EACH VIEWPAGE
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,8 +43,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
     GroupRecyclerAdapter mAdapter;
     ProgressBar progressBar;
     //Required empty fragment. Not sure why it is needed.
-    public MyGroupsFragment(){
-    }
+    public MyGroupsFragment(){}
 
     @Nullable
     @Override
@@ -117,11 +116,13 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
                                 }
                                 Log.i(TAG,"MyGroups = "+myGroups.toString());
                                 mAdapter.setData(myGroups);
-                                progressBar.setVisibility(View.GONE);
                             } else {
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
                                 Log.i(TAG,"Current user has no Groups associated to them.");
+                                TextView nullText = getView().findViewById(R.id.null_data_text);
+                                nullText.setVisibility(View.VISIBLE);
                             }
+                            progressBar.setVisibility(View.GONE);
                         }
                     });
                 } else {

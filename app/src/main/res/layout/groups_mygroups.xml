@@ -16,6 +16,20 @@
         app:layout_constraintTop_toBottomOf="@id/groupSearchView">
     </ProgressBar>
 
+    <TextView
+        android:id="@+id/null_data_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="center"
+        android:text="@string/null_groups"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp"
+        android:visibility="gone"/>
+
     <android.support.v7.widget.SearchView
         android:id="@+id/groupSearchView"
         android:layout_width="match_parent"
