@@ -3,12 +3,15 @@ package apps.raymond.friendswholift;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import apps.raymond.friendswholift.Groups.NewGroupFragment;
 
 
 public class Core_Activity extends AppCompatActivity {
@@ -20,7 +23,7 @@ public class Core_Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
-
+        Log.i(TAG,"Launching the Core Activity.");
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
 
@@ -32,7 +35,6 @@ public class Core_Activity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
-                Log.i(TAG,"page scrolled");
             }
 
             @Override
@@ -43,7 +45,6 @@ public class Core_Activity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int i) {
-                Log.i(TAG,"ON PAGE SCROLL STATE CHANGED");
             }
         });
         tabLayout.setupWithViewPager(viewPager);
@@ -52,6 +53,7 @@ public class Core_Activity extends AppCompatActivity {
     // If this does not return true, a Menu is never inflated and onPrepareOptionsMenu is never called.
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+
         return true;
     }
 
@@ -60,9 +62,11 @@ public class Core_Activity extends AppCompatActivity {
         int i = viewPager.getCurrentItem();
         switch(i){
             case 0:
+                menu.clear();
                 getMenuInflater().inflate(R.menu.home_actionbar,menu);
                 break;
             case 1:
+                menu.clear();
                 getMenuInflater().inflate(R.menu.groups_toolbar,menu);
                 break;
         }
@@ -81,6 +85,13 @@ public class Core_Activity extends AppCompatActivity {
             case R.id.action_create_group:
                 Log.i(TAG,"Clicked on create group button.");
                 // INFLATE THE FRAGMENT TO ADD A NEW GROUP HERE.
+                Fragment createGroupFragment = new NewGroupFragment();
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.core_frame,createGroupFragment)
+                        .addToBackStack(null)
+                        .show(createGroupFragment)
+                        .commit();
         }
         return true;
     }
