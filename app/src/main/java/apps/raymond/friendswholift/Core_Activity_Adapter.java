@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import apps.raymond.friendswholift.Groups.MyGroupsFragment;
+import apps.raymond.friendswholift.Groups.Core_Group_Fragment;
 
 public class Core_Activity_Adapter extends FragmentPagerAdapter {
     private static final int NUM_PAGES = 2;
@@ -18,9 +18,9 @@ public class Core_Activity_Adapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch(i){
             case 0:
-                return new Core_EventsFragment();
+                return new Core_Events_Fragment();
             case 1:
-                return new MyGroupsFragment();
+                return new Core_Group_Fragment();
             default:
                 return null; // Decide what the default Fragment should be.
         }

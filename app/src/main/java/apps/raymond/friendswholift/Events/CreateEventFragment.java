@@ -84,6 +84,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         }
     }
 
+
     @Override
     public void positiveClick() {
         Toast.makeText(getContext(),"clicked this pos btn",Toast.LENGTH_SHORT).show();

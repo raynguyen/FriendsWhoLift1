@@ -33,7 +33,7 @@ import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 
-public class Core_EventsFragment extends Fragment implements EventClickListener,View.OnClickListener {
+public class Core_Events_Fragment extends Fragment implements EventClickListener,View.OnClickListener {
     private static final String TAG = "EventsFragment";
 
     private EventViewModel viewModel;
@@ -41,7 +41,7 @@ public class Core_EventsFragment extends Fragment implements EventClickListener,
     private ProgressBar progressBar;
     private EventsRecyclerAdapter mAdapter;
 
-    public Core_EventsFragment(){}
+    public Core_Events_Fragment(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,10 +77,10 @@ public class Core_EventsFragment extends Fragment implements EventClickListener,
         }
     }
 
+
     /*
      * ToDo:
      * Fragment does not cover the TabLayout at the bottom of the screen.
-     * Pressing the back button should close the Fragment and return to the ViewPager Fragments.
      *
      * When clicking on an event in the RecyclerView, we want to inflate a Fragment that will display
      * the information regarding the clicked Event.
@@ -94,6 +94,7 @@ public class Core_EventsFragment extends Fragment implements EventClickListener,
                 Fragment createEventFragment = CreateEventFragment.newInstance();
                 getFragmentManager()
                         .beginTransaction()
+                        .addToBackStack(null)
                         .add(R.id.core_frame,createEventFragment)
                         .show(createEventFragment)
                         .commit();

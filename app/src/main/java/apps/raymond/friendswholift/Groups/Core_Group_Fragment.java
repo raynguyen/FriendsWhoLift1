@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.v7.widget.SearchView;
 import android.widget.ProgressBar;
@@ -35,15 +36,15 @@ import java.util.List;
 import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
-public class MyGroupsFragment extends Fragment implements View.OnClickListener, GroupClickListener {
-    private static final String TAG = "MyGroupsFragment";
+public class Core_Group_Fragment extends Fragment implements View.OnClickListener, GroupClickListener {
+    private static final String TAG = "Core_Group_Fragment";
 
     GroupsViewModel mGroupViewModel;
     ArrayList<GroupBase> myGroups;
     GroupRecyclerAdapter mAdapter;
     ProgressBar progressBar;
     //Required empty fragment. Not sure why it is needed.
-    public MyGroupsFragment(){}
+    public Core_Group_Fragment(){}
 
     @Nullable
     @Override
@@ -89,6 +90,8 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
+        ImageButton cameraBtn = view.findViewById(R.id.camera_button);
+        cameraBtn.setOnClickListener(this);
 
     }
 
@@ -141,7 +144,7 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
         args.putParcelable("GroupObject",groupBase);
         detailedGroup.setArguments(args);
         getFragmentManager().beginTransaction()
-                .replace(R.id.groups_FrameLayout,detailedGroup)
+                .replace(R.id.core_frame,detailedGroup)
                 .addToBackStack(null)
                 .show(detailedGroup)
                 .commit();
@@ -156,6 +159,9 @@ public class MyGroupsFragment extends Fragment implements View.OnClickListener, 
                 break;
             case R.id.testButton4:
                 Log.i(TAG, "Clicked on testButton4.");
+                break;
+            case R.id.camera_button:
+                // Launch the camera activity here. The user shuold be allowed to choose from camera result or from storage.
                 break;
         }
     }

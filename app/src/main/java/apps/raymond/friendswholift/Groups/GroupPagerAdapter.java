@@ -16,7 +16,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch (i){
             case 0:
-                return new MyGroupsFragment();
+                return new Core_Group_Fragment();
             case 1:
                 return new NewGroupFragment();
             default:

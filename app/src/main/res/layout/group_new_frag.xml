@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="12dp"
-    android:padding="12dp"
+    android:layout_margin="8dp"
+    android:padding="8dp"
     android:orientation="vertical"
     android:clickable="true"
     android:background="@color/colorPrimary">
@@ -124,4 +124,11 @@
             android:textAllCaps="true"
             android:textColor="@color/colorPrimaryDark"/>
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/camera_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/fui_idp_button_background_phone"
+        android:contentDescription="@string/Temp"/>
 </LinearLayout>

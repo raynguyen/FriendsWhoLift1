@@ -11,16 +11,6 @@
         android:layout_height="match_parent"
         android:padding="4dp">
 
-        <!--
-        <fragment
-            android:id="@+id/events_frag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="apps.raymond.friendswholift.Activity_Main.GroupEventsFrag"
-            app:layout_constraintTop_toTopOf="parent">
-        </fragment>
-        -->
-
         <TextView
             android:id="@+id/title_Txt"
             android:layout_width="match_parent"
