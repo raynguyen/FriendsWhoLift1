@@ -33,7 +33,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Events.CreateEventFragment;
+import apps.raymond.friendswholift.Events.Event_Create_Fragment;
 import apps.raymond.friendswholift.Events.EventDetailFragment;
 import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
@@ -150,7 +150,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         switch (i){
             case R.id.create_event_btn:
                 Log.i(TAG,"Clicked on button to create new event.");
-                Fragment createEventFragment = CreateEventFragment.newInstance();
+                Fragment createEventFragment = Event_Create_Fragment.newInstance();
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.event_FrameLayout,createEventFragment)

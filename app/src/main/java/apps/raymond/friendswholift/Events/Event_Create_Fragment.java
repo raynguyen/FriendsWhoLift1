@@ -23,25 +23,25 @@ import android.widget.Toast;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class CreateEventFragment extends Fragment implements View.OnClickListener, YesNoDialog.YesNoInterface {
-    private static final String TAG = "CreateEventFragment";
+public class Event_Create_Fragment extends Fragment implements View.OnClickListener, YesNoDialog.YesNoInterface {
+    private static final String TAG = "Event_Create_Fragment";
     EditText nameTxt;
     EditText descTxt;
     EditText dayTxt;
     EditText monthTxt;
 
-    public CreateEventFragment(){
+    public Event_Create_Fragment(){
     }
 
-    public static CreateEventFragment newInstance(){
-        return new CreateEventFragment();
+    public static Event_Create_Fragment newInstance(){
+        return new Event_Create_Fragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        //Need the layout CreateEventFragment.
+        //Need the layout Event_Create_Fragment.
         return inflater.inflate(R.layout.event_create_frag,container,false);
     }
 

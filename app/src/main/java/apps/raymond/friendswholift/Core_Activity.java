@@ -1,5 +1,10 @@
+/*
+ * ToDo:
+ * Get the user permission for camera and document access on start up and store as a SharedPreference.
+ */
 package apps.raymond.friendswholift;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -10,10 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import apps.raymond.friendswholift.Groups.NewGroupFragment;
+import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 
-public class Core_Activity extends AppCompatActivity {
+public class Core_Activity extends AppCompatActivity implements Group_Create_Fragment.GetImageInterface {
     private static final String TAG = "Core_Activity";
 
     private ViewPager viewPager;
@@ -82,7 +88,7 @@ public class Core_Activity extends AppCompatActivity {
                 break;
             case R.id.action_create_group:
                 Log.i(TAG,"Clicked on create group button.");
-                Fragment createGroupFragment = new NewGroupFragment();
+                Fragment createGroupFragment = new Group_Create_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.core_frame,createGroupFragment)
                         .addToBackStack(null)
@@ -90,5 +96,17 @@ public class Core_Activity extends AppCompatActivity {
                         .commit();
         }
         return true;
+    }
+
+
+    @Override
+    public void getImage() {
+        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+            // Launch camera that allows user to take a photo or retrieve a stored image.
+            Toast.makeText(this,"Activity callback",Toast.LENGTH_SHORT).show();
+        } else {
+            // If the device has no camera, create a dialog that allows the user to select an image from a provider.
+        }
+
     }
 }
