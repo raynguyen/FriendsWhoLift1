@@ -13,7 +13,6 @@ import android.view.MenuItem;
 
 import apps.raymond.friendswholift.Groups.NewGroupFragment;
 
-
 public class Core_Activity extends AppCompatActivity {
     private static final String TAG = "Core_Activity";
 
@@ -31,7 +30,7 @@ public class Core_Activity extends AppCompatActivity {
         Core_Activity_Adapter pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
-        //viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -50,10 +49,9 @@ public class Core_Activity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    // If this does not return true, a Menu is never inflated and onPrepareOptionsMenu is never called.
+    // Returning false means Menu is never inflated and onPrepareOptionsMenu is never called.
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-
         return true;
     }
 
@@ -84,9 +82,7 @@ public class Core_Activity extends AppCompatActivity {
                 break;
             case R.id.action_create_group:
                 Log.i(TAG,"Clicked on create group button.");
-                // INFLATE THE FRAGMENT TO ADD A NEW GROUP HERE.
                 Fragment createGroupFragment = new NewGroupFragment();
-
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.core_frame,createGroupFragment)
                         .addToBackStack(null)

@@ -94,7 +94,7 @@ public class Core_EventsFragment extends Fragment implements EventClickListener,
                 Fragment createEventFragment = CreateEventFragment.newInstance();
                 getFragmentManager()
                         .beginTransaction()
-                        .add(R.id.event_FrameLayout,createEventFragment)
+                        .add(R.id.core_frame,createEventFragment)
                         .show(createEventFragment)
                         .commit();
                 break;

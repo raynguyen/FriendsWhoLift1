@@ -43,18 +43,6 @@
         <activity android:name=".ManageStats_Activity"/>
 
         <activity
-            android:name=".MainActivityOld"
-            android:label="@string/title_activity_home"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".LiftsList">
         </activity>
 
