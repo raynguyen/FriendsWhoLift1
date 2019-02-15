@@ -18,7 +18,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new Core_Group_Fragment();
             case 1:
-                return new NewGroupFragment();
+                return new Group_Create_Fragment();
             default:
                 return null;
         }

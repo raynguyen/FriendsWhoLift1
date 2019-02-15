@@ -7,6 +7,7 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,11 +35,9 @@ import java.util.Arrays;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class NewGroupFragment extends Fragment implements View.OnClickListener,
+public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
         YesNoDialog.YesNoInterface {
-    private static final String TAG = "NewGroupFragment";
-    private static final String GROUP_COLLECTION = "Groups";
-    private static final String USER_COLLECTION = "Users";
+    private static final String TAG = "Group_Create_Fragment";
 
     public String groupName, descText;
 
@@ -47,12 +47,35 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
     private FirebaseUser currentUser;
     private GroupsViewModel mGroupViewModel;
 
+    private GetImageInterface imageInterface;
+    public interface GetImageInterface{
+        void getImage();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            imageInterface = (GetImageInterface) getActivity();
+        }catch (ClassCastException e){
+            Log.w(TAG,"Error attaching GetImageInterface.",e);
+        }
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.group_new_frag,container,false);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Button discard_Btn = view.findViewById(R.id.discard_grp_btn);
         Button create_Btn = view.findViewById(R.id.create_grp_btn);
         discard_Btn.setOnClickListener(this);
@@ -68,11 +91,9 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         invite_Spinner.setAdapter(adapter);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
-        return view;
+        ImageButton cameraBtn = view.findViewById(R.id.camera_button);
+        cameraBtn.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -91,11 +112,14 @@ public class NewGroupFragment extends Fragment implements View.OnClickListener,
                 break;
             case R.id.discard_grp_btn:
                 break;
+            case R.id.camera_button:
+                // Launch the camera activity here. The user should be allowed to choose from camera result or from storage.
+                imageInterface.getImage();
+                break;
         }
     }
 
     private void confirmDialog(){
-
         DialogFragment dialog = new YesNoDialog();
         dialog.setTargetFragment(this, 0);
         dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");

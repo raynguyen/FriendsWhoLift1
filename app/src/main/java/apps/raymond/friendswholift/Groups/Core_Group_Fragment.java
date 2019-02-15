@@ -43,6 +43,8 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     ArrayList<GroupBase> myGroups;
     GroupRecyclerAdapter mAdapter;
     ProgressBar progressBar;
+
+
     //Required empty fragment. Not sure why it is needed.
     public Core_Group_Fragment(){}
 
@@ -89,9 +91,6 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
                 return false;
             }
         });
-
-        ImageButton cameraBtn = view.findViewById(R.id.camera_button);
-        cameraBtn.setOnClickListener(this);
 
     }
 
@@ -160,11 +159,11 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
             case R.id.testButton4:
                 Log.i(TAG, "Clicked on testButton4.");
                 break;
-            case R.id.camera_button:
-                // Launch the camera activity here. The user shuold be allowed to choose from camera result or from storage.
-                break;
+
         }
     }
+
+
 
 
 }

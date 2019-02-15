@@ -27,11 +27,11 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
     private static final int NUM_FIELDS = 2;
 
     Button login_Btn, signUp_Btn;
-    TextInputEditText username_Txt, password_Txt;
-    TextInputEditText[] inputFields;
+    private TextInputEditText username_Txt, password_Txt;
+    private TextInputEditText[] inputFields;
     FirebaseAuth mAuth;
-    SignIn signIn;
-    LoginViewModel mLoginViewModel;
+    private SignIn signIn;
+    private LoginViewModel mLoginViewModel;
 
     public interface SignIn {
         void signedIn();
