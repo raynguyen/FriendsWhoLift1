@@ -69,7 +69,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ImageButton addEventBtn = view.findViewById(R.id.create_event);
+        ImageButton addEventBtn = view.findViewById(R.id.create_event_btn);
         addEventBtn.setOnClickListener(this);
 
         progressBar = view.findViewById(R.id.progress_bar);
@@ -148,7 +148,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
         final Task<List<Task<DocumentSnapshot>>> myGroupEvents;
 
         switch (i){
-            case R.id.create_event:
+            case R.id.create_event_btn:
                 Log.i(TAG,"Clicked on button to create new event.");
                 Fragment createEventFragment = CreateEventFragment.newInstance();
                 getFragmentManager()

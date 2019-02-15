@@ -18,7 +18,7 @@ public class Core_Activity_Adapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch(i){
             case 0:
-                return new MyEventsFragment();
+                return new Core_EventsFragment();
             case 1:
                 return new MyGroupsFragment();
             default:

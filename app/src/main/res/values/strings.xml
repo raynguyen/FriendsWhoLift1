@@ -65,6 +65,7 @@
     <!-- General Strings -->
     <string name="discard">Discard</string>
 
+    <string name="upcoming_events">Upcoming Events</string>
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>
         <item>Bench Press</item>

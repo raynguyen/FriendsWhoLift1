@@ -28,11 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.friendswholift.Activity_Main.EventsRecyclerAdapter;
+import apps.raymond.friendswholift.Events.CreateEventFragment;
 import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 
-public class MyEventsFragment extends Fragment implements EventClickListener,View.OnClickListener {
+public class Core_EventsFragment extends Fragment implements EventClickListener,View.OnClickListener {
     private static final String TAG = "EventsFragment";
 
     private EventViewModel viewModel;
@@ -40,7 +41,7 @@ public class MyEventsFragment extends Fragment implements EventClickListener,Vie
     private ProgressBar progressBar;
     private EventsRecyclerAdapter mAdapter;
 
-    public MyEventsFragment(){}
+    public Core_EventsFragment(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class MyEventsFragment extends Fragment implements EventClickListener,Vie
         super.onViewCreated(view, savedInstanceState);
         eventList = new ArrayList<>();
 
-        ImageButton addEventBtn = view.findViewById(R.id.create_event);
+        ImageButton addEventBtn = view.findViewById(R.id.create_event_btn);
         addEventBtn.setOnClickListener(this);
 
         progressBar = view.findViewById(R.id.progress_bar);
@@ -76,10 +77,27 @@ public class MyEventsFragment extends Fragment implements EventClickListener,Vie
         }
     }
 
+    /*
+     * ToDo:
+     * Fragment does not cover the TabLayout at the bottom of the screen.
+     * Pressing the back button should close the Fragment and return to the ViewPager Fragments.
+     *
+     * When clicking on an event in the RecyclerView, we want to inflate a Fragment that will display
+     * the information regarding the clicked Event.
+     */
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
+            case R.id.create_event_btn:
+                Log.i(TAG,"Clicked on button to create new event.");
+                Fragment createEventFragment = CreateEventFragment.newInstance();
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.event_FrameLayout,createEventFragment)
+                        .show(createEventFragment)
+                        .commit();
+                break;
         }
     }
 
