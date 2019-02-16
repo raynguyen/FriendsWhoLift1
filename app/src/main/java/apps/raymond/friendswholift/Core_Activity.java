@@ -4,6 +4,7 @@
  */
 package apps.raymond.friendswholift;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -101,27 +102,36 @@ public class Core_Activity extends AppCompatActivity implements Group_Create_Fra
         return true;
     }
 
+    @SuppressLint("all")
     @Override
     public void getImage() {
+        View imgDialogView;
+        final AlertDialog imgAlert = new AlertDialog.Builder(Core_Activity.this)
+                .setTitle("Image Selector")
+                .setCancelable(true)
+                .create();
+        imgAlert.setCanceledOnTouchOutside(true);
+
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            // Launch camera that allows user to take a photo or retrieve a stored image.
-            View imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
-            final AlertDialog imgAlert = new AlertDialog.Builder(Core_Activity.this)
-                    .setTitle("Image Selector")
-                    .setCancelable(true)
-                    .setView(R.layout.image_alert_dialog)
-                    .show();
-            imgAlert.setCanceledOnTouchOutside(true);
-            
+            imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
         } else {
-            // If the device has no camera, create a dialog that allows the user to select an image from a provider.
-            AlertDialog.Builder imgDialog = new AlertDialog.Builder(Core_Activity.this);
-            View alertView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
-            imgDialog.setView(alertView);
-            final AlertDialog imgAlert = imgDialog.show();
-            imgAlert.setCancelable(true);
-            imgAlert.setCanceledOnTouchOutside(true);
+            // Prompt dialog without camera option.
+            imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog_nc,null);
         }
 
+        imgAlert.setView(imgDialogView);
+        imgAlert.show();
+
+        // Button set-up:
+        imgDialogView
+
+
+
+
+
     }
+
+
+
+
 }
