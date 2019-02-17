@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,11 +20,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 
-public class Core_Activity extends AppCompatActivity implements Group_Create_Fragment.GetImageInterface {
+public class Core_Activity extends AppCompatActivity implements
+        Group_Create_Fragment.GetImageInterface, View.OnClickListener {
     private static final String TAG = "Core_Activity";
 
     private ViewPager viewPager;
@@ -102,7 +105,7 @@ public class Core_Activity extends AppCompatActivity implements Group_Create_Fra
         return true;
     }
 
-    @SuppressLint("all")
+    //@SuppressLint("all")
     @Override
     public void getImage() {
         View imgDialogView;
@@ -123,15 +126,34 @@ public class Core_Activity extends AppCompatActivity implements Group_Create_Fra
         imgAlert.show();
 
         // Button set-up:
-        imgDialogView
-
-
-
-
+        ImageView camera_btn = imgDialogView.findViewById(R.id.camera_img);
+        ImageView gallery_btn = imgDialogView.findViewById(R.id.gallery_img);
+        ImageView google_btn = imgDialogView.findViewById(R.id.google_img);
+        camera_btn.setOnClickListener(Core_Activity.this);
+        gallery_btn.setOnClickListener(Core_Activity.this);
+        google_btn.setOnClickListener(Core_Activity.this);
 
     }
 
-
-
-
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i){
+            case R.id.camera_img:
+                Log.i(TAG,"Starting intent for launch camera.");
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, 1);
+                }
+                break;
+            case R.id.gallery_img:
+                Log.i(TAG,"Starting intent to load Gallery.");
+                Toast.makeText(Core_Activity.this,"Should load Gallery.",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.google_img:
+                Log.i(TAG,"Loading google images for user.");
+                Toast.makeText(Core_Activity.this,"This feature has not been implemented.",Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
 }
