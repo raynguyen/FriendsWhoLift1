@@ -50,6 +50,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     private static final int IMAGE_REQUEST_CODE = 1;
 
     public String groupName, descText;
+    public Uri imageUri;
 
     Spinner invite_Spinner;
     EditText desc_Txt;
@@ -57,7 +58,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     private FirebaseUser currentUser;
     private GroupsViewModel mGroupViewModel;
     private ImageView imageView;
-
+    private AlertDialog imgAlert;
 
     @Nullable
     @Override
@@ -94,6 +95,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
     }
 
+
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -107,9 +109,14 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 }
                 groupName = name_Txt.getText().toString();
                 descText = desc_Txt.getText().toString();
-                confirmDialog();
+                DialogFragment dialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.CONFIRM_GROUP);
+                dialog.setTargetFragment(this, 0);
+                dialog.show(getActivity().getSupportFragmentManager(),"confirmation_dialog");
                 break;
             case R.id.discard_grp_btn:
+                DialogFragment discardDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+                discardDialog.setTargetFragment(this, 0);
+                discardDialog.show(getActivity().getSupportFragmentManager(),"confirmation_dialog");
                 break;
             case R.id.camera_button:
                 // Launch the camera activity here. The user should be allowed to choose from camera result or from storage.
@@ -137,7 +144,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
     private void getImage(){
         View imgDialogView;
-        final AlertDialog imgAlert = new AlertDialog.Builder(getContext())
+        imgAlert = new AlertDialog.Builder(getContext())
                 .setTitle("Image Selector")
                 .setCancelable(true)
                 .create();
@@ -166,20 +173,14 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
+        imgAlert.dismiss();
         if(requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK){
             Log.i(TAG,"Image URI retrieved from user selection.");
-            Uri imageURI = null;
             if(data != null){
-                imageURI = data.getData();
-                Picasso.get().load(imageURI).into(imageView);
+                imageUri = data.getData();
+                Picasso.get().load(imageUri).into(imageView);
             }
         }
-    }
-
-    private void confirmDialog(){
-        DialogFragment dialog = new YesNoDialog();
-        dialog.setTargetFragment(this, 0);
-        dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
     }
 
     @Override
@@ -187,7 +188,10 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         // Add option for photo, if photo is taken, create the group, add image to storage, when the
         // add image to storage is complete, take the uri and add it to the group's field.
         GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null);
-
+        if(imageUri!=null){
+            //SAVE THE PHOTO INTO FIREBASESTORAGE.
+            //IF THIS IS CALLED WE THEN NEED TO TAKE THE URI FROM STORAGE AND SAVE IT INTO THE GROUPBASE OBJECT.
+        }
         Log.i(TAG,"Created a new GroupBase object with name " + groupBase.getName());
         mGroupViewModel.createGroup(groupBase);
     }
