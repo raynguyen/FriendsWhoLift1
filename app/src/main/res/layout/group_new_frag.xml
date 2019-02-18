@@ -128,7 +128,12 @@
     <ImageButton
         android:id="@+id/camera_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="100dp"
         android:src="@drawable/fui_idp_button_background_phone"
         android:contentDescription="@string/Temp"/>
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

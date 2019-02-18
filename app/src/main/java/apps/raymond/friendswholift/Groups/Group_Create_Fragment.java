@@ -6,14 +6,20 @@
 
 package apps.raymond.friendswholift.Groups;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,21 +29,25 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
 public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
         YesNoDialog.YesNoInterface {
     private static final String TAG = "Group_Create_Fragment";
+    private static final int IMAGE_REQUEST_CODE = 1;
 
     public String groupName, descText;
 
@@ -46,22 +56,8 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     private TextInputEditText name_Txt;
     private FirebaseUser currentUser;
     private GroupsViewModel mGroupViewModel;
+    private ImageView imageView;
 
-    private GetImageInterface imageInterface;
-    public interface GetImageInterface{
-        void getImage();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            imageInterface = (GetImageInterface) getActivity();
-        }catch (ClassCastException e){
-            Log.w(TAG,"Error attaching GetImageInterface.",e);
-        }
-
-    }
 
     @Nullable
     @Override
@@ -93,6 +89,9 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
         ImageButton cameraBtn = view.findViewById(R.id.camera_button);
         cameraBtn.setOnClickListener(this);
+
+        imageView = view.findViewById(R.id.image_view);
+
     }
 
     @Override
@@ -114,8 +113,66 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.camera_button:
                 // Launch the camera activity here. The user should be allowed to choose from camera result or from storage.
-                imageInterface.getImage();
+                getImage();
                 break;
+            case R.id.camera_img:
+                Log.i(TAG,"Starting intent for launch camera.");
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, 1);
+                }
+                break;
+            case R.id.gallery_img:
+                Log.i(TAG,"Starting intent to load Gallery.");
+                Intent getPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                getPictureIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                getPictureIntent.setType("image/*");
+                startActivityForResult(getPictureIntent,IMAGE_REQUEST_CODE);
+                break;
+            case R.id.google_img:
+                Log.i(TAG,"Loading google images for user.");
+                break;
+        }
+    }
+
+    private void getImage(){
+        View imgDialogView;
+        final AlertDialog imgAlert = new AlertDialog.Builder(getContext())
+                .setTitle("Image Selector")
+                .setCancelable(true)
+                .create();
+        imgAlert.setCanceledOnTouchOutside(true);
+
+        if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+            imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
+        } else {
+            // Prompt dialog without camera option.
+            imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog_nc,null);
+        }
+
+        imgAlert.setView(imgDialogView);
+        imgAlert.show();
+
+        // Button set-up:
+        ImageView camera_btn = imgDialogView.findViewById(R.id.camera_img);
+        ImageView gallery_btn = imgDialogView.findViewById(R.id.gallery_img);
+        ImageView google_btn = imgDialogView.findViewById(R.id.google_img);
+        camera_btn.setOnClickListener(this);
+        gallery_btn.setOnClickListener(this);
+        google_btn.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            Log.i(TAG,"Image URI retrieved from user selection.");
+            Uri imageURI = null;
+            if(data != null){
+                imageURI = data.getData();
+                Picasso.get().load(imageURI).into(imageView);
+            }
         }
     }
 

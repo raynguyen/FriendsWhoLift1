@@ -4,9 +4,10 @@
  */
 package apps.raymond.friendswholift;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -23,10 +24,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 
-public class Core_Activity extends AppCompatActivity implements
-        Group_Create_Fragment.GetImageInterface, View.OnClickListener {
+public class Core_Activity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Core_Activity";
 
     private ViewPager viewPager;
@@ -105,55 +107,12 @@ public class Core_Activity extends AppCompatActivity implements
         return true;
     }
 
-    //@SuppressLint("all")
-    @Override
-    public void getImage() {
-        View imgDialogView;
-        final AlertDialog imgAlert = new AlertDialog.Builder(Core_Activity.this)
-                .setTitle("Image Selector")
-                .setCancelable(true)
-                .create();
-        imgAlert.setCanceledOnTouchOutside(true);
-
-        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
-            imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
-        } else {
-            // Prompt dialog without camera option.
-            imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog_nc,null);
-        }
-
-        imgAlert.setView(imgDialogView);
-        imgAlert.show();
-
-        // Button set-up:
-        ImageView camera_btn = imgDialogView.findViewById(R.id.camera_img);
-        ImageView gallery_btn = imgDialogView.findViewById(R.id.gallery_img);
-        ImageView google_btn = imgDialogView.findViewById(R.id.google_img);
-        camera_btn.setOnClickListener(Core_Activity.this);
-        gallery_btn.setOnClickListener(Core_Activity.this);
-        google_btn.setOnClickListener(Core_Activity.this);
-
-    }
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.camera_img:
-                Log.i(TAG,"Starting intent for launch camera.");
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, 1);
-                }
-                break;
-            case R.id.gallery_img:
-                Log.i(TAG,"Starting intent to load Gallery.");
-                Toast.makeText(Core_Activity.this,"Should load Gallery.",Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.google_img:
-                Log.i(TAG,"Loading google images for user.");
-                Toast.makeText(Core_Activity.this,"This feature has not been implemented.",Toast.LENGTH_SHORT).show();
-                break;
+
         }
     }
+
 }
