@@ -24,7 +24,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
 
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 

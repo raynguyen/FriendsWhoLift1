@@ -1,8 +1,10 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.arch.lifecycle.ViewModel;
+import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.List;
 
@@ -26,5 +28,9 @@ public class GroupsViewModel extends ViewModel {
 
     public Task<GroupBase> getGroup(){
         return mRepository.getGroup();
+    }
+
+    public UploadTask uploadImage(Uri uri,String name){
+        return mRepository.uploadImage(uri, name);
     }
 }

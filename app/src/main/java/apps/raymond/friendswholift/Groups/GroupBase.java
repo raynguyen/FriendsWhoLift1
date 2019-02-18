@@ -6,6 +6,7 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -90,6 +91,10 @@ public class GroupBase implements Parcelable {
 
     public String getImageURI(){
         return imageURI;
+    }
+
+    public void setImageURI(Uri imageURI){
+        this.imageURI = imageURI.toString();
     }
 
     public void setByteArray(byte[] byteArray){

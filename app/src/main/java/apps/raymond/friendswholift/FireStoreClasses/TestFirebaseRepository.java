@@ -15,6 +15,7 @@ package apps.raymond.friendswholift.FireStoreClasses;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -40,6 +41,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
@@ -60,7 +63,7 @@ public class TestFirebaseRepository {
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
@@ -356,6 +359,11 @@ public class TestFirebaseRepository {
                         return groupEvents;
                     }
                 });
+    }
+
+    public UploadTask uploadImage(Uri uri, String groupName){
+        StorageReference childStorage = storageRef.child("images/"+groupName);
+        return childStorage.putFile(uri);
     }
 
     public Task<GroupBase> getGroup(){
