@@ -34,18 +34,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
-
-import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
@@ -194,29 +186,27 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         // add image to storage is complete, take the uri and add it to the group's field.
         final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null);
         if(imageUri!=null){
-            //SAVE THE PHOTO INTO FIREBASESTORAGE.
-            //IF THIS IS CALLED WE THEN NEED TO TAKE THE URI FROM STORAGE AND SAVE IT INTO THE GROUPBASE OBJECT.
             //Need a confirmation dialog before we add the photo to FireStore.
             mGroupViewModel.uploadImage(imageUri, groupName)
-            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.i(TAG,"Successfully uploaded image.");
-                    //Want to return the storage URI not the device's document URI!!!!!!
-                    groupBase.setImageURI(imageUri);
-                    mGroupViewModel.createGroup(groupBase);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i(TAG,"Error uploading image.",e);
-                    Toast.makeText(getContext(),"Error uploading image.",Toast.LENGTH_SHORT).show();
-                }
-            });
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            groupBase.setImageURI(uri.toString());
+                            mGroupViewModel.createGroup(groupBase);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i(TAG,"Error uploading image.",e);
+                            Toast.makeText(getContext(),"Error uploading image.",Toast.LENGTH_SHORT).show();
+                        }
+                    });
         } else {
             mGroupViewModel.createGroup(groupBase);
         }
         Log.i(TAG,"Created a new GroupBase object with name " + groupBase.getName());
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override

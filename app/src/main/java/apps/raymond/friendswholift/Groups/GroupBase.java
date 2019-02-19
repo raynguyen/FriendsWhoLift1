@@ -5,14 +5,9 @@
  */
 package apps.raymond.friendswholift.Groups;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.List;
-
-import apps.raymond.friendswholift.Events.GroupEvent;
 
 public class GroupBase implements Parcelable {
 
@@ -22,9 +17,6 @@ public class GroupBase implements Parcelable {
     private String visibility;
     private String invite;
     private String imageURI;
-    private List<String> tags;
-    private byte[] photo;
-    private byte[] byteArray;
 
     // Empty constructor as required by FireBase.
     public GroupBase() {
@@ -73,39 +65,48 @@ public class GroupBase implements Parcelable {
         return name;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public String getDescription(){
         return description;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
     }
 
     public String getOwner(){
         return owner;
     }
 
+    public void setOwner(String owner){
+        this.owner = owner;
+    }
+
     public String getVisibility(){
         return visibility;
+    }
+
+    public void setVisibility(String visibility){
+        this.visibility = visibility;
     }
 
     public String getInvite(){
         return invite;
     }
 
+    public void setInvite(String invite){
+        this.invite = invite;
+    }
+
     public String getImageURI(){
         return imageURI;
     }
 
-    public void setImageURI(Uri imageURI){
-        this.imageURI = imageURI.toString();
+    public void setImageURI(String imageURI){
+        this.imageURI = imageURI;
     }
 
-    public void setByteArray(byte[] byteArray){
-        this.byteArray = byteArray;
-    }
-
-    public byte[] getByteArray(){
-        return byteArray;
-    }
-
-    public List<String> getTags(){
-        return tags;
-    }
 }

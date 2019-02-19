@@ -54,11 +54,11 @@ public class DetailedGroupFragment extends Fragment {
         name.setText(groupBase.getName());
         desc.setText(groupBase.getDescription());
 
-        byte[] bytes = groupBase.getByteArray();
+        /*byte[] bytes = groupBase.getByteArray();
         if(bytes !=null){
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
             image.setImageBitmap(bitmap);
-        }
+        }*/
     }
 
 

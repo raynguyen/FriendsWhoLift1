@@ -30,7 +30,7 @@ public class GroupsViewModel extends ViewModel {
         return mRepository.getGroup();
     }
 
-    public UploadTask uploadImage(Uri uri,String name){
+    public Task<Uri> uploadImage(Uri uri,String name){
         return mRepository.uploadImage(uri, name);
     }
 }

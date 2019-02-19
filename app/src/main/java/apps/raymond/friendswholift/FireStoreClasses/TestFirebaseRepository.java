@@ -281,9 +281,6 @@ public class TestFirebaseRepository {
                 });
     }
 
-    /*
-     * Adds a GroupEvent POJO to a Document with the POJO's name.
-     */
     public void createEvent(final GroupEvent groupEvent){
         eventCollection.document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -361,9 +358,18 @@ public class TestFirebaseRepository {
                 });
     }
 
-    public UploadTask uploadImage(Uri uri, String groupName){
-        StorageReference childStorage = storageRef.child("images/"+groupName);
-        return childStorage.putFile(uri);
+
+    // Task to upload an image and on success return the downloadUri.
+    public Task<Uri> uploadImage(Uri uri, String groupName){
+        final StorageReference childStorage = storageRef.child("images/"+groupName);
+        return childStorage.putFile(uri)
+                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    Log.i(TAG,"Successfully uploaded image to storage.");
+                    return childStorage.getDownloadUrl();
+                }
+            });
     }
 
     public Task<GroupBase> getGroup(){
