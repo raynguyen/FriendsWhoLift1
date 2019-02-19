@@ -1,5 +1,7 @@
 package apps.raymond.friendswholift.Groups;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,7 +57,11 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
 
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.descTxt.setText(currentGroup.getDescription());
-            //viewHolder.groupImage.setImageBitmap();
+            /*
+            if(currentGroup.getImageURI()!=null){
+                Bitmap bitmap = BitmapFactory.decodeByteArray(currentGroup.getBytes(),0,currentGroup.getBytes().length);
+                viewHolder.groupImage.setImageBitmap(bitmap);
+            }*/
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -67,7 +73,6 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
 
     public void setData(List<GroupBase> myGroups){
         this.groupsList = myGroups;
-        notifyDataSetChanged();
     }
 
     @Override

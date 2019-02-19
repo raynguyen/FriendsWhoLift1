@@ -281,6 +281,12 @@ public class TestFirebaseRepository {
                 });
     }
 
+    public Task<byte[]> getImage(String uri){
+        StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uri);
+        return imageRef.getBytes(1024*1024*3);
+
+    }
+
     public void createEvent(final GroupEvent groupEvent){
         eventCollection.document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

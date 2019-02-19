@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.List;
 
@@ -32,5 +31,9 @@ public class GroupsViewModel extends ViewModel {
 
     public Task<Uri> uploadImage(Uri uri,String name){
         return mRepository.uploadImage(uri, name);
+    }
+
+    public Task<byte[]> getImage(String uri){
+        return mRepository.getImage(uri);
     }
 }

@@ -5,7 +5,6 @@
  */
 package apps.raymond.friendswholift.Groups;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,6 +16,7 @@ public class GroupBase implements Parcelable {
     private String visibility;
     private String invite;
     private String imageURI;
+    private byte[] bytes;
 
     // Empty constructor as required by FireBase.
     public GroupBase() {
@@ -109,4 +109,11 @@ public class GroupBase implements Parcelable {
         this.imageURI = imageURI;
     }
 
+    public byte[] getBytes(){
+        return this.bytes;
+    }
+
+    public void setBytes(byte[] bytes){
+        this.bytes =bytes;
+    }
 }

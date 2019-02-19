@@ -7,6 +7,7 @@ package apps.raymond.friendswholift.Groups;
 
 // IMPLEMENT CHANGING ACTION BAR FOR EACH VIEWPAGE
 import android.arch.lifecycle.ViewModelProviders;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,11 +26,13 @@ import android.support.v7.widget.SearchView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +103,10 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
      *
      * Need to check to see what happens if there is no photoURI in the group.
+     *
+     *
+     * Create the cards, then download the images is probably the cleaner approach. This prevents the
+     * user from having to wait extended periods of time before viewing all their groups.
      */
     //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
     private void updateCardViews(){
@@ -130,9 +137,9 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
                 } else {
                     Log.i(TAG,"Fetching Groups for the user returned null.");
                 }
-
             }
         });
+
     }
 
     @Override
