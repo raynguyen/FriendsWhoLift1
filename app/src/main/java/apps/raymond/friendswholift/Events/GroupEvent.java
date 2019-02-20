@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GroupEvent implements Parcelable {
     private static final String TAG = "GroupEvent.Class";
 
@@ -28,23 +31,27 @@ public class GroupEvent implements Parcelable {
     private String month;
     private String day;
     private String privacy;
+    private List<String> tags;
 
     private GroupEvent(Parcel in){
-        Log.i(TAG,"Creating GroupEvent instance: " +name + " via Parcel.");
         this.name = in.readString();
         this.desc = in.readString();
         this.month = in.readString();
         this.day = in.readString();
         this.privacy = in.readString();
+        this.tags = in.readArrayList(null);
+
     }
 
-    public GroupEvent(String name, String desc, String month, String day, String privacy){
+    public GroupEvent(String name, String desc, String month, String day, String privacy,
+                      ArrayList<String> tags){
         Log.i(TAG,"Creating GroupEvent instance: " +name + " via parameter passing.");
         this.name = name;
         this.desc = desc;
         this.month = month;
         this.day = day;
         this.privacy = privacy;
+        this.tags = tags;
     }
 
     public String getName(){
@@ -87,6 +94,14 @@ public class GroupEvent implements Parcelable {
         this.privacy = privacy;
     }
 
+    public List<String> getTags(){
+        return this.tags;
+    }
+
+    public void setTags(ArrayList<String> tags){
+        this.tags = tags;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -100,5 +115,6 @@ public class GroupEvent implements Parcelable {
         dest.writeString(desc);
         dest.writeString(month);
         dest.writeString(day);
+        dest.writeList(tags);
     }
 }

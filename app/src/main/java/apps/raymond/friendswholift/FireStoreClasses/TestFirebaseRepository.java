@@ -287,30 +287,32 @@ public class TestFirebaseRepository {
 
     }
 
+    /*
+     * Creates a new Document in the Events collection. The Document is created as a GroupEvent
+     * object. Upon successful creation, we create a Document in the creator's Events collection via
+     * the event name. The associated tags for the event are stored as a sub-collection in the event
+     * document.
+     */
     public void createEvent(final GroupEvent groupEvent){
         eventCollection.document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Log.i(TAG,"Added event " + groupEvent.getName() + " to the Events.");
-                        } else {
-                            Log.w(TAG,"Unable to add Event to the Events collection.");
-                        }
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                @Override
+                public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                    if(task.isSuccessful()){
+                        Log.i(TAG,"Added event " + groupEvent.getName() + " to the Events.");
+                        addEventToUser(groupEvent.getName());
+                        //addEventTags(groupEvent);
+                    } else {
+                        Log.w(TAG,"Unable to add Event to the Events collection.");
                     }
-                }).continueWithTask(new Continuation<Void, Task<Void>>() {
-            @Override
-            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                if(task.isSuccessful()){
-                    addEventToUser(groupEvent.getName());
-                } else {
-                    Log.w(TAG,"Unable to store the Event in the Events collection. ");
+                    return null;
                 }
-                return null;
-            }
-        });
+            });
     }
 
+    /*
+     * Attach an event to the user's events collection.
+     */
     public Task<DocumentSnapshot> addEventToUser(String eventName){
         Log.i(TAG,"Adding event to User Document.");
         final DocumentReference docRef = userCollection.document(currentUser.getEmail()).collection("Events").document(eventName);
@@ -328,6 +330,33 @@ public class TestFirebaseRepository {
         });
     }
 
+    /*
+     * NOTE: This is currently needed as we are storing as a field an Array of the tags.
+     * Create a sub-collection of event tags in an Event.
+     */
+    private void addEventTags(final GroupEvent event){
+        Log.i(TAG,"Updating events sub-collection for: "+event.getName());
+        Map<String,Boolean> holder = new HashMap<>();
+        holder.put("Exists",true);
+        List<String> tags = event.getTags();
+        for(final String tag:tags){
+            Log.i(TAG,"Creating a document for tag: "+tag);
+            eventCollection.document(event.getName()).collection("Tags")
+                    .document(tag).set(holder,SetOptions.merge())
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.i(TAG,"Successfully created tag document: "+tag);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i(TAG,"Failed to create tag document: "+tag,e);
+                }
+            });
+        }
+
+    }
     /*
      * Called when we want to retrieve GroupEvent objects that are listed under the User's groups.
      * This method does not update the adapter when there is a change in the data.

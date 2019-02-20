@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,6 +44,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     EditText tagsTxt;
     String privacy;
     public Event_Create_Fragment(){
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     public static Event_Create_Fragment newInstance(){
@@ -81,11 +88,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         tagsContainer = view.findViewById(R.id.tags_container_txt);
 
         testList = new ArrayList<>();
+        tagsList = new ArrayList<>();
     }
 
 
 
-    List<String> tagsList;
+    ArrayList<String> tagsList;
     List<ClickableSpan> testList;
     @Override
     public void onClick(View v) {
@@ -100,11 +108,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                         descTxt.getText().toString(),
                         monthTxt.getText().toString(),
                         dayTxt.getText().toString(),
-                        privacy);
+                        privacy,
+                        tagsList);
                 Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getName());
 
-                //EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
-                //eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
+                EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+                eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
                 getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
 
@@ -121,6 +130,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
                 tagsList.add(tagsTxt.getText().toString());
                 tagsContainer.setText(tagsList.toString());
+                tagsTxt.getText().clear();
 
                 break;
         }
