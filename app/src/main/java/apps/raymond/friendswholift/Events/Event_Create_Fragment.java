@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
@@ -29,6 +30,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     EditText descTxt;
     EditText dayTxt;
     EditText monthTxt;
+    EditText tagTxt;
 
     public Event_Create_Fragment(){
     }
@@ -52,11 +54,17 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         descTxt = view.findViewById(R.id.event_desc_txt);
         dayTxt = view.findViewById(R.id.event_day);
         monthTxt = view.findViewById(R.id.event_month);
+        tagTxt = view.findViewById(R.id.event_tags_txt);
 
         Button saveBtn = view.findViewById(R.id.save_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
         saveBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
+
+
+
+        ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
+        addTagsBtn.setOnClickListener(this);
     }
 
     @Override
@@ -80,6 +88,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 DialogFragment dialog = new YesNoDialog();
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
+                break;
+
+            case R.id.event_tag_add_btn:
+                Log.i(TAG,"Adding tag to event.");
+                // When this button is pressed, add the String to a container below the TextView that displays all the tags that have been added
+                // Research a way of getting the individual strings as clickable objects.
                 break;
         }
     }

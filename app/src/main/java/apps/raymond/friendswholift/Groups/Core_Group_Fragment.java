@@ -139,7 +139,6 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
                 }
             }
         });
-
     }
 
     @Override

@@ -116,7 +116,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 discardDialog.show(getActivity().getSupportFragmentManager(),"confirmation_dialog");
                 break;
             case R.id.camera_button:
-                // Launch the camera activity here. The user should be allowed to choose from camera result or from storage.
                 getImage();
                 break;
             case R.id.camera_img:

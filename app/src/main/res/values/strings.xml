@@ -75,4 +75,9 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+
+
+    <!--EVENT CREATION FRAGMENT-->
+    <string name="event_name">EVENT NAME</string>
+    <string name="event_desc">SHORT DESCRIPTION</string>
 </resources>

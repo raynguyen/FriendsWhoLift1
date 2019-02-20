@@ -20,7 +20,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -108,10 +111,19 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        int i = v.getId();
-        switch (i){
-
-        }
+        //int i = v.getId();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(ev.getAction() == MotionEvent.ACTION_DOWN){
+            View v = getCurrentFocus();
+            if(v instanceof EditText){
+                v.clearFocus();
+                InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(),0);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 }

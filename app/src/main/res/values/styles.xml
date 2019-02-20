@@ -25,5 +25,11 @@
         <item name="android:windowNoTitle">false</item>
     </style>
 
+    <style name="EditTextTheme">
+        <item name="android:background">@drawable/edit_text_back</item>
+        <item name="android:colorControlNormal">@color/colorAccentLight</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+        <item name="android:colorControlHighlight">@color/colorAccent</item>
+    </style>
 
 </resources>
