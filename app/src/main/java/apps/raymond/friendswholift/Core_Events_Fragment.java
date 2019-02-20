@@ -12,10 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -72,6 +74,8 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
         eventsRecycler.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        Button searchEventsBtn = view.findViewById(R.id.search_events_btn);
+        searchEventsBtn.setOnClickListener(this);
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
             updateEvents();
         }
@@ -99,6 +103,9 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
                         .show(createEventFragment)
                         .commit();
                 break;
+            case R.id.search_events_btn:
+                Log.i(TAG,"Clicked on search events Btn.");
+                Toast.makeText(getContext(),"Search for new events.",Toast.LENGTH_SHORT).show();
         }
     }
 

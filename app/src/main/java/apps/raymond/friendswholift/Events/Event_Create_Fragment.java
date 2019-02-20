@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +20,28 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class Event_Create_Fragment extends Fragment implements View.OnClickListener, YesNoDialog.YesNoInterface {
+public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
+        YesNoDialog.YesNoInterface, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "Event_Create_Fragment";
     EditText nameTxt;
     EditText descTxt;
     EditText dayTxt;
     EditText monthTxt;
-    EditText tagTxt;
-
+    RadioGroup privacyGroup;
+    TextView tagsContainer;
+    EditText tagsTxt;
+    String privacy;
     public Event_Create_Fragment(){
     }
 
@@ -54,33 +64,47 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         descTxt = view.findViewById(R.id.event_desc_txt);
         dayTxt = view.findViewById(R.id.event_day);
         monthTxt = view.findViewById(R.id.event_month);
-        tagTxt = view.findViewById(R.id.event_tags_txt);
 
         Button saveBtn = view.findViewById(R.id.save_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
         saveBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
 
-
+        privacyGroup = view.findViewById(R.id.privacy_buttons);
+        privacyGroup.clearCheck();
+        privacyGroup.setOnCheckedChangeListener(this);
 
         ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
         addTagsBtn.setOnClickListener(this);
+
+        tagsTxt = view.findViewById(R.id.event_tags_txt);
+        tagsContainer = view.findViewById(R.id.tags_container_txt);
+
+        testList = new ArrayList<>();
     }
 
+
+
+    List<String> tagsList;
+    List<ClickableSpan> testList;
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
             case R.id.save_btn:
+                if(checkFields()){
+                    return;
+                }
                 GroupEvent newEvent = new GroupEvent(
                         nameTxt.getText().toString(),
                         descTxt.getText().toString(),
                         monthTxt.getText().toString(),
-                        dayTxt.getText().toString());
+                        dayTxt.getText().toString(),
+                        privacy);
                 Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getName());
 
-                EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
-                eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
+                //EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+                //eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
                 getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
 
@@ -94,10 +118,40 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 Log.i(TAG,"Adding tag to event.");
                 // When this button is pressed, add the String to a container below the TextView that displays all the tags that have been added
                 // Research a way of getting the individual strings as clickable objects.
+
+                tagsList.add(tagsTxt.getText().toString());
+                tagsContainer.setText(tagsList.toString());
+
                 break;
         }
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        RadioButton checkedBtn = group.findViewById(checkedId);
+        privacy = checkedBtn.getText().toString();
+    }
+
+    /*
+     * This method is called before creating an Event instance.
+     * Checks that all fields are filled and are valid inputs.
+     * True if fields require attention.
+     */
+    private boolean checkFields(){
+        //Highlight the necessary fields that are empty.
+        //Display a toast.
+        boolean check = false;
+        if(nameTxt.getText().toString().isEmpty()){
+            Log.i(TAG,"Name EditText is empty.");
+            Toast.makeText(getContext(),"Finish filling out the crap wtf.",Toast.LENGTH_SHORT).show();
+            check = true;
+        }
+        if(privacyGroup.getCheckedRadioButtonId() == -1){
+            Log.i(TAG,"Privacy has not been selected.");
+            check = true;
+        }
+        return check;
+    }
 
     @Override
     public void positiveClick() {

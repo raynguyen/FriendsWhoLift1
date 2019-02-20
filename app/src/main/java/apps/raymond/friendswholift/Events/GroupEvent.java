@@ -27,6 +27,7 @@ public class GroupEvent implements Parcelable {
     private String desc;
     private String month;
     private String day;
+    private String privacy;
 
     private GroupEvent(Parcel in){
         Log.i(TAG,"Creating GroupEvent instance: " +name + " via Parcel.");
@@ -34,30 +35,56 @@ public class GroupEvent implements Parcelable {
         this.desc = in.readString();
         this.month = in.readString();
         this.day = in.readString();
+        this.privacy = in.readString();
     }
 
-    public GroupEvent(String name, String desc, String month, String day){
+    public GroupEvent(String name, String desc, String month, String day, String privacy){
         Log.i(TAG,"Creating GroupEvent instance: " +name + " via parameter passing.");
         this.name = name;
         this.desc = desc;
         this.month = month;
         this.day = day;
+        this.privacy = privacy;
     }
 
     public String getName(){
         return name;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public String getDesc(){
         return desc;
+    }
+
+    public void setDesc(String desc){
+        this.desc = desc;
     }
 
     public String getDay(){
         return day;
     }
 
+    public void setDay(String day){
+        this.day = day;
+    }
+
     public String getMonth(){
         return month;
+    }
+
+    public void setMonth(String month){
+        this.month = month;
+    }
+
+    public String getPrivacy(){
+        return privacy;
+    }
+
+    public void setPrivacy(String privacy){
+        this.privacy = privacy;
     }
 
     @Override
