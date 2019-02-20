@@ -6,9 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/fui_bgTwitter"
     android:padding="8dp"
-    android:clickable="true"
-    android:layout_margin="12dp">
-
+    android:clickable="true">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/event_name_txt_layout"
@@ -136,18 +134,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:weightSum="2">
 
         <Button
             android:id="@+id/cancel_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel"/>
+            style="@style/Widget.AppCompat.ButtonBar"
+            android:text="@string/cancel"
+            android:textColor="@color/colorAccent"
+            android:layout_weight="1"/>
         <Button
             android:id="@+id/save_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save"/>
+            style="@style/Widget.AppCompat.ButtonBar"
+            android:text="@string/save"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 

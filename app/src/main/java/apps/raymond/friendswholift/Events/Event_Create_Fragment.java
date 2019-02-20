@@ -165,7 +165,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     @Override
     public void positiveClick() {
-        Toast.makeText(getContext(),"clicked this pos btn",Toast.LENGTH_SHORT).show();
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
 
