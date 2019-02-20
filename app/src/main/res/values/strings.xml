@@ -79,5 +79,5 @@
 
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME</string>
-    <string name="event_desc">SHORT DESCRIPTION</string>
+    <string name="event_desc">DESCRIPTION</string>
 </resources>
