@@ -112,18 +112,17 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
 
     @Override
     public void onEventClick(int position, GroupEvent groupEvent) {
-        Log.i(TAG,"Clicked on a Group inside the RecyclerView at position: "+ position);
-        Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
+        Log.i(TAG,"Clicked on Event inside the RecyclerView at position: "+ position);
+        Fragment detailedEvent = Event_Detail_Fragment.newInstance();
         Bundle args = new Bundle();
-        args.putParcelable("GroupObject",groupEvent);
+        args.putParcelable("EventObject",groupEvent);
 
         detailedEvent.setArguments(args);
-        /*
         getFragmentManager().beginTransaction()
                 .replace(R.id.core_frame,detailedEvent)
                 .addToBackStack(null)
                 .show(detailedEvent)
-                .commit();*/
+                .commit();
     }
 
     /*

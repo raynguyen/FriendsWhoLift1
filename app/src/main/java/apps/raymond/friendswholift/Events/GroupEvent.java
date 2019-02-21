@@ -33,6 +33,7 @@ public class GroupEvent implements Parcelable {
     private String privacy;
     private List<String> tags;
 
+    @SuppressWarnings("unchecked")
     private GroupEvent(Parcel in){
         this.name = in.readString();
         this.desc = in.readString();
@@ -40,7 +41,6 @@ public class GroupEvent implements Parcelable {
         this.day = in.readString();
         this.privacy = in.readString();
         this.tags = in.readArrayList(null);
-
     }
 
     public GroupEvent(String name, String desc, String month, String day, String privacy,

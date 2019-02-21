@@ -50,6 +50,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             eventViewHolder.eventDesc.setText(currEvent.getDesc());
             eventViewHolder.eventMonth.setText(currEvent.getMonth());
             eventViewHolder.eventDay.setText(currEvent.getDay());
+
             eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
