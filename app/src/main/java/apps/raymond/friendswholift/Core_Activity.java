@@ -59,6 +59,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         tabLayout.setupWithViewPager(viewPager);
     }
 
+
     // Returning false means Menu is never inflated and onPrepareOptionsMenu is never called.
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -98,9 +99,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .addToBackStack(null)
                         .show(createGroupFragment)
                         .commit();
+                invalidateOptionsMenu();
         }
         return true;
     }
+
 
     @Override
     public void onClick(View v) {

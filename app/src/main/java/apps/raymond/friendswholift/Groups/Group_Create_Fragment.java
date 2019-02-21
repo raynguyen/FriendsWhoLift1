@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,7 +62,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.group_new_frag,container,false);
+        View view = inflater.inflate(R.layout.group_create_frag,container,false);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
         return view;
@@ -89,6 +90,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         cameraBtn.setOnClickListener(this);
 
         imageView = view.findViewById(R.id.image_view);
+
 
     }
 

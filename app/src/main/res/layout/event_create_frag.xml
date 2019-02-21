@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/fui_bgTwitter"
+    android:background="#ffffff"
     android:padding="8dp"
     android:clickable="true">
 
@@ -62,8 +62,6 @@
         app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
         app:layout_constraintStart_toEndOf="@id/event_month"
         android:layout_marginStart="24dp"/>
-
-
 
     <RadioGroup
         android:id="@+id/privacy_buttons"

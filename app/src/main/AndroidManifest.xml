@@ -31,24 +31,9 @@
         </activity>
 
 
-        <activity android:name=".Main_Activity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
         <activity android:name=".Core_Activity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
 
-        <activity
-            android:name=".Groups_Activity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-
-        <activity android:name=".ManageStats_Activity"/>
-
-        <activity
-            android:name=".LiftsList">
-        </activity>
     </application>
 </manifest>

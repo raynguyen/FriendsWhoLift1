@@ -48,7 +48,7 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
     @Override
     public void signedIn() {
         Log.d(TAG, "Finishing Login Activity.");
-        Intent mainIntent = new Intent(Login_Activity.this,Main_Activity.class);
+        Intent mainIntent = new Intent(Login_Activity.this,Core_Activity.class);
         startActivity(mainIntent);
         finish();
     }
