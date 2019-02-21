@@ -30,6 +30,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -43,15 +45,14 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
 public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
-        YesNoDialog.YesNoInterface {
+        YesNoDialog.YesNoInterface, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 1;
 
-    public String groupName, descText;
     public Uri imageUri;
 
-    Spinner invite_Spinner;
-    EditText desc_Txt;
+
+    private EditText desc_Txt;
     private TextInputEditText name_Txt;
     private FirebaseUser currentUser;
     private GroupsViewModel mGroupViewModel;
@@ -68,6 +69,8 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         return view;
     }
 
+    RadioGroup privacyGroup;
+    Spinner invite_Spinner;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,10 +93,11 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         cameraBtn.setOnClickListener(this);
 
         imageView = view.findViewById(R.id.image_view);
+        privacyGroup = view.findViewById(R.id.privacy_buttons);
+        privacyGroup.setOnCheckedChangeListener(this);
 
 
     }
-
 
     @Override
     public void onClick(View v) {
@@ -102,12 +106,13 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         switch (i){
             case R.id.create_grp_btn:
                 // Want to show a dialog with a recap of the group and get user to confirm.
-                if(TextUtils.isEmpty(name_Txt.getText().toString())) {
-                    name_Txt.setError("Must specify a name.");
+                if(groupCheck()) {
+                    Toast.makeText(getContext(),"Mandatory fields must be completed.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                groupName = name_Txt.getText().toString();
-                descText = desc_Txt.getText().toString();
+
+                // This dialog confirms if the user wants to create the group.
+                // This should be updated to show the user a preview of their group.
                 DialogFragment dialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.CONFIRM_GROUP);
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getActivity().getSupportFragmentManager(),"confirmation_dialog");
@@ -140,6 +145,10 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
+    /*
+     * Creates a dialog for the user to determine how they want to retrieve an image. If device is
+     * equipped with a camera, the dialog shown will provide UI with a camera option.
+     */
     private void getImage(){
         View imgDialogView;
         imgAlert = new AlertDialog.Builder(getContext())
@@ -165,7 +174,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         camera_btn.setOnClickListener(this);
         gallery_btn.setOnClickListener(this);
         google_btn.setOnClickListener(this);
-
     }
 
     @Override
@@ -181,11 +189,32 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
+    //String privacy;
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        //RadioButton privacyBtn = group.findViewById(checkedId);
+        //privacy = privacyBtn.getText().toString();
+        //Log.i(TAG,"Privacy was changed to: "+privacy);
+    }
+
+    /*
+     * Method called to check if the group creation form is filled correctly. If there are any
+     * errors, the method returns true.
+     */
+    private boolean groupCheck(){
+
+        return false;
+    }
+
     @Override
     public void positiveClick() {
-        // Add option for photo, if photo is taken, create the group, add image to storage, when the
-        // add image to storage is complete, take the uri and add it to the group's field.
-        final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),"public","owner", null);
+        String groupName = name_Txt.getText().toString();
+        String descText = desc_Txt.getText().toString();
+        RadioButton privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
+        String privacy = privacyBtn.getText().toString();
+
+        String inviteText = invite_Spinner.getSelectedItem().toString();
+        final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
         if(imageUri!=null){
             //Need a confirmation dialog before we add the photo to FireStore.
             mGroupViewModel.uploadImage(imageUri, groupName)
@@ -214,6 +243,8 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     public void negativeClick() {
         Toast.makeText(getContext(),"Clicked on the negative button", Toast.LENGTH_SHORT).show();
     }
+
+
 
 }
 
