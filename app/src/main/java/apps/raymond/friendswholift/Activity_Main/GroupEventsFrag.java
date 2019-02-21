@@ -34,8 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
-import apps.raymond.friendswholift.Events.EventDetailFragment;
+import apps.raymond.friendswholift.Events.Event_Detail_Fragment;
 import apps.raymond.friendswholift.Events.EventViewModel;
+import apps.raymond.friendswholift.Events.EventsRecyclerAdapter;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
@@ -129,7 +130,7 @@ public class GroupEventsFrag extends Fragment implements EventClickListener, Vie
     public void onEventClick(int position, GroupEvent groupEvent) {
         Log.i(TAG,"Event CardView was clicked. Position: "+position);
         //Handle Event Clicks here
-        Fragment eventDetailFragment = EventDetailFragment.newInstance(groupEvent);
+        Fragment eventDetailFragment = Event_Detail_Fragment.newInstance(groupEvent);
         getFragmentManager()
                 .beginTransaction()
                 .add(R.id.event_FrameLayout,eventDetailFragment)

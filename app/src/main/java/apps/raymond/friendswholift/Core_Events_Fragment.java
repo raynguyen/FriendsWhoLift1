@@ -29,7 +29,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Activity_Main.EventsRecyclerAdapter;
+import apps.raymond.friendswholift.Events.Event_Detail_Fragment;
+import apps.raymond.friendswholift.Events.EventsRecyclerAdapter;
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
 import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
@@ -111,7 +112,18 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
 
     @Override
     public void onEventClick(int position, GroupEvent groupEvent) {
+        Log.i(TAG,"Clicked on a Group inside the RecyclerView at position: "+ position);
+        Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
+        Bundle args = new Bundle();
+        args.putParcelable("GroupObject",groupEvent);
 
+        detailedEvent.setArguments(args);
+        /*
+        getFragmentManager().beginTransaction()
+                .replace(R.id.core_frame,detailedEvent)
+                .addToBackStack(null)
+                .show(detailedEvent)
+                .commit();*/
     }
 
     /*

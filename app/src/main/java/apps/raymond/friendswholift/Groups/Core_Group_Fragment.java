@@ -7,7 +7,6 @@ package apps.raymond.friendswholift.Groups;
 
 // IMPLEMENT CHANGING ACTION BAR FOR EACH VIEWPAGE
 import android.arch.lifecycle.ViewModelProviders;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,21 +18,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.support.v7.widget.SearchView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,7 +139,7 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     @Override
     public void onGroupClick(int position, GroupBase groupBase) {
         Log.i(TAG,"Clicked on a Group inside the RecyclerView at position: "+ position);
-        Fragment detailedGroup = DetailedGroupFragment.newInstance();
+        Fragment detailedGroup = Detailed_Group_Fragment.newInstance();
         Bundle args = new Bundle();
         args.putParcelable("GroupObject",groupBase);
         detailedGroup.setArguments(args);

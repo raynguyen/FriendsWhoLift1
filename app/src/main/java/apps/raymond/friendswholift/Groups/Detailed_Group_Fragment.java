@@ -18,17 +18,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import apps.raymond.friendswholift.R;
 
-public class DetailedGroupFragment extends Fragment {
-    private static final String TAG = "DetailedGroupFragment";
+public class Detailed_Group_Fragment extends Fragment {
+    private static final String TAG = "Detailed_Group_Fragment";
 
     private GroupBase groupBase;
     private GroupsViewModel mGroupViewModel;
 
-    public DetailedGroupFragment(){
+    public Detailed_Group_Fragment(){
     }
 
-    public static DetailedGroupFragment newInstance(){
-        return new DetailedGroupFragment();
+    public static Detailed_Group_Fragment newInstance(){
+        return new Detailed_Group_Fragment();
     }
 
     @Override

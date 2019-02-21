@@ -24,19 +24,21 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import apps.raymond.friendswholift.Groups.Detailed_Group_Fragment;
+import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
 
-public class EventDetailFragment extends Fragment {
-    private static final String TAG = "EventDetailFragment";
+public class Event_Detail_Fragment extends Fragment implements EventClickListener {
+    private static final String TAG = "Event_Detail_Fragment";
     private static final String EXTRA_EVENT_ITEM = "event_item";
     private static final String EXTRA_TRANSITION = "transition_name";
 
-    public EventDetailFragment(){
+    public Event_Detail_Fragment(){
     }
 
-    public static EventDetailFragment newInstance(GroupEvent groupEvent){
-        EventDetailFragment eventDetailFragment = new EventDetailFragment();
+    public static Event_Detail_Fragment newInstance(GroupEvent groupEvent){
+        Event_Detail_Fragment eventDetailFragment = new Event_Detail_Fragment();
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(EXTRA_EVENT_ITEM,groupEvent);
@@ -47,7 +49,7 @@ public class EventDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG,"Creating EventDetailFragment.");
+        Log.i(TAG,"Creating Event_Detail_Fragment.");
     }
 
     @Nullable
@@ -69,28 +71,26 @@ public class EventDetailFragment extends Fragment {
         TextView eventDay = view.findViewById(R.id.event_day);
         final ImageView groupPhoto = view.findViewById(R.id.event_banner);
 
-        Log.i(TAG,"Description of Card: " + groupEvent.getDesc());
-        Log.i(TAG,"Month of card" + groupEvent.getMonth());
-        Log.i(TAG,"Day of card" + groupEvent.getDay());
+        //Log.i(TAG,"Description of Card: " + groupEvent.getDesc());
+        //Log.i(TAG,"Month of card" + groupEvent.getMonth());
+        //Log.i(TAG,"Day of card" + groupEvent.getDay());
 
         eventName.setText(groupEvent.getName());
         eventDesc.setText(groupEvent.getDesc());
         eventMonth.setText(groupEvent.getMonth());
         eventDay.setText(groupEvent.getDay());
-        //Test to see how photo looks in the Fragment.
-        FirebaseStorage.getInstance().getReference().child("TestGroup1/dogpic.jpg").getBytes(1024*1024)
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Log.i(TAG,"Attaching testImage ImageView with downloaded file");
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        groupPhoto.setImageBitmap(bitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Unable to retrieve the requested filed.", e);
-            }
-        });
+    }
+
+    @Override
+    public void onEventClick(int position, GroupEvent groupEvent) {
+        Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
+        Bundle args = new Bundle();
+        args.putParcelable("EventObject",groupEvent);
+        detailedEvent.setArguments(args);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.core_frame,detailedEvent)
+                .addToBackStack(null)
+                .show(detailedEvent)
+                .commit();
     }
 }

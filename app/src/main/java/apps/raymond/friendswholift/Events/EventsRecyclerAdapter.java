@@ -1,4 +1,4 @@
-package apps.raymond.friendswholift.Activity_Main;
+package apps.raymond.friendswholift.Events;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
@@ -54,6 +53,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.i(TAG,"Event was clicked.");
                     eventClickListener.onEventClick(eventViewHolder.getAdapterPosition(),currEvent);
                 }
             });
