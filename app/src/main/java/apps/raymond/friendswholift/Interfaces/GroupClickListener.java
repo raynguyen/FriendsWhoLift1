@@ -1,9 +1,9 @@
 package apps.raymond.friendswholift.Interfaces;
 
-import android.widget.TextView;
+import android.view.View;
 
 import apps.raymond.friendswholift.Groups.GroupBase;
 
 public interface GroupClickListener {
-    void onGroupClick(int position, GroupBase groupBase, TextView sharedView);
+    void onGroupClick(int position, GroupBase groupBase, View sharedView);
 }

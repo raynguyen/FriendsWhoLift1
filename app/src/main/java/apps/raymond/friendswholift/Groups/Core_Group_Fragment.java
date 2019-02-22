@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.support.v7.widget.SearchView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,7 +42,6 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     ArrayList<GroupBase> myGroups;
     GroupRecyclerAdapter mAdapter;
     ProgressBar progressBar;
-
 
     //Required empty fragment. Not sure why it is needed.
     public Core_Group_Fragment(){}
@@ -135,17 +132,17 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onGroupClick(int position, GroupBase groupBase, TextView sharedView) {
-         Fragment detailedGroup = Detailed_Group_Fragment.newInstance(groupBase,
+    public void onGroupClick(int position, GroupBase groupBase, View sharedView) {
+        Log.i(TAG,"Clicked on a Group View with TransitionName: "+sharedView.getTransitionName());
+        Fragment detailedGroup = Detailed_Group_Fragment.newInstance(groupBase,
                 sharedView.getTransitionName());
-        Log.i(TAG,"Setting up the detailed fragment share transition");
-        detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
-        detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+        detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));
+        //detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
-        Log.i(TAG,"TRANSITION NAME OF TEXT VIEW : "+ ViewCompat.getTransitionName(sharedView));
+        Log.i(TAG,"TRANSITION NAME OF Recycler TextView : "+ sharedView.getTransitionName());
         getFragmentManager()
                 .beginTransaction()
-                .addSharedElement(sharedView, sharedView.getTransitionName())
+                .addSharedElement(sharedView, "transition")
                 .replace(R.id.core_frame,detailedGroup)
                 .addToBackStack(null)
                 .commit();
@@ -157,8 +154,5 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
         switch (i){
         }
     }
-
-
-
 
 }

@@ -56,34 +56,30 @@ public class Detailed_Group_Fragment extends Fragment {
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
-    ImageView image;
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         final GroupBase groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
-
+        Log.i(TAG,"TransitionName variable in detail is: "+transitionName);
         TextView name = view.findViewById(R.id.detail_group_name_txt);
-        name.setTransitionName(transitionName);
-        Log.i(TAG,"TRANSITION NAME OF TEXT VIEW : "+ ViewCompat.getTransitionName(name));
+        name.setText(groupBase.getName());
+        //name.setTransitionName(transitionName);
+        ViewCompat.setTransitionName(name,"transition");
+
         startPostponedEnterTransition();
 
         TextView desc = view.findViewById(R.id.group_desc_txt);
-        image = view.findViewById(R.id.group_image);
-
-        name.setText(groupBase.getName());
-
         desc.setText(groupBase.getDescription());
 
+        final ImageView image = view.findViewById(R.id.group_image);
         if(groupBase.getImageURI()!=null && groupBase.getBytes()==null){
             Log.i(TAG,"Fetching the photo for this group.");
             mGroupViewModel.getImage(groupBase.getImageURI())
                     .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
-                            Log.i(TAG,"Adding fetched byte[] to " +groupBase.getName());
                             groupBase.setBytes(bytes);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                             image.setImageBitmap(bitmap);
@@ -94,7 +90,6 @@ public class Detailed_Group_Fragment extends Fragment {
             Bitmap bitmap = BitmapFactory.decodeByteArray(groupBase.getBytes(),0,groupBase.getBytes().length);
             image.setImageBitmap(bitmap);
         }
-
     }
 
 }

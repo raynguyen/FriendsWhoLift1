@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/group_image"
             android:hint="@string/group_name"
-            android:textSize="20sp"
-            android:transitionName="group_name_transition"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/desc_txt"
