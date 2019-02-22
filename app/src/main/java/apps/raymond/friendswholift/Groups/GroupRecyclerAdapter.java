@@ -1,7 +1,9 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,16 +55,14 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
             final GroupBase currentGroup = groupsList.get(position);
 
             viewHolder.nameTxt.setText(currentGroup.getName());
+            viewHolder.nameTxt.setTransitionName(currentGroup.getName());
+
             viewHolder.descTxt.setText(currentGroup.getDescription());
-            /*
-            if(currentGroup.getImageURI()!=null){
-                Bitmap bitmap = BitmapFactory.decodeByteArray(currentGroup.getBytes(),0,currentGroup.getBytes().length);
-                viewHolder.groupImage.setImageBitmap(bitmap);
-            }*/
+
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    groupClickListener.onGroupClick(viewHolder.getAdapterPosition(),currentGroup);
+                    groupClickListener.onGroupClick(viewHolder.getAdapterPosition(), currentGroup, viewHolder.nameTxt);
                 }
             });
         }

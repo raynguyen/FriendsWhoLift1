@@ -11,9 +11,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +52,7 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.groups_mygroups, container, false);
+        View view = inflater.inflate(R.layout.core_groups_frag, container, false);
         mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class); //new GroupsViewModel();
         updateCardViews();
         return view;
@@ -58,11 +61,6 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Button getfieldsBtn = view.findViewById(R.id.testButton3);
-        Button getGroupPojoBtn = view.findViewById(R.id.testButton4);
-        getGroupPojoBtn.setOnClickListener(this);
-        getfieldsBtn.setOnClickListener(this);
 
         progressBar = view.findViewById(R.id.progress_bar);
 
@@ -137,16 +135,19 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onGroupClick(int position, GroupBase groupBase) {
-        Log.i(TAG,"Clicked on a Group inside the RecyclerView at position: "+ position);
-        Fragment detailedGroup = Detailed_Group_Fragment.newInstance();
-        Bundle args = new Bundle();
-        args.putParcelable("GroupObject",groupBase);
-        detailedGroup.setArguments(args);
-        getFragmentManager().beginTransaction()
+    public void onGroupClick(int position, GroupBase groupBase, TextView sharedView) {
+         Fragment detailedGroup = Detailed_Group_Fragment.newInstance(groupBase,
+                sharedView.getTransitionName());
+        Log.i(TAG,"Setting up the detailed fragment share transition");
+        detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+        detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+
+        Log.i(TAG,"TRANSITION NAME OF TEXT VIEW : "+ ViewCompat.getTransitionName(sharedView));
+        getFragmentManager()
+                .beginTransaction()
+                .addSharedElement(sharedView, sharedView.getTransitionName())
                 .replace(R.id.core_frame,detailedGroup)
                 .addToBackStack(null)
-                .show(detailedGroup)
                 .commit();
     }
 
@@ -154,13 +155,6 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.testButton3:
-                Log.i(TAG, "Clicked on testButton3.");
-                break;
-            case R.id.testButton4:
-                Log.i(TAG, "Clicked on testButton4.");
-                break;
-
         }
     }
 
