@@ -25,6 +25,7 @@ import android.widget.EditText;
 
 import apps.raymond.friendswholift.Groups.Detailed_Group_Fragment;
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
+import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         Detailed_Group_Fragment.TransitionScheduler {
@@ -96,6 +97,15 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.action_settings:
                 Log.i(TAG,"Clicked the settings button.");
+                break;
+            case R.id.action_profile:
+                Log.i(TAG,"Clicked on profile button.");
+                ProfileFrag profileFrag = new ProfileFrag();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.core_frame,profileFrag)
+                        .addToBackStack(null)
+                        .show(profileFrag)
+                        .commit();
                 break;
             case R.id.action_create_group:
                 Log.i(TAG,"Clicked on create group button.");

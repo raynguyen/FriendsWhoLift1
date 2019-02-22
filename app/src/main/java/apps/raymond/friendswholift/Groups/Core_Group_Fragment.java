@@ -139,9 +139,8 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
         Fragment detailedGroup = Detailed_Group_Fragment.newInstance(groupBase,
                 sharedView.getTransitionName());
 
-        detailedGroup.setSharedElementEnterTransition(TransitionInflater
-                .from(getActivity()).inflateTransition(android.R.transition.move));
-        //detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+        //detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));
+        detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
         getFragmentManager()
                 .beginTransaction()

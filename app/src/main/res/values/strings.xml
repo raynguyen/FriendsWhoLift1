@@ -75,7 +75,12 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <!--CORE ACTIVITY-->
+    <string name="profile">Profile</string>
 
+    <!--USERS FRAGMENT-->
+    <string name="profile_picture">Profile Picture</string>
+    <string name="profile_display_name">Display Name</string>
 
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>

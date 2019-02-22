@@ -9,7 +9,15 @@
     </item>
 
     <item
+        android:id="@+id/action_profile"
+        android:title="@string/profile"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/fui_ic_twitter_bird_white_24dp">
+    </item>
+
+    <item
         android:id="@+id/action_logout"
-        android:title="@string/logout">
+        android:title="@string/logout"
+        app:showAsAction="never">
     </item>
 </menu>

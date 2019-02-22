@@ -70,8 +70,8 @@ public class Detailed_Group_Fragment extends Fragment {
 
         final TextView name = view.findViewById(R.id.detail_group_name_txt);
 
-        name.setText(transitionName);
-        name.setTransitionName("hungry");
+        name.setText(groupBase.getName());
+        name.setTransitionName(transitionName);
         transitionScheduler.scheduleStartTransition(name);
 
         TextView desc = view.findViewById(R.id.group_desc_txt);
