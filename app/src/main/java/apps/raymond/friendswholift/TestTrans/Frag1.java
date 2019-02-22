@@ -58,7 +58,7 @@ public class Frag1 extends Fragment implements TestInterface {
 
         textView = view.findViewById(R.id.frag1_txt);
         Log.i(TAG,"Fragment 1 TextView with TransitionName: "+textView.getTransitionName());
-        /*
+
         textView.setTransitionName("transition");
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +74,7 @@ public class Frag1 extends Fragment implements TestInterface {
                         .addSharedElement(textView,textView.getTransitionName())
                         .commit();
             }
-        });*/
+        });
     }
 
 

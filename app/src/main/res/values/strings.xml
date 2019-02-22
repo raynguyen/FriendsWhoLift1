@@ -76,6 +76,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
 
+
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>
 
@@ -86,4 +87,7 @@
     <string name="event_public">Public</string>
     <string name="event_discoverable">Discoverable</string>
     <string name="event_exclusive">Exclusive</string>
+
+    <!--GROUPS FRAGMENT-->
+    <string name="group_header">YOUR GROUPS</string>
 </resources>

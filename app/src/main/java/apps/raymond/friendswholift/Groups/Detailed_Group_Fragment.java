@@ -1,6 +1,7 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -19,12 +20,18 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
 
 public class Detailed_Group_Fragment extends Fragment {
     private static final String TAG = "Detailed_Group_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
+
+    TransitionScheduler transitionScheduler;
+    public interface TransitionScheduler{
+        void scheduleStartTransition(View sharedView);
+    }
 
     private GroupsViewModel mGroupViewModel;
 
@@ -38,7 +45,6 @@ public class Detailed_Group_Fragment extends Fragment {
         bundle.putParcelable(GROUP_BASE, groupBase);
         bundle.putString(TRANSITION_NAME,transitionName);
         detailed_group_fragment.setArguments(bundle);
-        Log.i(TAG,"New instance of Detailed Group Fragment created.");
         return detailed_group_fragment;
     }
 
@@ -46,29 +52,27 @@ public class Detailed_Group_Fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
-        postponeEnterTransition();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+            super.onViewCreated(view, savedInstanceState);
         final GroupBase groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
-        Log.i(TAG,"TransitionName variable in detail is: "+transitionName);
-        TextView name = view.findViewById(R.id.detail_group_name_txt);
-        name.setText(groupBase.getName());
-        //name.setTransitionName(transitionName);
-        ViewCompat.setTransitionName(name,"transition");
 
-        startPostponedEnterTransition();
+        final TextView name = view.findViewById(R.id.detail_group_name_txt);
+
+        name.setText(transitionName);
+        name.setTransitionName("hungry");
+        transitionScheduler.scheduleStartTransition(name);
 
         TextView desc = view.findViewById(R.id.group_desc_txt);
         desc.setText(groupBase.getDescription());
@@ -83,6 +87,7 @@ public class Detailed_Group_Fragment extends Fragment {
                             groupBase.setBytes(bytes);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                             image.setImageBitmap(bitmap);
+
                         }
                     });
         }
@@ -92,4 +97,14 @@ public class Detailed_Group_Fragment extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            //We need to get an instance of the Class that will execute our interface method.
+            transitionScheduler = (TransitionScheduler) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
+    }
 }

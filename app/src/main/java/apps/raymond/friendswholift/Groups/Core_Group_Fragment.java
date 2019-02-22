@@ -34,6 +34,7 @@ import java.util.List;
 
 import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.TestTrans.Frag2;
 
 public class Core_Group_Fragment extends Fragment implements View.OnClickListener, GroupClickListener {
     private static final String TAG = "Core_Group_Fragment";
@@ -55,10 +56,12 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
         return view;
     }
 
+    TextView headerTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        headerTxt = view.findViewById(R.id.header_txt);
         progressBar = view.findViewById(R.id.progress_bar);
 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
@@ -133,16 +136,16 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onGroupClick(int position, GroupBase groupBase, View sharedView) {
-        Log.i(TAG,"Clicked on a Group View with TransitionName: "+sharedView.getTransitionName());
         Fragment detailedGroup = Detailed_Group_Fragment.newInstance(groupBase,
                 sharedView.getTransitionName());
-        detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));
+
+        detailedGroup.setSharedElementEnterTransition(TransitionInflater
+                .from(getActivity()).inflateTransition(android.R.transition.move));
         //detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
-        Log.i(TAG,"TRANSITION NAME OF Recycler TextView : "+ sharedView.getTransitionName());
         getFragmentManager()
                 .beginTransaction()
-                .addSharedElement(sharedView, "transition")
+                .addSharedElement(sharedView,sharedView.getTransitionName())
                 .replace(R.id.core_frame,detailedGroup)
                 .addToBackStack(null)
                 .commit();

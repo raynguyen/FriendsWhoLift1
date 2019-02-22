@@ -54,10 +54,9 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
         if(groupsList !=null){
             final GroupBase currentGroup = groupsList.get(position);
 
-            ViewCompat.setTransitionName(viewHolder.nameTxt,"transition"+position);
             viewHolder.nameTxt.setText(currentGroup.getName());
-            //viewHolder.nameTxt.setTransitionName("Transition"+position);
-            Log.i(TAG,"New ViewHolder with TransitionName: "+ viewHolder.nameTxt.getTransitionName());
+            viewHolder.nameTxt.setTransitionName("Transition"+position);
+            Log.i(TAG,"Card "+ viewHolder.nameTxt.getText().toString() + " has transition name: "+ viewHolder.nameTxt.getTransitionName());
 
             viewHolder.descTxt.setText(currentGroup.getDescription());
 

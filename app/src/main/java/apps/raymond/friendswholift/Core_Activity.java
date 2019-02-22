@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +18,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 
+import apps.raymond.friendswholift.Groups.Detailed_Group_Fragment;
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 
-public class Core_Activity extends AppCompatActivity implements View.OnClickListener {
+public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
+        Detailed_Group_Fragment.TransitionScheduler {
     private static final String TAG = "Core_Activity";
 
     private ViewPager viewPager;
@@ -31,6 +35,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postponeEnterTransition();
+
         setContentView(R.layout.core_activity);
         Log.i(TAG,"Launching the Core Activity.");
         Toolbar toolbar = findViewById(R.id.core_toolbar);
@@ -121,5 +127,19 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    public void scheduleStartTransition(final View sharedView){
+        sharedView.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        Log.i(TAG,"The sharedView called onPreDraw.");
+                        sharedView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        startPostponedEnterTransition();
+                        return true;
+                    }
+                }
+        );
     }
 }
