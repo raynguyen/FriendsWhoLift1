@@ -95,4 +95,8 @@
 
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
+
+    <!--GROUPS DETAIL FRAGMENT-->
+    <string name="group_privacy">Who can see this group?</string>
+    <string name="group_invite">Who can invite to this group?</string>
 </resources>

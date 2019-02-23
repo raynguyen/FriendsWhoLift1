@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -52,10 +53,12 @@ public class Detailed_Group_Fragment extends Fragment {
         return detailed_group_fragment;
     }
 
+    ActionBar actionBar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     @Nullable
@@ -71,10 +74,9 @@ public class Detailed_Group_Fragment extends Fragment {
             super.onViewCreated(view, savedInstanceState);
         final GroupBase groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
-
         try{
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(groupBase.getName());
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(groupBase.getName());
+            actionBar.setDisplayShowTitleEnabled(true);
         } catch (NullPointerException npe){
             Log.i(TAG,"Error setting title of fragment.",npe);
         }
@@ -99,6 +101,10 @@ public class Detailed_Group_Fragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Log.i(TAG,"Editing Group: "+groupBase.getName());
+                    // Switch the ActionBar here for the one with the 'Save' item.
+
+
+
                 }
             });
         }
