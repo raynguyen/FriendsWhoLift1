@@ -16,6 +16,16 @@
         app:layout_constraintStart_toStartOf="parent"
         android:hint="@string/group_name" />
 
+    <ImageButton
+        android:id="@+id/edit_group_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/common_full_open_on_phone"
+        android:contentDescription="@string/Temp"
+        android:visibility="gone"/>
+
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/group_image"
         android:layout_width="match_parent"

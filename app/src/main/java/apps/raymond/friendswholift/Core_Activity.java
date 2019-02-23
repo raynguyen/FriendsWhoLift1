@@ -42,6 +42,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         Log.i(TAG,"Launching the Core Activity.");
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
+        this.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         viewPager = findViewById(R.id.core_ViewPager);
         Core_Activity_Adapter pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
