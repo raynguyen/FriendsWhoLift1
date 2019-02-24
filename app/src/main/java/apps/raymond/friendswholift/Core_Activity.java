@@ -71,6 +71,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     // Returning false means Menu is never inflated and onPrepareOptionsMenu is never called.
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        menu.clear();
         return true;
     }
 
@@ -139,6 +140,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         }
         return super.dispatchTouchEvent(ev);
     }
+
 
     public void scheduleStartTransition(final View sharedView){
         sharedView.getViewTreeObserver().addOnPreDrawListener(

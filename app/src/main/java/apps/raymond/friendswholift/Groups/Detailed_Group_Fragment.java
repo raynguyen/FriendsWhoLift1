@@ -4,8 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -66,7 +66,7 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
@@ -109,8 +109,7 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
                 public void onClick(View v) {
                     Log.i(TAG,"Editing Group: "+groupBase.getName());
                     viewFlipper.showNext();
-                    // Switch the ActionBar here for the one with the 'Save' item.
-                    // Switch the views to the editables here.
+                    getActivity().invalidateOptionsMenu();
                 }
             });
         }
@@ -159,5 +158,18 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
                 break;
 
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        Log.i(TAG,"Recreating Menu.");
+        menu.clear();
+        inflater.inflate(R.menu.group_detail_toolbar,menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
     }
 }
