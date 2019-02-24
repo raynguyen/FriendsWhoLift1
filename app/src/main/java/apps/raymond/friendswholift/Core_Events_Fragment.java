@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -159,8 +160,6 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
             }
         });
     }
-
-
 
 
 }

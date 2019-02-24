@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.SearchView;
@@ -36,7 +37,7 @@ import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.TestTrans.Frag2;
 
-public class Core_Group_Fragment extends Fragment implements View.OnClickListener, GroupClickListener {
+public class Core_Group_Fragment extends Fragment implements GroupClickListener {
     private static final String TAG = "Core_Group_Fragment";
 
     GroupsViewModel mGroupViewModel;
@@ -46,6 +47,12 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
 
     //Required empty fragment. Not sure why it is needed.
     public Core_Group_Fragment(){}
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -96,7 +103,6 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
      *
      * Need to check to see what happens if there is no photoURI in the group.
-     *
      *
      * Create the cards, then download the images is probably the cleaner approach. This prevents the
      * user from having to wait extended periods of time before viewing all their groups.
@@ -151,10 +157,19 @@ public class Core_Group_Fragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        switch (i){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_create_group:
+                Log.i(TAG,"YES GIRL");
+                Fragment createGroupFragment = new Group_Create_Fragment();
+                getFragmentManager().beginTransaction()
+                        .add(R.id.core_frame,createGroupFragment)
+                        .addToBackStack(null)
+                        .show(createGroupFragment)
+                        .commit();
+                return true;
+            default:
+                return false;
         }
     }
-
 }

@@ -6,6 +6,7 @@
 
 package apps.raymond.friendswholift.Groups;
 
+import android.support.v7.app.ActionBar;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -19,9 +20,12 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -59,6 +63,14 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     private ImageView imageView;
     private AlertDialog imgAlert;
 
+    ActionBar actionBar;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,6 +86,14 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        try{
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle("Creating New Group!");
+        } catch (NullPointerException npe){
+            Log.i(TAG,"Unable to set title of Action Bar.", npe);
+        }
+
         Button discard_Btn = view.findViewById(R.id.discard_grp_btn);
         Button create_Btn = view.findViewById(R.id.create_grp_btn);
         discard_Btn.setOnClickListener(this);
@@ -244,7 +264,20 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         Toast.makeText(getContext(),"Clicked on the negative button", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        super.onPrepareOptionsMenu(menu);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    }
 
+    @Override
+    public void onDestroy() {
+        actionBar.setDisplayShowTitleEnabled(false);
+        super.onDestroy();
+    }
 }
 

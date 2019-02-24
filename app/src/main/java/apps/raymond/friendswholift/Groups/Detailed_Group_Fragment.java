@@ -8,14 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -26,7 +25,6 @@ import android.widget.ViewFlipper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
-import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
 
 public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutChangeListener {
@@ -44,7 +42,6 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     public Detailed_Group_Fragment(){
     }
 
-
     public static Detailed_Group_Fragment newInstance(GroupBase groupBase, String transitionName){
         Detailed_Group_Fragment detailed_group_fragment = new Detailed_Group_Fragment();
         Bundle bundle = new Bundle();
@@ -58,15 +55,16 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
+        setHasOptionsMenu(true);
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
     }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
@@ -80,6 +78,7 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
 
         viewFlipper = view.findViewById(R.id.group_edit_flipper);
         viewFlipper.addOnLayoutChangeListener(this);
+
 
         try{
             actionBar.setTitle(groupBase.getName());
@@ -109,7 +108,6 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
                 public void onClick(View v) {
                     Log.i(TAG,"Editing Group: "+groupBase.getName());
                     viewFlipper.showNext();
-                    getActivity().invalidateOptionsMenu();
                 }
             });
         }
@@ -161,15 +159,26 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        Log.i(TAG,"Recreating Menu.");
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
         menu.clear();
-        inflater.inflate(R.menu.group_detail_toolbar,menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //Inflating seems to do nothing. Add/remove items for now.
+        inflater.inflate(R.menu.group_edit_toolbar,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onDestroy() {
+        actionBar.setDisplayShowTitleEnabled(false);
+        super.onDestroy();
     }
 }

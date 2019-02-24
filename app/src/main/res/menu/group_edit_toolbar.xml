@@ -8,7 +8,6 @@
         app:showAsAction="never">
     </item>
 
-
     <item
         android:id="@+id/action_logout"
         android:title="@string/logout"
@@ -16,7 +15,7 @@
     </item>
 
     <item
-        android:id="@+id/action_edit_group"
+        android:id="@+id/action_save_group"
         android:title="@string/save"
         app:showAsAction="ifRoom">
     </item>

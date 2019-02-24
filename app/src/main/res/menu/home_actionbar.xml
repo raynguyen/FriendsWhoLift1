@@ -9,6 +9,12 @@
     </item>
 
     <item
+        android:id="@+id/action_logout"
+        android:title="@string/logout"
+        app:showAsAction="never">
+    </item>
+
+    <item
         android:id="@+id/action_profile"
         android:title="@string/profile"
         app:showAsAction="ifRoom"
@@ -16,9 +22,10 @@
     </item>
 
     <item
-        android:id="@+id/action_logout"
-        android:title="@string/logout"
-        app:showAsAction="never">
+        android:id="@+id/action_create_group"
+        android:title="@string/create_group"
+        app:showAsAction="ifRoom">
     </item>
+
 
 </menu>

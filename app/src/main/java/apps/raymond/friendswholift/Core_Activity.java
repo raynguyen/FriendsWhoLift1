@@ -37,9 +37,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postponeEnterTransition();
-
         setContentView(R.layout.core_activity);
-        Log.i(TAG,"Launching the Core Activity.");
+
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -56,7 +55,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onPageSelected(int i) {
-                Log.i(TAG,"NEW PAGE SELECTED");
                 invalidateOptionsMenu();
             }
 
@@ -77,15 +75,17 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        getMenuInflater().inflate(R.menu.home_actionbar,menu);
         int i = viewPager.getCurrentItem();
         switch(i){
             case 0:
-                menu.clear();
-                getMenuInflater().inflate(R.menu.home_actionbar,menu);
+                menu.findItem(R.id.action_profile).setVisible(true);
+                menu.findItem(R.id.action_create_group).setVisible(false);
                 break;
             case 1:
-                menu.clear();
-                getMenuInflater().inflate(R.menu.groups_toolbar,menu);
+                menu.findItem(R.id.action_profile).setVisible(false);
+                menu.findItem(R.id.action_create_group).setVisible(true);
                 break;
         }
         return true;
@@ -110,16 +110,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .commit();
                 break;
             case R.id.action_create_group:
-                Log.i(TAG,"Clicked on create group button.");
-                Fragment createGroupFragment = new Group_Create_Fragment();
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.core_frame,createGroupFragment)
-                        .addToBackStack(null)
-                        .show(createGroupFragment)
-                        .commit();
-                invalidateOptionsMenu();
+                return false;
         }
-        return true;
+        return false;
     }
 
 
