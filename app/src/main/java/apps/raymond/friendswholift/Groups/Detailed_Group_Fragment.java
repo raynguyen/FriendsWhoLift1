@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
 
-public class Detailed_Group_Fragment extends Fragment {
+public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutChangeListener {
     private static final String TAG = "Detailed_Group_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
@@ -69,11 +70,17 @@ public class Detailed_Group_Fragment extends Fragment {
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
+    ViewFlipper viewFlipper;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
+
         final GroupBase groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
+
+        viewFlipper = view.findViewById(R.id.group_edit_flipper);
+        viewFlipper.addOnLayoutChangeListener(this);
+
         try{
             actionBar.setTitle(groupBase.getName());
             actionBar.setDisplayShowTitleEnabled(true);
@@ -101,10 +108,9 @@ public class Detailed_Group_Fragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Log.i(TAG,"Editing Group: "+groupBase.getName());
+                    viewFlipper.showNext();
                     // Switch the ActionBar here for the one with the 'Save' item.
-
-
-
+                    // Switch the views to the editables here.
                 }
             });
         }
@@ -137,6 +143,21 @@ public class Detailed_Group_Fragment extends Fragment {
             transitionScheduler = (TransitionScheduler) getActivity();
         } catch (ClassCastException e) {
             Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        Log.i(TAG,"Layout changed.");
+        int i = viewFlipper.getDisplayedChild();
+        switch (i){
+            case 0:
+                Log.i(TAG,"Detail Group read layout");
+                break;
+            case 1:
+                Log.i(TAG,"Detail Group edit layout");
+                break;
+
         }
     }
 }
