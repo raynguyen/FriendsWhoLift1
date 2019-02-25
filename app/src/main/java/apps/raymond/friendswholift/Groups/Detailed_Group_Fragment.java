@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,11 +53,12 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     }
 
     ActionBar actionBar;
+    Toolbar toolbar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
     }
 
@@ -68,17 +70,17 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
+    GroupBase groupBase;
+    String owner, currUser;
     ViewFlipper viewFlipper;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
 
-        final GroupBase groupBase = getArguments().getParcelable(GROUP_BASE);
+        groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
-
-        viewFlipper = view.findViewById(R.id.group_edit_flipper);
-        viewFlipper.addOnLayoutChangeListener(this);
-
+        owner = groupBase.getOwner();
+        currUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         try{
             actionBar.setTitle(groupBase.getName());
@@ -86,6 +88,9 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
         } catch (NullPointerException npe){
             Log.i(TAG,"Error setting title of fragment.",npe);
         }
+
+        viewFlipper = view.findViewById(R.id.group_edit_flipper);
+        viewFlipper.addOnLayoutChangeListener(this);
 
         final TextView name = view.findViewById(R.id.detail_group_name_txt);
 
@@ -96,23 +101,8 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
         TextView desc = view.findViewById(R.id.group_desc_txt);
         desc.setText(groupBase.getDescription());
 
-        String owner = groupBase.getOwner();
-        String currUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        if(owner.equals(currUser)){
-            Log.i(TAG,"The owner is also the current user!");
-            ImageButton editBtn = view.findViewById(R.id.edit_group_btn);
-            editBtn.setVisibility(View.VISIBLE);
-            editBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.i(TAG,"Editing Group: "+groupBase.getName());
-                    viewFlipper.showNext();
-                }
-            });
-        }
-
         final ImageView image = view.findViewById(R.id.group_image);
+
         if(groupBase.getImageURI()!=null && groupBase.getBytes()==null){
             Log.i(TAG,"Fetching the photo for this group.");
             mGroupViewModel.getImage(groupBase.getImageURI())
@@ -154,25 +144,36 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
             case 1:
                 Log.i(TAG,"Detail Group edit layout");
                 break;
-
         }
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        menu.clear();
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //Inflating seems to do nothing. Add/remove items for now.
+        //Inflating seems to do nothing.
+        Log.i(TAG,"IN THE ONCREATEOPTIONSMENU FOR FRAGMENT.");
         inflater.inflate(R.menu.group_edit_toolbar,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_create_group).setVisible(false);
+        if(owner.equals(currUser)){
+            menu.findItem(R.id.action_edit_group).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_edit_group).setVisible(false);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int i = item.getItemId();
+        switch (i){
+            case R.id.action_edit_group:
+                editGroup();
+                return true;
+        }
         return false;
     }
 
@@ -180,5 +181,10 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     public void onDestroy() {
         actionBar.setDisplayShowTitleEnabled(false);
         super.onDestroy();
+    }
+
+    private void editGroup(){
+        Log.i(TAG,"Entering edit mode for: "+groupBase.getName());
+        viewFlipper.showNext();
     }
 }

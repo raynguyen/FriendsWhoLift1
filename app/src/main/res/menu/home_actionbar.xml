@@ -27,5 +27,18 @@
         app:showAsAction="ifRoom">
     </item>
 
+    <item
+        android:id="@+id/action_save_group"
+        android:title="@string/save"
+        app:showAsAction="ifRoom">
+    </item>
+
+    <item
+        android:id="@+id/action_edit_group"
+        android:title="@string/Edit"
+        app:showAsAction="ifRoom"
+        android:visible="false">
+    </item>
+
 
 </menu>

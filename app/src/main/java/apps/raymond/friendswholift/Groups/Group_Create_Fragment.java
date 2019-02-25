@@ -55,7 +55,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
     public Uri imageUri;
 
-
     private EditText desc_Txt;
     private TextInputEditText name_Txt;
     private FirebaseUser currentUser;
@@ -222,7 +221,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
      * errors, the method returns true.
      */
     private boolean groupCheck(){
-
         return false;
     }
 

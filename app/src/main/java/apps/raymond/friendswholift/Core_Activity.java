@@ -82,10 +82,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             case 0:
                 menu.findItem(R.id.action_profile).setVisible(true);
                 menu.findItem(R.id.action_create_group).setVisible(false);
+                menu.findItem(R.id.action_save_group).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.action_profile).setVisible(false);
                 menu.findItem(R.id.action_create_group).setVisible(true);
+                menu.findItem(R.id.action_save_group).setVisible(false);
                 break;
         }
         return true;
@@ -96,10 +98,10 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         switch (item.getItemId()){
             case R.id.action_logout:
                 Log.i(TAG,"Clicked the logout button.");
-                break;
+                return true;
             case R.id.action_settings:
                 Log.i(TAG,"Clicked the settings button.");
-                break;
+                return true;
             case R.id.action_profile:
                 Log.i(TAG,"Clicked on profile button.");
                 ProfileFrag profileFrag = new ProfileFrag();
@@ -108,8 +110,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .addToBackStack(null)
                         .show(profileFrag)
                         .commit();
-                break;
+                return true;
             case R.id.action_create_group:
+                return false;
+            case R.id.action_save_group:
+                return false;
+            case R.id.action_edit_group:
                 return false;
         }
         return false;

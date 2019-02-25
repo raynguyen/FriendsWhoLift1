@@ -15,6 +15,8 @@ import android.support.v4.app.Fragment;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -49,6 +51,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
@@ -171,5 +174,19 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void negativeClick() {
         // Do nothing?
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //Inflating seems to do nothing.
+        Log.i(TAG,"IN THE ONCREATEOPTIONSMENU FOR FRAGMENT.");
+        inflater.inflate(R.menu.group_edit_toolbar,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_profile).setVisible(false);
     }
 }
