@@ -1,5 +1,15 @@
+/*
+ * TODO:
+ * Inflate the spinner in onViewCreated.
+ * Add the appropriate views to strings in the save group button.
+ * Call the Repository group update which in this case is probably just create new document?
+ *
+ * DO THE SAME FOR EVENTS
+ */
+
 package apps.raymond.friendswholift.Groups;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,7 +38,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.R;
 
-public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutChangeListener {
+public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutChangeListener,
+        View.OnClickListener {
     private static final String TAG = "Detailed_Group_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
@@ -57,6 +68,7 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG,"New instance of Detailed Group Fragment");
         setHasOptionsMenu(true);
         actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
@@ -77,6 +89,8 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
 
+
+
         groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
         owner = groupBase.getOwner();
@@ -89,6 +103,7 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
             Log.i(TAG,"Error setting title of fragment.",npe);
         }
 
+        flip = true;
         viewFlipper = view.findViewById(R.id.group_edit_flipper);
         viewFlipper.addOnLayoutChangeListener(this);
 
@@ -148,32 +163,67 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //Inflating seems to do nothing.
-        Log.i(TAG,"IN THE ONCREATEOPTIONSMENU FOR FRAGMENT.");
-        inflater.inflate(R.menu.group_edit_toolbar,menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    public void onClick(View v) {
+        Log.i(TAG,"Clicked on view: "+v.toString());
+        int i = v.getId();
+        switch (i){
+            case R.id.save_group_btn:
+                Log.i(TAG,"Overwriting the Group object.");
+                groupBase.setName();
+                groupBase.setDescription();
+                groupBase.setInvite();
+                groupBase.setVisibility();
+        }
     }
 
+    MenuItem editItem, saveItem;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        Log.i(TAG,"onCreateOptionsMenu of detailed group fragment.");
+        menu.clear();
+        inflater.inflate(R.menu.home_actionbar,menu);
+        editItem = menu.findItem(R.id.action_edit_group);
+        saveItem = menu.findItem(R.id.action_save_group);
+
+    }
+
+    // This is called every time the Menu opens.
+    // We are overriding this activity callback, not inflating a new menu.
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        Log.i(TAG,"onPrepareOptionsMenu of detailed group fragment.");
         menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_create_group).setEnabled(false);
         if(owner.equals(currUser)){
+            menu.findItem(R.id.action_edit_group).setEnabled(true);
             menu.findItem(R.id.action_edit_group).setVisible(true);
         } else {
             menu.findItem(R.id.action_edit_group).setVisible(false);
+            menu.findItem(R.id.action_edit_group).setEnabled(false);
         }
         super.onPrepareOptionsMenu(menu);
     }
 
+
+    //Going to handle events in the Activity because not sure why it doesn't work in the fragment.
+    boolean flip;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         switch (i){
             case R.id.action_edit_group:
+                //Calling item.XXXXXXXXX works but using editItem.xxxxxxxxxxxxxxx does not!?!?!?!?
+                Log.i(TAG,"Clicked on edit item: "+item.getItemId());
+                Log.i(TAG,"Clicked on edit item: "+editItem.getItemId());
+                item.setVisible(false);
+                item.setEnabled(false);
+                saveItem.setEnabled(true);
+                saveItem.setVisible(true);
                 editGroup();
                 return true;
         }
+
         return false;
     }
 

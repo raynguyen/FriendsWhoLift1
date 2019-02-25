@@ -66,16 +66,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/edit_group_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/Temp"
-                android:src="@drawable/common_full_open_on_phone"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <android.support.constraint.Guideline
                 android:id="@+id/desc_read_guideline"
                 android:layout_width="match_parent"
@@ -147,6 +137,16 @@
                     android:layout_height="wrap_content"
                     android:textSize="24sp"/>
             </android.support.design.widget.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/save_group_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/Temp"
+                android:src="@drawable/common_full_open_on_phone"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/desc_edit_guideline"

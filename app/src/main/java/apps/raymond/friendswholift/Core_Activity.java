@@ -67,9 +67,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
 
     // Returning false means Menu is never inflated and onPrepareOptionsMenu is never called.
+    Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         menu.clear();
+        this.menu = menu;
         return true;
     }
 
@@ -77,6 +79,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.home_actionbar,menu);
+
+        if(!menu.findItem(R.id.action_edit_group).isVisible()){
+            menu.findItem(R.id.action_edit_group).setVisible(false);
+        }
+
+        menu.findItem(R.id.action_edit_group).setVisible(false);
         int i = viewPager.getCurrentItem();
         switch(i){
             case 0:
@@ -111,11 +119,15 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .show(profileFrag)
                         .commit();
                 return true;
-            case R.id.action_create_group:
+            case R.id.action_create_group: // Handle this in the Create Group Fragment
                 return false;
+            case R.id.action_edit_group: // Handle this in the Detailed Group Fragment
+                //Log.i(TAG,"Edit group has id: "+item.getItemId());
+                //MenuItem saveItem = menu.findItem(R.id.action_save_group);
+                //saveItem.setVisible(true);
+                //item.setVisible(false);
+                return false; // Handle this in the Detailed Group Fragment
             case R.id.action_save_group:
-                return false;
-            case R.id.action_edit_group:
                 return false;
         }
         return false;
