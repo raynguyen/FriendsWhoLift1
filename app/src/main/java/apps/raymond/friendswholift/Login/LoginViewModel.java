@@ -6,14 +6,14 @@ import android.content.Context;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 
-import apps.raymond.friendswholift.TestFirebaseRepository;
+import apps.raymond.friendswholift.FirebaseRepository;
 
 class LoginViewModel extends ViewModel {
 
-    private TestFirebaseRepository mRepository;
+    private FirebaseRepository mRepository;
 
     LoginViewModel(){
-        this.mRepository = new TestFirebaseRepository();
+        this.mRepository = new FirebaseRepository();
     }
 
     Task<Void> createUserDoc(String userName){

@@ -54,9 +54,9 @@ import java.util.Set;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
 
-public class TestFirebaseRepository {
+public class FirebaseRepository {
 
-    private static final String TAG = "TestFirebaseRepository";
+    private static final String TAG = "FirebaseRepository";
     private static final String GROUP_COLLECTION = "Groups";
     private static final String USER_COLLECTION = "Users";
     private static final String EVENT_COLLECTION = "Events";
@@ -298,13 +298,14 @@ public class TestFirebaseRepository {
      * document.
      */
     public void createEvent(final GroupEvent groupEvent){
-        eventCollection.document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
+        eventCollection.document(groupEvent.getOriginalName()).set(groupEvent, SetOptions.merge())
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                 @Override
                 public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                     if(task.isSuccessful()){
-                        Log.i(TAG,"Added event " + groupEvent.getName() + " to the Events.");
-                        addEventToUser(groupEvent.getName());
+                        Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
+                        // ToDo: Check to see if user is already a member before rewriting to the document.
+                        addEventToUser(groupEvent.getOriginalName());
                         //addEventTags(groupEvent);
                     } else {
                         Log.w(TAG,"Unable to add Event to the Events collection.");

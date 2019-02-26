@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/core_frame"
-        tools:context=".Core_Activity">
+        tools:context=".Core_Activity"
+        android:isScrollContainer="true">
 
         <LinearLayout
             android:layout_width="match_parent"

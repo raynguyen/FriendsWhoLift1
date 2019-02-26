@@ -52,7 +52,7 @@
         android:layout_height="match_parent">
         <!--FIRST READ ONLY-->
         <android.support.constraint.ConstraintLayout
-            android:layout_width="384dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView

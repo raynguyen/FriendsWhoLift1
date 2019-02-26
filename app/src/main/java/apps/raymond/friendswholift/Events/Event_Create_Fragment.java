@@ -28,6 +28,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +66,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        //Need the layout Event_Create_Fragment.
         return inflater.inflate(R.layout.event_create_frag,container,false);
     }
 
@@ -94,8 +96,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         tagsList = new ArrayList<>();
     }
 
-
-
     ArrayList<String> tagsList;
     List<ClickableSpan> testList;
     @Override
@@ -107,13 +107,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                     return;
                 }
                 GroupEvent newEvent = new GroupEvent(
+                        FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                         nameTxt.getText().toString(),
                         descTxt.getText().toString(),
                         monthTxt.getText().toString(),
                         dayTxt.getText().toString(),
                         privacy,
                         tagsList);
-                Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getName());
+
+                Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
 
                 EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
                 eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.

@@ -1,7 +1,11 @@
 /*
  * ToDo:
- * Get the user permission for camera and document access on start up and store as a SharedPreference.
+ * 1. Get the user permission for camera and document access on start up and store as a SharedPreference.
+ * 2. When the user calls createEvent or createGroup and then completes the process, manually update
+ *    the RecyclerView to limit having to read all the Documents.
+ * 3. Move all the currentUser stuff to repository return methods.
  */
+
 package apps.raymond.friendswholift;
 
 import android.app.Activity;
@@ -19,6 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -36,6 +41,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
@@ -91,11 +98,13 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 menu.findItem(R.id.action_profile).setVisible(true);
                 menu.findItem(R.id.action_create_group).setVisible(false);
                 menu.findItem(R.id.action_save_group).setVisible(false);
+                menu.findItem(R.id.action_edit_event).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.action_profile).setVisible(false);
                 menu.findItem(R.id.action_create_group).setVisible(true);
                 menu.findItem(R.id.action_save_group).setVisible(false);
+                menu.findItem(R.id.action_edit_event).setVisible(false);
                 break;
         }
         return true;
@@ -127,7 +136,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 //saveItem.setVisible(true);
                 //item.setVisible(false);
                 return false; // Handle this in the Detailed Group Fragment
-            case R.id.action_save_group:
+            case R.id.action_edit_event:
                 return false;
         }
         return false;

@@ -26,6 +26,8 @@ public class GroupEvent implements Parcelable {
     public GroupEvent(){
     }
 
+    private String creator;
+    private String originalName;
     private String name;
     private String desc;
     private String month;
@@ -35,7 +37,9 @@ public class GroupEvent implements Parcelable {
 
     @SuppressWarnings("unchecked")
     private GroupEvent(Parcel in){
+        this.creator = in.readString();
         this.name = in.readString();
+        this.originalName = this.name;
         this.desc = in.readString();
         this.month = in.readString();
         this.day = in.readString();
@@ -43,15 +47,32 @@ public class GroupEvent implements Parcelable {
         this.tags = in.readArrayList(null);
     }
 
-    public GroupEvent(String name, String desc, String month, String day, String privacy,
+    public GroupEvent(String creator, String name, String desc, String month, String day, String privacy,
                       ArrayList<String> tags){
-        Log.i(TAG,"Creating GroupEvent instance: " +name + " via parameter passing.");
+        this.creator = creator;
         this.name = name;
+        this.originalName = name;
         this.desc = desc;
         this.month = month;
         this.day = day;
         this.privacy = privacy;
         this.tags = tags;
+    }
+
+    public String getCreator(){
+        return creator;
+    }
+
+    public void setCreator(String creator){
+        this.creator = creator;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public void setOriginalName(String name){
+        this.originalName = name;
     }
 
     public String getName(){
@@ -111,6 +132,7 @@ public class GroupEvent implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         Log.i(TAG,"Calling the writeToParcel method.");
+        dest.writeString(creator);
         dest.writeString(name);
         dest.writeString(desc);
         dest.writeString(month);

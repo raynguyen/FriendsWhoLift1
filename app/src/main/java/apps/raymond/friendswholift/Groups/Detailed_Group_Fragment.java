@@ -1,11 +1,4 @@
 /*
- * TODO:
- * Inflate the spinner in onViewCreated.
- * Add the appropriate views to strings in the save group button.
- * Call the Repository group update which in this case is probably just create new document?
- *
- * DO THE SAME FOR EVENTS
- *
  * Instead of deleting an existing document when the name changes, added another field to GroupBase
  * class that is unchangeable and is equal to the value of the Group name when it is first created.
  * This original name is the field that will be used to query fire store for the group.
@@ -72,7 +65,6 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     }
 
     ActionBar actionBar;
-    Toolbar toolbar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

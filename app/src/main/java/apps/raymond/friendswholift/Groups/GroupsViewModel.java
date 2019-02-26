@@ -7,14 +7,14 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.TestFirebaseRepository;
+import apps.raymond.friendswholift.FirebaseRepository;
 
 public class GroupsViewModel extends ViewModel {
 
-    private TestFirebaseRepository mRepository;
+    private FirebaseRepository mRepository;
 
     public GroupsViewModel(){
-        this.mRepository = new TestFirebaseRepository();
+        this.mRepository = new FirebaseRepository();
     }
 
     void createGroup(GroupBase groupBase){

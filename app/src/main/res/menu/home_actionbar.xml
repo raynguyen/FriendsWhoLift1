@@ -39,5 +39,11 @@
         app:showAsAction="ifRoom">
     </item>
 
+    <item
+        android:id="@+id/action_edit_event"
+        android:title="@string/Edit"
+        app:showAsAction="ifRoom">
+    </item>
+
 
 </menu>
