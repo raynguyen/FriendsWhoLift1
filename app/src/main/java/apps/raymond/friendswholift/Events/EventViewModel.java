@@ -16,7 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.FireStoreClasses.TestFirebaseRepository;
+import apps.raymond.friendswholift.TestFirebaseRepository;
 
 public class EventViewModel extends ViewModel {
     private TestFirebaseRepository mRepository;

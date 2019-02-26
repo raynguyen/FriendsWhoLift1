@@ -49,7 +49,7 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
 public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
-        YesNoDialog.YesNoInterface, RadioGroup.OnCheckedChangeListener {
+        YesNoDialog.YesNoInterface{
     private static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 1;
 
@@ -80,6 +80,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         return view;
     }
 
+    RadioButton privacyBtn;
     RadioGroup privacyGroup;
     Spinner invite_Spinner;
     @Override
@@ -113,9 +114,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
         imageView = view.findViewById(R.id.image_view);
         privacyGroup = view.findViewById(R.id.privacy_buttons);
-        privacyGroup.setOnCheckedChangeListener(this);
-
-
     }
 
     @Override
@@ -208,14 +206,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
-    //String privacy;
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        //RadioButton privacyBtn = group.findViewById(checkedId);
-        //privacy = privacyBtn.getText().toString();
-        //Log.i(TAG,"Privacy was changed to: "+privacy);
-    }
-
     /*
      * Method called to check if the group creation form is filled correctly. If there are any
      * errors, the method returns true.
@@ -228,10 +218,10 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     public void positiveClick() {
         String groupName = name_Txt.getText().toString();
         String descText = desc_Txt.getText().toString();
-        RadioButton privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
+        privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
         String privacy = privacyBtn.getText().toString();
-
         String inviteText = invite_Spinner.getSelectedItem().toString();
+
         final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
         if(imageUri!=null){
             //Need a confirmation dialog before we add the photo to FireStore.

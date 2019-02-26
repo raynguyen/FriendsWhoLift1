@@ -5,11 +5,14 @@
  * Call the Repository group update which in this case is probably just create new document?
  *
  * DO THE SAME FOR EVENTS
+ *
+ * Instead of deleting an existing document when the name changes, added another field to GroupBase
+ * class that is unchangeable and is equal to the value of the Group name when it is first created.
+ * This original name is the field that will be used to query fire store for the group.
  */
 
 package apps.raymond.friendswholift.Groups;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,6 +20,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +32,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -85,11 +93,12 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
     GroupBase groupBase;
     String owner, currUser;
     ViewFlipper viewFlipper;
+    Spinner inviteSpinner;
+    RadioGroup privacyGroup;
+    TextInputEditText nameEdit, descEdit;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-
-
 
         groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
@@ -102,6 +111,26 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
         } catch (NullPointerException npe){
             Log.i(TAG,"Error setting title of fragment.",npe);
         }
+
+        if(owner.equals(currUser)){
+            nameEdit = view.findViewById(R.id.group_name_edit);
+            descEdit = view.findViewById(R.id.group_desc_edit);
+
+            privacyGroup = view.findViewById(R.id.privacy_buttons);
+
+            inviteSpinner = view.findViewById(R.id.invite_spinner);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter
+                    .createFromResource(getActivity(), R.array.array_invite_authorize,
+                            android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            inviteSpinner.setAdapter(adapter);
+        }
+
+
+
+
+        ImageButton saveEditsBtn = view.findViewById(R.id.save_group_btn);
+        saveEditsBtn.setOnClickListener(this);
 
         flip = true;
         viewFlipper = view.findViewById(R.id.group_edit_flipper);
@@ -164,15 +193,24 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
 
     @Override
     public void onClick(View v) {
-        Log.i(TAG,"Clicked on view: "+v.toString());
         int i = v.getId();
         switch (i){
             case R.id.save_group_btn:
                 Log.i(TAG,"Overwriting the Group object.");
-                groupBase.setName();
-                groupBase.setDescription();
-                groupBase.setInvite();
-                groupBase.setVisibility();
+                groupBase.setName(nameEdit.getText().toString());
+                groupBase.setDescription(descEdit.getText().toString());
+
+                RadioButton privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
+                groupBase.setVisibility(privacyBtn.getText().toString());
+                groupBase.setInvite(inviteSpinner.getSelectedItem().toString());
+
+                mGroupViewModel.updateGroup(groupBase);
+
+                //Todo: Have to add the ability to modify the image.
+
+                return;
+            case R.id.action_create_group:
+                break;
         }
     }
 
@@ -185,7 +223,6 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
         inflater.inflate(R.menu.home_actionbar,menu);
         editItem = menu.findItem(R.id.action_edit_group);
         saveItem = menu.findItem(R.id.action_save_group);
-
     }
 
     // This is called every time the Menu opens.

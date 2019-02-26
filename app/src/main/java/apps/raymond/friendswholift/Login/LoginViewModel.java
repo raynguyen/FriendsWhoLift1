@@ -6,7 +6,7 @@ import android.content.Context;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 
-import apps.raymond.friendswholift.FireStoreClasses.TestFirebaseRepository;
+import apps.raymond.friendswholift.TestFirebaseRepository;
 
 class LoginViewModel extends ViewModel {
 

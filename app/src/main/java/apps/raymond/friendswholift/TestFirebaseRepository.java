@@ -11,7 +11,7 @@
  * sources, such as persistent models, web services, and caches
 */
 
-package apps.raymond.friendswholift.FireStoreClasses;
+package apps.raymond.friendswholift;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
@@ -159,32 +159,35 @@ public class TestFirebaseRepository {
         final Map<String,String> holderMap = new HashMap<>();
         holderMap.put("Access","Owner");
 
-        groupCollection.document(groupBase.getName()).set(groupBase)
+        // Create a document from the GroupBase object under the creation name.
+        groupCollection.document(groupBase.getOriginalName()).set(groupBase)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
                     }
                 }).continueWithTask(new Continuation<Void, Task<Void>>() {
-            @Override
-            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                if(task.isSuccessful()){
-                    return userCollection.document(currentUser.getEmail()).collection(GROUP_COLLECTION)
-                            .document(groupBase.getName()).set(holderMap)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.i(TAG,"Attached "+groupBase.getName()+" to " +currentUser.getEmail());
-                                }
-                            });
-                } else {
-                    Log.i(TAG,"Unable to create the Group.");
-                    return null;
-                }
-            }
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            return userCollection.document(currentUser.getEmail()).collection(GROUP_COLLECTION)
+                                    .document(groupBase.getName()).set(holderMap)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.i(TAG,"Attached "+groupBase.getName()+" to " +currentUser.getEmail());
+                                        }
+                                    });
+                        } else {
+                            Log.i(TAG,"Unable to create the Group.");
+                            return null;
+                        }
+                    }
         });
+
+        // Adds a 'tag' to the user document that can be read to query groups user is connected to.
         userCollection.document(currentUser.getEmail()).collection("Groups")
-                .document(groupBase.getName()).set(holderMap) //Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
+                .document(groupBase.getOriginalName()).set(holderMap) //Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void task) {
@@ -196,22 +199,23 @@ public class TestFirebaseRepository {
                     public void onFailure(@NonNull Exception e) {
                         Log.e(TAG,"Error creating document in Groups sub-collection.",e);
                     }
-                })
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        return groupCollection.document(groupBase.getName()).set(groupBase)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void task) {
-                                        Log.i(TAG,"Created group document "+groupBase.getName());
-                                    }
-                                });
-                    }
                 });
     }
 
-
+    public void updateGroup(final GroupBase groupBase){
+        groupCollection.document(groupBase.getOriginalName()).set(groupBase)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Failure to update Group: " + groupBase.getName());
+            }
+        });
+    }
 
 
 

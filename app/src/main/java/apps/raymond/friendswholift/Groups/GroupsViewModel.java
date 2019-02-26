@@ -7,7 +7,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.FireStoreClasses.TestFirebaseRepository;
+import apps.raymond.friendswholift.TestFirebaseRepository;
 
 public class GroupsViewModel extends ViewModel {
 
@@ -35,5 +35,9 @@ public class GroupsViewModel extends ViewModel {
 
     public Task<byte[]> getImage(String uri){
         return mRepository.getImage(uri);
+    }
+
+    public void updateGroup(GroupBase groupBase){
+        mRepository.updateGroup(groupBase);
     }
 }

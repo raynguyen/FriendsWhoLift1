@@ -10,11 +10,12 @@ import android.os.Parcelable;
 
 public class GroupBase implements Parcelable {
 
-    private String name;
+    private String originalName; // We use this to query Firestore in case the display name is modified.
+    private String name; // The display name that users see.
     private String description;
     private String owner;
-    private String visibility;
-    private String invite;
+    private String visibility; // Determines who can discover and view the Group.
+    private String invite; // Determines who has the power to invite/accept new members.
     private String imageURI;
     private byte[] bytes;
 
@@ -23,6 +24,7 @@ public class GroupBase implements Parcelable {
     }
 
     public GroupBase(String name, String description, String owner, String visibility, String invite, String imageURI){
+        this.originalName = name;
         this.name = name;
         this.description = description;
         this.owner = owner;
@@ -33,6 +35,7 @@ public class GroupBase implements Parcelable {
 
     public GroupBase(Parcel in){
         this.name = in.readString();
+        this.originalName = this.name;
         this.description = in.readString();
         this.owner = in.readString();
         this.visibility = in.readString();
@@ -59,6 +62,14 @@ public class GroupBase implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+    }
+
+    public String getOriginalName(){
+        return originalName;
+    }
+
+    public void setOriginalName(String name){
+        this.originalName = name;
     }
 
     public String getName(){

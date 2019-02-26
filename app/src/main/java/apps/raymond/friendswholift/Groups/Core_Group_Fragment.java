@@ -1,6 +1,8 @@
 /*
  * ToDo:
  * 1)Implement the swiperefresher that updates the RecyclerView CardViews.
+ * 2)We should only ever reload all the information on the pull down refresher.
+ * 3)If a new group is created or if a group is modified, manually add or update the corresponding card.
  */
 
 package apps.raymond.friendswholift.Groups;
