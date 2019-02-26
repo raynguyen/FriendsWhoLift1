@@ -13,6 +13,7 @@
         android:clickable="true"
         android:padding="12dp"
         android:background="#ffffff"
+        android:isScrollContainer="true"
         android:layout_weight="1">
 
         <ImageView
@@ -26,7 +27,8 @@
             android:id="@+id/event_edit_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="1">
 
 
             <!--READ EVENT-->
