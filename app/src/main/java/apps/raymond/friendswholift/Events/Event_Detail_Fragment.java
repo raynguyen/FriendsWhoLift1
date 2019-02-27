@@ -81,7 +81,6 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
         TextView eventDesc = view.findViewById(R.id.event_desc);
         TextView eventMonth = view.findViewById(R.id.event_month);
         TextView eventDay = view.findViewById(R.id.event_day);
-        final ImageView groupPhoto = view.findViewById(R.id.event_banner);
 
         ImageButton editSaveBtn = view.findViewById(R.id.save_event_btn);
         editSaveBtn.setOnClickListener(this);
@@ -128,4 +127,12 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /*
+     * Recycler view with tablayout
+     * Tablayouts are: Attending, maybe, invited
+     * The recyclerview will only load the User display name and their user profile image
+     * If the user clicks on a user, the whole profile for the user loads in a separate fragment.
+     *
+     */
 }

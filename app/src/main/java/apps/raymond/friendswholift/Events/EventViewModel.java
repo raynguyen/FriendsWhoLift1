@@ -41,6 +41,10 @@ public class EventViewModel extends ViewModel {
         return mRepository.getUsersEvents();
     }
 
+    public Task<List<String>> getEventInvitees(GroupEvent event){
+        return mRepository.getEventInvitees(event);
+    }
+
     public Task<DocumentSnapshot> attachListener(){
         //return mRepository.listenToUsersEvents();
         return null;

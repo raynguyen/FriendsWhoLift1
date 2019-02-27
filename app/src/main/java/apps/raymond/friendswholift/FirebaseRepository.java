@@ -13,10 +13,8 @@
 
 package apps.raymond.friendswholift;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,11 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -44,7 +38,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +76,18 @@ public class FirebaseRepository {
         });
     }
 
+    public Task<AuthResult> signInWithEmail(final String name, String password){
+        return firebaseAuth.signInWithEmailAndPassword(name,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Signed in as "+name);
+                        }
+                    }
+                });
+    }
+
     public Task<Void> createUser(final Context context, final String name, final String password){
         Log.i(TAG,"Creating new user "+ name);
         return firebaseAuth.createUserWithEmailAndPassword(name,password)
@@ -112,18 +117,6 @@ public class FirebaseRepository {
         });
     }
 
-    public Task<AuthResult> signInWithEmail(final String name, String password){
-        return firebaseAuth.signInWithEmailAndPassword(name,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Log.i(TAG,"Signed in as "+name);
-                        }
-                    }
-                });
-    }
-
     /*
      * Method call to create a Document under the 'Users' Collection. This collection will contain
      * details about the user as Fields in their respective document. The Document name is currently
@@ -131,6 +124,7 @@ public class FirebaseRepository {
      *
      * Need to check if the Document exists when trying to query its contents.
      */
+
     public Task<Void> createUserDoc(final String name){
         Log.i(TAG,"Creating new user Document "+ name);
         Map<String,String> testMap = new HashMap<>();
@@ -144,6 +138,41 @@ public class FirebaseRepository {
                         } else {
                             Log.w(TAG, "Failed to create document for "+name);
                         }
+                    }
+                });
+    }
+    /*
+     * Called when we want to retrieve GroupEvent objects that are listed under the User's groups.
+     * This method does not update the adapter when there is a change in the data.
+     */
+    public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
+        // First task retrieves a list of the Groups from the User Document.
+        return userCollection.document(currentUser.getEmail()).collection("Events").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for(QueryDocumentSnapshot document:task.getResult()){
+                            Log.i(TAG,"User's events include: "+document.getId());
+                        }
+                    }
+                })
+                // Second task will return a List of tasks to retrieve a document pertaining to each document retrieved from the first task.
+                .continueWith(new Continuation<QuerySnapshot, List<Task<DocumentSnapshot>>>() {
+                    @Override
+                    public List<Task<DocumentSnapshot>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Task<DocumentSnapshot>> groupEvents = new ArrayList<>();
+                        for(QueryDocumentSnapshot document:task.getResult()){
+                            Task<DocumentSnapshot> myEvent = eventCollection.document(document.getId()).get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            //Convert to POJO OBJECT HERE?
+                                            Log.i(TAG,"Retrieved this document from the task: "+documentSnapshot.toString());
+                                        }
+                                    });
+                            groupEvents.add(myEvent);
+                        }
+                        return groupEvents;
                     }
                 });
     }
@@ -216,9 +245,6 @@ public class FirebaseRepository {
             }
         });
     }
-
-
-
 
 
     /*
@@ -298,21 +324,22 @@ public class FirebaseRepository {
      * document.
      */
     public void createEvent(final GroupEvent groupEvent){
-        eventCollection.document(groupEvent.getOriginalName()).set(groupEvent, SetOptions.merge())
+        final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
+        eventRef.set(groupEvent, SetOptions.merge())
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
-                @Override
-                public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                    if(task.isSuccessful()){
-                        Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
-                        // ToDo: Check to see if user is already a member before rewriting to the document.
-                        addEventToUser(groupEvent.getOriginalName());
-                        //addEventTags(groupEvent);
-                    } else {
-                        Log.w(TAG,"Unable to add Event to the Events collection.");
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
+                            // ToDo: Check to see if user is already a member before rewriting to the document.
+                            addEventToUser(groupEvent.getOriginalName());
+                            updateInviteeStatus(groupEvent,currentUser.getEmail(),"Attending");
+                        } else {
+                            Log.w(TAG,"Unable to add Event to the Events collection.");
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            });
+                });
     }
 
     /*
@@ -335,67 +362,38 @@ public class FirebaseRepository {
         });
     }
 
-    /*
-     * NOTE: This is currently needed as we are storing as a field an Array of the tags.
-     * Create a sub-collection of event tags in an Event.
-     */
-    private void addEventTags(final GroupEvent event){
-        Log.i(TAG,"Updating events sub-collection for: "+event.getName());
-        Map<String,Boolean> holder = new HashMap<>();
-        holder.put("Exists",true);
-        List<String> tags = event.getTags();
-        for(final String tag:tags){
-            Log.i(TAG,"Creating a document for tag: "+tag);
-            eventCollection.document(event.getName()).collection("Tags")
-                    .document(tag).set(holder,SetOptions.merge())
+    //Consider changing from adding just the user's email to a full User object and upon calling geteventusers, return the list of User objects.
+    public void updateInviteeStatus(GroupEvent event, String user, String status){
+        Map<String,String> testMap = new HashMap<>();
+        testMap.put("Status",status);
+        CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
+        invitees.document(user).set(testMap,SetOptions.merge())
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Log.i(TAG,"Successfully created tag document: "+tag);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i(TAG,"Failed to create tag document: "+tag,e);
+                    Log.i(TAG,"Added new invitee to the event.");
                 }
             });
-        }
-
     }
-    /*
-     * Called when we want to retrieve GroupEvent objects that are listed under the User's groups.
-     * This method does not update the adapter when there is a change in the data.
-     */
-    public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
-        // First task retrieves a list of the Groups from the User Document.
-        return userCollection.document(currentUser.getEmail()).collection("Events").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        for(QueryDocumentSnapshot document:task.getResult()){
-                            Log.i(TAG,"User's events include: "+document.getId());
-                        }
+
+    public Task<List<String>> getEventInvitees(final GroupEvent event){
+        CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
+
+        final List<String> userList = new ArrayList<>();
+        return eventInvitees.get().continueWith(new Continuation<QuerySnapshot, List<String>>() {
+            @Override
+            public List<String> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document:task.getResult()){
+                        userList.add(document.getId());
                     }
-                })
-                // Second task will return a List of tasks to retrieve a document pertaining to each document retrieved from the first task.
-                .continueWith(new Continuation<QuerySnapshot, List<Task<DocumentSnapshot>>>() {
-                    @Override
-                    public List<Task<DocumentSnapshot>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Task<DocumentSnapshot>> groupEvents = new ArrayList<>();
-                        for(QueryDocumentSnapshot document:task.getResult()){
-                            Task<DocumentSnapshot> myEvent = eventCollection.document(document.getId()).get()
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                            //Convert to POJO OBJECT HERE?
-                                            Log.i(TAG,"Retrieved this document from the task: "+documentSnapshot.toString());
-                                        }
-                                    });
-                            groupEvents.add(myEvent);
-                        }
-                        return groupEvents;
-                    }
-                });
+                } else {
+                    Log.w(TAG,"Unable to retrieve invitee list for: "+event.getOriginalName());
+                    return null;
+                }
+                return userList;
+            }
+        });
     }
 
 
