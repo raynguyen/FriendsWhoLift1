@@ -31,6 +31,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -333,7 +334,7 @@ public class FirebaseRepository {
                             Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
                             // ToDo: Check to see if user is already a member before rewriting to the document.
                             addEventToUser(groupEvent.getOriginalName());
-                            updateInviteeStatus(groupEvent,currentUser.getEmail(),"Attending");
+                            updateInviteeStatus(groupEvent,currentUser.getEmail(),"Accepted");
                         } else {
                             Log.w(TAG,"Unable to add Event to the Events collection.");
                         }
@@ -378,7 +379,6 @@ public class FirebaseRepository {
 
     public Task<List<String>> getEventInvitees(final GroupEvent event){
         CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
-
         final List<String> userList = new ArrayList<>();
         return eventInvitees.get().continueWith(new Continuation<QuerySnapshot, List<String>>() {
             @Override
@@ -396,6 +396,14 @@ public class FirebaseRepository {
         });
     }
 
+    public Task<List<String>> getEventAceptees(final GroupEvent event){
+        CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
+        final List<String> userList = new ArrayList<>();
+
+        Query query = invitees.whereEqualTo("Status","Accepted");
+
+        return null;
+    }
 
     // Task to upload an image and on success return the downloadUri.
     public Task<Uri> uploadImage(Uri uri, String groupName){
