@@ -20,7 +20,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         Log.i(TAG,"Creating instance of ProfileViewHolder");
         this.profiles = profiles;
         if(profiles==null){
-            Log.i(TAG,"EMPTY ASS FUCK");
+            Log.i(TAG,"No profiles passed to recycler.");
         }
 
     }

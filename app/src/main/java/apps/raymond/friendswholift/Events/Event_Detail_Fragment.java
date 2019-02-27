@@ -73,7 +73,7 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
 
     ViewFlipper viewFlipper;
     TextInputEditText nameEdit, descEdit, monthEdit, dayEdit;
-    List<String> profiles;
+    ArrayList<String> profiles;
     ProfileRecyclerAdapter acceptedAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -106,22 +106,12 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
          * How do I fix this?
          */
 
-
-
+        RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
         acceptedAdapter = new ProfileRecyclerAdapter(profiles);
         getInviteList();
-        RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
-        Log.i(TAG,"Setting adapter of profile recyclers");
         acceptedRecycler.setAdapter(acceptedAdapter);
         acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         acceptedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
-        RecyclerView invitedRecycler = view.findViewById(R.id.invited_recycler);
-
-        declinedRecycler.setAdapter(acceptedAdapter);
-        invitedRecycler.setAdapter(acceptedAdapter);
-
 
     }
 
@@ -164,24 +154,29 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
 
     //CALL REPOSITORY METHOD TO RETRIEVE THE LIST HERE!!!!!!!
     private void getInviteList(){
-        profiles = new ArrayList<>();
-        profiles.add("hello");
-        profiles.add("fewa");
-        profiles.add("fewafweafwe");
-        profiles.add("hgreagaerge");
-        acceptedAdapter.setData(profiles);
-        /*
+
+
+
         eventViewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 if(task.isSuccessful()){
+                    /*
+                    profiles = new ArrayList<>();
+                    profiles.add("hello");
+                    profiles.add("fewa");
+                    profiles.add("fewafweafwe");
+                    profiles.add("hgreagaerge");
+                    Log.i(TAG,"SETTING CONTENTS OF PROFILES LIST.");
+                    acceptedAdapter.setData(profiles);
+                    */
+
                     Log.i(TAG,"Retrieved list of invited profiles.");
-                    //profiles = new ArrayList<>();
-                    for(String profile:task.getResult()){
-                        profiles.add(profile);
-                    }
+                    profiles = new ArrayList<>();
+                    profiles.addAll(task.getResult());
                     Log.i(TAG,"Contents of profiles list: "+profiles.toString());
                     acceptedAdapter.setData(profiles);
+                    acceptedAdapter.notifyDataSetChanged();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -191,7 +186,7 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
                 Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
-        */
+
     }
 
     /*

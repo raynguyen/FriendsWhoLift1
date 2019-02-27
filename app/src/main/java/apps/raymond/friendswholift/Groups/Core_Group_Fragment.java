@@ -49,6 +49,7 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     GroupsViewModel mGroupViewModel;
@@ -74,9 +75,11 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
         SearchView groupSearchView = view.findViewById(R.id.groupSearchView);
 
+
         mAdapter = new GroupRecyclerAdapter(myGroups, this);
-        //cardRecycler.setItemAnimator(new DefaultItemAnimator());
         updateCardViews();
+        //cardRecycler.setItemAnimator(new DefaultItemAnimator());
+
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -85,6 +85,8 @@
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>
 
+    <!--EVENT DETAIL-->
+    <string name="authority">Authority:Admin</string>
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>
     <string name="event_desc">DESCRIPTION</string>
