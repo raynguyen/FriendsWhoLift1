@@ -17,7 +17,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,9 +38,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.R;
 
-public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutChangeListener,
-        View.OnClickListener {
-    private static final String TAG = "Detailed_Group_Fragment";
+public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChangeListener,
+        View.OnClickListener{
+    private static final String TAG = "Group_Detail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
 
@@ -52,16 +51,16 @@ public class Detailed_Group_Fragment extends Fragment implements View.OnLayoutCh
 
     private GroupsViewModel mGroupViewModel;
 
-    public Detailed_Group_Fragment(){
+    public Group_Detail_Fragment(){
     }
 
-    public static Detailed_Group_Fragment newInstance(GroupBase groupBase, String transitionName){
-        Detailed_Group_Fragment detailed_group_fragment = new Detailed_Group_Fragment();
+    public static Group_Detail_Fragment newInstance(GroupBase groupBase, String transitionName){
+        Group_Detail_Fragment _group_Detail_fragment = new Group_Detail_Fragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(GROUP_BASE, groupBase);
         bundle.putString(TRANSITION_NAME,transitionName);
-        detailed_group_fragment.setArguments(bundle);
-        return detailed_group_fragment;
+        _group_Detail_fragment.setArguments(bundle);
+        return _group_Detail_fragment;
     }
 
     ActionBar actionBar;

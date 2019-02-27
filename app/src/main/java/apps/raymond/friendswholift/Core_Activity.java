@@ -12,8 +12,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,12 +29,11 @@ import android.widget.EditText;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 
-import apps.raymond.friendswholift.Groups.Detailed_Group_Fragment;
-import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
+import apps.raymond.friendswholift.Groups.Group_Detail_Fragment;
 import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
-        Detailed_Group_Fragment.TransitionScheduler {
+        Group_Detail_Fragment.TransitionScheduler {
     private static final String TAG = "Core_Activity";
 
     private ViewPager viewPager;

@@ -144,25 +144,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             style="@style/Base.Widget.AppCompat.ButtonBar"
-            android:text="Accepted"/>
+            android:text="@string/accepted"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             style="@style/Base.Widget.AppCompat.ButtonBar"
-            android:text="Declined"/>
+            android:text="@string/declined"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             style="@style/Base.Widget.AppCompat.ButtonBar"
-            android:text="Invited"/>
+            android:text="@string/invited"/>
     </LinearLayout>
 
     <ViewFlipper
         android:id="@+id/invited_flipper"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="160dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp">
 

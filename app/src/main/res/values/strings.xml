@@ -87,6 +87,10 @@
 
     <!--EVENT DETAIL-->
     <string name="authority">Authority:Admin</string>
+    <string name="accepted">Accepted</string>
+    <string name="declined">Declined</string>
+    <string name="invited">Invited</string>
+
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>
     <string name="event_desc">DESCRIPTION</string>

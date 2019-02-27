@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +36,6 @@ import java.util.List;
 
 import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
-import apps.raymond.friendswholift.TestTrans.Frag2;
 
 public class Core_Group_Fragment extends Fragment implements GroupClickListener {
     private static final String TAG = "Core_Group_Fragment";
@@ -130,7 +128,7 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
 
     @Override
     public void onGroupClick(int position, GroupBase groupBase, View sharedView) {
-        Fragment detailedGroup = Detailed_Group_Fragment.newInstance(groupBase,
+        Fragment detailedGroup = Group_Detail_Fragment.newInstance(groupBase,
                 sharedView.getTransitionName());
 
         //detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));

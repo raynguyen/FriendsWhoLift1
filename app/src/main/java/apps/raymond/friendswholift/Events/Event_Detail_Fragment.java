@@ -36,10 +36,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.UserProfile.ProfileRecyclerAdapter;
 
-public class Event_Detail_Fragment extends Fragment implements View.OnClickListener {
+public class Event_Detail_Fragment extends Fragment implements
+        View.OnClickListener, ProfileClickListener {
     private static final String TAG = "Event_Detail_Fragment";
 
     public Event_Detail_Fragment(){
@@ -107,7 +109,7 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
          */
 
         RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
-        acceptedAdapter = new ProfileRecyclerAdapter(profiles);
+        acceptedAdapter = new ProfileRecyclerAdapter(profiles, this);
         getInviteList();
         acceptedRecycler.setAdapter(acceptedAdapter);
         acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
@@ -130,6 +132,15 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
                 event.setDay(dayEdit.getText().toString());
                 eventViewModel.createEvent(event);
         }
+    }
+
+    /*
+     * OnClick call returns the Original name of the clicked profile. We then use this to query Firebase
+     * to retrieve the entire profile to load.
+    */
+    @Override
+    public void onProfileClick() {
+        Log.i(TAG,"Clicked on a profile.");
     }
 
     @Override

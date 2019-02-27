@@ -10,19 +10,17 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
 import apps.raymond.friendswholift.R;
 
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ProfileViewHolder> {
     private static final String TAG = "PROFILE RECYCLER ADAPTER";
     private List<String> profiles;
+    private ProfileClickListener listener;
 
-    public ProfileRecyclerAdapter(List<String> profiles){
-        Log.i(TAG,"Creating instance of ProfileViewHolder");
+    public ProfileRecyclerAdapter(List<String> profiles, ProfileClickListener profileClickListener){
         this.profiles = profiles;
-        if(profiles==null){
-            Log.i(TAG,"No profiles passed to recycler.");
-        }
-
+        this.listener = profileClickListener;
     }
 
     static class ProfileViewHolder extends RecyclerView.ViewHolder{
@@ -42,10 +40,16 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProfileViewHolder profileViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ProfileViewHolder profileViewHolder, int i) {
         if(profiles!=null){
             Log.i(TAG,"Attempting to make an item for : " + profiles.get(i));
             profileViewHolder.name.setText(profiles.get(i));
+            profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onProfileClick();
+                }
+            });
         } else {
             Log.i(TAG,"Empty profiles list.");
         }
