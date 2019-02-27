@@ -18,12 +18,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -73,15 +72,15 @@ public class Event_Detail_Fragment extends Fragment implements
         return inflater.inflate(R.layout.event_detail_frag,container,false);
     }
 
-    ViewFlipper viewFlipper;
+    ViewFlipper editFlipper, profilesFlipper;
     TextInputEditText nameEdit, descEdit, monthEdit, dayEdit;
-    ArrayList<String> profiles;
-    ProfileRecyclerAdapter acceptedAdapter;
+    List<String> invitedProfiles, declinedProfiles, acceptedProfiles;
+    ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewFlipper = view.findViewById(R.id.event_edit_flipper);
+        editFlipper = view.findViewById(R.id.event_edit_flipper);
 
         if(event.getCreator().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
             nameEdit = view.findViewById(R.id.event_name_edit);
@@ -103,18 +102,34 @@ public class Event_Detail_Fragment extends Fragment implements
         eventMonth.setText(event.getMonth());
         eventDay.setText(event.getDay());
 
-        /*
-         * The profiles list is null when it is passed into the Adapter so no views are created.
-         * How do I fix this?
-         */
+        Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);
+        Button declinedBtn = view.findViewById(R.id.declined_profiles_btn);
+        Button invitedBtn = view.findViewById(R.id.invited_profiles_btn);
+
+        acceptedBtn.setOnClickListener(this);
+        declinedBtn.setOnClickListener(this);
+        invitedBtn.setOnClickListener(this);
+
+        profilesFlipper = view.findViewById(R.id.profiles_flipper);
 
         RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
-        acceptedAdapter = new ProfileRecyclerAdapter(profiles, this);
-        getInviteList();
-        acceptedRecycler.setAdapter(acceptedAdapter);
+        acceptedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
+        acceptedRecycler.setAdapter(declinedAdapter);
         acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         acceptedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
+        declinedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
+        declinedRecycler.setAdapter(declinedAdapter);
+        declinedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
+        declinedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        RecyclerView invitedRecycler = view.findViewById(R.id.invited_recycler);
+        invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
+        getInviteList();
+        invitedRecycler.setAdapter(invitedAdapter);
+        invitedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
+        invitedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     @Override
@@ -123,7 +138,7 @@ public class Event_Detail_Fragment extends Fragment implements
         switch (i){
             case R.id.save_event_btn:
                 Log.i(TAG,"Saving edits to Event: "+ event.getName());
-                viewFlipper.showPrevious();
+                editFlipper.showPrevious();
 
                 getActivity().invalidateOptionsMenu();
                 event.setName(nameEdit.getText().toString());
@@ -131,6 +146,16 @@ public class Event_Detail_Fragment extends Fragment implements
                 event.setMonth(monthEdit.getText().toString());
                 event.setDay(dayEdit.getText().toString());
                 eventViewModel.createEvent(event);
+                break;
+            case R.id.accepted_profiles_btn:
+                profilesFlipper.setDisplayedChild(0);
+                break;
+            case R.id.declined_profiles_btn:
+                profilesFlipper.setDisplayedChild(1);
+                break;
+            case R.id.invited_profiles_btn:
+                profilesFlipper.setDisplayedChild(2);
+                break;
         }
     }
 
@@ -158,36 +183,23 @@ public class Event_Detail_Fragment extends Fragment implements
                 Log.i(TAG,"Editing event: "+event.getName());
                 item.setVisible(false);
                 item.setEnabled(false);
-                viewFlipper.showNext();
+                editFlipper.showNext();
         }
         return super.onOptionsItemSelected(item);
     }
 
     //CALL REPOSITORY METHOD TO RETRIEVE THE LIST HERE!!!!!!!
     private void getInviteList(){
-
-
-
         eventViewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 if(task.isSuccessful()){
-                    /*
-                    profiles = new ArrayList<>();
-                    profiles.add("hello");
-                    profiles.add("fewa");
-                    profiles.add("fewafweafwe");
-                    profiles.add("hgreagaerge");
-                    Log.i(TAG,"SETTING CONTENTS OF PROFILES LIST.");
-                    acceptedAdapter.setData(profiles);
-                    */
-
-                    Log.i(TAG,"Retrieved list of invited profiles.");
-                    profiles = new ArrayList<>();
-                    profiles.addAll(task.getResult());
-                    Log.i(TAG,"Contents of profiles list: "+profiles.toString());
-                    acceptedAdapter.setData(profiles);
-                    acceptedAdapter.notifyDataSetChanged();
+                    Log.i(TAG,"Retrieved list of invited invitedProfiles.");
+                    invitedProfiles = new ArrayList<>();
+                    invitedProfiles.addAll(task.getResult());
+                    Log.i(TAG,"Contents of invitedProfiles list: "+ invitedProfiles.toString());
+                    invitedAdapter.setData(invitedProfiles);
+                    invitedAdapter.notifyDataSetChanged();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -197,17 +209,8 @@ public class Event_Detail_Fragment extends Fragment implements
                 Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    /*
-     * Recycler view with tablayout
-     * Tablayouts are: Attending, maybe, invited
-     * The recyclerview will only load the User display name and their user profile image
-     * If the user clicks on a user, the whole profile for the user loads in a separate fragment.
-     *
-     *
-     *
-     * POPULATE EACH RECYCLER VIEW
-     */
+
+
 }

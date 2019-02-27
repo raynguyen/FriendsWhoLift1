@@ -140,38 +140,45 @@
         android:paddingEnd="24dp"
         android:weightSum="3">
         <Button
+            android:id="@+id/accepted_profiles_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/button_state_background"
             style="@style/Base.Widget.AppCompat.ButtonBar"
             android:text="@string/accepted"/>
         <Button
+            android:id="@+id/declined_profiles_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/button_state_background"
             style="@style/Base.Widget.AppCompat.ButtonBar"
             android:text="@string/declined"/>
         <Button
+            android:id="@+id/invited_profiles_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/button_state_background"
             style="@style/Base.Widget.AppCompat.ButtonBar"
             android:text="@string/invited"/>
     </LinearLayout>
 
     <ViewFlipper
-        android:id="@+id/invited_flipper"
+        android:id="@+id/profiles_flipper"
         android:layout_width="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_height="160dp"
         android:paddingStart="24dp"
-        android:paddingEnd="24dp">
+        android:paddingEnd="24dp"
+        android:background="@drawable/edit_text_border">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/accepted_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="12dp"
-            android:background="@drawable/edit_text_border">
+            android:layout_height="match_parent">
         </android.support.v7.widget.RecyclerView>
 
         <android.support.v7.widget.RecyclerView
