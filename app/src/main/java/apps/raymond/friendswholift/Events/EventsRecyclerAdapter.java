@@ -54,7 +54,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i(TAG,"Event was clicked.");
                     eventClickListener.onEventClick(eventViewHolder.getAdapterPosition(),currEvent);
                 }
             });

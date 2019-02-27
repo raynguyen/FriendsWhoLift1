@@ -38,7 +38,7 @@ import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 
 public class Core_Events_Fragment extends Fragment implements EventClickListener,View.OnClickListener {
-    private static final String TAG = "EventsFragment";
+    private static final String TAG = "Core_EventsFragment";
 
     private EventViewModel viewModel;
     private List<GroupEvent> eventList;
@@ -113,7 +113,6 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
 
     @Override
     public void onEventClick(int position, GroupEvent groupEvent) {
-        Log.i(TAG,"Clicked on Event inside the RecyclerView at position: "+ position);
         Fragment detailedEvent = Event_Detail_Fragment.newInstance();
         Bundle args = new Bundle();
         args.putParcelable("EventObject",groupEvent);

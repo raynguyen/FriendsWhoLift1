@@ -12,6 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,11 +25,19 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.UserProfile.ProfileRecyclerAdapter;
 
 public class Event_Detail_Fragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Event_Detail_Fragment";
@@ -43,15 +54,13 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG,"Creating Event_Detail_Fragment.");
         setHasOptionsMenu(true);
-
-        eventViewModel = new EventViewModel();
-
+        eventViewModel = new EventViewModel(); // mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
         Bundle args = this.getArguments();
         if(args !=null){
             this.event = args.getParcelable("EventObject");
         }
+        Log.i(TAG,"Creating detail event fragment for: "+ event.getName());
     }
 
 
@@ -64,6 +73,8 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
 
     ViewFlipper viewFlipper;
     TextInputEditText nameEdit, descEdit, monthEdit, dayEdit;
+    List<String> profiles;
+    ProfileRecyclerAdapter acceptedAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -89,6 +100,29 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
         eventDesc.setText(event.getDesc());
         eventMonth.setText(event.getMonth());
         eventDay.setText(event.getDay());
+
+        /*
+         * The profiles list is null when it is passed into the Adapter so no views are created.
+         * How do I fix this?
+         */
+
+
+
+        acceptedAdapter = new ProfileRecyclerAdapter(profiles);
+        getInviteList();
+        RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
+        Log.i(TAG,"Setting adapter of profile recyclers");
+        acceptedRecycler.setAdapter(acceptedAdapter);
+        acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
+        acceptedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
+        RecyclerView invitedRecycler = view.findViewById(R.id.invited_recycler);
+
+        declinedRecycler.setAdapter(acceptedAdapter);
+        invitedRecycler.setAdapter(acceptedAdapter);
+
+
     }
 
     @Override
@@ -128,11 +162,46 @@ public class Event_Detail_Fragment extends Fragment implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+    //CALL REPOSITORY METHOD TO RETRIEVE THE LIST HERE!!!!!!!
+    private void getInviteList(){
+        profiles = new ArrayList<>();
+        profiles.add("hello");
+        profiles.add("fewa");
+        profiles.add("fewafweafwe");
+        profiles.add("hgreagaerge");
+        acceptedAdapter.setData(profiles);
+        /*
+        eventViewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<String>> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Retrieved list of invited profiles.");
+                    //profiles = new ArrayList<>();
+                    for(String profile:task.getResult()){
+                        profiles.add(profile);
+                    }
+                    Log.i(TAG,"Contents of profiles list: "+profiles.toString());
+                    acceptedAdapter.setData(profiles);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Error when retrieving guest list.",e);
+                Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
+            }
+        });
+        */
+    }
+
     /*
      * Recycler view with tablayout
      * Tablayouts are: Attending, maybe, invited
      * The recyclerview will only load the User display name and their user profile image
      * If the user clicks on a user, the whole profile for the user loads in a separate fragment.
      *
+     *
+     *
+     * POPULATE EACH RECYCLER VIEW
      */
 }

@@ -28,6 +28,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+
 import apps.raymond.friendswholift.Groups.Detailed_Group_Fragment;
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 import apps.raymond.friendswholift.UserProfile.ProfileFrag;
@@ -115,6 +118,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         switch (item.getItemId()){
             case R.id.action_logout:
                 Log.i(TAG,"Clicked the logout button.");
+                logout();
                 return true;
             case R.id.action_settings:
                 Log.i(TAG,"Clicked the settings button.");
@@ -147,6 +151,13 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         //int i = v.getId();
     }
+
+    public void logout(){
+        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        AuthUI.getInstance().signOut(this);
+    }
+
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

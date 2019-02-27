@@ -42,11 +42,6 @@ import apps.raymond.friendswholift.TestTrans.Frag2;
 public class Core_Group_Fragment extends Fragment implements GroupClickListener {
     private static final String TAG = "Core_Group_Fragment";
 
-    GroupsViewModel mGroupViewModel;
-    ArrayList<GroupBase> myGroups;
-    GroupRecyclerAdapter mAdapter;
-    ProgressBar progressBar;
-
     //Required empty fragment. Not sure why it is needed.
     public Core_Group_Fragment(){}
 
@@ -56,15 +51,18 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         setHasOptionsMenu(true);
     }
 
+    GroupsViewModel mGroupViewModel;
+    ArrayList<GroupBase> myGroups;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.core_groups_frag, container, false);
-        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class); //new GroupsViewModel();
-        updateCardViews();
+        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
         return view;
     }
 
+    GroupRecyclerAdapter mAdapter;
+    ProgressBar progressBar;
     TextView headerTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -78,25 +76,10 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
 
         mAdapter = new GroupRecyclerAdapter(myGroups, this);
         //cardRecycler.setItemAnimator(new DefaultItemAnimator());
-        // When there is a change in data, we want to notify the Adapter by calling the GroupRecyclerAdapter.setData();
+        updateCardViews();
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        groupSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mAdapter.filter(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mAdapter.filter(newText);
-                return false;
-            }
-        });
-
     }
 
 

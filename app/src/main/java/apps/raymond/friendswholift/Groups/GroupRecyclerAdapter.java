@@ -53,11 +53,10 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     public void onBindViewHolder(@NonNull final GroupRecyclerAdapter.GroupViewHolder viewHolder, int position) {
         if(groupsList !=null){
             final GroupBase currentGroup = groupsList.get(position);
+            Log.i(TAG,"Creating card for: "+currentGroup.getName());
 
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.nameTxt.setTransitionName("Transition"+position);
-            Log.i(TAG,"Card "+ viewHolder.nameTxt.getText().toString() + " has transition name: "+ viewHolder.nameTxt.getTransitionName());
-
             viewHolder.descTxt.setText(currentGroup.getDescription());
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -81,20 +80,5 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
             return 0;
         }
     }
-
-    public void filter(String searchText){
-        List<GroupBase> myGroupsCopy = new ArrayList<>();
-        myGroupsCopy.clear();
-        if(searchText.isEmpty()){
-            myGroupsCopy.addAll(groupsList);
-        } else {
-            for(GroupBase group:myGroupsCopy){
-                if(group.getName().toLowerCase().contains(searchText)){
-                    myGroupsCopy.add(group);
-                }
-            }
-        }
-    }
-
 
 }
