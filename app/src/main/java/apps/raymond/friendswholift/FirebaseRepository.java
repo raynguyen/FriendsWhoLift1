@@ -384,9 +384,14 @@ public class FirebaseRepository {
             @Override
             public List<String> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document:task.getResult()){
-                        userList.add(document.getId());
+                    if(!task.getResult().isEmpty()){
+                        for(QueryDocumentSnapshot document:task.getResult()){
+                            userList.add(document.getId());
+                        }
+                    } else {
+                        Log.i(TAG,"No invited users for: "+event.getName());
                     }
+
                 } else {
                     Log.w(TAG,"Unable to retrieve invitee list for: "+event.getOriginalName());
                     return null;
@@ -396,13 +401,30 @@ public class FirebaseRepository {
         });
     }
 
-    public Task<List<String>> getEventAceptees(final GroupEvent event){
-        CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
-        final List<String> userList = new ArrayList<>();
-
-        Query query = invitees.whereEqualTo("Status","Accepted");
-
-        return null;
+    public Task<List<String>> getEventResponses(final GroupEvent event, final String status){
+        CollectionReference invitees = eventCollection.document(event.getOriginalName())
+                .collection("Invitees");
+        Log.i(TAG,"starting query");
+        Query query = invitees.whereEqualTo("Status",status);
+        return query.get().continueWith(new Continuation<QuerySnapshot, List<String>>() {
+            @Override
+            public List<String> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                List<String> responses = new ArrayList<>();
+                if(task.isSuccessful()) {
+                    if (task.getResult() != null) {
+                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                            Log.i(TAG, snapshot.getId()+ " responded " + status + " to " +event.getName());
+                            responses.add(snapshot.getId());
+                        }
+                    } else {
+                        Log.i(TAG,"No guests have accepted event: "+event.getName());
+                    }
+                } else {
+                    Log.i(TAG,"Error fetching list of accepted users for "+event.getName());
+                }
+                return responses;
+            }
+        });
     }
 
     // Task to upload an image and on success return the downloadUri.

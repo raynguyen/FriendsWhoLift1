@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -42,6 +43,8 @@ import apps.raymond.friendswholift.UserProfile.ProfileRecyclerAdapter;
 public class Event_Detail_Fragment extends Fragment implements
         View.OnClickListener, ProfileClickListener {
     private static final String TAG = "Event_Detail_Fragment";
+    private static final String EVENT_ACCEPTED = "Accepted";
+    private static final String EVENT_DECLINED = "Declined";
 
     public Event_Detail_Fragment(){
     }
@@ -76,6 +79,8 @@ public class Event_Detail_Fragment extends Fragment implements
     TextInputEditText nameEdit, descEdit, monthEdit, dayEdit;
     List<String> invitedProfiles, declinedProfiles, acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
+    ProgressBar acceptedBar,invitedBar,declinedBar;
+    TextView acceptedNullText,invitedNullText,declinedNullText;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -112,24 +117,38 @@ public class Event_Detail_Fragment extends Fragment implements
 
         profilesFlipper = view.findViewById(R.id.profiles_flipper);
 
+        /*
+         * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
+         * When user clicks on a user, load the full Profile using the name in the list as our query field.
+         */
         RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
         acceptedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
-        acceptedRecycler.setAdapter(declinedAdapter);
+        acceptedRecycler.setAdapter(acceptedAdapter);
+        Log.d(TAG,"Calling accepted list.");
+        getAcceptedList(event);
         acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         acceptedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        acceptedBar = view.findViewById(R.id.accepted_progress_bar);
+        acceptedNullText = view.findViewById(R.id.accepted_null_data_text);
+
 
         RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
         declinedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
         declinedRecycler.setAdapter(declinedAdapter);
+        getDeclinedList(event);
         declinedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         declinedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        declinedBar = view.findViewById(R.id.declined_progress_bar);
+        declinedNullText = view.findViewById(R.id.declined_null_data_text);
 
         RecyclerView invitedRecycler = view.findViewById(R.id.invited_recycler);
         invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
-        getInviteList();
+        getInviteList(event);
         invitedRecycler.setAdapter(invitedAdapter);
         invitedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         invitedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        invitedBar = view.findViewById(R.id.invited_progress_bar);
+        invitedNullText = view.findViewById(R.id.invited_null_data_text);
     }
 
     @Override
@@ -164,8 +183,8 @@ public class Event_Detail_Fragment extends Fragment implements
      * to retrieve the entire profile to load.
     */
     @Override
-    public void onProfileClick() {
-        Log.i(TAG,"Clicked on a profile.");
+    public void onProfileClick(String profileName) {
+        Log.i(TAG,"Clicked on: "+profileName);
     }
 
     @Override
@@ -189,15 +208,18 @@ public class Event_Detail_Fragment extends Fragment implements
     }
 
     //CALL REPOSITORY METHOD TO RETRIEVE THE LIST HERE!!!!!!!
-    private void getInviteList(){
+    private void getInviteList(final GroupEvent event){
         eventViewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
+                invitedBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
+                    if(task.getResult().isEmpty()){
+                        invitedNullText.setVisibility(View.VISIBLE);
+                    }
                     Log.i(TAG,"Retrieved list of invited invitedProfiles.");
                     invitedProfiles = new ArrayList<>();
                     invitedProfiles.addAll(task.getResult());
-                    Log.i(TAG,"Contents of invitedProfiles list: "+ invitedProfiles.toString());
                     invitedAdapter.setData(invitedProfiles);
                     invitedAdapter.notifyDataSetChanged();
                 }
@@ -207,6 +229,52 @@ public class Event_Detail_Fragment extends Fragment implements
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG,"Error when retrieving guest list.",e);
                 Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getAcceptedList(GroupEvent groupEvent){
+        Log.i(TAG,"Attempting to get query of accepted users!");
+        eventViewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<String>> task) {
+                if(task.getResult().isEmpty()){
+                    acceptedNullText.setVisibility(View.VISIBLE);
+                }
+                acceptedBar.setVisibility(View.INVISIBLE);
+                acceptedProfiles = new ArrayList<>();
+                acceptedProfiles.addAll(task.getResult());
+                acceptedAdapter.setData(acceptedProfiles);
+                acceptedAdapter.notifyDataSetChanged();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Error when retrieving guest list.",e);
+                Toast.makeText(getContext(),"Failed to accepted users for "+event.getName(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getDeclinedList(GroupEvent groupEvent){
+        Log.i(TAG,"Attempting to get query of accepted users!");
+        eventViewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<String>> task) {
+                if(task.getResult().isEmpty()){
+                    declinedNullText.setVisibility(View.VISIBLE);
+                }
+                declinedBar.setVisibility(View.INVISIBLE);
+                declinedProfiles = new ArrayList<>();
+                declinedProfiles.addAll(task.getResult());
+                declinedAdapter.setData(declinedProfiles);
+                declinedAdapter.notifyDataSetChanged();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Error when retrieving guest list.",e);
+                Toast.makeText(getContext(),"Failed to accepted users for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
     }

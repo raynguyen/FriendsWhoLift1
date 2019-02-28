@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_weight="1">
+    android:layout_weight="1"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <ImageView
         android:id="@+id/user_profile_icon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.2"
+        android:layout_weight="0.1"
         android:src="@drawable/googleg_disabled_color_18"
         android:contentDescription="@string/Temp"/>
     <TextView
@@ -18,11 +20,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:text="@string/Temp"/>
+        android:text="@string/Temp"
+        android:maxLines="1"/>
     <TextView
         android:id="@+id/authority_txt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:text="@string/authority"/>
+        android:layout_weight="0.4"
+        android:text="@string/authority"
+        android:maxLines="1"/>
 </LinearLayout>

@@ -45,10 +45,15 @@ public class EventViewModel extends ViewModel {
         return mRepository.getEventInvitees(event);
     }
 
+    public Task<List<String>> getEventResponses(GroupEvent event, String status){
+        return mRepository.getEventResponses(event, status);
+    }
+
     public Task<DocumentSnapshot> attachListener(){
         //return mRepository.listenToUsersEvents();
         return null;
     }
+
 
     public void removeListener(){
         mRepository.removeListener();

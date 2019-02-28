@@ -90,6 +90,7 @@
     <string name="accepted">Accepted</string>
     <string name="declined">Declined</string>
     <string name="invited">Invited</string>
+    <string name="empty">Empty</string>
 
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>

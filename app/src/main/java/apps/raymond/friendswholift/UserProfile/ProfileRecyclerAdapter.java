@@ -47,7 +47,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
             profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onProfileClick();
+                    listener.onProfileClick(profiles.get(profileViewHolder.getAdapterPosition()));
                 }
             });
         } else {
