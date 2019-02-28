@@ -96,8 +96,8 @@ public class Event_Detail_Fragment extends Fragment implements
 
         TextView eventName = view.findViewById(R.id.event_title);
         TextView eventDesc = view.findViewById(R.id.event_desc);
-        TextView eventMonth = view.findViewById(R.id.event_month);
-        TextView eventDay = view.findViewById(R.id.event_day);
+        TextView eventMonth = view.findViewById(R.id.event_start);
+        TextView eventDay = view.findViewById(R.id.event_start);
 
         ImageButton editSaveBtn = view.findViewById(R.id.save_event_btn);
         editSaveBtn.setOnClickListener(this);
@@ -175,6 +175,7 @@ public class Event_Detail_Fragment extends Fragment implements
             case R.id.invited_profiles_btn:
                 profilesFlipper.setDisplayedChild(2);
                 break;
+
         }
     }
 

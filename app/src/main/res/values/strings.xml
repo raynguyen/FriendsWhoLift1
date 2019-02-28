@@ -101,6 +101,8 @@
     <string name="event_exclusive">Exclusive</string>
     <string name="event_month">MONTH</string>
     <string name="event_day">DAY</string>
+    <string name="event_start">Start Time</string>
+    <string name="event_end">End Time</string>
 
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>

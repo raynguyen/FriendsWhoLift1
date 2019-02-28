@@ -2,7 +2,6 @@ package apps.raymond.friendswholift.Events;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +28,8 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             super(view);
             eventName = view.findViewById(R.id.event_title);
             eventDesc = view.findViewById(R.id.event_desc);
-            eventDay = view.findViewById(R.id.event_day);
-            eventMonth = view.findViewById(R.id.event_month);
+            eventDay = view.findViewById(R.id.event_start);
+            eventMonth = view.findViewById(R.id.event_start);
         }
     }
 

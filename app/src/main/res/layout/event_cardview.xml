@@ -21,13 +21,13 @@
             app:layout_constraintTop_toTopOf="parent"
             android:padding="12dp">
             <TextView
-                android:id="@+id/event_month"
+                android:id="@+id/event_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="MONTH"
                 android:gravity="center"/>
             <TextView
-                android:id="@+id/event_day"
+                android:id="@+id/event_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="DAY"

@@ -2,6 +2,10 @@
  * On back click, should prompt the user if they want to completely discard any progress.
  *
  * Need to decide on how to select the group to attach event to.
+ *
+ * One ConstraintLayout that holds the datepicker info and the timepicker info. At the start of the
+ * layout, have a calender imagebtn that opens a dialog with a viewpager for the time picker and the date picker.
+ * At the end of the image button will be two view layouts with the date on top and the time on the bottom.
  */
 
 package apps.raymond.friendswholift.Events;
@@ -12,6 +16,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,25 +35,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
+public class Event_Create_Fragment extends Fragment implements View.OnClickListener, DatePickerDialog.FetchDate,
         YesNoDialog.YesNoInterface, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "Event_Create_Fragment";
-    EditText nameTxt;
-    EditText descTxt;
-    EditText dayTxt;
-    EditText monthTxt;
-    RadioGroup privacyGroup;
-    TextView tagsContainer;
-    EditText tagsTxt;
-    String privacy;
+    private static final int REQUEST_CODE = 11;
     public Event_Create_Fragment(){
     }
 
@@ -69,20 +69,27 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return inflater.inflate(R.layout.event_create_frag,container,false);
     }
 
+    String startMonth, startDay;
+    EditText nameTxt, descTxt;
+    TextView startTxt, endTxt;
+    RadioGroup privacyGroup;
+    TextView tagsContainer;
+    EditText tagsTxt;
+    String privacy;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         nameTxt = view.findViewById(R.id.event_name_txt);
         descTxt = view.findViewById(R.id.event_desc_txt);
-        dayTxt = view.findViewById(R.id.event_day);
-        monthTxt = view.findViewById(R.id.event_month);
+        startTxt = view.findViewById(R.id.event_start);
+        endTxt = view.findViewById(R.id.event_end);
 
-        Button dateBtn = view.findViewById(R.id.date_btn);
+        ImageButton dateBtn = view.findViewById(R.id.date_btn);
         dateBtn.setOnClickListener(this);
 
         Button saveBtn = view.findViewById(R.id.save_btn);
-        Button cancelBtn = view.findViewById(R.id.cancel_btn);
         saveBtn.setOnClickListener(this);
+        Button cancelBtn = view.findViewById(R.id.cancel_btn);
         cancelBtn.setOnClickListener(this);
 
         privacyGroup = view.findViewById(R.id.privacy_buttons);
@@ -109,12 +116,19 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 if(checkFields()){
                     return;
                 }
+
+                // TODO: On save click, inflate the DialogFragment. The dialogfragment should return a boolean value and the
+                //  code here will determine what to do depending on the return value.
+                DialogFragment dialog = new YesNoDialog();
+                dialog.setTargetFragment(this, 0);
+                dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
+
                 GroupEvent newEvent = new GroupEvent(
                         FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                         nameTxt.getText().toString(),
                         descTxt.getText().toString(),
-                        monthTxt.getText().toString(),
-                        dayTxt.getText().toString(),
+                        startMonth,
+                        startDay,
                         privacy,
                         tagsList);
 
@@ -122,13 +136,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
                 EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
                 eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
-                getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
                 break;
 
             case R.id.cancel_btn:
-                DialogFragment dialog = new YesNoDialog();
-                dialog.setTargetFragment(this, 0);
-                dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
+                DialogFragment cancelDialog = new YesNoDialog();
+                cancelDialog.setTargetFragment(this, 0);
+                cancelDialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
                 break;
 
             case R.id.event_tag_add_btn:
@@ -143,9 +156,20 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.date_btn:
-                DialogFragment newFragment = new TimePickerDialog();
-                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+                DialogFragment newFragment = new DatePickerDialog();
+                FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                newFragment.setTargetFragment(Event_Create_Fragment.this,REQUEST_CODE);
+                newFragment.show(fm, "datePicker");
         }
+    }
+
+    @Override
+    public void fetchDate(int year, int month, int day) {
+        Log.i(TAG,"YEAR MONTH DAY = "+year+month+day);
+        startDay = String.format(Locale.getDefault(),"%s",day);
+        startMonth = new DateFormatSymbols().getMonths()[month];
+        String startString = startMonth + ", "+startDay;
+        startTxt.setText(startString);
     }
 
     @Override
