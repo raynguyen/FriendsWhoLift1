@@ -50,7 +50,7 @@
         android:id="@+id/event_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MONTH"
+        android:text="@string/event_month"
         app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -58,10 +58,18 @@
         android:id="@+id/event_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DAY"
+        android:text="@string/event_day"
         app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
         app:layout_constraintStart_toEndOf="@id/event_month"
         android:layout_marginStart="24dp"/>
+
+    <Button
+        android:id="@+id/date_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/event_month"
+        app:layout_constraintStart_toEndOf="@id/event_day"
+        app:layout_constraintTop_toTopOf="@id/event_day"/>
 
     <RadioGroup
         android:id="@+id/privacy_buttons"

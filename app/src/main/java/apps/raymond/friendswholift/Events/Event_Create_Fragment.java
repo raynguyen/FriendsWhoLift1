@@ -77,6 +77,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         dayTxt = view.findViewById(R.id.event_day);
         monthTxt = view.findViewById(R.id.event_month);
 
+        Button dateBtn = view.findViewById(R.id.date_btn);
+        dateBtn.setOnClickListener(this);
+
         Button saveBtn = view.findViewById(R.id.save_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
         saveBtn.setOnClickListener(this);
@@ -138,6 +141,10 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 tagsTxt.getText().clear();
 
                 break;
+
+            case R.id.date_btn:
+                DialogFragment newFragment = new TimePickerDialog();
+                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
         }
     }
 
