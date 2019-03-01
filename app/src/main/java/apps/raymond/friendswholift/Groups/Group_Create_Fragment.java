@@ -43,12 +43,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
 public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
-        YesNoDialog.YesNoInterface{
-    private static final String TAG = "Group_Create_Fragment";
+        YesNoDialog.YesNoInterface, Core_Activity.BackPressInterface {
+    public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 1;
 
     public Uri imageUri;
@@ -272,6 +273,13 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    }
+
+    @Override
+    public void backPress() {
+        Log.i(TAG,"BACK PRESSED");
+
+        // inflate the yes no dialog here and remember to destroy this fragment so we can garbage collect.
     }
 
     @Override

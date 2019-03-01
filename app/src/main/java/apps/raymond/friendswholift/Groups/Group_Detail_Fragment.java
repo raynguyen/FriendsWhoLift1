@@ -39,18 +39,14 @@ import android.widget.ViewFlipper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChangeListener,
-        View.OnClickListener{
-    private static final String TAG = "Group_Detail_Fragment";
+        View.OnClickListener, Core_Activity.BackPressInterface {
+    public static final String TAG = "Group_Detail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
-
-    TransitionScheduler transitionScheduler;
-    public interface TransitionScheduler{
-        void scheduleStartTransition(View sharedView);
-    }
 
     private GroupsViewModel mGroupViewModel;
 
@@ -131,7 +127,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
 
         name.setText(groupBase.getName());
         name.setTransitionName(transitionName);
-        transitionScheduler.scheduleStartTransition(name);
+        //transitionScheduler.scheduleStartTransition(name);
 
         TextView desc = view.findViewById(R.id.group_desc_txt);
         desc.setText(groupBase.getDescription());
@@ -153,17 +149,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         if(groupBase.getBytes()!=null){
             Bitmap bitmap = BitmapFactory.decodeByteArray(groupBase.getBytes(),0,groupBase.getBytes().length);
             image.setImageBitmap(bitmap);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            //We need to get an instance of the Class that will execute our interface method.
-            transitionScheduler = (TransitionScheduler) getActivity();
-        } catch (ClassCastException e) {
-            Log.e(TAG,"Class cast exception." + e.getMessage());
         }
     }
 
@@ -242,14 +227,41 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         return false;
     }
 
-    @Override
-    public void onDestroy() {
-        actionBar.setDisplayShowTitleEnabled(false);
-        super.onDestroy();
-    }
-
     private void editGroup(){
         Log.i(TAG,"Entering edit mode for: "+groupBase.getName());
         viewFlipper.showNext();
     }
+
+    @Override
+    public void backPress() {
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "DESTROYING GROUP DETAIL FRAGMENT.");
+        actionBar.setDisplayShowTitleEnabled(false);
+        super.onDestroy();
+    }
+
+
+    /*
+    TransitionScheduler transitionScheduler;
+    public interface TransitionScheduler{
+        void scheduleStartTransition(View sharedView);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            //We need to get an instance of the Class that will execute our interface method.
+            transitionScheduler = (TransitionScheduler) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
+    }*/
+
+
+
+
 }

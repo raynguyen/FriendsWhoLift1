@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,13 +29,19 @@ import android.widget.EditText;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 
+import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 import apps.raymond.friendswholift.Groups.Group_Detail_Fragment;
 import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 
-public class Core_Activity extends AppCompatActivity implements Group_Detail_Fragment.TransitionScheduler {
+public class Core_Activity extends AppCompatActivity {
     private static final String TAG = "Core_Activity";
 
-    private ViewPager viewPager;
+    ViewPager viewPager;
+
+    public BackPressInterface backPressListener;
+    public interface BackPressInterface{
+        void backPress();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,17 +143,25 @@ public class Core_Activity extends AppCompatActivity implements Group_Detail_Fra
         return super.dispatchTouchEvent(ev);
     }
 
-    public void scheduleStartTransition(final View sharedView){
-        sharedView.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        Log.i(TAG,"The sharedView called onPreDraw.");
-                        sharedView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        startPostponedEnterTransition();
-                        return true;
-                    }
-                }
-        );
+
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG,getSupportFragmentManager().getFragments().toString());
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if(count==0){
+            Log.i(TAG,"There is nothing in the back stack");
+            super.onBackPressed();
+        } else {
+            // When calling on fragment manager to add/replace a fragment to the back stack, we set
+            // the fragment's name and the backStack tag to the 'TAG' field.
+            String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
+            Fragment topFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+
+            if(topFragment instanceof BackPressInterface){
+                ((BackPressInterface) topFragment).backPress();
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 }

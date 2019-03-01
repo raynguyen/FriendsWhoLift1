@@ -7,7 +7,6 @@
 
 package apps.raymond.friendswholift.Groups;
 
-// IMPLEMENT CHANGING ACTION BAR FOR EACH VIEWPAGE
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -69,14 +68,15 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         super.onViewCreated(view, savedInstanceState);
 
         headerTxt = view.findViewById(R.id.header_txt);
+
         ImageButton createGroupBtn = view.findViewById(R.id.create_group_btn);
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment createGroupFragment = new Group_Create_Fragment();
                 getFragmentManager().beginTransaction()
-                        .add(R.id.core_frame,createGroupFragment)
-                        .addToBackStack(null)
+                        .add(R.id.core_frame,createGroupFragment,Group_Create_Fragment.TAG)
+                        .addToBackStack(Group_Create_Fragment.TAG)
                         .show(createGroupFragment)
                         .commit();
             }
@@ -162,4 +162,6 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
                 return false;
         }
     }
+
+
 }
