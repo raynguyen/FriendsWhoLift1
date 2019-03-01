@@ -73,7 +73,6 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
         SearchView groupSearchView = view.findViewById(R.id.groupSearchView);
 
-
         mAdapter = new GroupRecyclerAdapter(myGroups, this);
         updateCardViews();
         //cardRecycler.setItemAnimator(new DefaultItemAnimator());
@@ -146,7 +145,6 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_create_group:
-                Log.i(TAG,"YES GIRL");
                 Fragment createGroupFragment = new Group_Create_Fragment();
                 getFragmentManager().beginTransaction()
                         .add(R.id.core_frame,createGroupFragment)

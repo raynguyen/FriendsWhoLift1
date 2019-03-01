@@ -20,24 +20,22 @@ public class YesNoDialog extends DialogFragment{
     public static final String DISCARD_CHANGES = "Leaving now will discard any changes you have made. \nAre you sure you want to cancel?";
     public static final String WARNING = "WARNING!";
     public static final String CONFIRM_GROUP = "Are you sure you want to create this Group?";
-
+    public static final String TITLE = "title";
+    public static final String BODY = "body";
     YesNoInterface callback;
 
     public interface YesNoInterface {
         void positiveClick();
         void negativeClick();
     }
-
-    private static String title, body;
-
     public YesNoDialog(){
     }
 
     public static YesNoDialog newInstance(String title, String body){
         YesNoDialog dialog = new YesNoDialog();
         Bundle args = new Bundle();
-        args.putString("title",title);
-        args.putString("body",body);
+        args.putString(TITLE,title);
+        args.putString(BODY,body);
         dialog.setArguments(args);
         return dialog;
     }
@@ -50,6 +48,10 @@ public class YesNoDialog extends DialogFragment{
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+
+        String title = getArguments().getString(TITLE);
+        String body = getArguments().getString(BODY);
+
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(body)

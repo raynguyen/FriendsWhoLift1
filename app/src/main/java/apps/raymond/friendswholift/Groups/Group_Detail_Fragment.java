@@ -170,7 +170,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
 
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        Log.i(TAG,"Layout changed.");
         int i = viewFlipper.getDisplayedChild();
         switch (i){
             case 0:
@@ -212,7 +211,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         Log.i(TAG,"onCreateOptionsMenu of detailed group fragment.");
         menu.clear();
         inflater.inflate(R.menu.home_actionbar,menu);
-        editItem = menu.findItem(R.id.action_edit_group);
+        editItem = menu.findItem(R.id.action_edit);
         saveItem = menu.findItem(R.id.action_save_group);
     }
 
@@ -224,11 +223,11 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_create_group).setEnabled(false);
         if(owner.equals(currUser)){
-            menu.findItem(R.id.action_edit_group).setEnabled(true);
-            menu.findItem(R.id.action_edit_group).setVisible(true);
+            menu.findItem(R.id.action_edit).setEnabled(true);
+            menu.findItem(R.id.action_edit).setVisible(true);
         } else {
-            menu.findItem(R.id.action_edit_group).setVisible(false);
-            menu.findItem(R.id.action_edit_group).setEnabled(false);
+            menu.findItem(R.id.action_edit).setVisible(false);
+            menu.findItem(R.id.action_edit).setEnabled(false);
         }
         super.onPrepareOptionsMenu(menu);
     }
@@ -240,10 +239,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         switch (i){
-            case R.id.action_edit_group:
-                //Calling item.XXXXXXXXX works but using editItem.xxxxxxxxxxxxxxx does not!?!?!?!?
-                Log.i(TAG,"Clicked on edit item: "+item.getItemId());
-                Log.i(TAG,"Clicked on edit item: "+editItem.getItemId());
+            case R.id.action_edit:
                 item.setVisible(false);
                 item.setEnabled(false);
                 saveItem.setEnabled(true);

@@ -32,8 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import apps.raymond.friendswholift.Groups.Group_Detail_Fragment;
 import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 
-public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
-        Group_Detail_Fragment.TransitionScheduler {
+public class Core_Activity extends AppCompatActivity implements Group_Detail_Fragment.TransitionScheduler {
     private static final String TAG = "Core_Activity";
 
     private ViewPager viewPager;
@@ -72,13 +71,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         tabLayout.setupWithViewPager(viewPager);
     }
 
-
-    // Returning false means Menu is never inflated and onPrepareOptionsMenu is never called.
-    Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         menu.clear();
-        this.menu = menu;
         return true;
     }
 
@@ -86,25 +81,22 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.home_actionbar,menu);
+        menu.findItem(R.id.action_edit).setVisible(false);
+        menu.findItem(R.id.action_edit).setEnabled(false);
 
-        if(!menu.findItem(R.id.action_edit_group).isVisible()){
-            menu.findItem(R.id.action_edit_group).setVisible(false);
-        }
-
-        menu.findItem(R.id.action_edit_group).setVisible(false);
         int i = viewPager.getCurrentItem();
         switch(i){
             case 0:
                 menu.findItem(R.id.action_profile).setVisible(true);
                 menu.findItem(R.id.action_create_group).setVisible(false);
                 menu.findItem(R.id.action_save_group).setVisible(false);
-                menu.findItem(R.id.action_edit_event).setVisible(false);
+                menu.findItem(R.id.action_edit).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.action_profile).setVisible(false);
                 menu.findItem(R.id.action_create_group).setVisible(true);
                 menu.findItem(R.id.action_save_group).setVisible(false);
-                menu.findItem(R.id.action_edit_event).setVisible(false);
+                menu.findItem(R.id.action_edit).setVisible(false);
                 break;
         }
         return true;
@@ -130,24 +122,17 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .commit();
                 return true;
             case R.id.action_create_group: // Handle this in the Create Group Fragment
+                // Todo: move this button into the Core Group Fragment instead of the toolbar.
                 return false;
-            case R.id.action_edit_group: // Handle this in the Detailed Group Fragment
-                //Log.i(TAG,"Edit group has id: "+item.getItemId());
-                //MenuItem saveItem = menu.findItem(R.id.action_save_group);
-                //saveItem.setVisible(true);
-                //item.setVisible(false);
-                return false; // Handle this in the Detailed Group Fragment
-            case R.id.action_edit_event:
+            case R.id.action_edit:
                 return false;
+            case R.id.action_save:
+                return false;
+
         }
         return false;
     }
 
-
-    @Override
-    public void onClick(View v) {
-        //int i = v.getId();
-    }
 
     public void logout(){
         Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());

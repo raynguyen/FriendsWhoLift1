@@ -28,23 +28,15 @@
     </item>
 
     <item
-        android:id="@+id/action_save_group"
+        android:id="@+id/action_save"
         android:title="@string/save"
         app:showAsAction="ifRoom">
     </item>
 
     <item
-        android:id="@+id/action_edit_group"
-        android:title="@string/Edit"
-        app:showAsAction="ifRoom">
-    </item>
-
-    <item
-        android:id="@+id/action_edit_event"
+        android:id="@+id/action_edit"
         android:title="@string/Edit"
         app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_edit_black_18dp">
     </item>
-
-
 </menu>

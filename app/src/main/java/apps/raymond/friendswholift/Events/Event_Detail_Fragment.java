@@ -96,16 +96,18 @@ public class Event_Detail_Fragment extends Fragment implements
 
         TextView eventName = view.findViewById(R.id.event_title);
         TextView eventDesc = view.findViewById(R.id.event_desc);
-        TextView eventMonth = view.findViewById(R.id.event_start);
-        TextView eventDay = view.findViewById(R.id.event_start);
+        TextView eventStart = view.findViewById(R.id.event_start);
+        TextView eventEnd = view.findViewById(R.id.event_end);
 
         Button editSaveBtn = view.findViewById(R.id.save_event_btn);
         editSaveBtn.setOnClickListener(this);
 
         eventName.setText(event.getName());
         eventDesc.setText(event.getDesc());
-        eventMonth.setText(event.getMonth());
-        eventDay.setText(event.getDay());
+        String eventStartTxt = event.getMonth() + ", " + event.getDay();
+        String eventEndTxt = "Haven't implemented yet :(";
+        eventStart.setText(eventStartTxt);
+        eventEnd.setText(eventEndTxt);
 
         Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);
         Button declinedBtn = view.findViewById(R.id.declined_profiles_btn);
@@ -190,7 +192,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_edit_event).setVisible(true);
+        menu.findItem(R.id.action_edit).setVisible(true);
         menu.findItem(R.id.action_profile).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
@@ -199,7 +201,7 @@ public class Event_Detail_Fragment extends Fragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         switch (i){
-            case R.id.action_edit_event:
+            case R.id.action_edit:
                 Log.i(TAG,"Editing event: "+event.getName());
                 item.setVisible(false);
                 item.setEnabled(false);

@@ -21,14 +21,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -123,7 +121,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         switch (i){
             case R.id.create_grp_btn:
                 // Want to show a dialog with a recap of the group and get user to confirm.
-                if(groupCheck()) {
+                if(fieldsCheck()) {
                     Toast.makeText(getContext(),"Mandatory fields must be completed.",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -210,8 +208,22 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
      * Method called to check if the group creation form is filled correctly. If there are any
      * errors, the method returns true.
      */
-    private boolean groupCheck(){
-        return false;
+    private boolean fieldsCheck(){
+        boolean check = false;
+        if(name_Txt.getText() == null || name_Txt.length()<=1){
+            Log.i(TAG,"Empty or single character event names are not allowed.");
+            name_Txt.setError("Must be at minimum 2 characters long.");
+            check = true;
+        }
+        if(privacyGroup.getCheckedRadioButtonId() == -1){
+            //some sort of red highlighting if no checked button
+            Log.i(TAG,"No button checked for privacy.");
+            check = true;
+        }
+        if(check){
+            Toast.makeText(getContext(),"Group creation form has not been completed.",Toast.LENGTH_SHORT).show();
+        }
+        return check;
     }
 
     @Override
