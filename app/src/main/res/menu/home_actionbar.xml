@@ -18,7 +18,7 @@
         android:id="@+id/action_profile"
         android:title="@string/profile"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/fui_ic_twitter_bird_white_24dp">
+        android:icon="@drawable/baseline_face_black_18dp">
     </item>
 
     <item
@@ -42,7 +42,8 @@
     <item
         android:id="@+id/action_edit_event"
         android:title="@string/Edit"
-        app:showAsAction="ifRoom">
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_edit_black_18dp">
     </item>
 
 
