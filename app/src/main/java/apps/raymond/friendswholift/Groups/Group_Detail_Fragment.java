@@ -2,6 +2,8 @@
  * Instead of deleting an existing document when the name changes, added another field to GroupBase
  * class that is unchangeable and is equal to the value of the Group name when it is first created.
  * This original name is the field that will be used to query fire store for the group.
+ *
+ * ToDo: Control back button: if editing, should inflate the confirmation dialog saying all changes will be erased.
  */
 
 package apps.raymond.friendswholift.Groups;
@@ -25,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -117,7 +120,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
             inviteSpinner.setAdapter(adapter);
         }
 
-        ImageButton saveEditsBtn = view.findViewById(R.id.save_group_btn);
+        Button saveEditsBtn = view.findViewById(R.id.save_group_btn);
         saveEditsBtn.setOnClickListener(this);
 
         flip = true;

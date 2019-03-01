@@ -139,12 +139,11 @@
                     android:textSize="24sp"/>
             </android.support.design.widget.TextInputLayout>
 
-            <ImageButton
+            <Button
                 android:id="@+id/save_group_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/Temp"
-                android:src="@drawable/common_full_open_on_phone"
+                android:text="@string/save"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
