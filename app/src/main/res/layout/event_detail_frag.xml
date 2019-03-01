@@ -68,7 +68,7 @@
             android:layout_height="match_parent">
 
             <!-- SHOULD BE 'SAVE' TEXT THAT SWITCHES CHECK MARK WHEN COMPLETE-->
-            <ImageButton
+            <Button
                 android:id="@+id/save_event_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

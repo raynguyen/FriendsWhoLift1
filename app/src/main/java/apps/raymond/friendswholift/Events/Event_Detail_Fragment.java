@@ -99,7 +99,7 @@ public class Event_Detail_Fragment extends Fragment implements
         TextView eventMonth = view.findViewById(R.id.event_start);
         TextView eventDay = view.findViewById(R.id.event_start);
 
-        ImageButton editSaveBtn = view.findViewById(R.id.save_event_btn);
+        Button editSaveBtn = view.findViewById(R.id.save_event_btn);
         editSaveBtn.setOnClickListener(this);
 
         eventName.setText(event.getName());
