@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.SearchView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -68,6 +69,19 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         super.onViewCreated(view, savedInstanceState);
 
         headerTxt = view.findViewById(R.id.header_txt);
+        ImageButton createGroupBtn = view.findViewById(R.id.create_group_btn);
+        createGroupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment createGroupFragment = new Group_Create_Fragment();
+                getFragmentManager().beginTransaction()
+                        .add(R.id.core_frame,createGroupFragment)
+                        .addToBackStack(null)
+                        .show(createGroupFragment)
+                        .commit();
+            }
+        });
+
         progressBar = view.findViewById(R.id.progress_bar);
 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
@@ -144,14 +158,6 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_create_group:
-                Fragment createGroupFragment = new Group_Create_Fragment();
-                getFragmentManager().beginTransaction()
-                        .add(R.id.core_frame,createGroupFragment)
-                        .addToBackStack(null)
-                        .show(createGroupFragment)
-                        .commit();
-                return true;
             default:
                 return false;
         }

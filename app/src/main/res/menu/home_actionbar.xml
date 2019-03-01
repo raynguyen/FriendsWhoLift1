@@ -22,12 +22,6 @@
     </item>
 
     <item
-        android:id="@+id/action_create_group"
-        android:title="@string/create_group"
-        app:showAsAction="ifRoom">
-    </item>
-
-    <item
         android:id="@+id/action_save"
         android:title="@string/save"
         app:showAsAction="ifRoom">

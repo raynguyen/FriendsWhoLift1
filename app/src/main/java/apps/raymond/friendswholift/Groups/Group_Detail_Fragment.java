@@ -117,9 +117,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
             inviteSpinner.setAdapter(adapter);
         }
 
-
-
-
         ImageButton saveEditsBtn = view.findViewById(R.id.save_group_btn);
         saveEditsBtn.setOnClickListener(this);
 
@@ -147,7 +144,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
                             groupBase.setBytes(bytes);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                             image.setImageBitmap(bitmap);
-
                         }
                     });
         }
@@ -197,9 +193,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
                 mGroupViewModel.updateGroup(groupBase);
 
                 //Todo: Have to add the ability to modify the image.
-
-                return;
-            case R.id.action_create_group:
                 break;
         }
     }
@@ -212,7 +205,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         menu.clear();
         inflater.inflate(R.menu.home_actionbar,menu);
         editItem = menu.findItem(R.id.action_edit);
-        saveItem = menu.findItem(R.id.action_save_group);
     }
 
     // This is called every time the Menu opens.
@@ -220,8 +212,8 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         Log.i(TAG,"onPrepareOptionsMenu of detailed group fragment.");
-        menu.findItem(R.id.action_create_group).setVisible(false);
-        menu.findItem(R.id.action_create_group).setEnabled(false);
+        menu.findItem(R.id.action_profile).setVisible(false);
+        menu.findItem(R.id.action_profile).setEnabled(false);
         if(owner.equals(currUser)){
             menu.findItem(R.id.action_edit).setEnabled(true);
             menu.findItem(R.id.action_edit).setVisible(true);
@@ -232,7 +224,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         super.onPrepareOptionsMenu(menu);
     }
 
-
     //Going to handle events in the Activity because not sure why it doesn't work in the fragment.
     boolean flip;
     @Override
@@ -242,12 +233,9 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
             case R.id.action_edit:
                 item.setVisible(false);
                 item.setEnabled(false);
-                saveItem.setEnabled(true);
-                saveItem.setVisible(true);
                 editGroup();
                 return true;
         }
-
         return false;
     }
 

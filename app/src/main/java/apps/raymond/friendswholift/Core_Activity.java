@@ -25,7 +25,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -61,7 +60,7 @@ public class Core_Activity extends AppCompatActivity implements Group_Detail_Fra
 
             @Override
             public void onPageSelected(int i) {
-                invalidateOptionsMenu();
+                //invalidateOptionsMenu();
             }
 
             @Override
@@ -83,22 +82,9 @@ public class Core_Activity extends AppCompatActivity implements Group_Detail_Fra
         getMenuInflater().inflate(R.menu.home_actionbar,menu);
         menu.findItem(R.id.action_edit).setVisible(false);
         menu.findItem(R.id.action_edit).setEnabled(false);
-
-        int i = viewPager.getCurrentItem();
-        switch(i){
-            case 0:
-                menu.findItem(R.id.action_profile).setVisible(true);
-                menu.findItem(R.id.action_create_group).setVisible(false);
-                menu.findItem(R.id.action_save_group).setVisible(false);
-                menu.findItem(R.id.action_edit).setVisible(false);
-                break;
-            case 1:
-                menu.findItem(R.id.action_profile).setVisible(false);
-                menu.findItem(R.id.action_create_group).setVisible(true);
-                menu.findItem(R.id.action_save_group).setVisible(false);
-                menu.findItem(R.id.action_edit).setVisible(false);
-                break;
-        }
+        menu.findItem(R.id.action_save).setVisible(false);
+        menu.findItem(R.id.action_save).setEnabled(false);
+        //int i = viewPager.getCurrentItem();
         return true;
     }
 
@@ -121,10 +107,8 @@ public class Core_Activity extends AppCompatActivity implements Group_Detail_Fra
                         .show(profileFrag)
                         .commit();
                 return true;
-            case R.id.action_create_group: // Handle this in the Create Group Fragment
-                // Todo: move this button into the Core Group Fragment instead of the toolbar.
-                return false;
             case R.id.action_edit:
+                Log.i(TAG,"HELLO?");
                 return false;
             case R.id.action_save:
                 return false;
@@ -139,8 +123,6 @@ public class Core_Activity extends AppCompatActivity implements Group_Detail_Fra
         AuthUI.getInstance().signOut(this);
     }
 
-
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if(ev.getAction() == MotionEvent.ACTION_DOWN){
@@ -153,7 +135,6 @@ public class Core_Activity extends AppCompatActivity implements Group_Detail_Fra
         }
         return super.dispatchTouchEvent(ev);
     }
-
 
     public void scheduleStartTransition(final View sharedView){
         sharedView.getViewTreeObserver().addOnPreDrawListener(

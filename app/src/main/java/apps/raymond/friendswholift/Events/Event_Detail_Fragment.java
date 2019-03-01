@@ -177,7 +177,6 @@ public class Event_Detail_Fragment extends Fragment implements
             case R.id.invited_profiles_btn:
                 profilesFlipper.setDisplayedChild(2);
                 break;
-
         }
     }
 
@@ -193,6 +192,7 @@ public class Event_Detail_Fragment extends Fragment implements
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_edit).setVisible(true);
+        menu.findItem(R.id.action_edit).setEnabled(true);
         menu.findItem(R.id.action_profile).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
