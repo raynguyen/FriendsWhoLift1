@@ -114,6 +114,9 @@ public class Core_Activity extends AppCompatActivity {
                         .show(profileFrag)
                         .commit();
                 return true;
+            case R.id.action_test:
+                Log.i(TAG,getSupportFragmentManager().getFragments().toString());
+                return true;
             case R.id.action_edit:
                 Log.i(TAG,"HELLO?");
                 return false;

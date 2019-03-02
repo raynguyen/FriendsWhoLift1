@@ -17,8 +17,8 @@ public class GroupsViewModel extends ViewModel {
         this.mRepository = new FirebaseRepository();
     }
 
-    void createGroup(GroupBase groupBase){
-        mRepository.createGroup(groupBase);
+    Task<Void> createGroup(GroupBase groupBase){
+        return mRepository.createGroup(groupBase);
     }
 
     Task<List<Task<GroupBase>>> getUsersGroups(){

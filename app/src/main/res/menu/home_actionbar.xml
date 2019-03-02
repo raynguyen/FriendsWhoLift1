@@ -33,4 +33,11 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_edit_black_18dp">
     </item>
+
+    <item
+        android:id="@+id/action_test"
+        android:title="@string/Temp"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_edit_black_18dp">
+    </item>
 </menu>

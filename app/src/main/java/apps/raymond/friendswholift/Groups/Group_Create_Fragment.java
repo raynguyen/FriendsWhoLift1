@@ -32,13 +32,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
@@ -51,6 +55,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         YesNoDialog.YesNoInterface, Core_Activity.BackPressInterface {
     public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 1;
+    private static final int REQUEST_CODE = 12;
 
     public Uri imageUri;
 
@@ -61,12 +66,9 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     private ImageView imageView;
     private AlertDialog imgAlert;
 
-    ActionBar actionBar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -82,21 +84,19 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     RadioButton privacyBtn;
     RadioGroup privacyGroup;
     Spinner invite_Spinner;
+    ProgressBar progressBar;
+    TextView progressText;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        try{
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setTitle("Creating New Group!");
-        } catch (NullPointerException npe){
-            Log.i(TAG,"Unable to set title of Action Bar.", npe);
-        }
 
         Button discard_Btn = view.findViewById(R.id.discard_grp_btn);
         Button create_Btn = view.findViewById(R.id.create_grp_btn);
         discard_Btn.setOnClickListener(this);
         create_Btn.setOnClickListener(this);
+
+        progressBar = view.findViewById(R.id.creation_progress);
+        progressText = view.findViewById(R.id.creation_txt);
 
         name_Txt = view.findViewById(R.id.group_name_txt);
         desc_Txt = view.findViewById(R.id.desc_txt);
@@ -126,12 +126,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                     Toast.makeText(getContext(),"Mandatory fields must be completed.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                // This dialog confirms if the user wants to create the group.
-                // This should be updated to show the user a preview of their group.
-                DialogFragment dialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.CONFIRM_GROUP);
-                dialog.setTargetFragment(this, 0);
-                dialog.show(getActivity().getSupportFragmentManager(),"confirmation_dialog");
+                createGroup();
                 break;
             case R.id.discard_grp_btn:
                 DialogFragment discardDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
@@ -228,7 +223,15 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void positiveClick() {
+    public void backPress() {
+        Log.i(TAG,"BACK PRESSED");
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setTargetFragment(this,REQUEST_CODE);
+        yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+        // inflate the yes no dialog here and remember to destroy this fragment so we can garbage collect.
+    }
+
+    private void createGroup(){
         String groupName = name_Txt.getText().toString();
         String descText = desc_Txt.getText().toString();
         privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
@@ -237,13 +240,24 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
         final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
         if(imageUri!=null){
-            //Need a confirmation dialog before we add the photo to FireStore.
             mGroupViewModel.uploadImage(imageUri, groupName)
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             groupBase.setImageURI(uri.toString());
-                            mGroupViewModel.createGroup(groupBase);
+                            mGroupViewModel.createGroup(groupBase).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    progressText.setVisibility(View.INVISIBLE);
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                        getActivity().getSupportFragmentManager().popBackStack();
+                                    } else {
+                                        Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -254,10 +268,27 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                         }
                     });
         } else {
-            mGroupViewModel.createGroup(groupBase);
+            mGroupViewModel.createGroup(groupBase)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        progressText.setVisibility(View.INVISIBLE);
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"THIS SHOULD BE AT THE END!");
+                            Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        } else {
+                            Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            });
         }
-        Log.i(TAG,"Created a new GroupBase object with name " + groupBase.getName());
-        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+
+    @Override
+    public void positiveClick(){
     }
 
     @Override
@@ -265,27 +296,5 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         Toast.makeText(getContext(),"Clicked on the negative button", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        menu.clear();
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    }
-
-    @Override
-    public void backPress() {
-        Log.i(TAG,"BACK PRESSED");
-
-        // inflate the yes no dialog here and remember to destroy this fragment so we can garbage collect.
-    }
-
-    @Override
-    public void onDestroy() {
-        actionBar.setDisplayShowTitleEnabled(false);
-        super.onDestroy();
-    }
 }
 

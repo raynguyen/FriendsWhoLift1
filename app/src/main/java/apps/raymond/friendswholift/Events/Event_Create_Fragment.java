@@ -121,7 +121,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 //  code here will determine what to do depending on the return value.
                 DialogFragment dialog = new YesNoDialog();
                 dialog.setTargetFragment(this, 0);
-                dialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
+                dialog.show(getActivity().getSupportFragmentManager(),null);
 
                 GroupEvent newEvent = new GroupEvent(
                         FirebaseAuth.getInstance().getCurrentUser().getEmail(),

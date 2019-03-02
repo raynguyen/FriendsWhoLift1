@@ -185,21 +185,16 @@ public class FirebaseRepository {
      * Logic:
      * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    public void createGroup(final GroupBase groupBase){
+    public Task<Void> createGroup(final GroupBase groupBase){
         final Map<String,String> holderMap = new HashMap<>();
         holderMap.put("Access","Owner");
-
         // Create a document from the GroupBase object under the creation name.
-        groupCollection.document(groupBase.getOriginalName()).set(groupBase)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
-                    }
-                }).continueWithTask(new Continuation<Void, Task<Void>>() {
+        return groupCollection.document(groupBase.getOriginalName()).set(groupBase)
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
+                            Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
                             return userCollection.document(currentUser.getEmail()).collection(GROUP_COLLECTION)
                                     .document(groupBase.getName()).set(holderMap)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -213,23 +208,24 @@ public class FirebaseRepository {
                             return null;
                         }
                     }
-        });
-
-        // Adds a 'tag' to the user document that can be read to query groups user is connected to.
-        userCollection.document(currentUser.getEmail()).collection("Groups")
-                .document(groupBase.getOriginalName()).set(holderMap) //Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                }).continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
-                    public void onSuccess(Void task) {
-                        Log.i(TAG,"New Group Document in user's Group sub-collection: " + groupBase.getName());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG,"Error creating document in Groups sub-collection.",e);
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        return userCollection.document(currentUser.getEmail()).collection("Groups")
+                                .document(groupBase.getOriginalName()).set(holderMap)//Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.i(TAG,"Successfully attached group to user profile.");
+                                        } else {
+                                            Log.w(TAG,"Error attaching group to user profile.");
+                                        }
+                                    }
+                                }) ;
                     }
                 });
+
     }
 
     public void updateGroup(final GroupBase groupBase){
