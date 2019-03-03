@@ -1,6 +1,10 @@
 /*
- * A generic DialogFragment with positive and negative buttons, message body to be passed by the
- * caller, optional title?
+ * Ray N - 02/03/2019
+ * A generic DialogFragment with positive and negative buttons. The message body and title are
+ * determined by the arguments when creating an instance of this dialog.
+ *
+ * The callback methods implemented are currently only set to pass data back to fragments and not to
+ * activities.
  */
 
 package apps.raymond.friendswholift.DialogFragments;
@@ -22,6 +26,9 @@ public class YesNoDialog extends DialogFragment{
     public static final String CONFIRM_GROUP = "Are you sure you want to create this Group?";
     public static final String TITLE = "title";
     public static final String BODY = "body";
+    public static final int POS_RESULT = 21;
+    public static final int NEG_RESULT = 22;
+
     YesNoInterface callback;
 
     public interface YesNoInterface {
@@ -58,13 +65,13 @@ public class YesNoDialog extends DialogFragment{
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        callback.positiveClick();
+                        getTargetFragment().onActivityResult(getTargetRequestCode(),POS_RESULT,getActivity().getIntent());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        callback.negativeClick();
+                        getTargetFragment().onActivityResult(getTargetRequestCode(),NEG_RESULT,getActivity().getIntent());
                     }
                 })
                 .create();
@@ -76,7 +83,7 @@ public class YesNoDialog extends DialogFragment{
         try {
             callback = (YesNoInterface) getTargetFragment();
         } catch (ClassCastException e) {
-            Log.e(TAG,"Class cast exception:" + e.getMessage());
+            Log.e(TAG,"Calling Fragment/Activity does not implement YesNoInterface" + e.getMessage());
         }
     }
 }

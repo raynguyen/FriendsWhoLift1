@@ -6,7 +6,6 @@
 
 package apps.raymond.friendswholift.Groups;
 
-import android.support.v7.app.ActionBar;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -17,14 +16,10 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -52,10 +47,11 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
 public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
-        YesNoDialog.YesNoInterface, Core_Activity.BackPressInterface {
+        Core_Activity.BackPressInterface {
     public static final String TAG = "Group_Create_Fragment";
-    private static final int IMAGE_REQUEST_CODE = 1;
-    private static final int REQUEST_CODE = 12;
+    private static final int IMAGE_REQUEST_CODE = 11;
+    private static final int CAMERA_REQUEST_CODE = 12;
+    private static final int DIALOG_REQUEST_CODE = 21;
 
     public Uri imageUri;
 
@@ -129,29 +125,10 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 createGroup();
                 break;
             case R.id.discard_grp_btn:
-                DialogFragment discardDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-                discardDialog.setTargetFragment(this, 0);
-                discardDialog.show(getActivity().getSupportFragmentManager(),"confirmation_dialog");
+                getActivity().onBackPressed();
                 break;
             case R.id.camera_button:
                 getImage();
-                break;
-            case R.id.camera_img:
-                Log.i(TAG,"Starting intent for launch camera.");
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, 1);
-                }
-                break;
-            case R.id.gallery_img:
-                Log.i(TAG,"Starting intent to load Gallery.");
-                Intent getPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                getPictureIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                getPictureIntent.setType("image/*");
-                startActivityForResult(getPictureIntent,IMAGE_REQUEST_CODE);
-                break;
-            case R.id.google_img:
-                Log.i(TAG,"Loading google images for user.");
                 break;
         }
     }
@@ -162,12 +139,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
      */
     private void getImage(){
         View imgDialogView;
-        imgAlert = new AlertDialog.Builder(getContext())
-                .setTitle("Image Selector")
-                .setCancelable(true)
-                .create();
-        imgAlert.setCanceledOnTouchOutside(true);
-
         if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
         } else {
@@ -175,29 +146,45 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
             imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog_nc,null);
         }
 
+        imgAlert = new AlertDialog.Builder(getContext())
+                .setTitle("Image Selector")
+                .setCancelable(true)
+                .create();
+        imgAlert.setCanceledOnTouchOutside(true);
+
         imgAlert.setView(imgDialogView);
         imgAlert.show();
 
-        // Button set-up:
         ImageView camera_btn = imgDialogView.findViewById(R.id.camera_img);
         ImageView gallery_btn = imgDialogView.findViewById(R.id.gallery_img);
         ImageView google_btn = imgDialogView.findViewById(R.id.google_img);
-        camera_btn.setOnClickListener(this);
-        gallery_btn.setOnClickListener(this);
-        google_btn.setOnClickListener(this);
-    }
+        camera_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {Log.i(TAG,"Starting intent for launch camera.");
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
+                }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        imgAlert.dismiss();
-        if(requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            Log.i(TAG,"Image URI retrieved from user selection.");
-            if(data != null){
-                imageUri = data.getData();
-                Picasso.get().load(imageUri).into(imageView);
             }
-        }
+        });
+        gallery_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG,"Starting intent to load Gallery.");
+                Intent getPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                getPictureIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                getPictureIntent.setType("image/*");
+                startActivityForResult(getPictureIntent,IMAGE_REQUEST_CODE);
+            }
+        });
+        google_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG,"Loading google images for user.");
+                Toast.makeText(getContext(),"Not yet implemented; allow users to google an image for result.",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /*
@@ -226,9 +213,42 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     public void backPress() {
         Log.i(TAG,"BACK PRESSED");
         YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setTargetFragment(this,REQUEST_CODE);
+        yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
         yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
-        // inflate the yes no dialog here and remember to destroy this fragment so we can garbage collect.
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode){
+            case DIALOG_REQUEST_CODE:
+                if(resultCode == YesNoDialog.POS_RESULT){
+                    getActivity().getSupportFragmentManager().popBackStack();
+                } else {
+                    Log.i(TAG,"Resuming group creation.");
+                }
+                break;
+            case CAMERA_REQUEST_CODE:
+                imgAlert.dismiss();
+                Log.i(TAG,"BIGGITOY");
+                if(resultCode == Activity.RESULT_OK){
+                    if(data!=null){
+                        Toast.makeText(getContext(),"Camera completion has not been implemented.",Toast.LENGTH_SHORT).show();
+                        Log.i(TAG,"Camera intent returned with data!");
+                    } else {
+                        Log.i(TAG,"Camera returned with no data.");
+                    }
+                }
+                break;
+            case IMAGE_REQUEST_CODE:
+                imgAlert.dismiss();
+                Log.i(TAG,"Image URI retrieved from user selection.");
+                if(data != null){
+                    imageUri = data.getData();
+                    Picasso.get().load(imageUri).into(imageView);
+                }
+                break;
+        }
+        //super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void createGroup(){
@@ -286,15 +306,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
-
-    @Override
-    public void positiveClick(){
-    }
-
-    @Override
-    public void negativeClick() {
-        Toast.makeText(getContext(),"Clicked on the negative button", Toast.LENGTH_SHORT).show();
-    }
 
 }
 

@@ -74,7 +74,8 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
             @Override
             public void onClick(View v) {
                 Fragment createGroupFragment = new Group_Create_Fragment();
-                getFragmentManager().beginTransaction()
+                getFragmentManager()
+                        .beginTransaction()
                         .add(R.id.core_frame,createGroupFragment,Group_Create_Fragment.TAG)
                         .addToBackStack(Group_Create_Fragment.TAG)
                         .show(createGroupFragment)

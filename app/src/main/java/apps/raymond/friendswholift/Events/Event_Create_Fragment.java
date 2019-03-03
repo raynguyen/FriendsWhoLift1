@@ -10,7 +10,9 @@
 
 package apps.raymond.friendswholift.Events;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,19 +37,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class Event_Create_Fragment extends Fragment implements View.OnClickListener, DatePickerDialog.FetchDate,
-        YesNoDialog.YesNoInterface, RadioGroup.OnCheckedChangeListener {
-    private static final String TAG = "Event_Create_Fragment";
-    private static final int REQUEST_CODE = 11;
+public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
+        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener, Core_Activity.BackPressInterface {
+    public static final String TAG = "Event_Create_Fragment";
+    private static final int DIALOG_REQUEST_CODE = 21;
     public Event_Create_Fragment(){
     }
 
@@ -119,9 +123,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
                 // TODO: On save click, inflate the DialogFragment. The dialogfragment should return a boolean value and the
                 //  code here will determine what to do depending on the return value.
-                DialogFragment dialog = new YesNoDialog();
-                dialog.setTargetFragment(this, 0);
-                dialog.show(getActivity().getSupportFragmentManager(),null);
 
                 GroupEvent newEvent = new GroupEvent(
                         FirebaseAuth.getInstance().getCurrentUser().getEmail(),
@@ -139,11 +140,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.cancel_btn:
-                DialogFragment cancelDialog = new YesNoDialog();
-                cancelDialog.setTargetFragment(this, 0);
-                cancelDialog.show(getActivity().getSupportFragmentManager(),"yesno_dialog");
+                getActivity().onBackPressed();
                 break;
-
             case R.id.event_tag_add_btn:
                 Log.i(TAG,"Adding tag to event.");
                 // When this button is pressed, add the String to a container below the TextView that displays all the tags that have been added
@@ -152,13 +150,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 tagsList.add(tagsTxt.getText().toString());
                 tagsContainer.setText(tagsList.toString());
                 tagsTxt.getText().clear();
-
                 break;
-
             case R.id.date_btn:
                 DialogFragment newFragment = new DatePickerDialog();
                 FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
-                newFragment.setTargetFragment(Event_Create_Fragment.this,REQUEST_CODE);
+                newFragment.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
                 newFragment.show(fm, "datePicker");
         }
     }
@@ -200,16 +196,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void positiveClick() {
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-    }
-
-    @Override
-    public void negativeClick() {
-        // Do nothing?
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //Inflating seems to do nothing.
         Log.i(TAG,"IN THE ONCREATEOPTIONSMENU FOR FRAGMENT.");
@@ -221,5 +207,27 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.action_profile).setVisible(false);
+    }
+
+    @Override
+    public void backPress() {
+        Log.i(TAG,"BACK PRESSED");
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
+        yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode){
+            case DIALOG_REQUEST_CODE:
+                if(resultCode == YesNoDialog.POS_RESULT){
+                    getActivity().getSupportFragmentManager().popBackStack();
+                } else {
+                    Log.i(TAG,"Resuming event creation.");
+                }
+                break;
+        }
+        //super.onActivityResult(requestCode, resultCode, data);
     }
 }

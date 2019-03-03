@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/upcoming_events"
+        android:textSize="20sp"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         android:padding="12dp"/>
@@ -22,7 +23,8 @@
         android:contentDescription="@string/Temp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/fui_ic_twitter_bird_white_24dp" />
+        android:src="@drawable/baseline_add_black_18dp"
+        android:background="#ffffff"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/events_Recycler"
