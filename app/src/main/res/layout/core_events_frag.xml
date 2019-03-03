@@ -24,7 +24,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/baseline_add_black_18dp"
-        android:background="#ffffff"/>
+        android:background="#ffffff"
+        android:padding="12dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/events_Recycler"

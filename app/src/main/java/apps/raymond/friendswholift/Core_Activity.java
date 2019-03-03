@@ -153,7 +153,11 @@ public class Core_Activity extends AppCompatActivity{
         int count = getSupportFragmentManager().getBackStackEntryCount();
         if(count==0){
             Log.i(TAG,"There is nothing in the back stack");
-            super.onBackPressed();
+            if(viewPager.getCurrentItem() == 0){
+                super.onBackPressed();
+            } else if (viewPager.getCurrentItem() == 1){
+                viewPager.setCurrentItem(0);
+            }
         } else {
             Log.i(TAG,"Pressed back with a fragment in the back stack.");
             // When calling on fragment manager to add/replace a fragment to the back stack, we set
