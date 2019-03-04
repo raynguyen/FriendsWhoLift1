@@ -7,6 +7,7 @@
 
 package apps.raymond.friendswholift.Groups;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -97,7 +98,14 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-
+    private void subscribeToModel(){
+        model.getGroups().observe(this, new Observer<List<GroupBase>>() {
+            @Override
+            public void onChanged(@Nullable List<GroupBase> groupBases) {
+                Log.i(TAG,"There was an update to the GroupBase list!");
+            }
+        });
+    }
     /*
      * To truly follow SoC principle, the Fragment should not do the conversion from
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
@@ -140,6 +148,7 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
             }
         });
     }
+
 
     @Override
     public void onGroupClick(int position, GroupBase groupBase, View sharedView) {

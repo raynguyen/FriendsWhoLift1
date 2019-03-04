@@ -146,7 +146,6 @@ public class Core_Activity extends AppCompatActivity{
         return super.dispatchTouchEvent(ev);
     }
 
-
     @Override
     public void onBackPressed() {
         Log.i(TAG,getSupportFragmentManager().getFragments().toString());
