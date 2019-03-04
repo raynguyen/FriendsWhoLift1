@@ -16,5 +16,4 @@ public class Groups_ViewModel extends ViewModel {
     public LiveData<List<GroupBase>> getGroups(){
         return groups;
     }
-
 }

@@ -43,7 +43,7 @@ import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChangeListener,
-        View.OnClickListener, Core_Activity.BackPressInterface {
+        View.OnClickListener{
     public static final String TAG = "Group_Detail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
@@ -230,10 +230,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
     private void editGroup(){
         Log.i(TAG,"Entering edit mode for: "+groupBase.getName());
         viewFlipper.showNext();
-    }
-
-    @Override
-    public void backPress() {
     }
 
     @Override

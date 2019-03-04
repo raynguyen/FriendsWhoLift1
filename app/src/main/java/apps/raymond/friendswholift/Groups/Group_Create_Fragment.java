@@ -8,6 +8,7 @@ package apps.raymond.friendswholift.Groups;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -42,31 +43,40 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
-import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class Group_Create_Fragment extends Fragment implements View.OnClickListener, Core_Activity.BackPressInterface{
+public class Group_Create_Fragment extends Fragment implements View.OnClickListener{
     public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
     private static final int DIALOG_REQUEST_CODE = 21;
 
-    public Uri imageUri;
+    private AddGroup addGroupInterface;
+    public interface AddGroup{
+        void addToGroupRecycler(GroupBase groupBase);
+    }
 
-    private EditText desc_Txt;
-    private TextInputEditText name_Txt;
-    private FirebaseUser currentUser;
-    private GroupsViewModel mGroupViewModel;
-    private ImageView imageView;
-    private AlertDialog imgAlert;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            addGroupInterface = (AddGroup) context;
+            Log.i(TAG,"Successfully bound AddGroup interface to activity.");
+        } catch (ClassCastException e){
+            Log.i(TAG,"Error: "+e);
+        }
 
-    private Groups_ViewModel model;
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        model = ViewModelProviders.of(getActivity()).get(Groups_ViewModel.class);
     }
+
+    private FirebaseUser currentUser;
+    private GroupsViewModel mGroupViewModel;
 
     @Nullable
     @Override
@@ -79,6 +89,11 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         return view;
     }
 
+
+    private EditText desc_Txt;
+    private TextInputEditText name_Txt;
+    private ImageView imageView;
+    private AlertDialog imgAlert;
     RadioButton privacyBtn;
     RadioGroup privacyGroup;
     Spinner invite_Spinner;
@@ -116,13 +131,10 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         testBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG,"CLICKED TEST BTN.");
-                Log.i(TAG,"Calling model method " + model.getGroups().toString());
+                Log.i(TAG,"Clicked test btn 3.");
             }
         });
     }
-
-
 
     @Override
     public void onClick(View v) {
@@ -222,7 +234,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         return check;
     }
 
-
+    /*
     @Override
     public void backPress() {
         Log.i(TAG,"BACK PRESSED");
@@ -230,7 +242,9 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
         yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
     }
+    */
 
+    public Uri imageUri;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
@@ -243,7 +257,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case CAMERA_REQUEST_CODE:
                 imgAlert.dismiss();
-                Log.i(TAG,"BIGGITOY");
                 if(resultCode == Activity.RESULT_OK){
                     if(data!=null){
                         Toast.makeText(getContext(),"Camera completion has not been implemented.",Toast.LENGTH_SHORT).show();
@@ -286,6 +299,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                                     progressText.setVisibility(View.INVISIBLE);
                                     if(task.isSuccessful()){
                                         Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                        addGroupInterface.addToGroupRecycler(groupBase);
                                         getActivity().getSupportFragmentManager().popBackStack();
                                     } else {
                                         Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
@@ -311,6 +325,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                         if(task.isSuccessful()){
                             Log.i(TAG,"THIS SHOULD BE AT THE END!");
                             Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                            addGroupInterface.addToGroupRecycler(groupBase);
                             getActivity().getSupportFragmentManager().popBackStack();
                         } else {
                             Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();

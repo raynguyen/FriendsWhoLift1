@@ -1,9 +1,13 @@
 /*
  * ToDo:
  * 1. Get the user permission for camera and document access on start up and store as a SharedPreference.
- * 2. When the user calls createEvent or createGroup and then completes the process, manually update
- *    the RecyclerView to limit having to read all the Documents.
  * 3. Move all the currentUser stuff to repository return methods.
+ * 4. Allow user to remove/delete events and or Groups if they are owner for deletes.
+ * 5. Save btn in edit does not correctly popstack back to core activity screen.
+ * 6. Recycler View for events does not properly display information.
+ * 7. DetailFragment for events does not write proper info.
+ * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
+ * 9. **LIST OF USERS TO INVITE TO EVENTS AND GROUPS!!!!!!!!!!
  */
 
 package apps.raymond.friendswholift;
@@ -29,20 +33,37 @@ import android.widget.EditText;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 
+import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
+import apps.raymond.friendswholift.Events.Event_Create_Fragment;
+import apps.raymond.friendswholift.Events.GroupEvent;
+import apps.raymond.friendswholift.Groups.Core_Group_Fragment;
+import apps.raymond.friendswholift.Groups.GroupBase;
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
 import apps.raymond.friendswholift.Groups.Group_Detail_Fragment;
 import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 
-public class Core_Activity extends AppCompatActivity{
+public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesNoInterface,
+        Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent {
     private static final String TAG = "Core_Activity";
+    private static final int DIALOG_REQUEST_CODE = 21;
 
-    ViewPager viewPager;
+    public UpdateGroupRecycler updateGroupRecycler;
+    public interface UpdateGroupRecycler{
+        void updateGroupRecycler(GroupBase groupBase);
+    }
 
+    public UpdateEventRecycler updateEventRecycler;
+    public interface UpdateEventRecycler{
+        void updateEventRecycler(GroupEvent groupEvent);
+    }
+
+    /*
     public BackPressInterface backPressListener;
     public interface BackPressInterface{
         void backPress();
-    }
+    }*/
 
+    ViewPager viewPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +96,26 @@ public class Core_Activity extends AppCompatActivity{
             }
         });
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if(fragment instanceof Core_Group_Fragment){
+            try {
+                updateGroupRecycler = (UpdateGroupRecycler) fragment;
+            } catch (ClassCastException e){
+                Log.i(TAG,"Core_Group_Fragment does not implement UpdateGroupRecycler interface.");
+            }
+            return;
+        }
+
+        if(fragment instanceof Core_Events_Fragment){
+            try {
+                updateEventRecycler = (UpdateEventRecycler) fragment;
+            } catch (ClassCastException e){
+                Log.i(TAG,"Core_Events_Fragment does not implement UpdateEventRecycler interface.");
+            }
+        }
     }
 
     @Override
@@ -127,23 +168,21 @@ public class Core_Activity extends AppCompatActivity{
         return false;
     }
 
-
     public void logout(){
         Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
         AuthUI.getInstance().signOut(this);
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(ev.getAction() == MotionEvent.ACTION_DOWN){
-            View v = getCurrentFocus();
-            if(v instanceof EditText){
-                v.clearFocus();
-                InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(),0);
-            }
-        }
-        return super.dispatchTouchEvent(ev);
+    public void addToGroupRecycler(GroupBase groupBase) {
+        Log.i(TAG,"Called addToGroupRecycler implementation in Core Activity");
+        updateGroupRecycler.updateGroupRecycler(groupBase);
+    }
+
+    @Override
+    public void addToEventRecycler(GroupEvent groupEvent) {
+        Log.i(TAG,"Called addToEventRecycler implementation in the CoreAct");
+        updateEventRecycler.updateEventRecycler(groupEvent);
     }
 
     @Override
@@ -158,14 +197,46 @@ public class Core_Activity extends AppCompatActivity{
                 viewPager.setCurrentItem(0);
             }
         } else {
+            Log.i(TAG,"BACK PRESSED");
+            YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+            yesNoDialog.setCancelable(false);
+            yesNoDialog.show(getSupportFragmentManager(),null);
+
+            /*
             String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
             Fragment topFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+
             if(topFragment instanceof BackPressInterface){
+
                 ((BackPressInterface) topFragment).backPress();
             } else {
                 super.onBackPressed();
             }
+            */
         }
     }
 
+    @Override
+    public void positiveClick() {
+        Log.i(TAG,"Positive click.");
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void negativeClick() {
+        Log.i(TAG,"Negative click.");
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(ev.getAction() == MotionEvent.ACTION_DOWN){
+            View v = getCurrentFocus();
+            if(v instanceof EditText){
+                v.clearFocus();
+                InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(),0);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 }

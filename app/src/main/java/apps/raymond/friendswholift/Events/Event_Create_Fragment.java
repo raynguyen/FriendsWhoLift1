@@ -12,6 +12,7 @@ package apps.raymond.friendswholift.Events;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,10 +50,23 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
-        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener, Core_Activity.BackPressInterface {
+        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener{
     public static final String TAG = "Event_Create_Fragment";
     private static final int DIALOG_REQUEST_CODE = 21;
-    public Event_Create_Fragment(){
+
+    private AddEvent addEventToRecycler;
+    public interface AddEvent{
+        void addToEventRecycler(GroupEvent groupEvent);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            addEventToRecycler = (AddEvent) context;
+        }catch (ClassCastException e){
+            Log.i(TAG,"Unable to attach AddEvent interface to activity.");
+        }
     }
 
     @Override
@@ -120,10 +134,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 if(checkFields()){
                     return;
                 }
-
-                // TODO: On save click, inflate the DialogFragment. The dialogfragment should return a boolean value and the
-                //  code here will determine what to do depending on the return value.
-
                 GroupEvent newEvent = new GroupEvent(
                         FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                         nameTxt.getText().toString(),
@@ -137,6 +147,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
                 EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
                 eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
+                //ToDo: Change createEvent to return a Task so that upon completion, we can add the event to EventRecycler.
+                addEventToRecycler.addToEventRecycler(newEvent);
                 break;
 
             case R.id.cancel_btn:
@@ -210,14 +222,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void backPress() {
-        Log.i(TAG,"BACK PRESSED");
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
-        yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
             case DIALOG_REQUEST_CODE:
@@ -230,4 +234,13 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }
         //super.onActivityResult(requestCode, resultCode, data);
     }
+
+    /*
+    @Override
+    public void backPress() {
+        Log.i(TAG,"BACK PRESSED");
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
+        yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+    }*/
 }

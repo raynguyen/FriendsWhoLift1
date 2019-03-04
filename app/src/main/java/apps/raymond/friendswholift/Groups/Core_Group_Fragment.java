@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.SearchView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,20 +36,22 @@ import com.google.android.gms.tasks.Tasks;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
-public class Core_Group_Fragment extends Fragment implements GroupClickListener {
+public class Core_Group_Fragment extends Fragment implements GroupClickListener, Core_Activity.UpdateGroupRecycler {
     private static final String TAG = "Core_Group_Fragment";
     private Groups_ViewModel model;
+
     //Required empty fragment. Not sure why it is needed.
     public Core_Group_Fragment(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         model = ViewModelProviders.of(getActivity()).get(Groups_ViewModel.class);
+        subscribeToModel();
     }
 
     GroupsViewModel mGroupViewModel;
@@ -96,6 +99,15 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        Button testBtn1 = view.findViewById(R.id.testButton3);
+        testBtn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG,"CLICKED ON TEST BTN 3");
+                myGroups.add(new GroupBase("HELLO","SOMEDESCRIPTION","YA MOM","public","ANYONE",null));
+            }
+        });
     }
 
     private void subscribeToModel(){
@@ -103,9 +115,12 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
             @Override
             public void onChanged(@Nullable List<GroupBase> groupBases) {
                 Log.i(TAG,"There was an update to the GroupBase list!");
+                mAdapter.setData(myGroups);
+                mAdapter.notifyDataSetChanged();
             }
         });
     }
+
     /*
      * To truly follow SoC principle, the Fragment should not do the conversion from
      * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
@@ -131,7 +146,6 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
                                     myGroups.add((GroupBase) object);
                                 }
                                 Log.i(TAG,"MyGroups = "+myGroups.toString());
-                                mAdapter.setData(myGroups);
                                 model.setGroups(myGroups);
                             } else {
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
@@ -167,12 +181,9 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            default:
-                return false;
-        }
+    public void updateGroupRecycler(GroupBase groupBase) {
+        Log.i(TAG,"NOTIFIED TO UPDATE THE GROUP RECYCLER NEW GROUP: "+groupBase.getName());
+        myGroups.add(groupBase);
+        mAdapter.notifyItemInserted(myGroups.size()-1);
     }
-
-
 }

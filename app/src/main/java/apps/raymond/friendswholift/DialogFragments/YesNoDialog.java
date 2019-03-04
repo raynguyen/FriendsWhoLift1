@@ -65,13 +65,16 @@ public class YesNoDialog extends DialogFragment{
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(),POS_RESULT,getActivity().getIntent());
+                        //The getTargetFragment snip is only when we implement the code for dialog result inside the fragment and not the host activity.
+                        //getTargetFragment().onActivityResult(getTargetRequestCode(),POS_RESULT,getActivity().getIntent());
+                        callback.positiveClick();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(),NEG_RESULT,getActivity().getIntent());
+                        //getTargetFragment().onActivityResult(getTargetRequestCode(),NEG_RESULT,getActivity().getIntent());
+                        callback.negativeClick();
                     }
                 })
                 .create();
@@ -81,7 +84,7 @@ public class YesNoDialog extends DialogFragment{
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            callback = (YesNoInterface) getTargetFragment();
+            callback = (YesNoInterface) getActivity();
         } catch (ClassCastException e) {
             Log.e(TAG,"Calling Fragment/Activity does not implement YesNoInterface" + e.getMessage());
         }

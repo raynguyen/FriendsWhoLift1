@@ -37,7 +37,8 @@ import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Interfaces.EventClickListener;
 
-public class Core_Events_Fragment extends Fragment implements EventClickListener,View.OnClickListener {
+public class Core_Events_Fragment extends Fragment implements
+        EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
     private static final String TAG = "Core_EventsFragment";
 
     private EventViewModel viewModel;
@@ -83,6 +84,12 @@ public class Core_Events_Fragment extends Fragment implements EventClickListener
         }
     }
 
+
+    @Override
+    public void updateEventRecycler(GroupEvent groupEvent) {
+        eventList.add(groupEvent);
+        mAdapter.notifyItemInserted(eventList.size()-1);
+    }
 
     /*
      * ToDo:
