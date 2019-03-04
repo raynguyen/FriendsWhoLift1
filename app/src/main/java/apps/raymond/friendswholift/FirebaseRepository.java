@@ -244,31 +244,6 @@ public class FirebaseRepository {
     }
 
 
-    /*
-     * Collects the fields of a User document and returns them as a Set<String>.
-     * The actual method call returns a Task to gather the fields of our Document. Once this task is
-     * complete, we can utilise the data as needed (refer to the calling Context for
-     * onCompleteListener).
-     * Current version of the database only stores the User's attached groups in the form of a
-     * <String> GroupName : <String> Authorization pair.
-     */
-    public Task<Set<String>> getGroupTags(){
-        return userCollection.document(currentUser.getEmail()).get()
-                .continueWith(new Continuation<DocumentSnapshot, Set<String>>() {
-                    @Override
-                    public Set<String> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        DocumentSnapshot document = task.getResult();
-                        if(document.exists()){
-                            Log.i(TAG,"Successfully retrieved User document.");
-                            return document.getData().keySet();
-                        } else {
-                            Log.w(TAG, "Error when retrieving the Document.");
-                            return null;
-                        }
-                    }
-                });
-    }
-
     // Info below may be outdated.
     // Steps are to get the keySet corresponding to what groups the user is registered with
     // Then we want to retrieve the Documentsnapshots of the groups named in the KeySet.
@@ -311,7 +286,6 @@ public class FirebaseRepository {
     public Task<byte[]> getImage(String uri){
         StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uri);
         return imageRef.getBytes(1024*1024*3);
-
     }
 
     /*
@@ -320,21 +294,20 @@ public class FirebaseRepository {
      * the event name. The associated tags for the event are stored as a sub-collection in the event
      * document.
      */
-    public void createEvent(final GroupEvent groupEvent){
+    public Task<Void> createEvent(final GroupEvent groupEvent){
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
-        eventRef.set(groupEvent, SetOptions.merge())
+        return eventRef.set(groupEvent, SetOptions.merge())
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
                             Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
                             // ToDo: Check to see if user is already a member before rewriting to the document.
-                            addEventToUser(groupEvent.getOriginalName());
-                            updateInviteeStatus(groupEvent,currentUser.getEmail(),"Accepted");
+                            return addEventToUser(groupEvent);
                         } else {
                             Log.w(TAG,"Unable to add Event to the Events collection.");
+                            return null;
                         }
-                        return null;
                     }
                 });
     }
@@ -342,35 +315,25 @@ public class FirebaseRepository {
     /*
      * Attach an event to the user's events collection.
      */
-    public Task<DocumentSnapshot> addEventToUser(String eventName){
-        Log.i(TAG,"Adding event to User Document.");
-        final DocumentReference docRef = userCollection.document(currentUser.getEmail()).collection("Events").document(eventName);
-        Map<String,String> testMap = new HashMap<>();
+    public Task<Void> addEventToUser(GroupEvent event){
+        final DocumentReference docRef = userCollection.document(currentUser.getEmail()).collection("Events").document(event.getOriginalName());
+        final CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
+        final Map<String,String> testMap = new HashMap<>();
         testMap.put("Access","Owner");
         return docRef.set(testMap, SetOptions.merge())
-                .continueWithTask(new Continuation<Void, Task<DocumentSnapshot>>() {
-                @Override
-                public Task<DocumentSnapshot> then(@NonNull Task<Void> task) throws Exception {
-                    if(task.isSuccessful()){
-                        return docRef.get();
-                    }
-                    return null;
-                }
-        });
-    }
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Successfully added event to user doc.");
+                            return invitees.document(currentUser.getEmail()).set(testMap,SetOptions.merge());
+                        } else {
+                            Log.w(TAG,"Error adding event to user doc.");
+                            return null;
+                        }
 
-    //Consider changing from adding just the user's email to a full User object and upon calling geteventusers, return the list of User objects.
-    public void updateInviteeStatus(GroupEvent event, String user, String status){
-        Map<String,String> testMap = new HashMap<>();
-        testMap.put("Status",status);
-        CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
-        invitees.document(user).set(testMap,SetOptions.merge())
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.i(TAG,"Added new invitee to the event.");
-                }
-            });
+                    }
+                });
     }
 
     public Task<List<String>> getEventInvitees(final GroupEvent event){

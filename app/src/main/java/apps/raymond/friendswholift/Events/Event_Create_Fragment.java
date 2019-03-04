@@ -32,11 +32,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
@@ -94,6 +97,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     TextView tagsContainer;
     EditText tagsTxt;
     String privacy;
+    ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -109,6 +113,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         saveBtn.setOnClickListener(this);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
         cancelBtn.setOnClickListener(this);
+
+        progressBar = view.findViewById(R.id.create_progress_bar);
 
         privacyGroup = view.findViewById(R.id.privacy_buttons);
         privacyGroup.clearCheck();
@@ -134,23 +140,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 if(checkFields()){
                     return;
                 }
-                GroupEvent newEvent = new GroupEvent(
-                        FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                        nameTxt.getText().toString(),
-                        descTxt.getText().toString(),
-                        startMonth,
-                        startDay,
-                        privacy,
-                        tagsList);
-
-                Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
-
-                EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
-                eventViewModel.createEvent(newEvent); //Adds a new Event to the Events collection.
-                //ToDo: Change createEvent to return a Task so that upon completion, we can add the event to EventRecycler.
-                addEventToRecycler.addToEventRecycler(newEvent);
+                progressBar.setVisibility(View.VISIBLE);
+                createEvent();
                 break;
-
             case R.id.cancel_btn:
                 getActivity().onBackPressed();
                 break;
@@ -207,10 +199,37 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return check;
     }
 
+    private void createEvent(){
+        final GroupEvent newEvent = new GroupEvent(
+                FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                nameTxt.getText().toString(),
+                descTxt.getText().toString(),
+                startMonth,
+                startDay,
+                privacy,
+                tagsList);
+
+        Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
+
+        EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+        eventViewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                progressBar.setVisibility(View.INVISIBLE);
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Successfully created event.");
+                    addEventToRecycler.addToEventRecycler(newEvent);
+                    getActivity().getSupportFragmentManager().popBackStack();
+                } else {
+                    Log.w(TAG,"Error creating event. " + task.getException().toString());
+                    Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //Inflating seems to do nothing.
-        Log.i(TAG,"IN THE ONCREATEOPTIONSMENU FOR FRAGMENT.");
         inflater.inflate(R.menu.group_edit_toolbar,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

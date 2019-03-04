@@ -143,10 +143,13 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         switch (i){
             case R.id.create_grp_btn:
                 // Want to show a dialog with a recap of the group and get user to confirm.
+
                 if(fieldsCheck()) {
                     Toast.makeText(getContext(),"Mandatory fields must be completed.",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                progressBar.setVisibility(View.VISIBLE);
+                progressText.setVisibility(View.VISIBLE);
                 createGroup();
                 break;
             case R.id.discard_grp_btn:

@@ -25,16 +25,8 @@ public class EventViewModel extends ViewModel {
         this.mRepository = new FirebaseRepository();
     }
 
-    public void createEvent(GroupEvent groupEvent){
-        mRepository.createEvent(groupEvent);
-    }
-
-    public void attachAuthListener(){
-        mRepository.attachAuthListener();
-    }
-
-    public Task<DocumentSnapshot> addEventToUser(String eventName){
-        return mRepository.addEventToUser(eventName);
+    public Task<Void> createEvent(GroupEvent groupEvent){
+        return mRepository.createEvent(groupEvent);
     }
 
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
@@ -49,13 +41,4 @@ public class EventViewModel extends ViewModel {
         return mRepository.getEventResponses(event, status);
     }
 
-    public Task<DocumentSnapshot> attachListener(){
-        //return mRepository.listenToUsersEvents();
-        return null;
-    }
-
-
-    public void removeListener(){
-        mRepository.removeListener();
-    }
 }
