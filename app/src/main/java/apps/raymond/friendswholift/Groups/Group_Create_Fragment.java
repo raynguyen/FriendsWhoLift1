@@ -46,8 +46,7 @@ import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
-public class Group_Create_Fragment extends Fragment implements View.OnClickListener,
-        Core_Activity.BackPressInterface {
+public class Group_Create_Fragment extends Fragment implements View.OnClickListener, Core_Activity.BackPressInterface{
     public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
@@ -62,9 +61,11 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     private ImageView imageView;
     private AlertDialog imgAlert;
 
+    private Groups_ViewModel model;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        model = ViewModelProviders.of(getActivity()).get(Groups_ViewModel.class);
     }
 
     @Nullable
@@ -74,6 +75,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         View view = inflater.inflate(R.layout.group_create_frag,container,false);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
+
         return view;
     }
 
@@ -109,7 +111,18 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
         imageView = view.findViewById(R.id.image_view);
         privacyGroup = view.findViewById(R.id.privacy_buttons);
+
+        Button testBtn = view.findViewById(R.id.test_btn);
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG,"CLICKED TEST BTN.");
+                Log.i(TAG,"Calling model method " + model.getGroups().toString());
+            }
+        });
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -208,6 +221,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         }
         return check;
     }
+
 
     @Override
     public void backPress() {

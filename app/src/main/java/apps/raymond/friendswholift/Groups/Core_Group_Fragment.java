@@ -39,7 +39,7 @@ import apps.raymond.friendswholift.R;
 
 public class Core_Group_Fragment extends Fragment implements GroupClickListener {
     private static final String TAG = "Core_Group_Fragment";
-
+    private Groups_ViewModel model;
     //Required empty fragment. Not sure why it is needed.
     public Core_Group_Fragment(){}
 
@@ -47,7 +47,7 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
+        model = ViewModelProviders.of(getActivity()).get(Groups_ViewModel.class);
     }
 
     GroupsViewModel mGroupViewModel;
@@ -124,6 +124,7 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener 
                                 }
                                 Log.i(TAG,"MyGroups = "+myGroups.toString());
                                 mAdapter.setData(myGroups);
+                                model.setGroups(myGroups);
                             } else {
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
                                 Log.i(TAG,"Current user has no Groups associated to them.");

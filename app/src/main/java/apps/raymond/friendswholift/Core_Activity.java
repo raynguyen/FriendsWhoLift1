@@ -159,20 +159,14 @@ public class Core_Activity extends AppCompatActivity{
                 viewPager.setCurrentItem(0);
             }
         } else {
-            Log.i(TAG,"Pressed back with a fragment in the back stack.");
-            // When calling on fragment manager to add/replace a fragment to the back stack, we set
-            // the fragment's name and the backStack tag to the 'TAG' field.
             String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
             Fragment topFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-
-            Log.i(TAG,"fragment tag = "+fragmentTag);
-            //Log.i(TAG,"Topfragment = "+topFragment.toString());
             if(topFragment instanceof BackPressInterface){
-                Log.i(TAG,"HELLOHELHLEHEOHEHELHELH");
                 ((BackPressInterface) topFragment).backPress();
             } else {
                 super.onBackPressed();
             }
         }
     }
+
 }
