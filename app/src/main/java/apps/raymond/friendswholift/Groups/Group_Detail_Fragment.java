@@ -42,8 +42,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
 
-public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChangeListener,
-        View.OnClickListener{
+public class Group_Detail_Fragment extends Fragment implements View.OnClickListener{
     public static final String TAG = "Group_Detail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
@@ -85,7 +84,9 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
     ViewFlipper viewFlipper;
     Spinner inviteSpinner;
     RadioGroup privacyGroup;
+    RadioButton publicBtn,discoverBtn,exclusiveBtn;
     TextInputEditText nameEdit, descEdit;
+    ArrayAdapter<CharSequence> adapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
@@ -102,28 +103,29 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
             Log.i(TAG,"Error setting title of fragment.",npe);
         }
 
+        Button saveEditsBtn = view.findViewById(R.id.save_group_btn);
+        saveEditsBtn.setOnClickListener(this);
+
+        viewFlipper = view.findViewById(R.id.group_edit_flipper);
+
         if(owner.equals(currUser)){
             nameEdit = view.findViewById(R.id.group_name_edit);
             descEdit = view.findViewById(R.id.group_desc_edit);
 
+            publicBtn = view.findViewById(R.id.public_btn);
+            discoverBtn = view.findViewById(R.id.discoverable_btn);
+            exclusiveBtn = view.findViewById(R.id.exclusive_btn);
+
             privacyGroup = view.findViewById(R.id.privacy_buttons);
 
             inviteSpinner = view.findViewById(R.id.invite_spinner);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                    .createFromResource(getActivity(), R.array.array_invite_authorize,
+            adapter = ArrayAdapter.createFromResource(getActivity(), R.array.array_invite_authorize,
                             android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             inviteSpinner.setAdapter(adapter);
         }
 
-        Button saveEditsBtn = view.findViewById(R.id.save_group_btn);
-        saveEditsBtn.setOnClickListener(this);
-
-        flip = true;
-        viewFlipper = view.findViewById(R.id.group_edit_flipper);
-        viewFlipper.addOnLayoutChangeListener(this);
-
-        final TextView name = view.findViewById(R.id.detail_group_name_txt);
+        TextView name = view.findViewById(R.id.detail_group_name_txt);
 
         name.setText(groupBase.getName());
         name.setTransitionName(transitionName);
@@ -153,19 +155,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
     }
 
     @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        int i = viewFlipper.getDisplayedChild();
-        switch (i){
-            case 0:
-                Log.i(TAG,"Detail Group read layout");
-                break;
-            case 1:
-                Log.i(TAG,"Detail Group edit layout");
-                break;
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
@@ -185,7 +174,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
         }
     }
 
-    MenuItem editItem, saveItem;
+    MenuItem editItem;
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -213,7 +202,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
     }
 
     //Going to handle events in the Activity because not sure why it doesn't work in the fragment.
-    boolean flip;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
@@ -229,6 +217,23 @@ public class Group_Detail_Fragment extends Fragment implements View.OnLayoutChan
 
     private void editGroup(){
         Log.i(TAG,"Entering edit mode for: "+groupBase.getName());
+        nameEdit.setText(groupBase.getName(), TextView.BufferType.EDITABLE);
+        descEdit.setText(groupBase.getDescription(),TextView.BufferType.EDITABLE);
+        String groupVisibility = groupBase.getVisibility();
+
+        if (groupVisibility.equals(publicBtn.getText().toString())) {
+            publicBtn.setChecked(true);
+        } else if (groupVisibility.equals(discoverBtn.getText().toString())){
+            discoverBtn.setChecked(true);
+        } else if (groupVisibility.equals(exclusiveBtn.getText().toString())){
+            exclusiveBtn.setChecked(true);
+        }
+
+        int i = adapter.getPosition(groupBase.getInvite());
+        inviteSpinner.setSelection(i);
+
+        Log.i(TAG,"Invite power for group is: "+groupBase.getInvite());
+        //inviteSpinner.setSelection();
         viewFlipper.showNext();
     }
 

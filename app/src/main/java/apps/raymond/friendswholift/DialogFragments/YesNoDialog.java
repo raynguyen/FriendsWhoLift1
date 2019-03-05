@@ -62,7 +62,7 @@ public class YesNoDialog extends DialogFragment{
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(body)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                .setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //The getTargetFragment snip is only when we implement the code for dialog result inside the fragment and not the host activity.
@@ -70,7 +70,7 @@ public class YesNoDialog extends DialogFragment{
                         callback.positiveClick();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //getTargetFragment().onActivityResult(getTargetRequestCode(),NEG_RESULT,getActivity().getIntent());

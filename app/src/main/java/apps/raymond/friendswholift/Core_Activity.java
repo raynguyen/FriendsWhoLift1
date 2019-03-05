@@ -8,6 +8,7 @@
  * 7. DetailFragment for events does not write proper info.
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
  * 9. **LIST OF USERS TO INVITE TO EVENTS AND GROUPS!!!!!!!!!!
+ * 10.Redefine the layout for the edit group/event
  */
 
 package apps.raymond.friendswholift;

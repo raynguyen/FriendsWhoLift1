@@ -80,7 +80,7 @@ public class Event_Detail_Fragment extends Fragment implements
     List<String> invitedProfiles, declinedProfiles, acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     ProgressBar acceptedBar,invitedBar,declinedBar;
-    TextView acceptedNullText,invitedNullText,declinedNullText;
+    TextView acceptedNullText,invitedNullText,declinedNullText, startTxt, endTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,8 +90,8 @@ public class Event_Detail_Fragment extends Fragment implements
         if(event.getCreator().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
             nameEdit = view.findViewById(R.id.event_name_edit);
             descEdit = view.findViewById(R.id.event_desc_edit);
-            monthEdit = view.findViewById(R.id.event_month_edit);
-            dayEdit = view.findViewById(R.id.event_day_edit);
+            startTxt = view.findViewById(R.id.event_start_write);
+            endTxt = view.findViewById(R.id.event_end_write);
         }
 
         TextView eventName = view.findViewById(R.id.event_title);
@@ -164,8 +164,7 @@ public class Event_Detail_Fragment extends Fragment implements
                 getActivity().invalidateOptionsMenu();
                 event.setName(nameEdit.getText().toString());
                 event.setDesc(descEdit.getText().toString());
-                event.setMonth(monthEdit.getText().toString());
-                event.setDay(dayEdit.getText().toString());
+                // ToDo: retrieve the new info from the edit.
                 eventViewModel.createEvent(event);
                 break;
             case R.id.accepted_profiles_btn:
@@ -205,6 +204,7 @@ public class Event_Detail_Fragment extends Fragment implements
                 Log.i(TAG,"Editing event: "+event.getName());
                 item.setVisible(false);
                 item.setEnabled(false);
+                editEvent();
                 editFlipper.showNext();
         }
         return super.onOptionsItemSelected(item);
@@ -234,6 +234,12 @@ public class Event_Detail_Fragment extends Fragment implements
                 Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void editEvent(){
+        nameEdit.setText(event.getName(), TextView.BufferType.EDITABLE);
+        descEdit.setText(event.getDesc(), TextView.BufferType.EDITABLE);
+
     }
 
     private void getAcceptedList(GroupEvent groupEvent){
