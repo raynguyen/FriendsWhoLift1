@@ -3,7 +3,6 @@
  * 1. Get the user permission for camera and document access on start up and store as a SharedPreference.
  * 3. Move all the currentUser stuff to repository return methods.
  * 4. Allow user to remove/delete events and or Groups if they are owner for deletes.
- * 5. Save btn in edit does not correctly popstack back to core activity screen.
  * 6. Recycler View for events does not properly display information.
  * 7. DetailFragment for events does not write proper info.
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
@@ -26,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -34,19 +32,18 @@ import android.widget.EditText;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 
-import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.Core_Group_Fragment;
 import apps.raymond.friendswholift.Groups.GroupBase;
 import apps.raymond.friendswholift.Groups.Group_Create_Fragment;
-import apps.raymond.friendswholift.Groups.Group_Detail_Fragment;
+import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 
-public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesNoInterface,
+public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent {
     private static final String TAG = "Core_Activity";
-    private static final int DIALOG_REQUEST_CODE = 21;
+    public static final int YESNO_REQUEST = 21;
 
     public UpdateGroupRecycler updateGroupRecycler;
     public interface UpdateGroupRecycler{
@@ -57,12 +54,6 @@ public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesN
     public interface UpdateEventRecycler{
         void updateEventRecycler(GroupEvent groupEvent);
     }
-
-    /*
-    public BackPressInterface backPressListener;
-    public interface BackPressInterface{
-        void backPress();
-    }*/
 
     ViewPager viewPager;
     @Override
@@ -101,6 +92,7 @@ public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesN
 
     @Override
     public void onAttachFragment(Fragment fragment) {
+
         if(fragment instanceof Core_Group_Fragment){
             try {
                 updateGroupRecycler = (UpdateGroupRecycler) fragment;
@@ -117,6 +109,7 @@ public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesN
                 Log.i(TAG,"Core_Events_Fragment does not implement UpdateEventRecycler interface.");
             }
         }
+
     }
 
     @Override
@@ -188,7 +181,7 @@ public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesN
 
     @Override
     public void onBackPressed() {
-        Log.i(TAG,getSupportFragmentManager().getFragments().toString());
+        Log.i(TAG,"List of fragments: \n " + getSupportFragmentManager().getFragments().toString());
         int count = getSupportFragmentManager().getBackStackEntryCount();
         if(count==0){
             Log.i(TAG,"There is nothing in the back stack");
@@ -198,34 +191,16 @@ public class Core_Activity extends AppCompatActivity implements YesNoDialog.YesN
                 viewPager.setCurrentItem(0);
             }
         } else {
-            Log.i(TAG,"BACK PRESSED");
-            YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-            yesNoDialog.setCancelable(false);
-            yesNoDialog.show(getSupportFragmentManager(),null);
-
-            /*
             String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
             Fragment topFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-
-            if(topFragment instanceof BackPressInterface){
-
-                ((BackPressInterface) topFragment).backPress();
+            if(topFragment instanceof BackPressListener){
+                Log.i(TAG,"Top fragment is an instanceof OnBackListener");
+                ((BackPressListener)topFragment).onBackPress();
             } else {
+                Log.i(TAG,"BackPressListener interface is not inherited by this fragment.");
                 super.onBackPressed();
             }
-            */
         }
-    }
-
-    @Override
-    public void positiveClick() {
-        Log.i(TAG,"Positive click.");
-        getSupportFragmentManager().popBackStack();
-    }
-
-    @Override
-    public void negativeClick() {
-        Log.i(TAG,"Negative click.");
     }
 
     @Override

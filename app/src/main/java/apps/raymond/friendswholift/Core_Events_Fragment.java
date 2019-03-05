@@ -126,8 +126,8 @@ public class Core_Events_Fragment extends Fragment implements
 
         detailedEvent.setArguments(args);
         getFragmentManager().beginTransaction()
-                .replace(R.id.core_frame,detailedEvent)
-                .addToBackStack(null)
+                .replace(R.id.core_frame,detailedEvent,Event_Detail_Fragment.TAG)
+                .addToBackStack(Event_Detail_Fragment.TAG)
                 .show(detailedEvent)
                 .commit();
     }

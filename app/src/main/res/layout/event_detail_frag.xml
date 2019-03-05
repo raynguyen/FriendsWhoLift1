@@ -9,6 +9,16 @@
     android:clickable="true"
     android:background="#ffffff">
 
+    <ProgressBar
+        android:id="@+id/update_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/event_edit_flipper"
+        android:visibility="invisible"/>
+
     <ViewFlipper
         android:id="@+id/event_edit_flipper"
         android:layout_width="match_parent"

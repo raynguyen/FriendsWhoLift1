@@ -14,6 +14,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -29,12 +30,7 @@ public class YesNoDialog extends DialogFragment{
     public static final int POS_RESULT = 21;
     public static final int NEG_RESULT = 22;
 
-    YesNoInterface callback;
 
-    public interface YesNoInterface {
-        void positiveClick();
-        void negativeClick();
-    }
     public YesNoDialog(){
     }
 
@@ -52,13 +48,13 @@ public class YesNoDialog extends DialogFragment{
         super.onCreate(savedInstanceState);
     }
 
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
         String title = getArguments().getString(TITLE);
         String body = getArguments().getString(BODY);
-
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(body)
@@ -66,27 +62,18 @@ public class YesNoDialog extends DialogFragment{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //The getTargetFragment snip is only when we implement the code for dialog result inside the fragment and not the host activity.
-                        //getTargetFragment().onActivityResult(getTargetRequestCode(),POS_RESULT,getActivity().getIntent());
-                        callback.positiveClick();
+                        getTargetFragment().onActivityResult(getTargetRequestCode(),POS_RESULT,getActivity().getIntent());
+                        //callback.positiveClick();
                     }
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //getTargetFragment().onActivityResult(getTargetRequestCode(),NEG_RESULT,getActivity().getIntent());
-                        callback.negativeClick();
+                        getTargetFragment().onActivityResult(getTargetRequestCode(),NEG_RESULT,getActivity().getIntent());
+                        //callback.negativeClick();
                     }
                 })
                 .create();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            callback = (YesNoInterface) getActivity();
-        } catch (ClassCastException e) {
-            Log.e(TAG,"Calling Fragment/Activity does not implement YesNoInterface" + e.getMessage());
-        }
-    }
 }

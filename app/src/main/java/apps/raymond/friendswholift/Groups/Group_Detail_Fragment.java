@@ -10,6 +10,7 @@ package apps.raymond.friendswholift.Groups;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -40,12 +41,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.Core_Activity;
+import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
+import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
 
-public class Group_Detail_Fragment extends Fragment implements View.OnClickListener{
+public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Detail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
+    private static final int DETAIL_READ = 0;
+    private static final int DETAIL_WRITE = 1;
 
     private GroupsViewModel mGroupViewModel;
 
@@ -213,6 +218,38 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPress() {
+        int i = viewFlipper.getDisplayedChild();
+        Log.i(TAG,"Current state of detail fragment: "+i);
+        switch (i){
+            case DETAIL_READ:
+                getActivity().getSupportFragmentManager().popBackStack();
+                break;
+            case DETAIL_WRITE:
+                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+                yesNoDialog.setCancelable(false);
+                yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
+                yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case Core_Activity.YESNO_REQUEST:
+                if(resultCode == YesNoDialog.POS_RESULT){
+                    Log.i(TAG,"yes clicked");
+                    getActivity().invalidateOptionsMenu();
+                    viewFlipper.setDisplayedChild(DETAIL_READ);
+                } else {
+                    Log.i(TAG,"Cancel clicked.");
+                    // Do nothing.
+                }
+        }
     }
 
     private void editGroup(){

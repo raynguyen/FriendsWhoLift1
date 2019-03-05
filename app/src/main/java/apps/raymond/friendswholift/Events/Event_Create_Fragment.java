@@ -10,7 +10,6 @@
 
 package apps.raymond.friendswholift.Events;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -41,14 +40,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.R;
 
@@ -212,7 +209,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
 
         EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
-        eventViewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+        eventViewModel.updateEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.INVISIBLE);

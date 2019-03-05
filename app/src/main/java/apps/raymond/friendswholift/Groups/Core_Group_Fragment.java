@@ -175,8 +175,8 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener,
         getFragmentManager()
                 .beginTransaction()
                 .addSharedElement(sharedView,sharedView.getTransitionName())
-                .replace(R.id.core_frame,detailedGroup)
-                .addToBackStack(null)
+                .replace(R.id.core_frame,detailedGroup,Group_Detail_Fragment.TAG)
+                .addToBackStack(Group_Detail_Fragment.TAG)
                 .commit();
     }
 

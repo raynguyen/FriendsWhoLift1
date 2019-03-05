@@ -43,10 +43,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
+import apps.raymond.friendswholift.Events.Event_Detail_Fragment;
+import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
 
-public class Group_Create_Fragment extends Fragment implements View.OnClickListener{
+public class Group_Create_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
@@ -66,8 +69,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         } catch (ClassCastException e){
             Log.i(TAG,"Error: "+e);
         }
-
-
     }
 
     @Override
@@ -237,25 +238,25 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         return check;
     }
 
-    /*
     @Override
-    public void backPress() {
-        Log.i(TAG,"BACK PRESSED");
+    public void onBackPress() {
         YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
+        yesNoDialog.setCancelable(false);
+        yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
         yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
     }
-    */
 
     public Uri imageUri;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
-            case DIALOG_REQUEST_CODE:
+            case Core_Activity.YESNO_REQUEST:
                 if(resultCode == YesNoDialog.POS_RESULT){
+                    Log.i(TAG,"Group Creation Fragment yes clicked.");
                     getActivity().getSupportFragmentManager().popBackStack();
                 } else {
                     Log.i(TAG,"Resuming group creation.");
+                    // Do Nothing
                 }
                 break;
             case CAMERA_REQUEST_CODE:

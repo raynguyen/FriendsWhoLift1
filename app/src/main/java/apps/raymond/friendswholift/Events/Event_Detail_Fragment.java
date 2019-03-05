@@ -7,7 +7,9 @@
 
 package apps.raymond.friendswholift.Events;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -22,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,15 +37,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
+import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.UserProfile.ProfileRecyclerAdapter;
 
+import static apps.raymond.friendswholift.Core_Activity.YESNO_REQUEST;
+
 public class Event_Detail_Fragment extends Fragment implements
-        View.OnClickListener, ProfileClickListener {
-    private static final String TAG = "Event_Detail_Fragment";
+        View.OnClickListener, ProfileClickListener, BackPressListener{
+
+    public static final String TAG = "Event_Detail_Fragment";
     private static final String EVENT_ACCEPTED = "Accepted";
     private static final String EVENT_DECLINED = "Declined";
+    private static final int DETAIL_READ = 0;
+    private static final int DETAIL_WRITE = 1;
 
     public Event_Detail_Fragment(){
     }
@@ -76,39 +84,32 @@ public class Event_Detail_Fragment extends Fragment implements
     }
 
     ViewFlipper editFlipper, profilesFlipper;
-    TextInputEditText nameEdit, descEdit, monthEdit, dayEdit;
+    TextInputEditText nameEdit, descEdit;
     List<String> invitedProfiles, declinedProfiles, acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
-    ProgressBar acceptedBar,invitedBar,declinedBar;
+    ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
+    TextView eventName,eventDesc,eventStart,eventEnd;
     TextView acceptedNullText,invitedNullText,declinedNullText, startTxt, endTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         editFlipper = view.findViewById(R.id.event_edit_flipper);
-
+        eventName = view.findViewById(R.id.event_title);
+        eventDesc = view.findViewById(R.id.event_desc);
+        eventStart = view.findViewById(R.id.event_start);
+        eventEnd = view.findViewById(R.id.event_end);
+        // These are variables that are only required if the user is able to edit the event.
         if(event.getCreator().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
             nameEdit = view.findViewById(R.id.event_name_edit);
             descEdit = view.findViewById(R.id.event_desc_edit);
             startTxt = view.findViewById(R.id.event_start_write);
             endTxt = view.findViewById(R.id.event_end_write);
+            updateBar = view.findViewById(R.id.update_progress_bar);
+            Button editSaveBtn = view.findViewById(R.id.save_event_btn);
+            editSaveBtn.setOnClickListener(this);
         }
-
-        TextView eventName = view.findViewById(R.id.event_title);
-        TextView eventDesc = view.findViewById(R.id.event_desc);
-        TextView eventStart = view.findViewById(R.id.event_start);
-        TextView eventEnd = view.findViewById(R.id.event_end);
-
-        Button editSaveBtn = view.findViewById(R.id.save_event_btn);
-        editSaveBtn.setOnClickListener(this);
-
-        eventName.setText(event.getName());
-        eventDesc.setText(event.getDesc());
-        String eventStartTxt = event.getMonth() + ", " + event.getDay();
-        String eventEndTxt = "Haven't implemented yet :(";
-        eventStart.setText(eventStartTxt);
-        eventEnd.setText(eventEndTxt);
-
+        updateViews();
         Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);
         Button declinedBtn = view.findViewById(R.id.declined_profiles_btn);
         Button invitedBtn = view.findViewById(R.id.invited_profiles_btn);
@@ -159,13 +160,7 @@ public class Event_Detail_Fragment extends Fragment implements
         switch (i){
             case R.id.save_event_btn:
                 Log.i(TAG,"Saving edits to Event: "+ event.getName());
-                editFlipper.showPrevious();
-
-                getActivity().invalidateOptionsMenu();
-                event.setName(nameEdit.getText().toString());
-                event.setDesc(descEdit.getText().toString());
-                // ToDo: retrieve the new info from the edit.
-                eventViewModel.createEvent(event);
+                editEvent();
                 break;
             case R.id.accepted_profiles_btn:
                 profilesFlipper.setDisplayedChild(0);
@@ -202,9 +197,13 @@ public class Event_Detail_Fragment extends Fragment implements
         switch (i){
             case R.id.action_edit:
                 Log.i(TAG,"Editing event: "+event.getName());
+
+                nameEdit.setText(event.getName(), TextView.BufferType.EDITABLE);
+                descEdit.setText(event.getDesc(), TextView.BufferType.EDITABLE);
+
                 item.setVisible(false);
                 item.setEnabled(false);
-                editEvent();
+
                 editFlipper.showNext();
         }
         return super.onOptionsItemSelected(item);
@@ -236,10 +235,35 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
-    private void editEvent(){
-        nameEdit.setText(event.getName(), TextView.BufferType.EDITABLE);
-        descEdit.setText(event.getDesc(), TextView.BufferType.EDITABLE);
+    private void updateViews(){
+        eventName.setText(event.getName());
+        eventDesc.setText(event.getDesc());
+        String eventStartTxt = event.getMonth() + ", " + event.getDay();
+        String eventEndTxt = "EVENT END Haven't implemented yet :(";
+        eventStart.setText(eventStartTxt);
+        eventEnd.setText(eventEndTxt);
+    }
 
+    private void editEvent(){
+        updateBar.setVisibility(View.VISIBLE);
+        event.setName(nameEdit.getText().toString());
+        event.setDesc(descEdit.getText().toString());
+
+        eventViewModel.updateEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Successfully updated the event in Firestore.");
+                    updateBar.setVisibility(View.INVISIBLE);
+                    getActivity().invalidateOptionsMenu();
+                    updateViews();
+                    editFlipper.showPrevious();
+                } else {
+                    Log.w(TAG,"Error updating event: "+task.getException());
+                    Toast.makeText(getContext(),"Failed to update event.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void getAcceptedList(GroupEvent groupEvent){
@@ -288,6 +312,35 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
+    @Override
+    public void onBackPress() {
+        int i = editFlipper.getDisplayedChild();
+        switch(i){
+            case DETAIL_READ:
+                Log.i(TAG,"Detail currently in read mode.");
+                getActivity().getSupportFragmentManager().popBackStack();
+                break;
+            case DETAIL_WRITE:
+                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+                yesNoDialog.setCancelable(false);
+                yesNoDialog.setTargetFragment(Event_Detail_Fragment.this,YESNO_REQUEST);
+                yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+        }
+    }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case YESNO_REQUEST:
+                if(resultCode == YesNoDialog.POS_RESULT){
+                    Log.i(TAG,"Returned from YesNoDialog with positive click.");
+                    getActivity().invalidateOptionsMenu();
+                    editFlipper.setDisplayedChild(DETAIL_READ);
+                } else {
+                    Log.i(TAG,"Cancel click.");
+                    // Do nothing.
+                }
+                break;
+        }
+    }
 }

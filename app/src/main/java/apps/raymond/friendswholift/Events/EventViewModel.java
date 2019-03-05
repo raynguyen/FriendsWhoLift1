@@ -25,7 +25,7 @@ public class EventViewModel extends ViewModel {
         this.mRepository = new FirebaseRepository();
     }
 
-    public Task<Void> createEvent(GroupEvent groupEvent){
+    public Task<Void> updateEvent(GroupEvent groupEvent){
         return mRepository.createEvent(groupEvent);
     }
 
