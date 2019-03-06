@@ -20,13 +20,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:text="@string/Temp"
+        android:hint="@string/username"
         android:maxLines="1"/>
     <TextView
         android:id="@+id/authority_txt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:text="@string/authority"
+        android:hint="@string/authority"
         android:maxLines="1"/>
 </LinearLayout>

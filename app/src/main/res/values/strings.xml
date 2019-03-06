@@ -113,4 +113,5 @@
 
     <!--GROUP CREATION-->
     <string name="creating_group">CREATING GROUP</string>
+    <string name="add_users">Add Users to Group!</string>
 </resources>

@@ -248,15 +248,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 }
                 break;
         }
-        //super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*
-    @Override
-    public void backPress() {
-        Log.i(TAG,"BACK PRESSED");
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setTargetFragment(this, DIALOG_REQUEST_CODE);
-        yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
-    }*/
 }

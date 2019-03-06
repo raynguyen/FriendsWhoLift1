@@ -61,10 +61,15 @@ public class Core_Events_Fragment extends Fragment implements
         return inflater.inflate(R.layout.core_events_frag, container,false);
     }
 
+    private ImageView nullImage;
+    private TextView nullText;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventList = new ArrayList<>();
+
+        nullImage = getView().findViewById(R.id.null_data_image);
+        nullText = getView().findViewById(R.id.null_data_text);
 
         ImageButton addEventBtn = view.findViewById(R.id.create_event_btn);
         addEventBtn.setOnClickListener(this);
@@ -88,16 +93,11 @@ public class Core_Events_Fragment extends Fragment implements
     @Override
     public void updateEventRecycler(GroupEvent groupEvent) {
         eventList.add(groupEvent);
+        nullImage.setVisibility(View.INVISIBLE);
+        nullText.setVisibility(View.INVISIBLE);
         mAdapter.notifyItemInserted(eventList.size()-1);
     }
 
-    /*
-     * ToDo:
-     * Fragment does not cover the TabLayout at the bottom of the screen.
-     *
-     * When clicking on an event in the RecyclerView, we want to inflate a Fragment that will display
-     * the information regarding the clicked Event.
-     */
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -152,8 +152,6 @@ public class Core_Events_Fragment extends Fragment implements
                             progressBar.setVisibility(View.GONE);
                             if(eventList.size() == 0){
                                 // If there are no upcoming events, we want to fill the fragment with a text that says No Upcoming Events.
-                                ImageView nullImage = getView().findViewById(R.id.null_data_image);
-                                TextView nullText = getView().findViewById(R.id.null_data_text);
                                 nullImage.setVisibility(View.VISIBLE);
                                 nullText.setVisibility(View.VISIBLE);
                             } else {

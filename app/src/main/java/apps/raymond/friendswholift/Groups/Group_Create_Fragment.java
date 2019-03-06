@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,13 +68,19 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
             addGroupInterface = (AddGroup) context;
             Log.i(TAG,"Successfully bound AddGroup interface to activity.");
         } catch (ClassCastException e){
-            Log.i(TAG,"Error: "+e);
+            Log.i(TAG,"Error.",e);
         }
     }
 
+    private FragmentManager fm;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try{
+            fm = getActivity().getSupportFragmentManager();
+        } catch (NullPointerException npe){
+            Log.e(TAG,"Unable to get fragment manager for fragment.",npe);
+        }
     }
 
     private FirebaseUser currentUser;
@@ -129,12 +136,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         privacyGroup = view.findViewById(R.id.privacy_buttons);
 
         Button testBtn = view.findViewById(R.id.test_btn);
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG,"Clicked test btn 3.");
-            }
-        });
+        testBtn.setOnClickListener(this);
     }
 
     @Override
@@ -143,8 +145,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
         switch (i){
             case R.id.create_grp_btn:
-                // Want to show a dialog with a recap of the group and get user to confirm.
-
                 if(fieldsCheck()) {
                     Toast.makeText(getContext(),"Mandatory fields must be completed.",Toast.LENGTH_SHORT).show();
                     return;
@@ -158,6 +158,9 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.camera_button:
                 getImage();
+                break;
+            case R.id.test_btn:
+                Log.i(TAG,"Button to open uses search clicked. implement this");
                 break;
         }
     }
@@ -243,7 +246,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
         yesNoDialog.setCancelable(false);
         yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
-        yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+        yesNoDialog.show(fm,null);
     }
 
     public Uri imageUri;
@@ -253,7 +256,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
             case Core_Activity.YESNO_REQUEST:
                 if(resultCode == YesNoDialog.POS_RESULT){
                     Log.i(TAG,"Group Creation Fragment yes clicked.");
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    fm.popBackStack();
                 } else {
                     Log.i(TAG,"Resuming group creation.");
                     // Do Nothing
@@ -304,7 +307,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                                     if(task.isSuccessful()){
                                         Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
                                         addGroupInterface.addToGroupRecycler(groupBase);
-                                        getActivity().getSupportFragmentManager().popBackStack();
+                                        fm.popBackStack();
                                     } else {
                                         Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
                                     }
@@ -330,7 +333,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                             Log.i(TAG,"THIS SHOULD BE AT THE END!");
                             Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
                             addGroupInterface.addToGroupRecycler(groupBase);
-                            getActivity().getSupportFragmentManager().popBackStack();
+                            fm.popBackStack();
                         } else {
                             Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
                         }
