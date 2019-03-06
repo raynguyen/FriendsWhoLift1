@@ -130,8 +130,8 @@ public class Core_Activity extends AppCompatActivity implements
         menu.findItem(R.id.action_edit).setEnabled(false);
         menu.findItem(R.id.action_save).setVisible(false);
         menu.findItem(R.id.action_save).setEnabled(false);
-        menu.findItem(R.id.action_connections).setVisible(true);
-        menu.findItem(R.id.action_connections).setEnabled(true);
+        menu.findItem(R.id.action_add_connections).setVisible(true);
+        menu.findItem(R.id.action_add_connections).setEnabled(true);
         //int i = viewPager.getCurrentItem();
         return true;
     }
@@ -155,7 +155,7 @@ public class Core_Activity extends AppCompatActivity implements
                         .show(profileFrag)
                         .commit();
                 return true;
-            case R.id.action_connections:
+            case R.id.action_add_connections:
                 userModel.createConnection().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

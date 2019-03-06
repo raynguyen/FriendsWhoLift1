@@ -47,6 +47,7 @@ import java.util.Set;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class FirebaseRepository {
 
@@ -63,7 +64,16 @@ public class FirebaseRepository {
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private CollectionReference eventCollection = db.collection(EVENT_COLLECTION);
 
-    private String userEmail = currentUser.getEmail();
+    private String userEmail;
+
+    // ToDo: Auth listener here to do things.
+    public FirebaseRepository(){
+        try{
+            this.userEmail = currentUser.getEmail();
+        }catch (NullPointerException npe){
+            Log.w(TAG,"Error: "+ npe);
+        }
+    }
 
     // When a state change is detected, we need to launch a new activity but not sure how to do that without direct communication from Repository back to the Activity.
     public void attachAuthListener(){
@@ -73,7 +83,7 @@ public class FirebaseRepository {
                 if(currentUser == null){
                     Log.i(TAG,"There is no active user.");
                 } else {
-                    Log.i(TAG,"Current user is: "+currentUser.getEmail());
+                    Log.i(TAG,"Current user is: "+userEmail);
                 }
             }
         });
@@ -91,40 +101,27 @@ public class FirebaseRepository {
                 });
     }
 
-    public Task<Void> createUser(final Context context, final String name, final String password){
+    public Task<Void> createUserByEmail(final UserModel userModel, final String password){
+        final String name = userModel.getEmail();
         Log.i(TAG,"Creating new user "+ name);
         return firebaseAuth.createUserWithEmailAndPassword(name,password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                .continueWithTask(new Continuation<AuthResult, Task<AuthResult>>() {
                     @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Log.i(TAG,"Successfully registered user "+ name);
-                        Toast.makeText(context,"Successfully registered "+name,Toast.LENGTH_SHORT).show();
+                    public Task<AuthResult> then(@NonNull Task<AuthResult> task) throws Exception {
+                        return signInWithEmail(name,password);
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+                }).continueWithTask(new Continuation<AuthResult, Task<Void>>() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"Failed to register "+ name,e);
-                        Toast.makeText(context,"Error registering "+name,Toast.LENGTH_SHORT).show();
+                    public Task<Void> then(@NonNull Task<AuthResult> task) throws Exception {
+                        return createUserDoc(userModel);
                     }
-                }
-        ).continueWithTask(new Continuation<AuthResult, Task<AuthResult>>() {
-            @Override
-            public Task<AuthResult> then(@NonNull Task<AuthResult> task) throws Exception {
-                return signInWithEmail(name,password);
-            }
-        }).continueWithTask(new Continuation<AuthResult, Task<Void>>() {
-            @Override
-            public Task<Void> then(@NonNull Task<AuthResult> task) throws Exception {
-                return createUserDoc(name);
-            }
-        });
+                });
     }
 
-    public Task<Void> createUserDoc(final String name){
+    private Task<Void> createUserDoc(UserModel userModel){
+        final String name = userModel.getEmail();
         Log.i(TAG,"Creating new user Document "+ name);
-        Map<String,String> testMap = new HashMap<>();
-        testMap.put("Email",userEmail);
-        return userCollection.document(name).set(testMap)
+        return userCollection.document(name).set(userModel)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -143,7 +140,7 @@ public class FirebaseRepository {
      */
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
         // First task retrieves a list of the Groups from the User Document.
-        return userCollection.document(currentUser.getEmail()).collection("Events").get()
+        return userCollection.document(userEmail).collection("Events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -190,12 +187,12 @@ public class FirebaseRepository {
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
                             Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
-                            return userCollection.document(currentUser.getEmail()).collection(GROUP_COLLECTION)
+                            return userCollection.document(userEmail).collection(GROUP_COLLECTION)
                                     .document(groupBase.getName()).set(holderMap)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Log.i(TAG,"Attached "+groupBase.getName()+" to " +currentUser.getEmail());
+                                            Log.i(TAG,"Attached "+groupBase.getName()+" to " +userEmail);
                                         }
                                     });
                         } else {
@@ -206,7 +203,7 @@ public class FirebaseRepository {
                 }).continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        return userCollection.document(currentUser.getEmail()).collection("Groups")
+                        return userCollection.document(userEmail).collection("Groups")
                                 .document(groupBase.getOriginalName()).set(holderMap)//Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -247,7 +244,7 @@ public class FirebaseRepository {
     public Task<List<Task<GroupBase>>> getUsersGroups(){
         final List<String> groupList = new ArrayList<>();
         //First thing to do is retrieve the Group tags from current user.
-        return userCollection.document(currentUser.getEmail()).collection("Groups").get()
+        return userCollection.document(userEmail).collection("Groups").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -311,7 +308,7 @@ public class FirebaseRepository {
      * Attach an event to the user's events collection.
      */
     public Task<Void> addEventToUser(GroupEvent event){
-        final DocumentReference docRef = userCollection.document(currentUser.getEmail()).collection("Events").document(event.getOriginalName());
+        final DocumentReference docRef = userCollection.document(userEmail).collection("Events").document(event.getOriginalName());
         final CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
         final Map<String,String> testMap = new HashMap<>();
         testMap.put("Access","Owner");
@@ -321,7 +318,7 @@ public class FirebaseRepository {
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
                             Log.i(TAG,"Successfully added event to user doc.");
-                            return invitees.document(currentUser.getEmail()).set(testMap,SetOptions.merge());
+                            return invitees.document(userEmail).set(testMap,SetOptions.merge());
                         } else {
                             Log.w(TAG,"Error adding event to user doc.");
                             return null;

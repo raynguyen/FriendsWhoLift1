@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -23,10 +22,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class SignUpFrag extends Fragment implements View.OnClickListener {
     private static final String TAG = "SignUpFrag";
@@ -84,7 +83,6 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v){
         int i = v.getId();
-
         switch(i){
             case R.id.register_btn:
                 //Attempts to register the user if the fields are not blank.
@@ -92,15 +90,19 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                     Log.d(TAG,"Empty or incorrect input in SignUp fields.");
                     return;
                 }
-                String username,password;
+                final String username,password;
                 username = username_Txt.getText().toString();
                 password = password_Txt.getText().toString();
-                mLoginViewModel.createUser(getContext(),username,password)
+                UserModel userModel = new UserModel(username,"invisible");
+                mLoginViewModel.createUserByEmail(userModel,password)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
+                                    Toast.makeText(getContext(),"Successfully registered "+username,Toast.LENGTH_SHORT).show();
                                     signIn.signedIn();
+                                } else {
+                                    Toast.makeText(getContext(),"Error registering user.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -111,9 +113,7 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                 viewPager.setCurrentItem(0);
                 break;
         }
-
-
-    } //bottom of onClick()
+    }
 
     private boolean validate(@NonNull TextInputEditText[] inputFields){
         //False means there is at least one empty field.

@@ -2,6 +2,8 @@
  * ToDo:
  * Create the ViewModel for the Login and SignUp fragments in this context and access it through the
  * fragments.
+ *
+ * There is a suspicious event after signing up, there could be two activities starting somehow.
  */
 
 

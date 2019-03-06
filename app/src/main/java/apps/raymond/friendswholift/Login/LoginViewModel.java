@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 
 import apps.raymond.friendswholift.FirebaseRepository;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 class LoginViewModel extends ViewModel {
 
@@ -16,12 +17,8 @@ class LoginViewModel extends ViewModel {
         this.mRepository = new FirebaseRepository();
     }
 
-    Task<Void> createUserDoc(String userName){
-        return mRepository.createUserDoc(userName);
-    }
-
-    Task<Void> createUser(Context context, String name, String password){
-        return mRepository.createUser(context,name,password);
+    Task<Void> createUserByEmail(UserModel userModel, String password){
+        return mRepository.createUserByEmail(userModel,password);
     }
 
     Task<AuthResult> signIn(String name, String password){
