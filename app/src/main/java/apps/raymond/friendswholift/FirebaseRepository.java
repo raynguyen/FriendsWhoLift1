@@ -54,7 +54,7 @@ public class FirebaseRepository {
     private static final String GROUP_COLLECTION = "Groups";
     private static final String USER_COLLECTION = "Users";
     private static final String EVENT_COLLECTION = "Events";
-
+    private static final String CONNECTIONS = "Connections";
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -62,6 +62,8 @@ public class FirebaseRepository {
     private CollectionReference groupCollection = db.collection(GROUP_COLLECTION);
     private CollectionReference userCollection = db.collection(USER_COLLECTION);
     private CollectionReference eventCollection = db.collection(EVENT_COLLECTION);
+
+    private String userEmail = currentUser.getEmail();
 
     // When a state change is detected, we need to launch a new activity but not sure how to do that without direct communication from Repository back to the Activity.
     public void attachAuthListener(){
@@ -118,18 +120,10 @@ public class FirebaseRepository {
         });
     }
 
-    /*
-     * Method call to create a Document under the 'Users' Collection. This collection will contain
-     * details about the user as Fields in their respective document. The Document name is currently
-     * created under the user's email.
-     *
-     * Need to check if the Document exists when trying to query its contents.
-     */
-
     public Task<Void> createUserDoc(final String name){
         Log.i(TAG,"Creating new user Document "+ name);
         Map<String,String> testMap = new HashMap<>();
-        testMap.put("hello","test"); // ToDo need to figure out how to set a null field when creating a Document.
+        testMap.put("Email",userEmail);
         return userCollection.document(name).set(testMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -142,6 +136,7 @@ public class FirebaseRepository {
                     }
                 });
     }
+
     /*
      * Called when we want to retrieve GroupEvent objects that are listed under the User's groups.
      * This method does not update the adapter when there is a change in the data.
@@ -398,6 +393,15 @@ public class FirebaseRepository {
                 }
             });
     }
+
+    // ToDo: Create a user Pojo so we can properly store them into firestore
+    public Task<Void> createConnection(){
+        CollectionReference connections = userCollection.document(userEmail).collection(CONNECTIONS);
+        Map<String,String> testMap = new HashMap<>();
+        testMap.put("User email", "some email");
+        return connections.document("Some new connection").set(testMap);
+    }
+
 
     public Task<GroupBase> getGroup(){
         return null;

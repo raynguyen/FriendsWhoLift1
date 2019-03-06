@@ -37,6 +37,10 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
+        <activity
+            android:name=".Connections_Activity">
+        </activity>
+
         <activity android:name=".TestAct"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <!--

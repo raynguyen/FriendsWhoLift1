@@ -14,6 +14,7 @@ package apps.raymond.friendswholift;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
@@ -44,7 +47,6 @@ public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent {
     private static final String TAG = "Core_Activity";
     public static final int YESNO_REQUEST = 21;
-
     public UpdateGroupRecycler updateGroupRecycler;
     public interface UpdateGroupRecycler{
         void updateGroupRecycler(GroupBase groupBase);
@@ -55,6 +57,7 @@ public class Core_Activity extends AppCompatActivity implements
         void updateEventRecycler(GroupEvent groupEvent);
     }
 
+    private User_ViewModel userModel;
     ViewPager viewPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +67,7 @@ public class Core_Activity extends AppCompatActivity implements
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
+        userModel = new User_ViewModel();
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -126,6 +130,8 @@ public class Core_Activity extends AppCompatActivity implements
         menu.findItem(R.id.action_edit).setEnabled(false);
         menu.findItem(R.id.action_save).setVisible(false);
         menu.findItem(R.id.action_save).setEnabled(false);
+        menu.findItem(R.id.action_connections).setVisible(true);
+        menu.findItem(R.id.action_connections).setEnabled(true);
         //int i = viewPager.getCurrentItem();
         return true;
     }
@@ -148,6 +154,16 @@ public class Core_Activity extends AppCompatActivity implements
                         .addToBackStack(null)
                         .show(profileFrag)
                         .commit();
+                return true;
+            case R.id.action_connections:
+                userModel.createConnection().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Successfully added connection.");
+                        }
+                    }
+                });
                 return true;
             case R.id.action_test:
                 Log.i(TAG,getSupportFragmentManager().getFragments().toString());
