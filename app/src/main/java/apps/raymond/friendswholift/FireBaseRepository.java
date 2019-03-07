@@ -47,11 +47,12 @@ import java.util.Set;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
+import apps.raymond.friendswholift.Groups.GroupsViewModel;
 import apps.raymond.friendswholift.UserProfile.UserModel;
 
-public class FirebaseRepository {
+public class FireBaseRepository {
 
-    private static final String TAG = "FirebaseRepository";
+    private static final String TAG = "FireBaseRepository";
     private static final String GROUP_COLLECTION = "Groups";
     private static final String USER_COLLECTION = "Users";
     private static final String EVENT_COLLECTION = "Events";
@@ -67,7 +68,7 @@ public class FirebaseRepository {
     private String userEmail;
 
     // ToDo: Auth listener here to do things.
-    public FirebaseRepository(){
+    public FireBaseRepository(){
         try{
             this.userEmail = currentUser.getEmail();
         }catch (NullPointerException npe){
@@ -327,6 +328,25 @@ public class FirebaseRepository {
                     }
                 });
     }
+
+    //Will currently return a whole list of users.
+    public Task<List<UserModel>> fetchUsers(){
+        return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+            @Override
+            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                List<UserModel> userList = new ArrayList<>();
+                if (task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        Log.i(TAG,"Converting user document to UserModel: "+document.getId());
+                        UserModel model = document.toObject(UserModel.class);
+                        userList.add(model);
+                    }
+                }
+                return userList;
+            }
+        });
+    }
+
 
     public Task<List<String>> getEventInvitees(final GroupEvent event){
         CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection("Invitees");

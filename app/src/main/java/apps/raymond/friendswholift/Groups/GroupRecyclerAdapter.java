@@ -1,7 +1,6 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
 public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdapter.GroupViewHolder>{
@@ -21,7 +18,11 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     private List<GroupBase> groupsList;
     private GroupClickListener groupClickListener;
 
-    GroupRecyclerAdapter(List<GroupBase> myGroups, GroupClickListener groupClickListener){
+    public interface GroupClickListener {
+        void onGroupClick(int position, GroupBase groupBase, View sharedView);
+    }
+
+    public GroupRecyclerAdapter(List<GroupBase> myGroups, GroupClickListener groupClickListener){
         this.groupsList = myGroups;
         this.groupClickListener =  groupClickListener;
     }
@@ -59,6 +60,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
             viewHolder.nameTxt.setTransitionName("Transition"+position);
             viewHolder.descTxt.setText(currentGroup.getDescription());
 
+            // Todo: Best to move this into onCreateViewHolder otherwise each UserModel that is bound to a holder will create  anew onclick listener. It is better to create one.
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

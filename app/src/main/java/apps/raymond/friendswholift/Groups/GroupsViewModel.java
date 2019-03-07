@@ -7,14 +7,15 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.FirebaseRepository;
+import apps.raymond.friendswholift.FireBaseRepository;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class GroupsViewModel extends ViewModel {
 
-    private FirebaseRepository mRepository;
+    private FireBaseRepository mRepository;
 
     public GroupsViewModel(){
-        this.mRepository = new FirebaseRepository();
+        this.mRepository = new FireBaseRepository();
     }
 
     Task<Void> createGroup(GroupBase groupBase){
@@ -39,5 +40,9 @@ public class GroupsViewModel extends ViewModel {
 
     public void updateGroup(GroupBase groupBase){
         mRepository.updateGroup(groupBase);
+    }
+
+    public Task<List<UserModel>> fetchUsers(){
+        return mRepository.fetchUsers();
     }
 }

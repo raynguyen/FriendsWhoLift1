@@ -9,13 +9,16 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.Interfaces.EventClickListener;
 import apps.raymond.friendswholift.R;
 
 public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.EventViewHolder> {
     private static final String TAG = "EventsRecyclerAdapter";
     private List<GroupEvent> eventsList;
     private EventClickListener eventClickListener;
+
+    public interface EventClickListener {
+        void onEventClick(int position, GroupEvent groupEvent);
+    }
 
     public EventsRecyclerAdapter(List<GroupEvent> eventsList, EventClickListener eventClickListener){
         this.eventsList = eventsList;
@@ -29,7 +32,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             eventName = view.findViewById(R.id.event_title);
             eventDesc = view.findViewById(R.id.event_desc);
             eventDay = view.findViewById(R.id.event_start);
-            eventMonth = view.findViewById(R.id.event_start);
+            eventMonth = view.findViewById(R.id.event_end);
         }
     }
 

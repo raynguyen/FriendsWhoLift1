@@ -16,13 +16,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.FirebaseRepository;
+import apps.raymond.friendswholift.FireBaseRepository;
 
 public class EventViewModel extends ViewModel {
-    private FirebaseRepository mRepository;
+    private FireBaseRepository mRepository;
 
     public EventViewModel(){
-        this.mRepository = new FirebaseRepository();
+        this.mRepository = new FireBaseRepository();
     }
 
     public Task<Void> updateEvent(GroupEvent groupEvent){

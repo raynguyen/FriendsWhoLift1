@@ -19,7 +19,6 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.SearchView;
@@ -37,10 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.friendswholift.Core_Activity;
-import apps.raymond.friendswholift.Interfaces.GroupClickListener;
 import apps.raymond.friendswholift.R;
 
-public class Core_Group_Fragment extends Fragment implements GroupClickListener, Core_Activity.UpdateGroupRecycler {
+public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
     private static final String TAG = "Core_Group_Fragment";
     private Groups_ViewModel model;
 
@@ -70,7 +68,7 @@ public class Core_Group_Fragment extends Fragment implements GroupClickListener,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        myGroups = new ArrayList<>();
         headerTxt = view.findViewById(R.id.header_txt);
 
         ImageButton createGroupBtn = view.findViewById(R.id.create_group_btn);

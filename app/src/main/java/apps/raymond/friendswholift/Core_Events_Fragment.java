@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,10 +34,9 @@ import apps.raymond.friendswholift.Events.EventsRecyclerAdapter;
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
 import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
-import apps.raymond.friendswholift.Interfaces.EventClickListener;
 
 public class Core_Events_Fragment extends Fragment implements
-        EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
+        EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
     private static final String TAG = "Core_EventsFragment";
 
     private EventViewModel viewModel;

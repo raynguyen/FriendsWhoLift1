@@ -9,7 +9,6 @@ package apps.raymond.friendswholift.Events;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -41,7 +40,6 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
 import apps.raymond.friendswholift.R;
-import apps.raymond.friendswholift.UserProfile.ProfileRecyclerAdapter;
 
 import static apps.raymond.friendswholift.Core_Activity.YESNO_REQUEST;
 

@@ -20,6 +20,8 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,13 +46,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import apps.raymond.friendswholift.Add_Users_Adapter;
 import apps.raymond.friendswholift.Core_Activity;
+import apps.raymond.friendswholift.DialogFragments.SearchUsersDialog;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
-import apps.raymond.friendswholift.Events.Event_Detail_Fragment;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
-public class Group_Create_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
+public class Group_Create_Fragment extends Fragment implements
+        View.OnClickListener, BackPressListener, Add_Users_Adapter.CheckProfileInterface {
     public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
@@ -73,6 +81,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private FragmentManager fm;
+    List<UserModel> usersList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +90,9 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         } catch (NullPointerException npe){
             Log.e(TAG,"Unable to get fragment manager for fragment.",npe);
         }
+        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
+        usersList = new ArrayList<>();
+        fetchUsersList();
     }
 
     private FirebaseUser currentUser;
@@ -92,8 +104,6 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.group_create_frag,container,false);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
-
         return view;
     }
 
@@ -107,6 +117,8 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
     Spinner invite_Spinner;
     ProgressBar progressBar;
     TextView progressText;
+    RecyclerView usersRecycler;
+    Add_Users_Adapter userAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -137,6 +149,11 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
 
         Button testBtn = view.findViewById(R.id.test_btn);
         testBtn.setOnClickListener(this);
+
+        usersRecycler = view.findViewById(R.id.add_users_recycler);
+        usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        userAdapter = new Add_Users_Adapter(usersList, this);
+        usersRecycler.setAdapter(userAdapter);
     }
 
     @Override
@@ -161,6 +178,7 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.test_btn:
                 Log.i(TAG,"Button to open uses search clicked. implement this");
+                //expandUserRecycler();
                 break;
         }
     }
@@ -217,6 +235,34 @@ public class Group_Create_Fragment extends Fragment implements View.OnClickListe
                 Toast.makeText(getContext(),"Not yet implemented; allow users to google an image for result.",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void fetchUsersList(){
+        mGroupViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Successfully fetched suggested users list.");
+                    Log.i(TAG,"List composed of: "+task.getResult().toString());
+                    usersList.addAll(task.getResult());
+                    userAdapter.notifyDataSetChanged();
+                } else {
+                    Log.i(TAG,"Error retrieving suggested users list. " + task.getException());
+                    Toast.makeText(getContext(),"Error retrieving suggested invitees.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void expandUserRecycler(){
+        Log.i(TAG,"Creating search users recycler dialog");
+        SearchUsersDialog usersDialog = SearchUsersDialog.newInstance();
+        usersDialog.show(fm,"Search_Users_Dialog");
+    }
+
+    @Override
+    public void getCheckedList() {
+        Log.i(TAG,"Shawty lemme peep that list of invitees");
     }
 
     /*

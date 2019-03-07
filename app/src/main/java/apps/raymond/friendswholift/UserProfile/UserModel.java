@@ -2,6 +2,9 @@
  * RayN. 3/5/2019
  * email: email field for user
  * visibility: field that determines if this user to searchable when creating connections
+ *
+ * ToDo:
+ * Add fields during registration for display name. ALTNERNATIVELY, ON LOG IN POP A USER FORM FOR USER TO SET UP THEIR ACCOUNT!!!!!!
  */
 
 package apps.raymond.friendswholift.UserProfile;
@@ -12,6 +15,8 @@ import android.os.Parcelable;
 public class UserModel implements Parcelable {
     private String email;
     private String visibility;
+
+    public UserModel(){}
 
     public UserModel(String email, String visibility){
         this.email = email;
