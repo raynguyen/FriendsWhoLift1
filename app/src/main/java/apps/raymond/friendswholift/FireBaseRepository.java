@@ -178,11 +178,27 @@ public class FireBaseRepository {
      * Logic:
      * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    public Task<Void> createGroup(final GroupBase groupBase){
+    public Task<Void> createGroup(final GroupBase groupBase,final List<UserModel> inviteList){
+        final DocumentReference groupDoc = groupCollection.document(groupBase.getOriginalName());
         final Map<String,String> holderMap = new HashMap<>();
         holderMap.put("Access","Owner");
         // Create a document from the GroupBase object under the creation name.
-        return groupCollection.document(groupBase.getOriginalName()).set(groupBase)
+        return groupDoc.set(groupBase)
+                .continueWith(new Continuation<Void, Void>() {
+                    @Override
+                    public Void then(@NonNull Task<Void> task) throws Exception {
+                        Log.i(TAG,"Creating invitee sub collection.");
+                        if(task.isSuccessful()){
+                            for(UserModel user : inviteList){
+                                groupDoc.collection("Invitees").document(user.getEmail()).set(user);
+                            }
+                        } else {
+                            Log.i(TAG,"Error creating invitee sub collection.");
+                            //return null;
+                        }
+                        return null;
+                    }
+                })
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
@@ -201,7 +217,8 @@ public class FireBaseRepository {
                             return null;
                         }
                     }
-                }).continueWithTask(new Continuation<Void, Task<Void>>() {
+                })
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         return userCollection.document(userEmail).collection("Groups")

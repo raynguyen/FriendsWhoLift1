@@ -317,7 +317,7 @@ public class Group_Create_Fragment extends Fragment implements
                         @Override
                         public void onSuccess(Uri uri) {
                             groupBase.setImageURI(uri.toString());
-                            mGroupViewModel.createGroup(groupBase).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            mGroupViewModel.createGroup(groupBase, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     progressBar.setVisibility(View.INVISIBLE);
@@ -341,7 +341,7 @@ public class Group_Create_Fragment extends Fragment implements
                         }
                     });
         } else {
-            mGroupViewModel.createGroup(groupBase)
+            mGroupViewModel.createGroup(groupBase, inviteUsersList)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
