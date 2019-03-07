@@ -11,7 +11,7 @@ import android.os.Parcelable;
 public class GroupBase implements Parcelable {
 
     private String originalName; // We use this to query Firestore in case the display name is modified.
-    private String name; // The display name that users see.
+    private String name; // The display name that inviteUsersList see.
     private String description;
     private String owner;
     private String visibility; // Determines who can discover and view the Group.

@@ -232,22 +232,24 @@ public class Group_Create_Fragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 Log.i(TAG,"Loading google images for user.");
-                Toast.makeText(getContext(),"Not yet implemented; allow users to google an image for result.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"Not yet implemented; allow inviteUsersList to google an image for result.",Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    List<UserModel> inviteUsersList;
     private void fetchUsersList(){
         mGroupViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.isSuccessful()){
-                    Log.i(TAG,"Successfully fetched suggested users list.");
+                    inviteUsersList = new ArrayList<>();
+                    Log.i(TAG,"Successfully fetched suggested inviteUsersList list.");
                     Log.i(TAG,"List composed of: "+task.getResult().toString());
                     usersList.addAll(task.getResult());
                     userAdapter.notifyDataSetChanged();
                 } else {
-                    Log.i(TAG,"Error retrieving suggested users list. " + task.getException());
+                    Log.i(TAG,"Error retrieving suggested inviteUsersList list. " + task.getException());
                     Toast.makeText(getContext(),"Error retrieving suggested invitees.",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -255,14 +257,28 @@ public class Group_Create_Fragment extends Fragment implements
     }
 
     private void expandUserRecycler(){
-        Log.i(TAG,"Creating search users recycler dialog");
+        Log.i(TAG,"Creating search inviteUsersList recycler dialog");
         SearchUsersDialog usersDialog = SearchUsersDialog.newInstance();
         usersDialog.show(fm,"Search_Users_Dialog");
     }
 
     @Override
-    public void getCheckedList() {
-        Log.i(TAG,"Shawty lemme peep that list of invitees");
+    public void addToCheckedList(UserModel clickedUser) {
+        Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
+        inviteUsersList.add(clickedUser);
+        for(UserModel user : inviteUsersList){
+            Log.i(TAG,"Inviting: "+user.getEmail());
+        }
+
+    }
+
+    @Override
+    public void removeFromCheckedList(UserModel clickedUser) {
+        Log.i(TAG,"Removing user from list to invite: "+clickedUser.getEmail());
+        inviteUsersList.remove(clickedUser);
+        for(UserModel user : inviteUsersList){
+            Log.i(TAG,"Inviting: "+user.getEmail());
+        }
     }
 
     /*
@@ -285,6 +301,63 @@ public class Group_Create_Fragment extends Fragment implements
             Toast.makeText(getContext(),"Group creation form has not been completed.",Toast.LENGTH_SHORT).show();
         }
         return check;
+    }
+
+    private void createGroup(){
+        String groupName = name_Txt.getText().toString();
+        String descText = desc_Txt.getText().toString();
+        privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
+        String privacy = privacyBtn.getText().toString();
+        String inviteText = invite_Spinner.getSelectedItem().toString();
+        final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
+
+        if(imageUri!=null){
+            mGroupViewModel.uploadImage(imageUri, groupName)
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            groupBase.setImageURI(uri.toString());
+                            mGroupViewModel.createGroup(groupBase).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    progressText.setVisibility(View.INVISIBLE);
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                        addGroupInterface.addToGroupRecycler(groupBase);
+                                        fm.popBackStack();
+                                    } else {
+                                        Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i(TAG,"Error uploading image.",e);
+                            Toast.makeText(getContext(),"Error uploading image.",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            mGroupViewModel.createGroup(groupBase)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progressText.setVisibility(View.INVISIBLE);
+                            if(task.isSuccessful()){
+                                Log.i(TAG,"THIS SHOULD BE AT THE END!");
+                                Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                addGroupInterface.addToGroupRecycler(groupBase);
+                                fm.popBackStack();
+                            } else {
+                                Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
     }
 
     @Override
@@ -330,64 +403,6 @@ public class Group_Create_Fragment extends Fragment implements
         }
         //super.onActivityResult(requestCode, resultCode, data);
     }
-
-    private void createGroup(){
-        String groupName = name_Txt.getText().toString();
-        String descText = desc_Txt.getText().toString();
-        privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
-        String privacy = privacyBtn.getText().toString();
-        String inviteText = invite_Spinner.getSelectedItem().toString();
-
-        final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
-        if(imageUri!=null){
-            mGroupViewModel.uploadImage(imageUri, groupName)
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            groupBase.setImageURI(uri.toString());
-                            mGroupViewModel.createGroup(groupBase).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    progressText.setVisibility(View.INVISIBLE);
-                                    if(task.isSuccessful()){
-                                        Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
-                                        addGroupInterface.addToGroupRecycler(groupBase);
-                                        fm.popBackStack();
-                                    } else {
-                                        Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.i(TAG,"Error uploading image.",e);
-                            Toast.makeText(getContext(),"Error uploading image.",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            mGroupViewModel.createGroup(groupBase)
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        progressText.setVisibility(View.INVISIBLE);
-                        if(task.isSuccessful()){
-                            Log.i(TAG,"THIS SHOULD BE AT THE END!");
-                            Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
-                            addGroupInterface.addToGroupRecycler(groupBase);
-                            fm.popBackStack();
-                        } else {
-                            Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            });
-        }
-    }
-
 
 }
 

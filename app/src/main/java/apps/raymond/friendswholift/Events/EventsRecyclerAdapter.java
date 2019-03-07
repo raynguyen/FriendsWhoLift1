@@ -31,8 +31,8 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             super(view);
             eventName = view.findViewById(R.id.event_title);
             eventDesc = view.findViewById(R.id.event_desc);
-            eventDay = view.findViewById(R.id.event_start);
-            eventMonth = view.findViewById(R.id.event_end);
+            eventDay = view.findViewById(R.id.event_day);
+            eventMonth = view.findViewById(R.id.event_month);
         }
     }
 

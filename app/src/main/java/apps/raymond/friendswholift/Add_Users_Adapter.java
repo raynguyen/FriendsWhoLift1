@@ -17,7 +17,8 @@ public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.Us
     private static final String TAG = "Add_Users_Adapter";
 
     public interface CheckProfileInterface{
-        void getCheckedList();
+        void addToCheckedList(UserModel clickedUser);
+        void removeFromCheckedList(UserModel clickedUser);
     }
 
     private List<UserModel> users;
@@ -27,18 +28,20 @@ public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.Us
         this.checkedInterface = checkedInterface;
     }
 
-    static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class UserViewHolder extends RecyclerView.ViewHolder{
 
         private TextView nameTxt;
         private CheckBox checkBox;
 
         private UserViewHolder(View view){
             super(view);
-            view.setOnClickListener(this);
+            //view.setOnClickListener(this);
             nameTxt = view.findViewById(R.id.user_name_txt);
             checkBox = view.findViewById(R.id.invite_user_checkbox);
         }
 
+        // How do we call this once and not per onBindViewHolder?
+        /*
         @Override
         public void onClick(View v) {
             if(checkBox.isChecked()){
@@ -47,10 +50,7 @@ public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.Us
             } else {
                 checkBox.setChecked(true);
             }
-        }
-
-        // TODO: When an item is clicked, we want to update the array list in the Group_Create_Fragment that stores all users to invite.
-        // How do we access the interface in the adapter from inside the ViewHolder??
+        }*/
     }
 
     @NonNull
@@ -64,12 +64,23 @@ public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.Us
     @Override
     public void onBindViewHolder(@NonNull final UserViewHolder userViewHolder, int i) {
         Log.i(TAG,"Binding view holder for user: "+users.get(i).getEmail());
-        if(users != null){
-            final UserModel currentUser = users.get(i);
-            userViewHolder.nameTxt.setText(currentUser.getEmail());
-        } else {
-            Log.i(TAG,"Adapter was passed an empty list.");
-        }
+
+        final UserModel currentUser = users.get(i);
+        userViewHolder.nameTxt.setText(currentUser.getEmail());
+
+        userViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(userViewHolder.checkBox.isChecked()){
+                    userViewHolder.checkBox.setChecked(false);
+                    checkedInterface.removeFromCheckedList(currentUser);
+                } else {
+                    userViewHolder.checkBox.setChecked(true);
+                    checkedInterface.addToCheckedList(currentUser);
+                }
+            }
+        });
+
     }
 
     @Override
