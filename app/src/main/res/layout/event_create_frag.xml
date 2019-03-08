@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,171 +8,196 @@
     android:padding="8dp"
     android:clickable="true">
 
-    <ProgressBar
-        android:id="@+id/create_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="invisible"/>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/event_name_txt_layout"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:layout_constraintTop_toTopOf="parent"
-        app:boxCornerRadiusBottomEnd="8dp"
-        app:boxCornerRadiusBottomStart="8dp"
-        app:boxCornerRadiusTopEnd="8dp"
-        app:boxCornerRadiusTopStart="8dp"
-        android:hint="@string/event_name">
+        android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/event_name_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/event_desc_txt_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:layout_constraintTop_toBottomOf="@id/event_name_txt_layout"
-        android:layout_marginTop="24dp"
-        app:boxCornerRadiusBottomEnd="8dp"
-        app:boxCornerRadiusBottomStart="8dp"
-        app:boxCornerRadiusTopEnd="8dp"
-        app:boxCornerRadiusTopStart="8dp"
-        android:hint="@string/event_desc">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/event_desc_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </android.support.design.widget.TextInputLayout>
-
-    <ImageButton
-        android:id="@+id/date_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_calendar_today_black_18dp"
-        android:background="#ffffff"
-        android:contentDescription="@string/event_month"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/event_start"
-        android:padding="12dp"
-        android:layout_marginStart="24dp"/>
-
-    <TextView
-        android:id="@+id/event_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/event_start"
-        android:textSize="20sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
-        app:layout_constraintStart_toEndOf="@id/date_btn" />
-
-    <TextView
-        android:id="@+id/event_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/event_end"
-        android:textSize="20sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/event_start"
-        app:layout_constraintStart_toEndOf="@id/date_btn" />
-
-    <RadioGroup
-        android:id="@+id/privacy_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/event_start"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="48dp"
-        android:weightSum="3">
-
-        <RadioButton
-            android:id="@+id/public_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/event_public"
-            android:layout_weight="1" />
-        <RadioButton
-            android:id="@+id/discoverable_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/event_discoverable"
-            android:layout_weight="1"/>
-        <RadioButton
-            android:id="@+id/exclusive_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/event_exclusive"
-            android:layout_weight="1"/>
-    </RadioGroup>
-
-    <EditText
-        android:id="@+id/event_tags_txt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:maxLines="1"
-        android:hint="Add some event tags!"
-        android:textSize="14sp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toStartOf="@id/event_tag_add_btn"
-        app:layout_constraintTop_toBottomOf="@id/privacy_buttons"/>
-
-    <ImageButton
-        android:id="@+id/event_tag_add_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/event_tags_txt"
-        app:layout_constraintBottom_toBottomOf="@id/event_tags_txt"
-        android:src="@drawable/googleg_standard_color_18"/>
-
-    <TextView
-        android:id="@+id/tags_container_txt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/event_tags_txt"
-        android:hint="@string/empty_tags"
-        android:gravity="center"
-        android:lines="3"
-        android:lineSpacingExtra="8sp"
-        android:background="@drawable/edit_text_border"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:weightSum="2">
-
-        <Button
-            android:id="@+id/cancel_btn"
+        <ProgressBar
+            android:id="@+id/create_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.ButtonBar"
-            android:text="@string/cancel"
-            android:textColor="@color/colorAccent"
-            android:layout_weight="1"/>
-        <Button
-            android:id="@+id/save_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="invisible"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/event_name_txt_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toTopOf="parent"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            android:hint="@string/event_name">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/event_name_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/event_desc_txt_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@id/event_name_txt_layout"
+            android:layout_marginTop="24dp"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            android:hint="@string/event_desc">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/event_desc_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/date_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.ButtonBar"
-            android:text="@string/save"
-            android:layout_weight="1"/>
-    </LinearLayout>
+            android:src="@drawable/baseline_calendar_today_black_18dp"
+            android:background="#ffffff"
+            android:contentDescription="@string/event_month"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/event_start"
+            android:padding="12dp"
+            android:layout_marginStart="24dp"/>
 
+        <TextView
+            android:id="@+id/event_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/event_start"
+            android:textSize="20sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
+            app:layout_constraintStart_toEndOf="@id/date_btn" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/event_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/event_end"
+            android:textSize="20sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/event_start"
+            app:layout_constraintStart_toEndOf="@id/date_btn" />
+
+        <RadioGroup
+            android:id="@+id/privacy_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/event_start"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="48dp"
+            android:weightSum="3">
+
+            <RadioButton
+                android:id="@+id/public_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/event_public"
+                android:layout_weight="1" />
+            <RadioButton
+                android:id="@+id/discoverable_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/event_discoverable"
+                android:layout_weight="1"/>
+            <RadioButton
+                android:id="@+id/exclusive_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/event_exclusive"
+                android:layout_weight="1"/>
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/event_tags_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:hint="Add some event tags!"
+            android:textSize="14sp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toStartOf="@id/event_tag_add_btn"
+            app:layout_constraintTop_toBottomOf="@id/privacy_buttons"/>
+
+        <ImageButton
+            android:id="@+id/event_tag_add_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/event_tags_txt"
+            app:layout_constraintBottom_toBottomOf="@id/event_tags_txt"
+            android:src="@drawable/googleg_standard_color_18"/>
+
+        <TextView
+            android:id="@+id/tags_container_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/event_tags_txt"
+            android:hint="@string/empty_tags"
+            android:gravity="center"
+            android:lines="3"
+            android:lineSpacingExtra="8sp"
+            android:background="@drawable/edit_text_border"/>
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/userSearchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tags_container_txt">
+        </android.support.v7.widget.SearchView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/add_users_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            app:layout_constraintTop_toBottomOf="@id/userSearchView">
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/test_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:text="@string/add_users"
+            app:layout_constraintTop_toBottomOf="@id/add_users_recycler"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/test_btn"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/cancel_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.ButtonBar"
+                android:text="@string/cancel"
+                android:textColor="@color/colorAccent"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/save_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.ButtonBar"
+                android:text="@string/save"
+                android:layout_weight="1"/>
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

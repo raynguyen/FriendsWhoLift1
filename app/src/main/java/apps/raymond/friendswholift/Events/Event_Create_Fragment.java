@@ -20,6 +20,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,11 +48,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import apps.raymond.friendswholift.Add_Users_Adapter;
+import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
+import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
-        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener{
+        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener, Add_Users_Adapter.CheckProfileInterface,
+        BackPressListener {
     public static final String TAG = "Event_Create_Fragment";
     private static final int DIALOG_REQUEST_CODE = 21;
 
@@ -59,6 +66,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         void addToEventRecycler(GroupEvent groupEvent);
     }
 
+    FragmentManager fm;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -67,12 +75,17 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }catch (ClassCastException e){
             Log.i(TAG,"Unable to attach AddEvent interface to activity.");
         }
+
+        fm = getActivity().getSupportFragmentManager();
     }
 
+    EventViewModel eventViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+        fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
@@ -95,6 +108,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     EditText tagsTxt;
     String privacy;
     ProgressBar progressBar;
+    Add_Users_Adapter userAdapter;
+    List<UserModel> usersList;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -125,6 +140,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         testList = new ArrayList<>();
         tagsList = new ArrayList<>();
+
+        usersList = new ArrayList<>();
+        RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
+        usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        userAdapter = new Add_Users_Adapter(usersList, this);
+        usersRecycler.setAdapter(userAdapter);
     }
 
     ArrayList<String> tagsList;
@@ -154,7 +175,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.date_btn:
                 DialogFragment newFragment = new DatePickerDialog();
-                FragmentManager fm = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 newFragment.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
                 newFragment.show(fm, "datePicker");
         }
@@ -173,6 +193,41 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         RadioButton checkedBtn = group.findViewById(checkedId);
         privacy = checkedBtn.getText().toString();
+    }
+
+    List<UserModel> inviteUsersList;
+    private void fetchUsersList(){
+        eventViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
+                if(task.isSuccessful()){
+                    inviteUsersList = new ArrayList<>();
+                    usersList.addAll(task.getResult());
+                    userAdapter.notifyDataSetChanged();
+                } else {
+                    Log.i(TAG,"Error retrieving suggested inviteUsersList list. " + task.getException());
+                    Toast.makeText(getContext(),"Error retrieving suggested invitees.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    @Override
+    public void addToCheckedList(UserModel clickedUser) {
+        Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
+        inviteUsersList.add(clickedUser);
+        for(UserModel user : inviteUsersList){
+            Log.i(TAG,"Inviting: "+user.getEmail());
+        }
+
+    }
+
+    @Override
+    public void removeFromCheckedList(UserModel clickedUser) {
+        Log.i(TAG,"Removing user from list to invite: "+clickedUser.getEmail());
+        inviteUsersList.remove(clickedUser);
+        for(UserModel user : inviteUsersList){
+            Log.i(TAG,"Inviting: "+user.getEmail());
+        }
     }
 
     /*
@@ -208,7 +263,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
 
-        EventViewModel eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
         eventViewModel.updateEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -216,7 +270,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 if(task.isSuccessful()){
                     Log.i(TAG,"Successfully created event.");
                     addEventToRecycler.addToEventRecycler(newEvent);
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    fm.popBackStack();
                 } else {
                     Log.w(TAG,"Error creating event. " + task.getException().toString());
                     Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
@@ -242,12 +296,20 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         switch (requestCode){
             case DIALOG_REQUEST_CODE:
                 if(resultCode == YesNoDialog.POS_RESULT){
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    fm.popBackStack();
                 } else {
                     Log.i(TAG,"Resuming event creation.");
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onBackPress() {
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setCancelable(false);
+        yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
+        yesNoDialog.show(fm,null);
     }
 
 }

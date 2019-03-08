@@ -117,7 +117,6 @@ public class Group_Create_Fragment extends Fragment implements
     Spinner invite_Spinner;
     ProgressBar progressBar;
     TextView progressText;
-    RecyclerView usersRecycler;
     Add_Users_Adapter userAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -150,7 +149,7 @@ public class Group_Create_Fragment extends Fragment implements
         Button testBtn = view.findViewById(R.id.test_btn);
         testBtn.setOnClickListener(this);
 
-        usersRecycler = view.findViewById(R.id.add_users_recycler);
+        RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new Add_Users_Adapter(usersList, this);
         usersRecycler.setAdapter(userAdapter);

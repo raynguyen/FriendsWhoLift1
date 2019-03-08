@@ -57,6 +57,7 @@ public class FireBaseRepository {
     private static final String USER_COLLECTION = "Users";
     private static final String EVENT_COLLECTION = "Events";
     private static final String CONNECTIONS = "Connections";
+    private static final String INVITEES = "Invitees";
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();

@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.List;
 
 import apps.raymond.friendswholift.FireBaseRepository;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class EventViewModel extends ViewModel {
     private FireBaseRepository mRepository;
@@ -41,4 +42,7 @@ public class EventViewModel extends ViewModel {
         return mRepository.getEventResponses(event, status);
     }
 
+    public Task<List<UserModel>> fetchUsers(){
+        return mRepository.fetchUsers();
+    }
 }
