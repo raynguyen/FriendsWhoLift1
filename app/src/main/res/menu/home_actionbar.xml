@@ -37,15 +37,14 @@
     <item
         android:id="@+id/action_test"
         android:title="@string/Temp"
-        app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_edit_black_18dp">
     </item>
 
     <item
-        android:id="@+id/action_add_connections"
-        android:title="@string/invited"
+        android:id="@+id/action_invites"
+        android:title="@string/messages"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/baseline_person_add_black_18dp">
+        android:icon="@drawable/baseline_mail_black_18dp">
     </item>
 
 </menu>

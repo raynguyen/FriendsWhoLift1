@@ -429,6 +429,7 @@ public class FireBaseRepository {
             });
     }
 
+    // Used to add users to the current user.
     // ToDo: Create a user Pojo so we can properly store them into firestore
     public Task<Void> createConnection(){
         CollectionReference connections = userCollection.document(userEmail).collection(CONNECTIONS);

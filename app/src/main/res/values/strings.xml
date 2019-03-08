@@ -77,6 +77,7 @@
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
+    <string name="messages">Messages</string>
 
     <!--USERS FRAGMENT-->
     <string name="profile_picture">Profile Picture</string>

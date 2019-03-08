@@ -8,6 +8,9 @@
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
  * 9. **LIST OF USERS TO INVITE TO EVENTS AND GROUPS!!!!!!!!!!
  * 10.Redefine the layout for the edit group/event
+ *
+ * MESSAGING FOR INVITES:
+ * Doc listener for a invites doc.
  */
 
 package apps.raymond.friendswholift;
@@ -57,7 +60,7 @@ public class Core_Activity extends AppCompatActivity implements
         void updateEventRecycler(GroupEvent groupEvent);
     }
 
-    private User_ViewModel userModel;
+    private User_ViewModel userViewModel;
     ViewPager viewPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +70,7 @@ public class Core_Activity extends AppCompatActivity implements
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
-        userModel = new User_ViewModel();
+        userViewModel = new User_ViewModel();
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -130,8 +133,6 @@ public class Core_Activity extends AppCompatActivity implements
         menu.findItem(R.id.action_edit).setEnabled(false);
         menu.findItem(R.id.action_save).setVisible(false);
         menu.findItem(R.id.action_save).setEnabled(false);
-        menu.findItem(R.id.action_add_connections).setVisible(true);
-        menu.findItem(R.id.action_add_connections).setEnabled(true);
         //int i = viewPager.getCurrentItem();
         return true;
     }
@@ -154,16 +155,6 @@ public class Core_Activity extends AppCompatActivity implements
                         .addToBackStack(null)
                         .show(profileFrag)
                         .commit();
-                return true;
-            case R.id.action_add_connections:
-                userModel.createConnection().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Log.i(TAG,"Successfully added connection.");
-                        }
-                    }
-                });
                 return true;
             case R.id.action_test:
                 Log.i(TAG,getSupportFragmentManager().getFragments().toString());
@@ -232,3 +223,14 @@ public class Core_Activity extends AppCompatActivity implements
         return super.dispatchTouchEvent(ev);
     }
 }
+
+/* Creates a connection to the current user. Should move so that this code is only called when you are viewing another user.
+    userViewModel.createConnection().addOnCompleteListener(new OnCompleteListener<Void>() {
+        @Override
+        public void onComplete(@NonNull Task<Void> task) {
+            if(task.isSuccessful()){
+                Log.i(TAG,"Successfully added connection.");
+            }
+        }
+    });
+ */
