@@ -306,7 +306,7 @@ public class FireBaseRepository {
      * the event name. The associated tags for the event are stored as a sub-collection in the event
      * document.
      */
-    public Task<Void> createEvent(final GroupEvent groupEvent){
+    public Task<Void> createEvent(final GroupEvent groupEvent, final List<UserModel> inviteList){
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
         return eventRef.set(groupEvent, SetOptions.merge())
                 .continueWithTask(new Continuation<Void, Task<Void>>() {

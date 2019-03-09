@@ -263,28 +263,18 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
 
-        eventViewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+        eventViewModel.createEvent(newEvent,inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     Log.i(TAG,"Successfully created event.");
+                    eventViewModel.sendInvites(newEvent,inviteUsersList);
                     addEventToRecycler.addToEventRecycler(newEvent);
                     fm.popBackStack();
                 } else {
                     Log.w(TAG,"Error creating event. " + task.getException().toString());
                     Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).continueWith(new Continuation<Void, List<Task<Void>>>() { //ToDo: this continueWith needs to be moved to the repo.
-            @Override
-            public List<Task<Void>> then(@NonNull Task<Void> task) throws Exception {
-                if(task.isSuccessful()){
-                    Log.i(TAG,"Sending out invites to users.");
-                    return eventViewModel.sendInvites(newEvent,inviteUsersList);
-                } else {
-                    Log.w(TAG,"Error sending out invites to users. " + task.getException().toString());
-                    return null;
                 }
             }
         });
