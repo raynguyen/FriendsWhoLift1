@@ -37,6 +37,7 @@ import java.util.List;
 
 import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.Repository_ViewModel;
 
 public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
     private static final String TAG = "Core_Group_Fragment";
@@ -52,13 +53,13 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         subscribeToModel();
     }
 
-    GroupsViewModel mGroupViewModel;
+    Repository_ViewModel viewModel;
     ArrayList<GroupBase> myGroups;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.core_groups_frag, container, false);
-        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
         return view;
     }
 
@@ -130,7 +131,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
      */
     //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
     private void updateCardViews(){
-        mGroupViewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
+        viewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<GroupBase>>> task) {
                 if(task.getResult()!=null){

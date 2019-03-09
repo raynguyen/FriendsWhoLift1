@@ -13,11 +13,9 @@
 
 package apps.raymond.friendswholift;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,11 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
-import apps.raymond.friendswholift.Groups.GroupsViewModel;
 import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class FireBaseRepository {

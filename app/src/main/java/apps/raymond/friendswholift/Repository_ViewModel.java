@@ -1,28 +1,21 @@
-/*
- * ViewModel that is used by the MainActivity and its Fragments.
- * ToDo:
- * Need to determine if there is a method of instancing one ViewModel in the Activity that the
- * Fragments call when they need to interact with FireStore.
- *
- * RENAME THIS VIEWMODEL
- */
-
-package apps.raymond.friendswholift.Events;
+package apps.raymond.friendswholift;
 
 import android.arch.lifecycle.ViewModel;
+import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
-import apps.raymond.friendswholift.FireBaseRepository;
+import apps.raymond.friendswholift.Events.GroupEvent;
+import apps.raymond.friendswholift.Groups.GroupBase;
 import apps.raymond.friendswholift.UserProfile.UserModel;
 
-public class EventViewModel extends ViewModel {
+public class Repository_ViewModel extends ViewModel {
     private FireBaseRepository mRepository;
 
-    public EventViewModel(){
+    public Repository_ViewModel(){
         this.mRepository = new FireBaseRepository();
     }
 
@@ -53,4 +46,30 @@ public class EventViewModel extends ViewModel {
     public Task<List<UserModel>> fetchUsers(){
         return mRepository.fetchUsers();
     }
+
+    public Task<Void> createGroup(GroupBase groupBase, List<UserModel> inviteList){
+        return mRepository.createGroup(groupBase, inviteList);
+    }
+
+    public Task<List<Task<GroupBase>>> getUsersGroups(){
+        return mRepository.getUsersGroups();
+    }
+
+    public Task<GroupBase> getGroup(){
+        return mRepository.getGroup();
+    }
+
+    public Task<Uri> uploadImage(Uri uri, String name){
+        return mRepository.uploadImage(uri, name);
+    }
+
+    public Task<byte[]> getImage(String uri){
+        return mRepository.getImage(uri);
+    }
+
+    public void updateGroup(GroupBase groupBase){
+        mRepository.updateGroup(groupBase);
+    }
+
 }
+

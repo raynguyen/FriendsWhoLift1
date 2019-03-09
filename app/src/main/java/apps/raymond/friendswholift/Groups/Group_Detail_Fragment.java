@@ -9,7 +9,6 @@
 package apps.raymond.friendswholift.Groups;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -44,6 +42,7 @@ import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.Repository_ViewModel;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Detail_Fragment";
@@ -52,7 +51,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     private static final int DETAIL_READ = 0;
     private static final int DETAIL_WRITE = 1;
 
-    private GroupsViewModel mGroupViewModel;
+
 
     public Group_Detail_Fragment(){
     }
@@ -66,6 +65,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         return _group_Detail_fragment;
     }
 
+    private Repository_ViewModel viewModel;
     ActionBar actionBar;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         Log.i(TAG,"New instance of Detailed Group Fragment");
         setHasOptionsMenu(true);
         actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
 
 
@@ -143,7 +143,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
 
         if(groupBase.getImageURI()!=null && groupBase.getBytes()==null){
             Log.i(TAG,"Fetching the photo for this group.");
-            mGroupViewModel.getImage(groupBase.getImageURI())
+            viewModel.getImage(groupBase.getImageURI())
                     .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
@@ -172,7 +172,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
                 groupBase.setVisibility(privacyBtn.getText().toString());
                 groupBase.setInvite(inviteSpinner.getSelectedItem().toString());
 
-                mGroupViewModel.updateGroup(groupBase);
+                viewModel.updateGroup(groupBase);
 
                 //Todo: Have to add the ability to modify the image.
                 break;

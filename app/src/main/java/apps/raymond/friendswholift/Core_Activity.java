@@ -16,6 +16,7 @@
 package apps.raymond.friendswholift;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -57,17 +58,18 @@ public class Core_Activity extends AppCompatActivity implements
         void updateEventRecycler(GroupEvent groupEvent);
     }
 
-    private User_ViewModel userViewModel;
     ViewPager viewPager;
+    private Repository_ViewModel viewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+        viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
-        userViewModel = new User_ViewModel();
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -93,6 +95,8 @@ public class Core_Activity extends AppCompatActivity implements
         });
         tabLayout.setupWithViewPager(viewPager);
     }
+
+
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -219,6 +223,9 @@ public class Core_Activity extends AppCompatActivity implements
         }
         return super.dispatchTouchEvent(ev);
     }
+
+
+
 }
 
 /* Creates a connection to the current user. Should move so that this code is only called when you are viewing another user.

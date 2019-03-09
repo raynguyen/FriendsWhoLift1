@@ -38,7 +38,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +52,7 @@ import apps.raymond.friendswholift.Core_Activity;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.Repository_ViewModel;
 import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
@@ -79,12 +79,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         fm = getActivity().getSupportFragmentManager();
     }
 
-    EventViewModel eventViewModel;
+    private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        eventViewModel = ViewModelProviders.of(getActivity()).get(EventViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(Repository_ViewModel.class);
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
@@ -197,7 +197,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private void fetchUsersList(){
-        eventViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.isSuccessful()){
@@ -263,17 +263,17 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
 
-        eventViewModel.createEvent(newEvent,inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
+        viewModel.createEvent(newEvent,inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     Log.i(TAG,"Successfully created event.");
-                    eventViewModel.sendInvites(newEvent,inviteUsersList);
+                    viewModel.sendInvites(newEvent,inviteUsersList);
                     addEventToRecycler.addToEventRecycler(newEvent);
                     fm.popBackStack();
                 } else {
-                    Log.w(TAG,"Error creating event. " + task.getException().toString());
+                    Log.w(TAG,"Error creating event. " + task.getException());
                     Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
                 }
             }

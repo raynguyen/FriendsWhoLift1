@@ -55,6 +55,7 @@ import apps.raymond.friendswholift.DialogFragments.SearchUsersDialog;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.Repository_ViewModel;
 import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class Group_Create_Fragment extends Fragment implements
@@ -82,6 +83,7 @@ public class Group_Create_Fragment extends Fragment implements
 
     private FragmentManager fm;
     List<UserModel> usersList;
+    private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,13 +92,13 @@ public class Group_Create_Fragment extends Fragment implements
         } catch (NullPointerException npe){
             Log.e(TAG,"Unable to get fragment manager for fragment.",npe);
         }
-        mGroupViewModel = ViewModelProviders.of(getActivity()).get(GroupsViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(Repository_ViewModel.class);
         usersList = new ArrayList<>();
         fetchUsersList();
     }
 
     private FirebaseUser currentUser;
-    private GroupsViewModel mGroupViewModel;
+
 
     @Nullable
     @Override
@@ -238,7 +240,7 @@ public class Group_Create_Fragment extends Fragment implements
 
     List<UserModel> inviteUsersList;
     private void fetchUsersList(){
-        mGroupViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.isSuccessful()){
@@ -311,12 +313,12 @@ public class Group_Create_Fragment extends Fragment implements
         final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
 
         if(imageUri!=null){
-            mGroupViewModel.uploadImage(imageUri, groupName)
+            viewModel.uploadImage(imageUri, groupName)
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             groupBase.setImageURI(uri.toString());
-                            mGroupViewModel.createGroup(groupBase, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            viewModel.createGroup(groupBase, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     progressBar.setVisibility(View.INVISIBLE);
@@ -340,7 +342,7 @@ public class Group_Create_Fragment extends Fragment implements
                         }
                     });
         } else {
-            mGroupViewModel.createGroup(groupBase, inviteUsersList)
+            viewModel.createGroup(groupBase, inviteUsersList)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

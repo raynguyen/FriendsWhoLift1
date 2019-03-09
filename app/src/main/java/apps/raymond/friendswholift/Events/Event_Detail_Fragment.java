@@ -7,6 +7,7 @@
 
 package apps.raymond.friendswholift.Events;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +41,7 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
 import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.Repository_ViewModel;
 
 import static apps.raymond.friendswholift.Core_Activity.YESNO_REQUEST;
 
@@ -60,19 +62,17 @@ public class Event_Detail_Fragment extends Fragment implements
     }
 
     GroupEvent event;
-    EventViewModel eventViewModel;
+    private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        eventViewModel = new EventViewModel(); // mGroupViewModel = ViewModelProviders.of(requireActivity()).get(GroupsViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
         Bundle args = this.getArguments();
         if(args !=null){
             this.event = args.getParcelable("EventObject");
         }
-        Log.i(TAG,"Creating detail event fragment for: "+ event.getName());
     }
-
 
     @Nullable
     @Override
@@ -209,7 +209,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     //CALL REPOSITORY METHOD TO RETRIEVE THE LIST HERE!!!!!!!
     private void getInviteList(final GroupEvent event){
-        eventViewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 invitedBar.setVisibility(View.INVISIBLE);
@@ -247,7 +247,7 @@ public class Event_Detail_Fragment extends Fragment implements
         event.setName(nameEdit.getText().toString());
         event.setDesc(descEdit.getText().toString());
 
-        eventViewModel.updateEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        viewModel.updateEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
@@ -266,7 +266,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     private void getAcceptedList(GroupEvent groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
-        eventViewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 if(task.getResult().isEmpty()){
@@ -289,7 +289,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     private void getDeclinedList(GroupEvent groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
-        eventViewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 if(task.getResult().isEmpty()){

@@ -32,24 +32,24 @@ import java.util.List;
 import apps.raymond.friendswholift.Events.Event_Detail_Fragment;
 import apps.raymond.friendswholift.Events.EventsRecyclerAdapter;
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
-import apps.raymond.friendswholift.Events.EventViewModel;
 import apps.raymond.friendswholift.Events.GroupEvent;
 
 public class Core_Events_Fragment extends Fragment implements
         EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
     private static final String TAG = "Core_EventsFragment";
 
-    private EventViewModel viewModel;
+
     private List<GroupEvent> eventList;
     private ProgressBar progressBar;
     private EventsRecyclerAdapter mAdapter;
 
     public Core_Events_Fragment(){}
 
+    private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this.getActivity()).get(EventViewModel.class); // Is there a better callback for this?
+        viewModel = ViewModelProviders.of(this.getActivity()).get(Repository_ViewModel.class); // Is there a better callback for this?
     }
 
     @Nullable

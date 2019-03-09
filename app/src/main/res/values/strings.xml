@@ -62,8 +62,7 @@
         These tags are used to find locale Groups that share the same interests as you and without
     them we can not provide you any suggestions!
     Would you like to register some tags now?</string>
-    <!-- General Strings -->
-    <string name="discard">Discard</string>
+
 
     <string name="upcoming_events">Upcoming Events</string>
     <string-array name="array_liftsSpinner">
@@ -74,6 +73,9 @@
     </string-array>
     <string name="title_activity_home">HomeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- General Strings -->
+    <string name="discard">Discard</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
@@ -104,6 +106,7 @@
     <string name="event_day">DAY</string>
     <string name="event_start">Start Time</string>
     <string name="event_end">End Time</string>
+    <string name="create_event">Create Event</string>
 
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>

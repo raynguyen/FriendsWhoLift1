@@ -196,7 +196,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.ButtonBar"
-                android:text="@string/save"
+                android:text="@string/create_event"
                 android:layout_weight="1"/>
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
