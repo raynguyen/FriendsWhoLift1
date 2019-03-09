@@ -19,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.style.ClickableSpan;
@@ -39,6 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -109,7 +109,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     String privacy;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
-    List<UserModel> usersList;
+    List<UserModel> usersList, inviteUsersList;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -142,6 +142,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         tagsList = new ArrayList<>();
 
         usersList = new ArrayList<>();
+        inviteUsersList = new ArrayList<>();
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new Add_Users_Adapter(usersList, this);
@@ -195,13 +196,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         privacy = checkedBtn.getText().toString();
     }
 
-    List<UserModel> inviteUsersList;
     private void fetchUsersList(){
         eventViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.isSuccessful()){
-                    inviteUsersList = new ArrayList<>();
                     usersList.addAll(task.getResult());
                     userAdapter.notifyDataSetChanged();
                 } else {
@@ -211,6 +210,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             }
         });
     }
+
     @Override
     public void addToCheckedList(UserModel clickedUser) {
         Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
@@ -263,7 +263,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
 
-        eventViewModel.updateEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+        eventViewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.INVISIBLE);
@@ -274,6 +274,17 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 } else {
                     Log.w(TAG,"Error creating event. " + task.getException().toString());
                     Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).continueWith(new Continuation<Void, List<Task<Void>>>() { //ToDo: this continueWith needs to be moved to the repo.
+            @Override
+            public List<Task<Void>> then(@NonNull Task<Void> task) throws Exception {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Sending out invites to users.");
+                    return eventViewModel.sendInvites(newEvent,inviteUsersList);
+                } else {
+                    Log.w(TAG,"Error sending out invites to users. " + task.getException().toString());
+                    return null;
                 }
             }
         });

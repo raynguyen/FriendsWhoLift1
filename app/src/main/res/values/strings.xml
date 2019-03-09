@@ -115,4 +115,7 @@
     <!--GROUP CREATION-->
     <string name="creating_group">CREATING GROUP</string>
     <string name="add_users">Full screen</string>
+
+    <!--MESSAGES DIALOG-->
+    <string name="accept">ACCEPT</string>
 </resources>

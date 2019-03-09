@@ -17,7 +17,6 @@ package apps.raymond.friendswholift;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -34,8 +33,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;

@@ -58,6 +58,7 @@ public class FireBaseRepository {
     private static final String EVENT_COLLECTION = "Events";
     private static final String CONNECTIONS = "Connections";
     private static final String INVITEES = "Invitees";
+    private static final String MESSAGES_EVENT = "EventInvites";
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -323,10 +324,15 @@ public class FireBaseRepository {
                 });
     }
 
+    public Task<Void> updateEvent(final GroupEvent groupEvent){
+        final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
+        return eventRef.set(groupEvent, SetOptions.merge());
+    }
+
     /*
      * Attach an event to the user's events collection.
      */
-    public Task<Void> addEventToUser(GroupEvent event){
+    private Task<Void> addEventToUser(GroupEvent event){
         final DocumentReference docRef = userCollection.document(userEmail).collection("Events").document(event.getOriginalName());
         final CollectionReference invitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
         final Map<String,String> testMap = new HashMap<>();
@@ -342,12 +348,11 @@ public class FireBaseRepository {
                             Log.w(TAG,"Error adding event to user doc.");
                             return null;
                         }
-
                     }
                 });
     }
 
-    //Will currently return a whole list of users.
+    //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
     public Task<List<UserModel>> fetchUsers(){
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
             @Override
@@ -365,6 +370,26 @@ public class FireBaseRepository {
         });
     }
 
+    public List<Task<Void>> sendEventInvites(final GroupEvent groupEvent, List<UserModel> userList){
+        Log.i(TAG,"Sending invites to FireStore");
+        List<Task<Void>> sentInvites = new ArrayList<>();
+
+        for(final UserModel user:userList){
+            Log.i(TAG,"Sending invite to: "+user.getEmail());
+            Task<Void> sendInvite = userCollection.document(user.getEmail()).collection(MESSAGES_EVENT)
+                    .document(groupEvent.getName()).set(groupEvent,SetOptions.merge())
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Log.i(TAG,"Successfully invited " + user.getEmail() + " to " + groupEvent.getName());
+                    }
+                }
+            });
+            sentInvites.add(sendInvite);
+        }
+        return sentInvites;
+    }
 
     public Task<List<String>> getEventInvitees(final GroupEvent event){
         CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
