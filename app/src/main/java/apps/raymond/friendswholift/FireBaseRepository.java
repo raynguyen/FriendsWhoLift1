@@ -310,8 +310,20 @@ public class FireBaseRepository {
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
                             Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
-                            // ToDo: Check to see if user is already a member before rewriting to the document.
-                            return addEventToUser(groupEvent);
+                            // ToDo: automatically set event to creator of this event.
+
+                            // ToDo: Need to return a non-null otherwise task.issuccessful fails in Event_Create_Fragment.
+                            for(final UserModel user: inviteList){
+                                sendEventInvite(groupEvent,user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            eventRef.collection("Invitees").document(user.getEmail()).set(user);
+                                        }
+                                    }
+                                });
+                            }
+                            return null;
                         } else {
                             Log.w(TAG,"Unable to add Event to the Events collection.");
                             return null;
@@ -366,25 +378,21 @@ public class FireBaseRepository {
         });
     }
 
-    public List<Task<Void>> sendEventInvites(final GroupEvent groupEvent, List<UserModel> userList){
-        Log.i(TAG,"Sending invites to FireStore");
-        List<Task<Void>> sentInvites = new ArrayList<>();
-
-        for(final UserModel user:userList){
-            Log.i(TAG,"Sending invite to: "+user.getEmail());
-            Task<Void> sendInvite = userCollection.document(user.getEmail()).collection(MESSAGES_EVENT)
-                    .document(groupEvent.getName()).set(groupEvent,SetOptions.merge())
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Log.i(TAG,"Successfully invited " + user.getEmail() + " to " + groupEvent.getName());
+    private Task<Void> sendEventInvite(final GroupEvent groupEvent,final UserModel user){
+        return userCollection.document(user.getEmail()).collection(MESSAGES_EVENT)
+                .document(groupEvent.getName()).set(groupEvent,SetOptions.merge())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"Successfully invited " + user.getEmail() + " to " + groupEvent.getName());
+                        }
                     }
-                }
-            });
-            sentInvites.add(sendInvite);
-        }
-        return sentInvites;
+                });
+    }
+
+    public void sendGroupInvites(final GroupBase groupBase, List<UserModel>userList){
+
     }
 
     public Task<List<String>> getEventInvitees(final GroupEvent event){

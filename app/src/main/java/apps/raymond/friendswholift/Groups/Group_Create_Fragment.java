@@ -325,6 +325,7 @@ public class Group_Create_Fragment extends Fragment implements
                                     progressText.setVisibility(View.INVISIBLE);
                                     if(task.isSuccessful()){
                                         Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                        viewModel.sendGroupInvites(groupBase,inviteUsersList);
                                         addGroupInterface.addToGroupRecycler(groupBase);
                                         fm.popBackStack();
                                     } else {
@@ -351,6 +352,7 @@ public class Group_Create_Fragment extends Fragment implements
                             if(task.isSuccessful()){
                                 Log.i(TAG,"THIS SHOULD BE AT THE END!");
                                 Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                viewModel.sendGroupInvites(groupBase,inviteUsersList);
                                 addGroupInterface.addToGroupRecycler(groupBase);
                                 fm.popBackStack();
                             } else {
