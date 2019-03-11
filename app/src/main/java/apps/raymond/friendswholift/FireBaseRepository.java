@@ -56,7 +56,8 @@ public class FireBaseRepository {
     private static final String EVENT_COLLECTION = "Events";
     private static final String CONNECTIONS = "Connections";
     private static final String INVITEES = "Invitees";
-    private static final String MESSAGES_EVENT = "EventInvites";
+    private static final String EVENT_INVITES = "EventInvites";
+    private static final String GROUP_INVITES = "GroupInvites";
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -360,12 +361,12 @@ public class FireBaseRepository {
     }
 
     //Todo: change to accept a document title so we can call this regardless of Event or Group. Consider changing way data is stored udner the usser's collection.
-    public void sendEventInvite(final GroupEvent groupEvent,final List<UserModel> userList){
+    public void sendEventInvite(final GroupEvent groupEvent, final List<UserModel> userList){
         final CollectionReference eventCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITEES);
         final WriteBatch inviteBatch = db.batch();
         List<Task<Void>> sendInvites = new ArrayList<>();
         for(final UserModel user : userList){
-            sendInvites.add(userCollection.document(user.getEmail()).collection(MESSAGES_EVENT)
+            sendInvites.add(userCollection.document(user.getEmail()).collection(EVENT_INVITES)
                     .document(groupEvent.getName()).set(groupEvent,SetOptions.merge())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -377,7 +378,6 @@ public class FireBaseRepository {
                         }
                     }));
         }
-
         Tasks.whenAllSuccess(sendInvites).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
             @Override
             public void onSuccess(List<Object> objects) {
@@ -386,8 +386,30 @@ public class FireBaseRepository {
         });
     }
 
-    public void sendGroupInvites(final GroupBase groupBase, List<UserModel>userList){
+    public void sendGroupInvites(final GroupBase groupBase, final List<UserModel> userList){
+        final CollectionReference groupCol = groupCollection.document(groupBase.getOriginalName()).collection(INVITEES);
+        final WriteBatch inviteBatch = db.batch();
+        List<Task<Void>> sendInvites = new ArrayList<>();
 
+        for(final UserModel user : userList){
+            sendInvites.add(userCollection.document(user.getEmail()).collection(GROUP_INVITES)
+                    .document(groupBase.getName()).set(groupBase,SetOptions.merge())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Log.i(TAG,"Successfully invited " + user.getEmail() + " to " + groupBase.getName());
+                                inviteBatch.set(groupCol.document(user.getEmail()),user);
+                            }
+                        }
+                    }));
+        }
+        Tasks.whenAllSuccess(sendInvites).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+            @Override
+            public void onSuccess(List<Object> objects) {
+                inviteBatch.commit();
+            }
+        });
     }
 
     public Task<List<String>> getEventInvitees(final GroupEvent event){

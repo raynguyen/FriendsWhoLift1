@@ -310,26 +310,43 @@ public class Group_Create_Fragment extends Fragment implements
         privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
         String privacy = privacyBtn.getText().toString();
         String inviteText = invite_Spinner.getSelectedItem().toString();
-        final GroupBase groupBase = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
+        final GroupBase newGroup = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
 
         if(imageUri!=null){
             viewModel.uploadImage(imageUri, groupName)
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                Log.i(TAG,"Successfully uploaded image to storage.");
+                                viewModel.createGroup(newGroup,inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.i(TAG,"Successfully created Group document.");
+                                            viewModel.sendGroupInvites(newGroup,inviteUsersList);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    })
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            groupBase.setImageURI(uri.toString());
-                            viewModel.createGroup(groupBase, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            newGroup.setImageURI(uri.toString());
+                            viewModel.createGroup(newGroup, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     progressBar.setVisibility(View.INVISIBLE);
                                     progressText.setVisibility(View.INVISIBLE);
                                     if(task.isSuccessful()){
-                                        Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
-                                        viewModel.sendGroupInvites(groupBase,inviteUsersList);
-                                        addGroupInterface.addToGroupRecycler(groupBase);
+                                        Toast.makeText(getContext(),"Successfully created "+newGroup.getName(),Toast.LENGTH_SHORT).show();
+                                        viewModel.sendGroupInvites(newGroup,inviteUsersList);
+                                        addGroupInterface.addToGroupRecycler(newGroup);
                                         fm.popBackStack();
                                     } else {
-                                        Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(),"Error creating "+newGroup.getName(),Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -343,7 +360,7 @@ public class Group_Create_Fragment extends Fragment implements
                         }
                     });
         } else {
-            viewModel.createGroup(groupBase, inviteUsersList)
+            viewModel.createGroup(newGroup, inviteUsersList)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -351,12 +368,12 @@ public class Group_Create_Fragment extends Fragment implements
                             progressText.setVisibility(View.INVISIBLE);
                             if(task.isSuccessful()){
                                 Log.i(TAG,"THIS SHOULD BE AT THE END!");
-                                Toast.makeText(getContext(),"Successfully created "+groupBase.getName(),Toast.LENGTH_SHORT).show();
-                                viewModel.sendGroupInvites(groupBase,inviteUsersList);
-                                addGroupInterface.addToGroupRecycler(groupBase);
+                                Toast.makeText(getContext(),"Successfully created "+newGroup.getName(),Toast.LENGTH_SHORT).show();
+                                viewModel.sendGroupInvites(newGroup,inviteUsersList);
+                                addGroupInterface.addToGroupRecycler(newGroup);
                                 fm.popBackStack();
                             } else {
-                                Toast.makeText(getContext(),"Error creating "+groupBase.getName(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(),"Error creating "+newGroup.getName(),Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
