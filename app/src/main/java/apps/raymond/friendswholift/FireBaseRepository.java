@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -304,37 +306,16 @@ public class FireBaseRepository {
      */
     public Task<Void> createEvent(final GroupEvent groupEvent, final List<UserModel> inviteList){
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
-        return eventRef.set(groupEvent, SetOptions.merge())
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if(task.isSuccessful()){
-                            Log.i(TAG,"Added/updated event " + groupEvent.getOriginalName());
-                            // ToDo: automatically set event to creator of this event.
-
-                            // ToDo: Need to return a non-null otherwise task.issuccessful fails in Event_Create_Fragment.
-                            for(final UserModel user: inviteList){
-                                sendEventInvite(groupEvent,user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            eventRef.collection("Invitees").document(user.getEmail()).set(user);
-                                        }
-                                    }
-                                });
-                            }
-                            return null;
-                        } else {
-                            Log.w(TAG,"Unable to add Event to the Events collection.");
-                            return null;
-                        }
-                    }
-                });
+        return eventRef.set(groupEvent, SetOptions.merge());
     }
 
     public Task<Void> updateEvent(final GroupEvent groupEvent){
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
         return eventRef.set(groupEvent, SetOptions.merge());
+    }
+
+    private void updateEventInvites(final GroupEvent groupEvent, final List<UserModel> userList){
+        final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
     }
 
     /*
@@ -378,17 +359,31 @@ public class FireBaseRepository {
         });
     }
 
-    private Task<Void> sendEventInvite(final GroupEvent groupEvent,final UserModel user){
-        return userCollection.document(user.getEmail()).collection(MESSAGES_EVENT)
-                .document(groupEvent.getName()).set(groupEvent,SetOptions.merge())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Log.i(TAG,"Successfully invited " + user.getEmail() + " to " + groupEvent.getName());
+    //Todo: change to accept a document title so we can call this regardless of Event or Group. Consider changing way data is stored udner the usser's collection.
+    public void sendEventInvite(final GroupEvent groupEvent,final List<UserModel> userList){
+        final CollectionReference eventCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITEES);
+        final WriteBatch inviteBatch = db.batch();
+        List<Task<Void>> sendInvites = new ArrayList<>();
+        for(final UserModel user : userList){
+            sendInvites.add(userCollection.document(user.getEmail()).collection(MESSAGES_EVENT)
+                    .document(groupEvent.getName()).set(groupEvent,SetOptions.merge())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Log.i(TAG,"Successfully invited " + user.getEmail() + " to " + groupEvent.getName());
+                                inviteBatch.set(eventCol.document(user.getEmail()),user);
+                            }
                         }
-                    }
-                });
+                    }));
+        }
+
+        Tasks.whenAllSuccess(sendInvites).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+            @Override
+            public void onSuccess(List<Object> objects) {
+                inviteBatch.commit();
+            }
+        });
     }
 
     public void sendGroupInvites(final GroupBase groupBase, List<UserModel>userList){

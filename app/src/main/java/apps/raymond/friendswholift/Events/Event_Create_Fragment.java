@@ -269,6 +269,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     Log.i(TAG,"Successfully created event.");
+                    viewModel.sendEventInvites(newEvent,inviteUsersList);
                     addEventToRecycler.addToEventRecycler(newEvent);
                     fm.popBackStack();
                 } else {

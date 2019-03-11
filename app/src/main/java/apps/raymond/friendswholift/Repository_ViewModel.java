@@ -23,6 +23,10 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.createEvent(groupEvent, inviteList);
     }
 
+    public void sendEventInvites(GroupEvent groupEvent,List<UserModel> inviteList){
+        mRepository.sendEventInvite(groupEvent,inviteList);
+    }
+
     public void sendGroupInvites(GroupBase groupBase,List<UserModel> inviteList){
         mRepository.sendGroupInvites(groupBase,inviteList);
     }
