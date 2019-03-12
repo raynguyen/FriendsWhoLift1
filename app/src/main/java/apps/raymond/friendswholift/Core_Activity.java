@@ -16,6 +16,7 @@
 package apps.raymond.friendswholift;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,6 +36,8 @@ import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
 
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
 import apps.raymond.friendswholift.Events.GroupEvent;
@@ -59,13 +62,26 @@ public class Core_Activity extends AppCompatActivity implements
     }
 
     ViewPager viewPager;
-    private Repository_ViewModel viewModel;
+    Repository_ViewModel viewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+        viewModel.getEventInvites().observe(this, new Observer<List<GroupEvent>>() {
+            @Override
+            public void onChanged(@Nullable List<GroupEvent> groupEvents) {
+                Log.i(TAG,"LiveData of even invites has changed.");
+            }
+        });
+
+
+
+
+
+
+
 
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
@@ -79,24 +95,14 @@ public class Core_Activity extends AppCompatActivity implements
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                //invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-            }
-        });
         tabLayout.setupWithViewPager(viewPager);
     }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        viewModel.attachInviteListener();
+    }
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -224,8 +230,11 @@ public class Core_Activity extends AppCompatActivity implements
         return super.dispatchTouchEvent(ev);
     }
 
-
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        viewModel.removeInviteListeners();
+    }
 }
 
 /* Creates a connection to the current user. Should move so that this code is only called when you are viewing another user.

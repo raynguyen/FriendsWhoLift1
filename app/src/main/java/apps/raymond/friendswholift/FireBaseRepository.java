@@ -27,9 +27,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -43,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.GroupBase;
@@ -171,6 +177,65 @@ public class FireBaseRepository {
                     }
                 });
     }
+
+    /*
+     * Listens to the Invite folders for the current user. On snapshot, we want to throw a dialog up
+     * for the user to accept or decline the invitation, or close it.
+     */
+    ListenerRegistration eventInviteListener, groupInviteListener;
+    public void attachInviteListener(){
+        CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
+        CollectionReference groupMessages = userCollection.document(userEmail).collection(GROUP_INVITES);
+
+        eventInviteListener = eventMessages.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if(e!=null){
+                    Log.w(TAG,"Event listener error: "+e);
+                    return;
+                }
+                for(DocumentChange change : queryDocumentSnapshots.getDocumentChanges()){
+                    switch (change.getType()){
+                        case ADDED:
+                            Log.i(TAG,"Event invite received: "+change.getDocument().getId());
+                            break;
+                        case REMOVED:
+                            break;
+                        case MODIFIED:
+                            break;
+                    }
+                }
+            }
+        });
+
+        groupInviteListener = groupMessages.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if(e!=null){
+                    Log.w(TAG,"Group listener error: "+e);
+                    return;
+                }
+                for(DocumentChange change : queryDocumentSnapshots.getDocumentChanges()){
+                    switch (change.getType()){
+                        case ADDED:
+                            Log.i(TAG,"Group invite received: "+change.getDocument().getId());
+                            break;
+                        case REMOVED:
+                            break;
+                        case MODIFIED:
+                            break;
+                    }
+                }
+            }
+        });
+        // Add the documents to a list that is passed back to the activity via interface?
+    }
+
+    public void removeInviteListeners(){
+        eventInviteListener.remove();
+        groupInviteListener.remove();
+    }
+
 
     /*
      * Call when creating a new GroupBase object and store the details on FireStore. When storing
@@ -343,17 +408,19 @@ public class FireBaseRepository {
     }
 
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
-    public Task<List<UserModel>> fetchUsers(){
+    Task<List<UserModel>> fetchUsers(){
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
             @Override
             public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 List<UserModel> userList = new ArrayList<>();
-                if (task.isSuccessful()){
+                if (task.isSuccessful() && task.getResult() !=null){
                     for(QueryDocumentSnapshot document : task.getResult()){
                         Log.i(TAG,"Converting user document to UserModel: "+document.getId());
                         UserModel model = document.toObject(UserModel.class);
                         userList.add(model);
                     }
+                } else if(task.getResult() == null){
+                    Log.w(TAG,"There are no users to fetch.");
                 }
                 return userList;
             }
@@ -361,7 +428,7 @@ public class FireBaseRepository {
     }
 
     //Todo: change to accept a document title so we can call this regardless of Event or Group. Consider changing way data is stored udner the usser's collection.
-    public void sendEventInvite(final GroupEvent groupEvent, final List<UserModel> userList){
+    void sendEventInvite(final GroupEvent groupEvent, final List<UserModel> userList){
         final CollectionReference eventCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITEES);
         final WriteBatch inviteBatch = db.batch();
         List<Task<Void>> sendInvites = new ArrayList<>();
@@ -386,7 +453,7 @@ public class FireBaseRepository {
         });
     }
 
-    public void sendGroupInvites(final GroupBase groupBase, final List<UserModel> userList){
+    void sendGroupInvites(final GroupBase groupBase, final List<UserModel> userList){
         final CollectionReference groupCol = groupCollection.document(groupBase.getOriginalName()).collection(INVITEES);
         final WriteBatch inviteBatch = db.batch();
         List<Task<Void>> sendInvites = new ArrayList<>();
@@ -412,7 +479,7 @@ public class FireBaseRepository {
         });
     }
 
-    public Task<List<String>> getEventInvitees(final GroupEvent event){
+    Task<List<String>> getEventInvitees(final GroupEvent event){
         CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection("Invitees");
         final List<String> userList = new ArrayList<>();
         return eventInvitees.get().continueWith(new Continuation<QuerySnapshot, List<String>>() {
@@ -436,7 +503,7 @@ public class FireBaseRepository {
         });
     }
 
-    public Task<List<String>> getEventResponses(final GroupEvent event, final String status){
+    Task<List<String>> getEventResponses(final GroupEvent event, final String status){
         CollectionReference invitees = eventCollection.document(event.getOriginalName())
                 .collection("Invitees");
         Log.i(TAG,"starting query");
@@ -463,21 +530,24 @@ public class FireBaseRepository {
     }
 
     // Task to upload an image and on success return the downloadUri.
-    public Task<Uri> uploadImage(Uri uri, String groupName){
+    Task<Uri> uploadImage(Uri uri, String groupName){
         final StorageReference childStorage = storageRef.child("images/"+groupName);
         return childStorage.putFile(uri)
                 .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    Log.i(TAG,"Successfully uploaded image to storage.");
-                    return childStorage.getDownloadUrl();
+                    if(task.isSuccessful()){
+                        Log.i(TAG,"Successfully uploaded image to storage.");
+                        return childStorage.getDownloadUrl();
+                    }
+                    return null;
                 }
             });
     }
 
     // Used to add users to the current user.
     // ToDo: Create a user Pojo so we can properly store them into firestore
-    public Task<Void> createConnection(){
+    Task<Void> createConnection(){
         CollectionReference connections = userCollection.document(userEmail).collection(CONNECTIONS);
         Map<String,String> testMap = new HashMap<>();
         testMap.put("User email", "some email");
@@ -487,9 +557,6 @@ public class FireBaseRepository {
 
     public Task<GroupBase> getGroup(){
         return null;
-    }
-
-    public void removeListener(){
     }
 
 }
