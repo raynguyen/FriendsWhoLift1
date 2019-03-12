@@ -1,4 +1,6 @@
 /*
+ * In true MVVM fashion, it should go from ViewModel -> Repository -> DAO -> DataBackEnd.
+ *
  * There appears to be an error where if there is no photo, the recycler view does not retrieve all the group objects.
  *
  * There appears to be an error where onSuccessListeners will trigger even if there is no collection or document of the requested name.
@@ -13,6 +15,8 @@
 
 package apps.raymond.friendswholift;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -43,6 +47,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -182,58 +187,31 @@ public class FireBaseRepository {
      * Listens to the Invite folders for the current user. On snapshot, we want to throw a dialog up
      * for the user to accept or decline the invitation, or close it.
      */
-    ListenerRegistration eventInviteListener, groupInviteListener;
-    public void attachInviteListener(){
+    private ListenerRegistration eventInviteListener;
+
+    public Task<List<GroupEvent>> fetchEventInvites() {
         CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
-        CollectionReference groupMessages = userCollection.document(userEmail).collection(GROUP_INVITES);
+        final List<GroupEvent> eventInvites = new ArrayList<>();
 
-        eventInviteListener = eventMessages.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<GroupEvent>>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e!=null){
-                    Log.w(TAG,"Event listener error: "+e);
-                    return;
-                }
-                for(DocumentChange change : queryDocumentSnapshots.getDocumentChanges()){
-                    switch (change.getType()){
-                        case ADDED:
-                            Log.i(TAG,"Event invite received: "+change.getDocument().getId());
-                            break;
-                        case REMOVED:
-                            break;
-                        case MODIFIED:
-                            break;
+            public List<GroupEvent> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                if(task.isSuccessful() && task.getResult() !=null){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        eventInvites.add(document.toObject(GroupEvent.class));
                     }
+                    return eventInvites;
+                } else if(task.isSuccessful() && task.getResult() == null){
+                    Log.i(TAG,"No event invites.");
                 }
+                return null;
             }
         });
-
-        groupInviteListener = groupMessages.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e!=null){
-                    Log.w(TAG,"Group listener error: "+e);
-                    return;
-                }
-                for(DocumentChange change : queryDocumentSnapshots.getDocumentChanges()){
-                    switch (change.getType()){
-                        case ADDED:
-                            Log.i(TAG,"Group invite received: "+change.getDocument().getId());
-                            break;
-                        case REMOVED:
-                            break;
-                        case MODIFIED:
-                            break;
-                    }
-                }
-            }
-        });
-        // Add the documents to a list that is passed back to the activity via interface?
     }
 
     public void removeInviteListeners(){
         eventInviteListener.remove();
-        groupInviteListener.remove();
+        //groupInviteListener.remove();
     }
 
 
@@ -333,7 +311,6 @@ public class FireBaseRepository {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                            if (task.isSuccessful()) {
-                               Log.i(TAG,"The user is a part of "+task.getResult().toString());
                                for (QueryDocumentSnapshot document : task.getResult()) {
                                    Log.i(TAG, "Adding to GroupBase query list: " + document.getId());
                                    groupList.add(document.getId());
@@ -345,7 +322,6 @@ public class FireBaseRepository {
                     public List<Task<GroupBase>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                         List<Task<GroupBase>> taskList = new ArrayList<>();
                         for(final String group:groupList){
-                            Log.i(TAG,"Fetching document "+group);
                             taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
                                 @Override
                                 public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
@@ -560,3 +536,33 @@ public class FireBaseRepository {
     }
 
 }
+
+/*
+public void fetchEventInvites() {
+        CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
+
+        final List<GroupEvent> someTestList = new ArrayList<>();
+        eventInviteListener = eventMessages.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Event listener error: " + e);
+                    return;
+                }
+                for (DocumentChange change : queryDocumentSnapshots.getDocumentChanges()) {
+                    switch (change.getType()) {
+                        case ADDED:
+                            Log.i(TAG, "Event invite received: " + change.getDocument().getId());
+                            change.getDocument().toObject(GroupEvent.class);
+                            someTestList.add(change.getDocument().toObject(GroupEvent.class));
+                            break;
+                        case REMOVED:
+                            break;
+                        case MODIFIED:
+                            break;
+                    }
+                }
+            }
+        });
+    }
+ */

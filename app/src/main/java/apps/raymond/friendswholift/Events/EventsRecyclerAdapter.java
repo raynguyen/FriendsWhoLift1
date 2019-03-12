@@ -12,7 +12,6 @@ import java.util.List;
 import apps.raymond.friendswholift.R;
 
 public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.EventViewHolder> {
-    private static final String TAG = "EventsRecyclerAdapter";
     private List<GroupEvent> eventsList;
     private EventClickListener eventClickListener;
 

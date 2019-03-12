@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -69,19 +72,7 @@ public class Core_Activity extends AppCompatActivity implements
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-        viewModel.getEventInvites().observe(this, new Observer<List<GroupEvent>>() {
-            @Override
-            public void onChanged(@Nullable List<GroupEvent> groupEvents) {
-                Log.i(TAG,"LiveData of even invites has changed.");
-            }
-        });
-
-
-
-
-
-
-
+        inviteDialog();
 
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
@@ -101,7 +92,14 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        viewModel.attachInviteListener();
+        /*
+        viewModel.getEventInvites().observe(this, new Observer<List<GroupEvent>>() {
+            @Override
+            public void onChanged(@Nullable List<GroupEvent> groupEvents) {
+                Log.i(TAG,"LiveData of even invites has changed.");
+            }
+        });
+         */
     }
 
     @Override
@@ -175,6 +173,18 @@ public class Core_Activity extends AppCompatActivity implements
         }
         return false;
     }
+
+    public void inviteDialog(){
+        viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<GroupEvent>> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Fetched list of invites: " +task.getResult().toString());
+                }
+            }
+        });
+    }
+
 
     public void logout(){
         Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());

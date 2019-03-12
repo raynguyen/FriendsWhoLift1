@@ -6,10 +6,8 @@
  * There is a suspicious event after signing up, there could be two activities starting somehow.
  */
 
-
 package apps.raymond.friendswholift;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,16 +21,12 @@ import apps.raymond.friendswholift.Login.SignUpFrag;
 
 public class Login_Activity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn {
     private static final String TAG = "Login_Activity";
-    public FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceStance){
         super.onCreate(savedInstanceStance);
         setContentView(R.layout.login_screen);
 
-        mAuth = FirebaseAuth.getInstance();
-
-        //Adapter class that will generate the views to be displayed by the ViewPager.
         LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
 
         ViewPager mViewPager = findViewById(R.id.login_container);

@@ -9,22 +9,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.Add_Users_Adapter;
+import apps.raymond.friendswholift.Events.GroupEvent;
+import apps.raymond.friendswholift.Groups.GroupBase;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.UserProfile.UserModel;
 
-public class SearchUsersDialog extends DialogFragment {
+public class MessagesDialog extends DialogFragment {
     private static final String TAG = "SearchUsersDialog";
 
-    public SearchUsersDialog(){}
-
-    public static SearchUsersDialog newInstance(){
-        SearchUsersDialog dialog =  new SearchUsersDialog();
+    public static MessagesDialog newInstance(){
+        MessagesDialog dialog =  new MessagesDialog();
         //Some arguments for dialog here?
         return dialog;
     }
@@ -34,18 +32,16 @@ public class SearchUsersDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
-    List<UserModel> usersList;
-    RecyclerView usersRecycler;
+    List<GroupEvent> eventInviteList;
+    List<GroupBase> groupInviteList;
+    RecyclerView eventInviteRecycler;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_users_dialog,container,false);
+        View view = inflater.inflate(R.layout.messages_dialog_fragment,container,false);
 
-        List<String> testList = new ArrayList<>();
-        usersRecycler = view.findViewById(R.id.add_users_recycler);
-        usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        //Add_Users_Adapter adapter = new Add_Users_Adapter(SOME_LIST_OF_USERMODELS);
-        //usersRecycler.setAdapter(adapter);
+        eventInviteRecycler = view.findViewById(R.id.messages_invite_recycler);
+        eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //When an item inside the usersRecycler is clicked, we need to check it and add to arraylist.
         return view;

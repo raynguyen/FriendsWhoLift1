@@ -17,31 +17,17 @@ import apps.raymond.friendswholift.UserProfile.UserModel;
 public class Repository_ViewModel extends ViewModel {
     private FireBaseRepository mRepository;
 
-    private MutableLiveData<List<GroupEvent>> eventInvites;
-    public LiveData<List<GroupEvent>> getEventInvites(){
-        // We are observing this List in the activity but how to do we notify this viewmodel from onChange observers  from firestore?
-        return null;
-    }
-
-
-
-
-
-
-
-
-
 
     public Repository_ViewModel(){
         this.mRepository = new FireBaseRepository();
     }
 
-    public void attachInviteListener(){
-        mRepository.attachInviteListener();
-    }
-
     public void removeInviteListeners(){
         mRepository.removeInviteListeners();
+    }
+
+    public Task<List<GroupEvent>> fetchEventInvites(){
+        return mRepository.fetchEventInvites();
     }
 
     public Task<Void> createEvent(GroupEvent groupEvent, List<UserModel> inviteList){
