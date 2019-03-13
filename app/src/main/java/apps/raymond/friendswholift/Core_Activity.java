@@ -23,6 +23,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -74,7 +76,6 @@ public class Core_Activity extends AppCompatActivity implements
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-        //inviteDialog();
 
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
@@ -185,22 +186,6 @@ public class Core_Activity extends AppCompatActivity implements
         return false;
     }
 
-    /*
-     * If the result does not return null, we will inflate a dialog for the user to see what new invites
-     * they have received.
-     */
-    public void inviteDialog(){
-        viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<GroupEvent>> task) {
-                if(task.isSuccessful()){
-                    Log.i(TAG,"Fetched list of invites: " +task.getResult().toString());
-                }
-            }
-        });
-    }
-
-
     public void logout(){
         Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
         AuthUI.getInstance().signOut(this);
@@ -259,6 +244,43 @@ public class Core_Activity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
         viewModel.removeInviteListeners();
+    }
+
+    public class Core_Activity_Adapter extends FragmentPagerAdapter {
+        private static final int NUM_PAGES = 2;
+
+        private Core_Activity_Adapter(FragmentManager fm){
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch(i){
+                case 0:
+                    return new Core_Events_Fragment();
+                case 1:
+                    return new Core_Group_Fragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Events";
+                case 1:
+                    return "Groups";
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
     }
 }
 

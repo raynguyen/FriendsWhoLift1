@@ -4,8 +4,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,19 +23,15 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.friendswholift.EventInviteFragment;
 import apps.raymond.friendswholift.Events.GroupEvent;
+import apps.raymond.friendswholift.GroupInviteFragment;
 import apps.raymond.friendswholift.Groups.GroupBase;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.Repository_ViewModel;
 
-public class InviteDialog extends Fragment implements InviteMessagesAdapter.InviteResponseListener {
+public class InviteDialog extends Fragment{
     private static final String TAG = "Invites_Dialog";
-
-    public static InviteDialog newInstance(){
-        InviteDialog dialog =  new InviteDialog();
-        //Some arguments for dialog here?
-        return dialog;
-    }
 
     Repository_ViewModel viewModel;
     @Override
@@ -40,57 +40,59 @@ public class InviteDialog extends Fragment implements InviteMessagesAdapter.Invi
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
 
-    List<GroupEvent> eventInviteList;
-    List<GroupBase> groupInviteList;
-    RecyclerView eventInviteRecycler;
-    InviteMessagesAdapter adapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.invite_dialog,container,false);
     }
 
+    ViewPager inviteViewPager;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        eventInviteRecycler = view.findViewById(R.id.messages_invite_recycler);
-        eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new InviteMessagesAdapter(this);
-        eventInviteRecycler.setAdapter(adapter);
-        eventInviteList = new ArrayList<>();
-        fetchInvites();
+
+        inviteViewPager = view.findViewById(R.id.invite_viewpager);
+        InvitePagerAdapter pAdapter = new InvitePagerAdapter(getFragmentManager());
+        inviteViewPager.setAdapter(pAdapter);
+        inviteViewPager.setCurrentItem(0);
+
+        TabLayout tabLayout = view.findViewById(R.id.invite_tabs);
+        tabLayout.setupWithViewPager(inviteViewPager);
     }
 
-    private void fetchInvites(){
-        viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<GroupEvent>> task) {
-                if(task.isSuccessful()){
-                    Log.i(TAG, "fetchInvites returned : "+ task.getResult());
-                    eventInviteList.addAll(task.getResult());
-                    adapter.setData(eventInviteList);
-                    adapter.notifyDataSetChanged();
-                }
+    public class InvitePagerAdapter extends FragmentPagerAdapter {
+        private InvitePagerAdapter(FragmentManager fm){
+            super(fm);
+        }
 
+        @Override
+        public Fragment getItem(int i) {
+            switch(i){
+                case 0:
+                    return new EventInviteFragment();
+                case 1:
+                    return new GroupInviteFragment();
+                default:
+                    return null;
             }
-        });
-    }
+        }
 
-    @Override
-    public void onAccept(GroupEvent event) {
-        Log.i(TAG,"Clicked to accept this event.");
-        viewModel.addUserToEvent(event);
-        eventInviteList.remove(event);
-        adapter.notifyDataSetChanged();
-    }
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position){
+                case 0:
+                    return "Events";
+                case 1:
+                    return "Groups";
+                default :
+                    return null;
+            }
+        }
 
-    @Override
-    public void onDecline() {
-        Log.i(TAG,"Clicked to decline this event.");
-    }
-
-    @Override
-    public void onDetail() {
-        Log.i(TAG,"Clicked to view in detail this event.");
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 }

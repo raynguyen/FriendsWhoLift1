@@ -59,6 +59,7 @@ public class FireBaseRepository {
     private static final String MEMBERS = "Members";
     private static final String CONNECTIONS = "Connections";
     private static final String INVITEES = "Invitees";
+    private static final String ATTENDING = "Attending";
     private static final String EVENT_INVITES = "EventInvites";
     private static final String GROUP_INVITES = "GroupInvites";
 
@@ -206,27 +207,34 @@ public class FireBaseRepository {
     }
 
     Task<Void> addUserToEvent(final GroupEvent event){
-        final DocumentReference usersEventRef = userCollection.document(userEmail).collection(EVENTS).document(event.getOriginalName());
+        final CollectionReference usersEvents = userCollection.document(userEmail).collection(EVENTS);
         final CollectionReference usersEventInvites = userCollection.document(userEmail).collection(EVENT_INVITES);
-        final CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection(INVITEES);
+        final CollectionReference acceptedUsers = eventCollection.document(event.getOriginalName()).collection(ATTENDING);
+        final CollectionReference invitedUsers = eventCollection.document(event.getOriginalName()).collection(INVITEES);
 
-        return usersEventRef.set(event, SetOptions.merge())
+        return usersEvents.document(event.getOriginalName()).set(event)
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
-                            Log.i(TAG,"Successfully added event to user doc.");
-                            return eventInvitees.document(userEmail).set(curUserModel);
-                        } else {
-                            Log.w(TAG,"Error adding event to user doc.");
-                            return null;
+                            return acceptedUsers.document(userEmail).set(curUserModel);
                         }
+                        return null;
                     }
-                })
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                }).continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        usersEventInvites.document(event.getOriginalName()).delete();
+                        if(task.isSuccessful()){
+                            return usersEventInvites.document(event.getOriginalName()).delete();
+                        }
+                        return null;
+                    }
+                }).continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            return invitedUsers.document(userEmail).delete();
+                        }
                         return null;
                     }
                 });
@@ -439,13 +447,28 @@ public class FireBaseRepository {
     }
 
     Task<Void> addUserToGroup(final GroupBase group){
+        CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUPS);
         final CollectionReference usersGroupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
-        CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
+        final CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
 
-        return groupMembers.document(userEmail).set(curUserModel).continueWithTask(new Continuation<Void, Task<Void>>() {
+        return usersGroups.document(group.getOriginalName()).set(group).continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                return usersGroupInvites.document(group.getOriginalName()).delete();
+                if(task.isSuccessful()){
+                    return groupMembers.document(userEmail).set(curUserModel);
+                } else {
+                    return null;
+                }
+
+            }
+        })
+        .continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                if(task.isSuccessful()){
+                    return usersGroupInvites.document(group.getOriginalName()).delete();
+                }
+                return null;
             }
         });
 
