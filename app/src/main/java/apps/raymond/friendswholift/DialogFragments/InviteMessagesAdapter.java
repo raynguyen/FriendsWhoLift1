@@ -19,7 +19,7 @@ public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAd
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void onAccept();
+        void onAccept(GroupEvent groupEvent);
         void onDecline();
         void onDetail();
     }
@@ -57,14 +57,15 @@ public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAd
     public void onBindViewHolder(@NonNull InviteMessagesViewHolder viewHolder, int i) {
         if(eventInviteList !=null){
             Log.i("INVITEADAPTER","Creating an item for invite.");
-            viewHolder.titleTxt.setText(eventInviteList.get(i).getName());
-            viewHolder.monthTxt.setText(eventInviteList.get(i).getMonth());
-            viewHolder.dayTxt.setText(eventInviteList.get(i).getDay());
+            final GroupEvent event = eventInviteList.get(i);
+            viewHolder.titleTxt.setText(event.getName());
+            viewHolder.monthTxt.setText(event.getMonth());
+            viewHolder.dayTxt.setText(event.getDay());
 
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onAccept();
+                    callback.onAccept(event);
                 }
             });
 

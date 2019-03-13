@@ -1,7 +1,5 @@
 package apps.raymond.friendswholift;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 
@@ -30,8 +28,8 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.fetchEventInvites();
     }
 
-    public Task<Void> createEvent(GroupEvent groupEvent, List<UserModel> inviteList){
-        return mRepository.createEvent(groupEvent, inviteList);
+    public Task<Void> createEvent(GroupEvent groupEvent){
+        return mRepository.createEvent(groupEvent);
     }
 
     public void sendEventInvites(GroupEvent groupEvent,List<UserModel> inviteList){
@@ -44,6 +42,10 @@ public class Repository_ViewModel extends ViewModel {
 
     public Task<Void> updateEvent(GroupEvent groupEvent){
         return mRepository.updateEvent(groupEvent);
+    }
+
+    public Task<Void> addUserToEvent(GroupEvent groupEvent){
+        return mRepository.addUserToEvent(groupEvent);
     }
 
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){

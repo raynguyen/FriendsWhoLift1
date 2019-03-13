@@ -47,15 +47,18 @@ public class InviteDialog extends Fragment implements InviteMessagesAdapter.Invi
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.invite_dialog,container,false);
+        return inflater.inflate(R.layout.invite_dialog,container,false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         eventInviteRecycler = view.findViewById(R.id.messages_invite_recycler);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new InviteMessagesAdapter(this);
         eventInviteRecycler.setAdapter(adapter);
         eventInviteList = new ArrayList<>();
         fetchInvites();
-        return view;
     }
 
     private void fetchInvites(){
@@ -74,8 +77,11 @@ public class InviteDialog extends Fragment implements InviteMessagesAdapter.Invi
     }
 
     @Override
-    public void onAccept() {
+    public void onAccept(GroupEvent event) {
         Log.i(TAG,"Clicked to accept this event.");
+        viewModel.addUserToEvent(event);
+        eventInviteList.remove(event);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

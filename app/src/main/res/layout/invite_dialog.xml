@@ -15,7 +15,7 @@
         android:background="@drawable/edit_text_border"
         android:clickable="true"
         android:layout_gravity="center"
-        android:layout_marginBottom="100dp">
+        android:fitsSystemWindows="true">
 
         <TextView
             android:id="@+id/title_Txt"
