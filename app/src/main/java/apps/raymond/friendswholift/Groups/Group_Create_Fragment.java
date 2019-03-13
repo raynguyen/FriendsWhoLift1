@@ -310,7 +310,7 @@ public class Group_Create_Fragment extends Fragment implements
         privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
         String privacy = privacyBtn.getText().toString();
         String inviteText = invite_Spinner.getSelectedItem().toString();
-        final GroupBase newGroup = new GroupBase(groupName, descText, currentUser.getUid(),privacy,inviteText, null);
+        final GroupBase newGroup = new GroupBase(groupName, descText, currentUser.getEmail(),privacy,inviteText, null);
 
         if(imageUri!=null){
             viewModel.uploadImage(imageUri, groupName)

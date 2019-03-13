@@ -56,6 +56,7 @@ public class FireBaseRepository {
     private static final String GROUPS = "Groups";
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
+    private static final String MEMBERS = "Members";
     private static final String CONNECTIONS = "Connections";
     private static final String INVITEES = "Invitees";
     private static final String EVENT_INVITES = "EventInvites";
@@ -311,16 +312,21 @@ public class FireBaseRepository {
      * Logic:
      * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    public Task<Void> createGroup(final GroupBase groupBase,final List<UserModel> inviteList){
+    Task<Void> createGroup(final GroupBase groupBase,final List<UserModel> inviteList){
         final DocumentReference groupDoc = groupCollection.document(groupBase.getOriginalName());
         final Map<String,String> holderMap = new HashMap<>();
         holderMap.put("Access","Owner");
         // Create a document from the GroupBase object under the creation name.
         return groupDoc.set(groupBase)
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        return groupDoc.collection(MEMBERS).document(userEmail).set(curUserModel);
+                    }
+                })
                 .continueWith(new Continuation<Void, Void>() {
                     @Override
                     public Void then(@NonNull Task<Void> task) throws Exception {
-                        Log.i(TAG,"Creating invitee sub collection.");
                         if(task.isSuccessful()){
                             for(UserModel user : inviteList){
                                 groupDoc.collection("Invitees").document(user.getEmail()).set(user);
@@ -336,15 +342,8 @@ public class FireBaseRepository {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
-                            Log.i(TAG,"Successfully stored the Group under: "+groupBase.getName());
                             return userCollection.document(userEmail).collection(GROUPS)
-                                    .document(groupBase.getName()).set(holderMap)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.i(TAG,"Attached "+groupBase.getName()+" to " +userEmail);
-                                        }
-                                    });
+                                    .document(groupBase.getName()).set(holderMap);
                         } else {
                             Log.i(TAG,"Unable to create the Group.");
                             return null;
@@ -355,17 +354,7 @@ public class FireBaseRepository {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         return userCollection.document(userEmail).collection("Groups")
-                                .document(groupBase.getOriginalName()).set(holderMap)//Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Log.i(TAG,"Successfully attached group to user profile.");
-                                        } else {
-                                            Log.w(TAG,"Error attaching group to user profile.");
-                                        }
-                                    }
-                                }) ;
+                                .document(groupBase.getOriginalName()).set(holderMap);//Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
                     }
                 });
 
@@ -448,6 +437,34 @@ public class FireBaseRepository {
                     }
                 });
     }
+
+    Task<Void> addUserToGroup(final GroupBase group){
+        final CollectionReference usersGroupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
+        CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
+
+        return groupMembers.document(userEmail).set(curUserModel).continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                return usersGroupInvites.document(group.getOriginalName()).delete();
+            }
+        });
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    //*-------------------------------------------ETC--------------------------------------------*//
+
+
+
 
 
 
