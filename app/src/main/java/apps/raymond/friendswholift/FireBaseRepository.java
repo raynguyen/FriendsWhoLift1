@@ -192,7 +192,6 @@ public class FireBaseRepository {
     public Task<List<GroupEvent>> fetchEventInvites() {
         CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
         final List<GroupEvent> eventInvites = new ArrayList<>();
-
         return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<GroupEvent>>() {
             @Override
             public List<GroupEvent> then(@NonNull Task<QuerySnapshot> task) throws Exception {
@@ -210,7 +209,7 @@ public class FireBaseRepository {
     }
 
     public void removeInviteListeners(){
-        eventInviteListener.remove();
+        //eventInviteListener.remove();
         //groupInviteListener.remove();
     }
 
@@ -384,7 +383,7 @@ public class FireBaseRepository {
     }
 
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
-    Task<List<UserModel>> fetchUsers(){
+    public Task<List<UserModel>> fetchUsers(){
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
             @Override
             public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {

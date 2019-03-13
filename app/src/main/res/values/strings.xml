@@ -121,4 +121,7 @@
 
     <!--MESSAGES DIALOG-->
     <string name="accept">ACCEPT</string>
+    <string name="decline">DECLINE</string>
+    <string name="invitations">INVITATIONS</string>
+
 </resources>

@@ -2,9 +2,12 @@ package apps.raymond.friendswholift.DialogFragments;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -12,16 +15,34 @@ import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.R;
 
 public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAdapter.InviteMessagesViewHolder> {
-    List<GroupEvent> eventInviteList;
+    private List<GroupEvent> eventInviteList;
+    private InviteResponseListener callback;
 
-    public InviteMessagesAdapter(List<GroupEvent> eventInviteList){
+    public interface InviteResponseListener{
+        void onAccept();
+        void onDecline();
+        void onDetail();
+    }
+
+    public InviteMessagesAdapter(InviteResponseListener callback){
+        this.callback = callback;
+    }
+
+    public InviteMessagesAdapter(List<GroupEvent> eventInviteList, InviteResponseListener callback){
         this.eventInviteList = eventInviteList;
     }
 
     static class InviteMessagesViewHolder extends RecyclerView.ViewHolder{
+        TextView titleTxt, monthTxt, dayTxt;
+        Button acceptBtn, declineBtn;
 
-        public InviteMessagesViewHolder(@NonNull View itemView) {
+        private InviteMessagesViewHolder(@NonNull View itemView) {
             super(itemView);
+            titleTxt = itemView.findViewById(R.id.event_name);
+            monthTxt = itemView.findViewById(R.id.event_month);
+            dayTxt = itemView.findViewById(R.id.event_day);
+            acceptBtn = itemView.findViewById(R.id.accept_event_btn);
+            declineBtn = itemView.findViewById(R.id.decline_event_btn);
         }
     }
 
@@ -33,12 +54,39 @@ public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InviteMessagesViewHolder inviteMessagesViewHolder, int i) {
+    public void onBindViewHolder(@NonNull InviteMessagesViewHolder viewHolder, int i) {
+        if(eventInviteList !=null){
+            Log.i("INVITEADAPTER","Creating an item for invite.");
+            viewHolder.titleTxt.setText(eventInviteList.get(i).getName());
+            viewHolder.monthTxt.setText(eventInviteList.get(i).getMonth());
+            viewHolder.dayTxt.setText(eventInviteList.get(i).getDay());
 
+            viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.onAccept();
+                }
+            });
+
+            viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.onDecline();
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        if(eventInviteList != null){
+            return eventInviteList.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setData(List<GroupEvent> eventsInviteList){
+        this.eventInviteList = eventsInviteList;
     }
 }

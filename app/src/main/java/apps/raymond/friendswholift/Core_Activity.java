@@ -42,6 +42,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
+import apps.raymond.friendswholift.DialogFragments.InviteDialog;
 import apps.raymond.friendswholift.Events.Event_Create_Fragment;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.Groups.Core_Group_Fragment;
@@ -55,6 +56,7 @@ public class Core_Activity extends AppCompatActivity implements
     private static final String TAG = "Core_Activity";
     public static final int YESNO_REQUEST = 21;
     public UpdateGroupRecycler updateGroupRecycler;
+
     public interface UpdateGroupRecycler{
         void updateGroupRecycler(GroupBase groupBase);
     }
@@ -72,7 +74,7 @@ public class Core_Activity extends AppCompatActivity implements
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-        inviteDialog();
+        //inviteDialog();
 
         postponeEnterTransition();
         setContentView(R.layout.core_activity);
@@ -164,6 +166,15 @@ public class Core_Activity extends AppCompatActivity implements
             case R.id.action_test:
                 Log.i(TAG,getSupportFragmentManager().getFragments().toString());
                 return true;
+            case R.id.action_invites:
+                Log.i(TAG,"Clicked on invites button");
+                InviteDialog inviteDialog = new InviteDialog();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.core_frame,inviteDialog)
+                        .addToBackStack(null)
+                        .show(inviteDialog)
+                        .commit();
+                return true;
             case R.id.action_edit:
                 Log.i(TAG,"HELLO?");
                 return false;
@@ -174,6 +185,10 @@ public class Core_Activity extends AppCompatActivity implements
         return false;
     }
 
+    /*
+     * If the result does not return null, we will inflate a dialog for the user to see what new invites
+     * they have received.
+     */
     public void inviteDialog(){
         viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
             @Override
