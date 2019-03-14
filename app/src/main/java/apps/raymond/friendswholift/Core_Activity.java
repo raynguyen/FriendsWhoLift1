@@ -56,6 +56,8 @@ import apps.raymond.friendswholift.UserProfile.ProfileFrag;
 public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent {
     private static final String TAG = "Core_Activity";
+    private static final String INV_FRAG = "InviteFragment";
+
     public static final int YESNO_REQUEST = 21;
     public UpdateGroupRecycler updateGroupRecycler;
 
@@ -171,8 +173,8 @@ public class Core_Activity extends AppCompatActivity implements
                 Log.i(TAG,"Clicked on invites button");
                 InviteDialog inviteDialog = new InviteDialog();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,inviteDialog)
-                        .addToBackStack(null)
+                        .replace(R.id.core_frame,inviteDialog,INV_FRAG)
+                        .addToBackStack(INV_FRAG)
                         .show(inviteDialog)
                         .commit();
                 return true;

@@ -88,5 +88,12 @@ public class Repository_ViewModel extends ViewModel {
         mRepository.updateGroup(groupBase);
     }
 
+    public Task<List<GroupBase>> fetchGroupInvites(){
+        return mRepository.fetchGroupInvites();
+    }
+
+    public void addUserToGroup(GroupBase group){
+        mRepository.addUserToGroup(group);
+    }
 }
 

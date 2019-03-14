@@ -18,10 +18,10 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.friendswholift.DialogFragments.InviteMessagesAdapter;
+import apps.raymond.friendswholift.DialogFragments.EventInviteAdapter;
 import apps.raymond.friendswholift.Events.GroupEvent;
 
-public class EventInviteFragment extends Fragment implements InviteMessagesAdapter.InviteResponseListener {
+public class EventInviteFragment extends Fragment implements EventInviteAdapter.InviteResponseListener {
     private static final String TAG = "Event_Invite_Fragment";
 
     Repository_ViewModel viewModel;
@@ -40,14 +40,14 @@ public class EventInviteFragment extends Fragment implements InviteMessagesAdapt
 
     List<GroupEvent> eventInviteList;
     RecyclerView eventInviteRecycler;
-    InviteMessagesAdapter adapter;
+    EventInviteAdapter adapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         eventInviteRecycler = view.findViewById(R.id.event_invite_recycler);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new InviteMessagesAdapter(this);
+        adapter = new EventInviteAdapter(this);
         eventInviteRecycler.setAdapter(adapter);
         eventInviteList = new ArrayList<>();
         fetchInvites();

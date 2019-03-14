@@ -446,6 +446,26 @@ public class FireBaseRepository {
                 });
     }
 
+    Task<List<GroupBase>> fetchGroupInvites(){
+        CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUP_INVITES);
+        final List<GroupBase> groupInvites = new ArrayList<>();
+
+        return usersGroups.get().continueWith(new Continuation<QuerySnapshot, List<GroupBase>>() {
+            @Override
+            public List<GroupBase> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    if(task.getResult() !=null ){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            groupInvites.add(document.toObject(GroupBase.class));
+                        }
+                        return groupInvites;
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
     Task<Void> addUserToGroup(final GroupBase group){
         CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUPS);
         final CollectionReference usersGroupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
@@ -471,18 +491,7 @@ public class FireBaseRepository {
                 return null;
             }
         });
-
     }
-
-
-
-
-
-
-
-
-
-
 
     //*-------------------------------------------ETC--------------------------------------------*//
 

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -52,12 +53,20 @@ public class InviteDialog extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 
         inviteViewPager = view.findViewById(R.id.invite_viewpager);
-        InvitePagerAdapter pAdapter = new InvitePagerAdapter(getFragmentManager());
+        InvitePagerAdapter pAdapter = new InvitePagerAdapter(getChildFragmentManager());
         inviteViewPager.setAdapter(pAdapter);
         inviteViewPager.setCurrentItem(0);
 
         TabLayout tabLayout = view.findViewById(R.id.invite_tabs);
         tabLayout.setupWithViewPager(inviteViewPager);
+
+        ImageButton closeBtn = view.findViewById(R.id.messages_close_btn);
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
     }
 
     public class InvitePagerAdapter extends FragmentPagerAdapter {

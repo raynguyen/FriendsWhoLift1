@@ -14,7 +14,7 @@ import java.util.List;
 import apps.raymond.friendswholift.Events.GroupEvent;
 import apps.raymond.friendswholift.R;
 
-public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAdapter.InviteMessagesViewHolder> {
+public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.InviteMessagesViewHolder> {
     private List<GroupEvent> eventInviteList;
     private InviteResponseListener callback;
 
@@ -24,12 +24,13 @@ public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAd
         void onDetail();
     }
 
-    public InviteMessagesAdapter(InviteResponseListener callback){
+    public EventInviteAdapter(InviteResponseListener callback){
         this.callback = callback;
     }
 
-    public InviteMessagesAdapter(List<GroupEvent> eventInviteList, InviteResponseListener callback){
+    public EventInviteAdapter(List<GroupEvent> eventInviteList, InviteResponseListener callback){
         this.eventInviteList = eventInviteList;
+        this.callback = callback;
     }
 
     static class InviteMessagesViewHolder extends RecyclerView.ViewHolder{
@@ -48,7 +49,7 @@ public class InviteMessagesAdapter extends RecyclerView.Adapter<InviteMessagesAd
 
     @NonNull
     @Override
-    public InviteMessagesAdapter.InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public EventInviteAdapter.InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_invite_item,viewGroup,false);
         return new InviteMessagesViewHolder(view);
     }
