@@ -43,11 +43,13 @@ import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.Repository_ViewModel;
+import apps.raymond.friendswholift.VerticalTextView;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Detail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
+    private static final String MEMBERS_FRAG = "Members_Fragment";
     private static final int DETAIL_READ = 0;
     private static final int DETAIL_WRITE = 1;
 
@@ -92,6 +94,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     RadioButton publicBtn,discoverBtn,exclusiveBtn;
     TextInputEditText nameEdit, descEdit;
     ArrayAdapter<CharSequence> adapter;
+    VerticalTextView membersTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
@@ -100,6 +103,9 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         String transitionName = getArguments().getString(TRANSITION_NAME);
         owner = groupBase.getOwner();
         currUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        membersTxt = view.findViewById(R.id.members_vtxt);
+        membersTxt.setOnClickListener(this);
 
         try{
             actionBar.setTitle(groupBase.getName());
@@ -157,6 +163,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
             Bitmap bitmap = BitmapFactory.decodeByteArray(groupBase.getBytes(),0,groupBase.getBytes().length);
             image.setImageBitmap(bitmap);
         }
+
     }
 
     @Override
@@ -175,6 +182,14 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
                 viewModel.updateGroup(groupBase);
 
                 //Todo: Have to add the ability to modify the image.
+                break;
+            case R.id.members_vtxt:
+                MembersPanel membersPanel = new MembersPanel();
+
+                getChildFragmentManager().beginTransaction()
+                        .addToBackStack(MEMBERS_FRAG)
+                        .replace(R.id.members_frame,membersPanel,MEMBERS_FRAG)
+                        .commit();
                 break;
         }
     }
