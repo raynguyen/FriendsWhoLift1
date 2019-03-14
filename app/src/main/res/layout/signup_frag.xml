@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorAccentLight">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="48dp"/>
+        app:layout_constraintGuide_begin="120dp"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/login_txt_layout"
@@ -89,16 +90,19 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_editor_absoluteY="391dp" />
 
-    <Button
-        android:id="@+id/login_btn"
-        style="@style/Base.Widget.AppCompat.ButtonBar"
-        android:layout_width="88dp"
+
+    <apps.raymond.friendswholift.VerticalTextView
+        android:id="@+id/login_vtxt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
         android:textAllCaps="true"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="48dp" />
+        android:layout_marginBottom="100dp"
+        android:clickable="true"/>
 
 </android.support.constraint.ConstraintLayout>

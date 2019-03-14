@@ -26,47 +26,59 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.UserProfile.UserModel;
+import apps.raymond.friendswholift.VerticalTextView;
 
 public class SignUpFrag extends Fragment implements View.OnClickListener {
     private static final String TAG = "SignUpFrag";
     private static final int NUM_TXT = 3; //Number of TextFields
-    Button register_Btn, login_Btn;
-    TextInputEditText username_Txt, password_Txt, repassword_Txt;
-
-    TextInputEditText[] inputFields;
-    FirebaseAuth mAuth;
-
-    LoginViewModel mLoginViewModel;
 
     SignIn signIn;
     public interface SignIn {
         void signedIn();
     }
 
+    FirebaseAuth mAuth;
+    LoginViewModel mLoginViewModel;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        mLoginViewModel = new LoginViewModel();
+    }
+
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState){
-        super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.signup_frag, container, false);
-        mAuth = FirebaseAuth.getInstance();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+        return inflater.inflate(R.layout.signup_frag, container, false);
+    }
 
-        register_Btn = v.findViewById(R.id.register_btn);
-        login_Btn = v.findViewById(R.id.login_btn);
-        username_Txt = v.findViewById(R.id.login_txt);
-        password_Txt = v.findViewById(R.id.password_txt);
-        repassword_Txt = v.findViewById(R.id.repassword_txt);
+    Button register_Btn;
+    TextInputEditText username_Txt, password_Txt, repassword_Txt;
+    TextInputEditText[] inputFields;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        register_Btn = view.findViewById(R.id.register_btn);
+        username_Txt = view.findViewById(R.id.login_txt);
+        password_Txt = view.findViewById(R.id.password_txt);
+        repassword_Txt = view.findViewById(R.id.repassword_txt);
 
         register_Btn.setOnClickListener(this);
-        login_Btn.setOnClickListener(this);
 
         inputFields = new TextInputEditText[NUM_TXT];
         inputFields[0] = username_Txt;
         inputFields[1] = password_Txt;
         inputFields[2] = repassword_Txt;
 
-        mLoginViewModel = new LoginViewModel();
-        return v;
+        VerticalTextView loginTxt = view.findViewById(R.id.login_vtxt);
+        loginTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG,"Swap views to login");
+                ViewPager viewPager = getActivity().findViewById(R.id.login_container);
+                viewPager.setCurrentItem(0);
+            }
+        });
     }
 
     @Override
@@ -106,11 +118,6 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                                 }
                             }
                         });
-                break;
-            case R.id.login_btn:
-                //Returns to the Login fragment when 'LOGIN' is clicked.
-                ViewPager viewPager = getActivity().findViewById(R.id.login_container);
-                viewPager.setCurrentItem(0);
                 break;
         }
     }
