@@ -40,8 +40,10 @@ import java.util.List;
 import apps.raymond.friendswholift.DialogFragments.YesNoDialog;
 import apps.raymond.friendswholift.Interfaces.BackPressListener;
 import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
+import apps.raymond.friendswholift.ProfileRecyclerAdapter;
 import apps.raymond.friendswholift.R;
 import apps.raymond.friendswholift.Repository_ViewModel;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 import static apps.raymond.friendswholift.Core_Activity.YESNO_REQUEST;
 
@@ -83,7 +85,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     ViewFlipper editFlipper, profilesFlipper;
     TextInputEditText nameEdit, descEdit;
-    List<String> invitedProfiles, declinedProfiles, acceptedProfiles;
+    List<UserModel> invitedProfiles,declinedProfiles, acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
     TextView eventName,eventDesc,eventStart,eventEnd;
@@ -177,8 +179,8 @@ public class Event_Detail_Fragment extends Fragment implements
      * to retrieve the entire profile to load.
     */
     @Override
-    public void onProfileClick(String profileName) {
-        Log.i(TAG,"Clicked on: "+profileName);
+    public void onProfileClick(UserModel userModel) {
+        Log.i(TAG,"Clicked on: "+ userModel.getEmail());
     }
 
     @Override
@@ -205,32 +207,6 @@ public class Event_Detail_Fragment extends Fragment implements
                 editFlipper.showNext();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    //CALL REPOSITORY METHOD TO RETRIEVE THE LIST HERE!!!!!!!
-    private void getInviteList(final GroupEvent event){
-        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<String>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<String>> task) {
-                invitedBar.setVisibility(View.INVISIBLE);
-                if(task.isSuccessful()){
-                    if(task.getResult().isEmpty()){
-                        invitedNullText.setVisibility(View.VISIBLE);
-                    }
-                    Log.i(TAG,"Retrieved list of invited invitedProfiles.");
-                    invitedProfiles = new ArrayList<>();
-                    invitedProfiles.addAll(task.getResult());
-                    invitedAdapter.setData(invitedProfiles);
-                    invitedAdapter.notifyDataSetChanged();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error when retrieving guest list.",e);
-                Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void updateViews(){
@@ -264,11 +240,36 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
+    private void getInviteList(final GroupEvent event){
+        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
+                invitedBar.setVisibility(View.INVISIBLE);
+                if(task.isSuccessful()){
+                    if(task.getResult().isEmpty()){
+                        invitedNullText.setVisibility(View.VISIBLE);
+                    }
+                    Log.i(TAG,"Retrieved list of invited invitedProfiles.");
+                    invitedProfiles = new ArrayList<>();
+                    invitedProfiles.addAll(task.getResult());
+                    invitedAdapter.setData(invitedProfiles);
+                    invitedAdapter.notifyDataSetChanged();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Error when retrieving guest list.",e);
+                Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void getAcceptedList(GroupEvent groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
-        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
-            public void onComplete(@NonNull Task<List<String>> task) {
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.getResult().isEmpty()){
                     acceptedNullText.setVisibility(View.VISIBLE);
                 }
@@ -289,9 +290,9 @@ public class Event_Detail_Fragment extends Fragment implements
 
     private void getDeclinedList(GroupEvent groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
-        viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
-            public void onComplete(@NonNull Task<List<String>> task) {
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.getResult().isEmpty()){
                     declinedNullText.setVisibility(View.VISIBLE);
                 }

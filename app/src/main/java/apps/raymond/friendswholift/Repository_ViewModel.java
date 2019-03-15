@@ -52,11 +52,11 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.getUsersEvents();
     }
 
-    public Task<List<String>> getEventInvitees(GroupEvent event){
+    public Task<List<UserModel>> getEventInvitees(GroupEvent event){
         return mRepository.getEventInvitees(event);
     }
 
-    public Task<List<String>> getEventResponses(GroupEvent event, String status){
+    public Task<List<UserModel>> getEventResponses(GroupEvent event, String status){
         return mRepository.getEventResponses(event, status);
     }
 
@@ -85,7 +85,7 @@ public class Repository_ViewModel extends ViewModel {
     }
 
     public void updateGroup(GroupBase groupBase){
-        mRepository.updateGroup(groupBase);
+        mRepository.editGroup(groupBase);
     }
 
     public Task<List<GroupBase>> fetchGroupInvites(){
@@ -94,6 +94,10 @@ public class Repository_ViewModel extends ViewModel {
 
     public void addUserToGroup(GroupBase group){
         mRepository.addUserToGroup(group);
+    }
+
+    public Task<List<UserModel>> fetchGroupMembers(GroupBase group){
+        return mRepository.fetchGroupMembers(group);
     }
 }
 

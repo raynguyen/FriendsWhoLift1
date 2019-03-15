@@ -89,7 +89,7 @@
     <string name="event_search">Find Events Near Me!</string>
 
     <!--EVENT DETAIL-->
-    <string name="authority">Authority:Admin</string>
+    <string name="authority">Admin</string>
     <string name="accepted">Accepted</string>
     <string name="declined">Declined</string>
     <string name="invited">Invited</string>

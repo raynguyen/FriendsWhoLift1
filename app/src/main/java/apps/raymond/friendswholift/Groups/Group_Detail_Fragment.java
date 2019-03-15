@@ -184,8 +184,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
                 //Todo: Have to add the ability to modify the image.
                 break;
             case R.id.members_vtxt:
-                MembersPanel membersPanel = new MembersPanel();
-
+                MembersPanel membersPanel = MembersPanel.newInstance(groupBase);
                 getChildFragmentManager().beginTransaction()
                         .addToBackStack(MEMBERS_FRAG)
                         .replace(R.id.members_frame,membersPanel,MEMBERS_FRAG)

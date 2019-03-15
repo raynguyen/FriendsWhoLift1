@@ -280,7 +280,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent=".6">
+        app:layout_constraintWidth_percent=".7">
     </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

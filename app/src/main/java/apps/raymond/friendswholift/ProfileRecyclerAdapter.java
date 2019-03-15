@@ -1,4 +1,4 @@
-package apps.raymond.friendswholift.Events;
+package apps.raymond.friendswholift;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,15 +11,16 @@ import android.widget.TextView;
 import java.util.List;
 
 import apps.raymond.friendswholift.Interfaces.ProfileClickListener;
-import apps.raymond.friendswholift.R;
+import apps.raymond.friendswholift.UserProfile.UserModel;
 
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ProfileViewHolder> {
     private static final String TAG = "PROFILE RECYCLER ADAPTER";
-    private List<String> profiles;
+
+    private List<UserModel> userModels;
     private ProfileClickListener listener;
 
-    public ProfileRecyclerAdapter(List<String> profiles, ProfileClickListener profileClickListener){
-        this.profiles = profiles;
+    public ProfileRecyclerAdapter(List<UserModel> userModels, ProfileClickListener profileClickListener){
+        this.userModels = userModels;
         this.listener = profileClickListener;
     }
 
@@ -35,19 +36,19 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     @NonNull
     @Override
     public ProfileRecyclerAdapter.ProfileViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_user_item,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_recycler_item,viewGroup,false);
         return new ProfileViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ProfileViewHolder profileViewHolder, int i) {
-        if(profiles!=null){
-            Log.i(TAG,"Attempting to make an item for : " + profiles.get(i));
-            profileViewHolder.name.setText(profiles.get(i));
+        if(userModels!=null){
+            UserModel currUser = userModels.get(i);
+            profileViewHolder.name.setText(currUser.getEmail());
             profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onProfileClick(profiles.get(profileViewHolder.getAdapterPosition()));
+                    listener.onProfileClick(userModels.get(profileViewHolder.getAdapterPosition()));
                 }
             });
         } else {
@@ -57,14 +58,14 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     @Override
     public int getItemCount() {
-        if(profiles !=null){
-            return profiles.size();
+        if(userModels !=null){
+            return userModels.size();
         } else {
             return 0;
         }
     }
 
-    public void setData(List<String> profiles){
-        this.profiles = profiles;
+    public void setData(List<UserModel> profiles){
+        this.userModels = profiles;
     }
 }
