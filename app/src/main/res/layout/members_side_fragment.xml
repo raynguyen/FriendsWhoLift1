@@ -13,8 +13,8 @@
         app:layout_constraintEnd_toStartOf="@id/drawer_frame"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/swipe_right_btn"
-        android:background="#0000"
+        android:src="@drawable/baseline_arrow_forward_ios_black_18dp"
+        android:background="@drawable/swipe_right_btn"
         android:contentDescription="@string/Temp"/>
 
     <LinearLayout

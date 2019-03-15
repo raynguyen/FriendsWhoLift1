@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -65,6 +66,15 @@ public class MembersPanel extends Fragment implements ProfileClickListener {
         pAdapter = new ProfileRecyclerAdapter(membersList, this);
         membersRecycler.setAdapter(pAdapter);
         membersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        ImageButton closeDrawer = view.findViewById(R.id.close_members_drawer_btn);
+        closeDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG,"FRAGMENTS:" + getFragmentManager().getFragments().toString());
+                getFragmentManager().popBackStack();
+            }
+        });
     }
 
     @Override
@@ -86,5 +96,11 @@ public class MembersPanel extends Fragment implements ProfileClickListener {
                 }
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG,"DESTROYING MEMBER CABINET");
     }
 }
