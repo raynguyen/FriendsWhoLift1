@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:clickable="true">
 
+    <android.support.constraint.Guideline
+        android:id="@+id/startguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="8dp"/>
+
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/group_image"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_margin="8dp"
         android:background="@drawable/edit_text_border"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/drawer_guideline"/>
+        app:layout_constraintStart_toStartOf="@id/startguideline"
+        app:layout_constraintEnd_toStartOf="@id/drawer_guideline"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.Guideline
         android:id="@+id/privacy_guideline"
@@ -28,10 +36,10 @@
         android:id="@+id/privacy_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:text="@string/group_privacy"
         android:textSize="20sp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/startguideline"
         app:layout_constraintTop_toTopOf="@id/privacy_guideline" />
 
     <android.support.constraint.Guideline
@@ -45,23 +53,24 @@
         android:id="@+id/invite_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:text="@string/group_invite"
         android:textSize="20sp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/startguideline"
         app:layout_constraintTop_toTopOf="@id/invite_guideline" />
 
     <ViewFlipper
         android:id="@+id/group_edit_flipper"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="25dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/drawer_guideline">
+
         <!--FIRST READ ONLY-->
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="4dp">
+            android:layout_margin="8dp">
 
             <TextView
                 android:id="@+id/detail_group_name_txt"
@@ -79,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_begin="220dp" />
+                app:layout_constraintGuide_begin="210dp" />
 
             <TextView
                 android:id="@+id/group_desc_txt"
@@ -88,7 +97,9 @@
                 android:hint="@string/descriptor"
                 android:maxLines="3"
                 android:textSize="20sp"
-                app:layout_constraintTop_toTopOf="@id/desc_read_guideline" />
+                android:padding="8dp"
+                app:layout_constraintTop_toTopOf="@id/desc_read_guideline"
+                android:background="@drawable/edit_text_border"/>
 
             <android.support.constraint.Guideline
                 android:id="@+id/privacy_read_guideline"
@@ -102,6 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
+                android:layout_marginStart="8dp"
                 android:text="@string/Temp"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -119,6 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
+                android:layout_marginStart="8dp"
                 android:text="@string/Temp"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -170,6 +183,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:hint="@string/descriptor"
                 android:visibility="visible"
                 app:boxCornerRadiusBottomEnd="8dp"
