@@ -13,6 +13,8 @@
  * sources, such as persistent models, web services, and caches
 */
 
+// LOCAL DATABASE CAHCE WITH REST API
+
 package apps.raymond.friendswholift;
 
 import android.net.Uri;

@@ -11,7 +11,8 @@
         android:id="@+id/core_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent">
+        android:background="@color/colorAccent"
+        app:navigationIcon="@drawable/baseline_face_black_18dp">
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout
