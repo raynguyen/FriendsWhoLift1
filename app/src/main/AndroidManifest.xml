@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="apps.raymond.friendswholift">
+    package="apps.raymond.kinect">
 
     <uses-feature
         android:name="android.hardware.camera2"
@@ -18,11 +18,11 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".Login_Activity">
+            android:name="apps.raymond.kinect.Login_Activity">
         </activity>
 
         <activity
-            android:name=".Activity_Launcher"
+            android:name="apps.raymond.kinect.Activity_Launcher"
             android:theme="@style/AppTheme.Launcher">
             <!---->
             <intent-filter>
@@ -32,16 +32,16 @@
         </activity>
 
         <activity
-            android:name=".Core_Activity"
+            android:name="apps.raymond.kinect.Core_Activity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize">
         </activity>
 
         <activity
-            android:name=".Connections_Activity">
+            android:name="apps.raymond.kinect.Connections_Activity">
         </activity>
 
-        <activity android:name=".TestAct"
+        <activity android:name="apps.raymond.kinect.TestAct"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <!--
             <intent-filter>

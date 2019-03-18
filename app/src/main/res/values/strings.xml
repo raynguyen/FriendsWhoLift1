@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">To Jesse Funk</string>
     <string name="action_settings">Settings</string>
     <string name="summary_title">Most Recent Updates:</string>
     <string name="squat_line">Squat : </string>
@@ -75,6 +74,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- General Strings -->
+    <string name="app_name">Kinect</string>
     <string name="discard">Discard</string>
 
     <!--CORE ACTIVITY-->

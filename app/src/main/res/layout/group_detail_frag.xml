@@ -276,7 +276,7 @@
         android:clickable="true"
         android:focusable="false"/>
 
-    <apps.raymond.friendswholift.VerticalTextView
+    <apps.raymond.kinect.VerticalTextView
         android:id="@+id/members_vtxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
