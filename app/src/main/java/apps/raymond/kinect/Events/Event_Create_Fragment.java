@@ -290,7 +290,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_profile).setVisible(false);
     }
 
     @Override

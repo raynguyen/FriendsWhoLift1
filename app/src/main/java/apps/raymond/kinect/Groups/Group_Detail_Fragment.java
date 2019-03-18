@@ -208,8 +208,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         Log.i(TAG,"onPrepareOptionsMenu of detailed group fragment.");
-        menu.findItem(R.id.action_profile).setVisible(false);
-        menu.findItem(R.id.action_profile).setEnabled(false);
         if(owner.equals(currUser)){
             menu.findItem(R.id.action_edit).setEnabled(true);
             menu.findItem(R.id.action_edit).setVisible(true);

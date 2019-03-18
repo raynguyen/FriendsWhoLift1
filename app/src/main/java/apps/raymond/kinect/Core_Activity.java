@@ -81,7 +81,13 @@ public class Core_Activity extends AppCompatActivity implements
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG,"FUCKHOLE");
+                Log.i(TAG,"Clicked on profile button.");
+                ProfileFrag profileFrag = new ProfileFrag();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.core_frame,profileFrag)
+                        .addToBackStack(null)
+                        .show(profileFrag)
+                        .commit();
             }
         });
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -156,15 +162,6 @@ public class Core_Activity extends AppCompatActivity implements
                 return true;
             case R.id.action_settings:
                 Log.i(TAG,"Clicked the settings button.");
-                return true;
-            case R.id.action_profile:
-                Log.i(TAG,"Clicked on profile button.");
-                ProfileFrag profileFrag = new ProfileFrag();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,profileFrag)
-                        .addToBackStack(null)
-                        .show(profileFrag)
-                        .commit();
                 return true;
             case R.id.action_test:
                 Log.i(TAG,getSupportFragmentManager().getFragments().toString());

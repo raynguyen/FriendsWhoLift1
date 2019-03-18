@@ -3,6 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        android:title="@string/event_search"
+        android:icon="@drawable/baseline_search_black_18dp"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView">
+    </item>
+
+    <item
+        android:id="@+id/action_invites"
+        android:title="@string/messages"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="2"
+        android:icon="@drawable/baseline_mail_black_18dp">
+    </item>
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never">
@@ -15,35 +31,23 @@
     </item>
 
     <item
-        android:id="@+id/action_profile"
-        android:title="@string/profile"
-        android:icon="@drawable/baseline_face_black_18dp">
-    </item>
-
-    <item
         android:id="@+id/action_save"
         android:title="@string/save"
-        app:showAsAction="ifRoom">
+        app:showAsAction="never">
     </item>
 
     <item
         android:id="@+id/action_edit"
         android:title="@string/Edit"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:icon="@drawable/baseline_edit_black_18dp">
     </item>
 
     <item
         android:id="@+id/action_test"
         android:title="@string/Temp"
-        android:icon="@drawable/baseline_edit_black_18dp">
-    </item>
-
-    <item
-        android:id="@+id/action_invites"
-        android:title="@string/messages"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/baseline_mail_black_18dp">
+        android:icon="@drawable/baseline_edit_black_18dp"
+        app:showAsAction="never">
     </item>
 
 </menu>
