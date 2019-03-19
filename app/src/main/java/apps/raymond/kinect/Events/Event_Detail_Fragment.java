@@ -52,6 +52,7 @@ public class Event_Detail_Fragment extends Fragment implements
         View.OnClickListener, ProfileClickListener, BackPressListener{
 
     public static final String TAG = "Event_Detail_Fragment";
+    public static final String EVENT = "EventObject";
     private static final String EVENT_ACCEPTED = "Accepted";
     private static final String EVENT_DECLINED = "Declined";
     private static final int DETAIL_READ = 0;
@@ -60,20 +61,29 @@ public class Event_Detail_Fragment extends Fragment implements
     public Event_Detail_Fragment(){
     }
     //ToDo: The event should be passed as an argument in newInstance!!!!!
-    public static Event_Detail_Fragment newInstance(){
-        return new Event_Detail_Fragment();
+    public static Event_Detail_Fragment newInstance(GroupEvent event){
+        Log.i(TAG,"THE EVENT YOU CLICKED OWNER IS: "+event.getCreator());
+        Event_Detail_Fragment fragment = new Event_Detail_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable(EVENT,event);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     GroupEvent event;
+    String currUser;
     private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         setHasOptionsMenu(true);
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+
         Bundle args = this.getArguments();
+
         if(args !=null){
-            this.event = args.getParcelable("EventObject");
+            this.event = args.getParcelable(EVENT);
         }
     }
 
@@ -90,7 +100,8 @@ public class Event_Detail_Fragment extends Fragment implements
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
     TextView eventName,eventDesc,eventStart,eventEnd;
-    TextView acceptedNullText,invitedNullText,declinedNullText, startTxt, endTxt;
+    TextView acceptedNullText,invitedNullText,declinedNullText, startEdit, endEdit;
+    String creator;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -100,16 +111,16 @@ public class Event_Detail_Fragment extends Fragment implements
         eventDesc = view.findViewById(R.id.event_desc);
         eventStart = view.findViewById(R.id.event_start);
         eventEnd = view.findViewById(R.id.event_end);
-        // These are variables that are only required if the user is able to edit the event.
-        if(event.getCreator().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+
+        creator = event.getCreator();
+        if(creator.equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
             nameEdit = view.findViewById(R.id.event_name_edit);
             descEdit = view.findViewById(R.id.event_desc_edit);
-            startTxt = view.findViewById(R.id.event_start_write);
-            endTxt = view.findViewById(R.id.event_end_write);
+            startEdit = view.findViewById(R.id.event_start_write);
+            endEdit = view.findViewById(R.id.event_end_write);
             updateBar = view.findViewById(R.id.update_progress_bar);
-            Button editSaveBtn = view.findViewById(R.id.save_event_btn);
-            editSaveBtn.setOnClickListener(this);
         }
+
         updateViews();
         Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);
         Button declinedBtn = view.findViewById(R.id.declined_profiles_btn);
@@ -121,6 +132,10 @@ public class Event_Detail_Fragment extends Fragment implements
 
         profilesFlipper = view.findViewById(R.id.profiles_flipper);
 
+        setMemberRecyclers(view);
+    }
+
+    private void setMemberRecyclers(View view){
         /*
          * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
          * When user clicks on a user, load the full Profile using the name in the list as our query field.
@@ -159,10 +174,6 @@ public class Event_Detail_Fragment extends Fragment implements
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.save_event_btn:
-                Log.i(TAG,"Saving edits to Event: "+ event.getName());
-                editEvent();
-                break;
             case R.id.accepted_profiles_btn:
                 profilesFlipper.setDisplayedChild(0);
                 break;
@@ -193,15 +204,13 @@ public class Event_Detail_Fragment extends Fragment implements
         editAction = menu.findItem(R.id.action_edit);
         saveAction = menu.findItem(R.id.action_save);
 
-        /*
-        if(owner.equals(currUser)){
+        if(creator.equals(currUser)){
             editAction.setEnabled(true);
             editAction.setVisible(true);
         } else {
             editAction.setVisible(false);
             editAction.setEnabled(false);
         }
-        */
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -211,24 +220,36 @@ public class Event_Detail_Fragment extends Fragment implements
         int i = item.getItemId();
         switch (i){
             case R.id.action_edit:
-                item.setVisible(false);
-                item.setEnabled(false);
-                saveAction.setEnabled(true);
-                saveAction.setVisible(true);
+                setEditView();
                 return true;
             case R.id.action_save:
-                Log.i(TAG,"Overwriting the Group object.");
+                Log.i(TAG,"Overwriting the event object.");
                 item.setVisible(false);
                 item.setEnabled(false);
                 editAction.setVisible(true);
                 editAction.setEnabled(true);
 
+                editEvent();
+                editFlipper.setDisplayedChild(0);
                 //Todo: Return a task when updating so that we can display the progress bar.
 
                 //Todo: Have to add the ability to modify the image.
                 return true;
         }
         return false;
+    }
+
+    private void setEditView(){
+        nameEdit.setText(event.getName());
+        descEdit.setText(event.getDesc());
+        startEdit.setText("TEMP");
+        endEdit.setText("TEMP");
+
+        editAction.setVisible(false);
+        editAction.setEnabled(false);
+        saveAction.setEnabled(true);
+        saveAction.setVisible(true);
+        editFlipper.setDisplayedChild(1);
     }
 
     private void updateViews(){

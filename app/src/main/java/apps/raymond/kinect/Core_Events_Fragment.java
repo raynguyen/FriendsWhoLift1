@@ -121,15 +121,10 @@ public class Core_Events_Fragment extends Fragment implements
 
     @Override
     public void onEventClick(int position, GroupEvent groupEvent) {
-        Fragment detailedEvent = Event_Detail_Fragment.newInstance();
-        Bundle args = new Bundle();
-        args.putParcelable("EventObject",groupEvent);
-
-        detailedEvent.setArguments(args);
+        Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
         getFragmentManager().beginTransaction()
                 .replace(R.id.core_frame,detailedEvent,Event_Detail_Fragment.TAG)
                 .addToBackStack(Event_Detail_Fragment.TAG)
-                .show(detailedEvent)
                 .commit();
     }
 

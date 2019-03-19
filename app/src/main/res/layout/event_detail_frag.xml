@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:fillViewport="true"
@@ -36,10 +37,10 @@
                 android:id="@+id/event_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
                 android:gravity="center"
                 android:hint="@string/event_name"
-                android:textSize="26sp" />
+                android:textSize="26sp"
+                app:layout_constraintTop_toTopOf="parent"/>
             <TextView
                 android:id="@+id/event_desc"
                 android:layout_width="match_parent"
@@ -69,26 +70,19 @@
                 app:layout_constraintTop_toBottomOf="@id/event_start"
                 app:layout_constraintStart_toStartOf="parent"/>
         </android.support.constraint.ConstraintLayout>
+
         <!--WRITE EVENT-->
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <!-- SHOULD BE 'SAVE' TEXT THAT SWITCHES CHECK MARK WHEN COMPLETE-->
-            <Button
-                android:id="@+id/save_event_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:contentDescription="@string/Temp"
-                android:text="@string/save"/>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/name_write_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/save_event_btn"
+                app:layout_constraintTop_toTopOf="parent"
                 android:hint="@string/event_name">
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/event_name_edit"
