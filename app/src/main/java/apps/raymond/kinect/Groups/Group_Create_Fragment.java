@@ -109,7 +109,6 @@ public class Group_Create_Fragment extends Fragment implements
         return view;
     }
 
-
     private EditText desc_Txt;
     private TextInputEditText name_Txt;
     private ImageView imageView;

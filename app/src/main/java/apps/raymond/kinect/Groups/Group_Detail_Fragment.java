@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -167,9 +166,10 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         int i = v.getId();
         switch (i){
             case R.id.members_vtxt:
-                MembersPanel membersPanel = MembersPanel.newInstance(groupBase);
+                Members_Panel_Fragment membersPanel = Members_Panel_Fragment.newInstance(groupBase);
                 getChildFragmentManager().beginTransaction()
                         .addToBackStack(MEMBERS_FRAG)
+                        .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
                         .replace(R.id.members_frame,membersPanel,MEMBERS_FRAG)
                         .commit();
                 break;
@@ -264,7 +264,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     }
 
     private void editGroup(){
-        Log.i(TAG,"Entering edit mode for: "+groupBase.getName());
         nameEdit.setText(groupBase.getName(), TextView.BufferType.EDITABLE);
         descEdit.setText(groupBase.getDescription(),TextView.BufferType.EDITABLE);
         String groupVisibility = groupBase.getVisibility();

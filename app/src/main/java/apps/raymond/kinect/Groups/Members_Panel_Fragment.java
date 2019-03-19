@@ -25,12 +25,12 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
-public class MembersPanel extends Fragment implements ProfileClickListener {
+public class Members_Panel_Fragment extends Fragment implements ProfileClickListener {
     private static final String TAG = "Custom_Members_Panel";
     private static final String GROUP_PARCEL = "GroupParcel";
 
-    public static MembersPanel newInstance(GroupBase group){
-        MembersPanel membersPanel = new MembersPanel();
+    public static Members_Panel_Fragment newInstance(GroupBase group){
+        Members_Panel_Fragment membersPanel = new Members_Panel_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(GROUP_PARCEL, group);
         membersPanel.setArguments(args);

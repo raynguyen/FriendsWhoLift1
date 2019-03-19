@@ -46,7 +46,7 @@
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:hint="@string/password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:gravity="center"/>
     </android.support.design.widget.TextInputLayout>
 

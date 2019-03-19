@@ -526,24 +526,26 @@ public class FireBaseRepository {
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
     // Todo: Filter our users that have Privacy:private.
     Task<List<UserModel>> fetchUsers() {
+        Log.i(TAG,"FETCHING USERS TO POPULATE INVITE LIST.");
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
             @Override
             public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 List<UserModel> userList = new ArrayList<>();
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.i(TAG, "Converting user document to UserModel: " + document.getId());
                         UserModel model = document.toObject(UserModel.class);
-                        userList.add(model);
+                        if(!model.getEmail().equals(userEmail)){
+                            userList.add(model);
+                        }
                     }
                 } else if (task.getResult() == null) {
                     Log.w(TAG, "There are no users to fetch.");
                 }
+                Log.i(TAG,"COMPLETED FETCHING USERS.");
                 return userList;
             }
         });
     }
-
 
     // Task to upload an image and on success return the downloadUri.
     Task<Uri> uploadImage(Uri uri, String groupName) {

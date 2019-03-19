@@ -23,7 +23,7 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
     @Override
     protected void onCreate(Bundle savedInstanceStance){
         super.onCreate(savedInstanceStance);
-        setContentView(R.layout.login_screen);
+        setContentView(R.layout.login_activity);
 
         LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
 
