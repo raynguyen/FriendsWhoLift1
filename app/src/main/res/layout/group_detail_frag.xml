@@ -162,15 +162,6 @@
                     android:textSize="24sp" />
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/save_group_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/save"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <android.support.constraint.Guideline
                 android:id="@+id/desc_edit_guideline"
                 android:layout_width="wrap_content"

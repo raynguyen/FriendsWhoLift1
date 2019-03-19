@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     public Event_Detail_Fragment(){
     }
-
+    //ToDo: The event should be passed as an argument in newInstance!!!!!
     public static Event_Detail_Fragment newInstance(){
         return new Event_Detail_Fragment();
     }
@@ -183,29 +184,51 @@ public class Event_Detail_Fragment extends Fragment implements
         Log.i(TAG,"Clicked on: "+ userModel.getEmail());
     }
 
+    MenuItem saveAction, editAction;
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_edit).setVisible(true);
-        menu.findItem(R.id.action_edit).setEnabled(true);
-        super.onPrepareOptionsMenu(menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.i(TAG,"onCreateOptionsMenu of detailed group fragment.");
+        menu.clear();
+        inflater.inflate(R.menu.details_menu,menu);
+        editAction = menu.findItem(R.id.action_edit);
+        saveAction = menu.findItem(R.id.action_save);
+
+        /*
+        if(owner.equals(currUser)){
+            editAction.setEnabled(true);
+            editAction.setVisible(true);
+        } else {
+            editAction.setVisible(false);
+            editAction.setEnabled(false);
+        }
+        */
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
+    //Going to handle events in the Activity because not sure why it doesn't work in the fragment.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         switch (i){
             case R.id.action_edit:
-                Log.i(TAG,"Editing event: "+event.getName());
-
-                nameEdit.setText(event.getName(), TextView.BufferType.EDITABLE);
-                descEdit.setText(event.getDesc(), TextView.BufferType.EDITABLE);
-
                 item.setVisible(false);
                 item.setEnabled(false);
+                saveAction.setEnabled(true);
+                saveAction.setVisible(true);
+                return true;
+            case R.id.action_save:
+                Log.i(TAG,"Overwriting the Group object.");
+                item.setVisible(false);
+                item.setEnabled(false);
+                editAction.setVisible(true);
+                editAction.setEnabled(true);
 
-                editFlipper.showNext();
+                //Todo: Return a task when updating so that we can display the progress bar.
+
+                //Todo: Have to add the ability to modify the image.
+                return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private void updateViews(){

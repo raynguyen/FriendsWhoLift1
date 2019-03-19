@@ -26,6 +26,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,9 +50,10 @@ import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements
-        Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent {
+        Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener {
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
+    private static final String PROFILE_FRAG = "ProfileFragment";
 
     public static final int YESNO_REQUEST = 21;
     public UpdateGroupRecycler updateGroupRecycler;
@@ -66,6 +69,7 @@ public class Core_Activity extends AppCompatActivity implements
 
     ViewPager viewPager;
     Repository_ViewModel viewModel;
+    SearchView toolbarSearch;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,19 +82,12 @@ public class Core_Activity extends AppCompatActivity implements
 
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG,"Clicked on profile button.");
-                ProfileFrag profileFrag = new ProfileFrag();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,profileFrag)
-                        .addToBackStack(null)
-                        .show(profileFrag)
-                        .commit();
-            }
-        });
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        ImageButton profileBtn = findViewById(R.id.action_profile);
+        profileBtn.setOnClickListener(this);
+
+        toolbarSearch = findViewById(R.id.toolbar_search);
 
         viewPager = findViewById(R.id.core_ViewPager);
         Core_Activity_Adapter pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
@@ -137,19 +134,7 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        menu.clear();
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.clear();
-        getMenuInflater().inflate(R.menu.home_actionbar,menu);
-        menu.findItem(R.id.action_edit).setVisible(false);
-        menu.findItem(R.id.action_edit).setEnabled(false);
-        menu.findItem(R.id.action_save).setVisible(false);
-        menu.findItem(R.id.action_save).setEnabled(false);
-        //int i = viewPager.getCurrentItem();
+        getMenuInflater().inflate(R.menu.core_menu,menu);
         return true;
     }
 
@@ -183,6 +168,21 @@ public class Core_Activity extends AppCompatActivity implements
 
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch(i){
+            case R.id.action_profile:
+                ProfileFrag profileFrag = new ProfileFrag();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.core_frame,profileFrag,PROFILE_FRAG)
+                        .addToBackStack(PROFILE_FRAG)
+                        .show(profileFrag)
+                        .commit();
+                break;
+        }
     }
 
     public void logout(){

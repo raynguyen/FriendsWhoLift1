@@ -19,6 +19,9 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.SearchView;
@@ -49,7 +52,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        model = ViewModelProviders.of(getActivity()).get(Groups_ViewModel.class);
+        model = ViewModelProviders.of(requireActivity()).get(Groups_ViewModel.class);
         subscribeToModel();
     }
 
@@ -70,7 +73,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         myGroups = new ArrayList<>();
-        headerTxt = view.findViewById(R.id.header_txt);
 
         ImageButton createGroupBtn = view.findViewById(R.id.create_group_btn);
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
@@ -185,4 +187,5 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         myGroups.add(groupBase);
         mAdapter.notifyItemInserted(myGroups.size()-1);
     }
+
 }

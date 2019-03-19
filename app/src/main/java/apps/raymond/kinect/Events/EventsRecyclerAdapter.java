@@ -5,13 +5,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.List;
 
 import apps.raymond.kinect.R;
 
-public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.EventViewHolder> {
+public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.EventViewHolder>
+    implements Filterable {
+
     private List<GroupEvent> eventsList;
     private EventClickListener eventClickListener;
 
@@ -59,6 +63,11 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 }
             });
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return null;
     }
 
     @Override

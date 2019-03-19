@@ -10,12 +10,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,9 +39,8 @@ import apps.raymond.kinect.Events.Event_Create_Fragment;
 import apps.raymond.kinect.Events.GroupEvent;
 
 public class Core_Events_Fragment extends Fragment implements
-        EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
+        EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler{
     private static final String TAG = "Core_EventsFragment";
-
 
     private List<GroupEvent> eventList;
     private ProgressBar progressBar;
@@ -49,7 +52,7 @@ public class Core_Events_Fragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this.getActivity()).get(Repository_ViewModel.class); // Is there a better callback for this?
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class); // Is there a better callback for this?
     }
 
     @Nullable
@@ -162,6 +165,5 @@ public class Core_Events_Fragment extends Fragment implements
             }
         });
     }
-
 
 }

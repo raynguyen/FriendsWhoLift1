@@ -110,6 +110,7 @@
 
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
+    <string name="explore_groups">EXPLORE GROUPS</string>
 
     <!--GROUPS DETAIL FRAGMENT-->
     <string name="group_privacy">Who can see this group?</string>

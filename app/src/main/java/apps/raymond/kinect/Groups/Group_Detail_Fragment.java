@@ -17,8 +17,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,8 +55,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     private static final int DETAIL_READ = 0;
     private static final int DETAIL_WRITE = 1;
 
-
-
     public Group_Detail_Fragment(){
     }
 
@@ -69,10 +69,16 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
 
     private Repository_ViewModel viewModel;
     ActionBar actionBar;
+    SearchView toolbarSearch;
+    FragmentManager fm;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG,"New instance of Detailed Group Fragment");
+
+        fm = requireActivity().getSupportFragmentManager();
+        toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
+        toolbarSearch.setVisibility(View.GONE);
+
         setHasOptionsMenu(true);
         actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
@@ -102,20 +108,10 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         groupBase = getArguments().getParcelable(GROUP_BASE);
         String transitionName = getArguments().getString(TRANSITION_NAME);
         owner = groupBase.getOwner();
-        currUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         membersTxt = view.findViewById(R.id.members_vtxt);
         membersTxt.setOnClickListener(this);
-
-        try{
-            actionBar.setTitle(groupBase.getName());
-            actionBar.setDisplayShowTitleEnabled(true);
-        } catch (NullPointerException npe){
-            Log.i(TAG,"Error setting title of fragment.",npe);
-        }
-
-        Button saveEditsBtn = view.findViewById(R.id.save_group_btn);
-        saveEditsBtn.setOnClickListener(this);
 
         viewFlipper = view.findViewById(R.id.group_edit_flipper);
 
@@ -130,7 +126,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
             privacyGroup = view.findViewById(R.id.privacy_buttons);
 
             inviteSpinner = view.findViewById(R.id.invite_spinner);
-            adapter = ArrayAdapter.createFromResource(getActivity(), R.array.array_invite_authorize,
+            adapter = ArrayAdapter.createFromResource(requireActivity(), R.array.array_invite_authorize,
                             android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             inviteSpinner.setAdapter(adapter);
@@ -170,19 +166,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.save_group_btn:
-                Log.i(TAG,"Overwriting the Group object.");
-                groupBase.setName(nameEdit.getText().toString());
-                groupBase.setDescription(descEdit.getText().toString());
-
-                RadioButton privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
-                groupBase.setVisibility(privacyBtn.getText().toString());
-                groupBase.setInvite(inviteSpinner.getSelectedItem().toString());
-
-                viewModel.updateGroup(groupBase);
-
-                //Todo: Have to add the ability to modify the image.
-                break;
             case R.id.members_vtxt:
                 MembersPanel membersPanel = MembersPanel.newInstance(groupBase);
                 getChildFragmentManager().beginTransaction()
@@ -193,29 +176,23 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
-    MenuItem editItem;
+    MenuItem saveAction, editAction;
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         Log.i(TAG,"onCreateOptionsMenu of detailed group fragment.");
         menu.clear();
-        inflater.inflate(R.menu.home_actionbar,menu);
-        editItem = menu.findItem(R.id.action_edit);
-    }
+        inflater.inflate(R.menu.details_menu,menu);
+        editAction = menu.findItem(R.id.action_edit);
+        saveAction = menu.findItem(R.id.action_save);
 
-    // This is called every time the Menu opens.
-    // We are overriding this activity callback, not inflating a new menu.
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        Log.i(TAG,"onPrepareOptionsMenu of detailed group fragment.");
         if(owner.equals(currUser)){
-            menu.findItem(R.id.action_edit).setEnabled(true);
-            menu.findItem(R.id.action_edit).setVisible(true);
+            editAction.setEnabled(true);
+            editAction.setVisible(true);
         } else {
-            menu.findItem(R.id.action_edit).setVisible(false);
-            menu.findItem(R.id.action_edit).setEnabled(false);
+            editAction.setVisible(false);
+            editAction.setEnabled(false);
         }
-        super.onPrepareOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     //Going to handle events in the Activity because not sure why it doesn't work in the fragment.
@@ -226,7 +203,29 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
             case R.id.action_edit:
                 item.setVisible(false);
                 item.setEnabled(false);
+                saveAction.setEnabled(true);
+                saveAction.setVisible(true);
                 editGroup();
+                return true;
+            case R.id.action_save:
+                Log.i(TAG,"Overwriting the Group object.");
+                item.setVisible(false);
+                item.setEnabled(false);
+                editAction.setVisible(true);
+                editAction.setEnabled(true);
+
+                groupBase.setName(nameEdit.getText().toString());
+                groupBase.setDescription(descEdit.getText().toString());
+
+                RadioButton privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
+                groupBase.setVisibility(privacyBtn.getText().toString());
+                groupBase.setInvite(inviteSpinner.getSelectedItem().toString());
+
+                viewFlipper.showPrevious();
+                //Todo: Return a task when updating so that we can display the progress bar.
+                viewModel.updateGroup(groupBase);
+
+                //Todo: Have to add the ability to modify the image.
                 return true;
         }
         return false;
@@ -238,13 +237,13 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         Log.i(TAG,"Current state of detail fragment: "+i);
         switch (i){
             case DETAIL_READ:
-                getActivity().getSupportFragmentManager().popBackStack();
+                fm.popBackStack();
                 break;
             case DETAIL_WRITE:
                 YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
                 yesNoDialog.setCancelable(false);
                 yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
-                yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
+                yesNoDialog.show(fm,null);
                 break;
         }
     }
@@ -290,6 +289,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     public void onDestroy() {
         Log.i(TAG, "DESTROYING GROUP DETAIL FRAGMENT.");
         actionBar.setDisplayShowTitleEnabled(false);
+        toolbarSearch.setVisibility(View.VISIBLE);
         super.onDestroy();
     }
 

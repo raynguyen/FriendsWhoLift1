@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -40,15 +39,6 @@
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/members_panel_outline"
-        app:layout_constraintEnd_toStartOf="@+id/drawer_frame"
-        app:layout_constraintTop_toTopOf="parent">
-    </View>
-
     <ImageButton
         android:id="@+id/close_members_drawer_btn"
         android:layout_width="wrap_content"
@@ -57,7 +47,7 @@
         android:contentDescription="@string/Temp"
         android:src="@drawable/baseline_arrow_forward_ios_black_18dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintEnd_toStartOf="@+id/drawer_frame"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.442" />
 
