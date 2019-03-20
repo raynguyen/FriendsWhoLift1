@@ -6,6 +6,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/googleg_standard_color_18" />
+            android:src="@drawable/baseline_weekend_black_18dp" />
     </item>
 </layer-list>

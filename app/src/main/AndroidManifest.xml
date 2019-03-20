@@ -18,17 +18,18 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name="apps.raymond.kinect.Login_Activity">
-        </activity>
-
-        <activity
-            android:name="apps.raymond.kinect.Activity_Launcher"
+            android:name="apps.raymond.kinect.Launch_Activity"
             android:theme="@style/AppTheme.Launcher">
             <!---->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name="apps.raymond.kinect.Login.Login_Activity"
+            android:windowSoftInputMode="adjustResize">
         </activity>
 
         <activity

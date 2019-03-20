@@ -98,19 +98,6 @@ public class Core_Activity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        /*
-        viewModel.getEventInvites().observe(this, new Observer<List<GroupEvent>>() {
-            @Override
-            public void onChanged(@Nullable List<GroupEvent> groupEvents) {
-                Log.i(TAG,"LiveData of even invites has changed.");
-            }
-        });
-         */
-    }
-
-    @Override
     public void onAttachFragment(Fragment fragment) {
 
         if(fragment instanceof Core_Group_Fragment){

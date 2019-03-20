@@ -5,6 +5,7 @@
  * 3)If a new group is created or if a group is modified, manually add or update the corresponding card.
  */
 
+//https://stackoverflow.com/questions/32303492/android-animate-recyclerview-item-of-fragment-inside-viewpager
 package apps.raymond.kinect.Groups;
 
 import android.arch.lifecycle.Observer;

@@ -131,5 +131,4 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         return b;
     }
 
-
 }

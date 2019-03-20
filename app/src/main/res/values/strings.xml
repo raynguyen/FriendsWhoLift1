@@ -76,6 +76,9 @@
     <!-- General Strings -->
     <string name="app_name">Kinect</string>
     <string name="discard">Discard</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="search">Search</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
