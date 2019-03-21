@@ -215,6 +215,7 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.i(TAG,"DISPATCH TOUCH EVENT IN CORE.");
         if(ev.getAction() == MotionEvent.ACTION_DOWN){
             View v = getCurrentFocus();
             if(v instanceof EditText){

@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.DialogFragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,8 +21,9 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.DialogFragments.EventInviteAdapter;
 import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.R;
+import apps.raymond.kinect.Repository_ViewModel;
 
 public class EventInviteFragment extends Fragment implements EventInviteAdapter.InviteResponseListener {
     private static final String TAG = "Event_Invite_Fragment";
@@ -27,7 +31,6 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i(TAG,"CREATING EVENT INVITE FRAGMENT FOR VIEWPAGER~");
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
@@ -35,40 +38,44 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.event_invite_fragment,container,false);
+        return inflater.inflate(R.layout.view_invites_fragment,container,false);
     }
 
-    List<GroupEvent> eventInviteList;
+    TextView nullDataTxt;
+    List<GroupEvent> eventInvSet;
     RecyclerView eventInviteRecycler;
     EventInviteAdapter adapter;
+    ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        eventInviteRecycler = view.findViewById(R.id.event_invite_recycler);
+        progressBar = view.findViewById(R.id.progress_bar);
+        nullDataTxt = view.findViewById(R.id.null_data_text);
+        eventInviteRecycler = view.findViewById(R.id.invite_recycler);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new EventInviteAdapter(this);
         eventInviteRecycler.setAdapter(adapter);
-        eventInviteList = new ArrayList<>();
+        eventInvSet = new ArrayList<>();
         fetchInvites();
     }
 
     private void fetchInvites(){
-        // Show the progress bar animation~
         viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
             @Override
             public void onComplete(@NonNull Task<List<GroupEvent>> task) {
+                progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
-                    if(task.getResult() !=null){
-                        Log.i(TAG, "fetchInvites returned : "+ task.getResult());
-                        eventInviteList.addAll(task.getResult());
-                        adapter.setData(eventInviteList);
+                    if(task.getResult() !=null && task.getResult().size()>0){
+                        Log.i(TAG, "fetch event Invites returned : "+ task.getResult());
+                        eventInvSet.addAll(task.getResult());
+                        adapter.setData(eventInvSet);
                         adapter.notifyDataSetChanged();
-                    } else {
-                        Log.i(TAG,"no invites!");
-                        //Display the null image and text.
+                        return;
                     }
-
+                    nullDataTxt.setVisibility(View.VISIBLE);
+                } else {
+                    Log.w(TAG,"There was an error fetching event invites.");
                 }
 
             }
@@ -76,15 +83,25 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     }
 
     @Override
-    public void onAccept(GroupEvent event) {
-        Log.i(TAG,"Clicked to accept this event.");
-        viewModel.addUserToEvent(event);
-        eventInviteList.remove(event);
-        adapter.notifyDataSetChanged();
+    public void onAccept(final GroupEvent event, final int position) {
+        //if adding user to event is successful, then we should remove from the recycler.
+        progressBar.setVisibility(View.VISIBLE);
+        viewModel.addUserToEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                progressBar.setVisibility(View.GONE);
+                if(task.isSuccessful()){
+                    eventInvSet.remove(position);
+                    adapter.notifyItemRemoved(position);
+                } else {
+                    Toast.makeText(getContext(),"There was an error!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
-    public void onDecline() {
+    public void onDecline(GroupEvent event) {
         Log.i(TAG,"Clicked to decline this event.");
     }
 

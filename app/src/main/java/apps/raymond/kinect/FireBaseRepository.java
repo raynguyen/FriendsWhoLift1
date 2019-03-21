@@ -464,12 +464,12 @@ public class FireBaseRepository {
                 });
     }
 
-    void addUserToGroup(final GroupBase group) {
+    Task<Void> addUserToGroup(final GroupBase group) {
         CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUPS);
         final CollectionReference usersGroupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
         final CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
 
-        usersGroups.document(group.getOriginalName()).set(group).continueWithTask(new Continuation<Void, Task<Void>>() {
+        return usersGroups.document(group.getOriginalName()).set(group).continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                 if (task.isSuccessful()) {

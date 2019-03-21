@@ -15,12 +15,12 @@ import apps.raymond.kinect.Events.GroupEvent;
 import apps.raymond.kinect.R;
 
 public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.InviteMessagesViewHolder> {
-    private List<GroupEvent> eventInviteList;
+    private List<GroupEvent> eventInviteSet;
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void onAccept(GroupEvent groupEvent);
-        void onDecline();
+        void onAccept(GroupEvent event,int position);
+        void onDecline(GroupEvent event);
         void onDetail();
     }
 
@@ -29,7 +29,7 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
     }
 
     public EventInviteAdapter(List<GroupEvent> eventInviteList, InviteResponseListener callback){
-        this.eventInviteList = eventInviteList;
+        this.eventInviteSet = eventInviteList;
         this.callback = callback;
     }
 
@@ -55,25 +55,23 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InviteMessagesViewHolder viewHolder, int i) {
-        if(eventInviteList !=null){
-            Log.i("INVITEADAPTER","Creating an item for invite.");
-            final GroupEvent event = eventInviteList.get(i);
+    public void onBindViewHolder(@NonNull final InviteMessagesViewHolder viewHolder, int i) {
+        if(eventInviteSet !=null){
+            final GroupEvent event = eventInviteSet.get(i);
             viewHolder.titleTxt.setText(event.getName());
             viewHolder.monthTxt.setText(event.getMonth());
             viewHolder.dayTxt.setText(event.getDay());
-
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onAccept(event);
+                    callback.onAccept(event,viewHolder.getAdapterPosition());
                 }
             });
 
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onDecline();
+                    callback.onDecline(event);
                 }
             });
         }
@@ -81,14 +79,14 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
 
     @Override
     public int getItemCount() {
-        if(eventInviteList != null){
-            return eventInviteList.size();
+        if(eventInviteSet != null){
+            return eventInviteSet.size();
         } else {
             return 0;
         }
     }
 
     public void setData(List<GroupEvent> eventsInviteList){
-        this.eventInviteList = eventsInviteList;
+        this.eventInviteSet = eventsInviteList;
     }
 }

@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import apps.raymond.kinect.EventInviteFragment;
-import apps.raymond.kinect.GroupInviteFragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 

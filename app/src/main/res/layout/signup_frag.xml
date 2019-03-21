@@ -82,7 +82,8 @@
 
     <Button
         android:id="@+id/register_btn"
-        style="@style/Base.Widget.AppCompat.ButtonBar"
+        android:textColor="@color/white"
+        android:background="@drawable/button_ripple"
         app:layout_constraintTop_toBottomOf="@+id/repassword_txt_layout"
         android:layout_width="88dp"
         android:layout_height="wrap_content"

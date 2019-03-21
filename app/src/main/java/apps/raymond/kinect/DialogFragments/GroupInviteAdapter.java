@@ -15,12 +15,12 @@ import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.R;
 
 public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.GroupInviteViewHolder> {
-    private List<GroupBase> groupInviteList;
+    private List<GroupBase> groupInviteSet;
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void onAccept(GroupBase group);
-        void onDecline();
+        void onAccept(GroupBase group, int position);
+        void onDecline(GroupBase group);
         void onDetail();
     }
 
@@ -29,14 +29,13 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
     }
 
     public GroupInviteAdapter(List<GroupBase> groupInviteList, InviteResponseListener callback){
-        this.groupInviteList = groupInviteList;
+        this.groupInviteSet = groupInviteList;
         this.callback = callback;
     }
 
     static class GroupInviteViewHolder extends RecyclerView.ViewHolder{
         TextView titleTxt;
         Button acceptBtn, declineBtn;
-
         private GroupInviteViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTxt = itemView.findViewById(R.id.group_name);
@@ -53,23 +52,25 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GroupInviteViewHolder viewHolder, int i) {
-        if(groupInviteList !=null){
-            Log.i("INVITEADAPTER","Creating an item for invite.");
-            final GroupBase group = groupInviteList.get(i);
+    public void onBindViewHolder(@NonNull final GroupInviteViewHolder viewHolder, int i) {
+        if(groupInviteSet !=null){
+            final GroupBase group = groupInviteSet.get(i);
             viewHolder.titleTxt.setText(group.getName());
-
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onAccept(group);
+                    callback.onAccept(group,viewHolder.getAdapterPosition());
+                    //groupInviteSet.remove(viewHolder.getAdapterPosition());
+                    //notifyItemRemoved(viewHolder.getAdapterPosition());
                 }
             });
 
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onDecline();
+                    callback.onDecline(group);
+                    //groupInviteSet.remove(viewHolder.getAdapterPosition());
+                    //notifyItemRemoved(viewHolder.getAdapterPosition());
                 }
             });
         }
@@ -77,14 +78,14 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
 
     @Override
     public int getItemCount() {
-        if(groupInviteList != null){
-            return groupInviteList.size();
+        if(groupInviteSet != null){
+            return groupInviteSet.size();
         } else {
             return 0;
         }
     }
 
     public void setData(List<GroupBase> groupInviteList){
-        this.groupInviteList = groupInviteList;
+        this.groupInviteSet = groupInviteList;
     }
 }

@@ -2,10 +2,11 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:opacity="opaque">
     <item
-        android:drawable="@color/colorPrimary" />
+        android:drawable="@color/colorAccent" />
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/baseline_weekend_black_18dp" />
+            android:src="@drawable/baseline_weekend_black_18dp"
+            android:tint="@color/colorAccentLight"/>
     </item>
 </layer-list>

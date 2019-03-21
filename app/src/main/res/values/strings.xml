@@ -79,6 +79,7 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="search">Search</string>
+    <string name="null_data">Nothing was found!</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

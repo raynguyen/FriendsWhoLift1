@@ -142,7 +142,7 @@ public class Core_Events_Fragment extends Fragment implements
                         @Override
                         public void onSuccess(List<Object> objects) {
                             for(Object object:objects){
-                                Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(GroupEvent.class).getName() + " to RecyclerView.");
+                                //Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(GroupEvent.class).getName() + " to RecyclerView.");
                                 eventList.add(((DocumentSnapshot) object).toObject(GroupEvent.class)); //Do the toObject in the repo
                             }
                             progressBar.setVisibility(View.GONE);

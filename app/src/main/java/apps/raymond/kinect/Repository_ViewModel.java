@@ -92,8 +92,8 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.fetchGroupInvites();
     }
 
-    public void addUserToGroup(GroupBase group){
-        mRepository.addUserToGroup(group);
+    public Task<Void> addUserToGroup(GroupBase group){
+        return mRepository.addUserToGroup(group);
     }
 
     public Task<List<UserModel>> fetchGroupMembers(GroupBase group){
