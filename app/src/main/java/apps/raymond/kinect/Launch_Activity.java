@@ -20,25 +20,28 @@ public class Launch_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // ToDo: This needs to be moved to the repository.
-        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
+        FirebaseAuth.getInstance().addAuthStateListener( new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
                 FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if(currUser == null){
+
                     Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Log.i(TAG,"Starting login activity.");
                     startActivity(loginIntent);
                     finish();
                 } else {
                     Log.d(TAG,"Current user:" + currUser.getEmail());
                     Intent loginIntent = new Intent(Launch_Activity.this, Core_Activity.class);
+                    Log.i(TAG,"Starting core activity.");
                     startActivity(loginIntent);
                     finish();
                 }
-                //overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
             }
-        };
-        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+        });
+
     }
 }

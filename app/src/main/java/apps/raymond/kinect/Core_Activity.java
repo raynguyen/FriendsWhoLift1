@@ -4,9 +4,7 @@
  * 3. Move all the currentUser stuff to repository return methods.
  * 4. Allow user to remove/delete events and or Groups if they are owner for deletes.
  * 6. Recycler View for events does not properly display information.
- * 7. DetailFragment for events does not write proper info.
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
- * 9. **LIST OF USERS TO INVITE TO EVENTS AND GROUPS!!!!!!!!!!
  * 10.Redefine the layout for the edit group/event
  *
  * MESSAGING FOR INVITES:
@@ -77,7 +75,7 @@ public class Core_Activity extends AppCompatActivity implements
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
 
-        postponeEnterTransition();
+        //postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
         Toolbar toolbar = findViewById(R.id.core_toolbar);
