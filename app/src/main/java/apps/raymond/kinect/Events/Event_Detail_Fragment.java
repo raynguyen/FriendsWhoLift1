@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -101,11 +102,15 @@ public class Event_Detail_Fragment extends Fragment implements
     ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
     TextView eventName,eventDesc,eventStart,eventEnd;
     TextView acceptedNullText,invitedNullText,declinedNullText, startEdit, endEdit;
+    TextView acceptedCount, declinedCount, invitedCount;
     String creator;
+    SearchView toolbarSearch;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
+        toolbarSearch.setVisibility(View.GONE);
         editFlipper = view.findViewById(R.id.event_edit_flipper);
         eventName = view.findViewById(R.id.event_title);
         eventDesc = view.findViewById(R.id.event_desc);
@@ -125,6 +130,9 @@ public class Event_Detail_Fragment extends Fragment implements
         Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);
         Button declinedBtn = view.findViewById(R.id.declined_profiles_btn);
         Button invitedBtn = view.findViewById(R.id.invited_profiles_btn);
+        acceptedCount = view.findViewById(R.id.accepted_count_txt);
+        declinedCount = view.findViewById(R.id.declined_count_txt);
+        invitedCount = view.findViewById(R.id.invited_count_txt);
 
         acceptedBtn.setOnClickListener(this);
         declinedBtn.setOnClickListener(this);
@@ -133,6 +141,11 @@ public class Event_Detail_Fragment extends Fragment implements
         profilesFlipper = view.findViewById(R.id.profiles_flipper);
 
         setMemberRecyclers(view);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
     }
 
     private void setMemberRecyclers(View view){
@@ -292,9 +305,9 @@ public class Event_Detail_Fragment extends Fragment implements
                     if(task.getResult().isEmpty()){
                         invitedNullText.setVisibility(View.VISIBLE);
                     }
-                    Log.i(TAG,"Retrieved list of invited invitedProfiles.");
                     invitedProfiles = new ArrayList<>();
                     invitedProfiles.addAll(task.getResult());
+                    invitedCount.setText("" + invitedProfiles.size());
                     invitedAdapter.setData(invitedProfiles);
                     invitedAdapter.notifyDataSetChanged();
                 }
@@ -302,7 +315,7 @@ public class Event_Detail_Fragment extends Fragment implements
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error when retrieving guest list.",e);
+                Log.w(TAG,"Error fetching invited list.",e);
                 Toast.makeText(getContext(),"Failed to retrieve guest list for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
@@ -319,13 +332,14 @@ public class Event_Detail_Fragment extends Fragment implements
                 acceptedBar.setVisibility(View.INVISIBLE);
                 acceptedProfiles = new ArrayList<>();
                 acceptedProfiles.addAll(task.getResult());
+                acceptedCount.setText(""+acceptedProfiles.size());
                 acceptedAdapter.setData(acceptedProfiles);
                 acceptedAdapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error when retrieving guest list.",e);
+                Log.w(TAG,"Error fetching accepted list.",e);
                 Toast.makeText(getContext(),"Failed to accepted users for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
@@ -342,13 +356,15 @@ public class Event_Detail_Fragment extends Fragment implements
                 declinedBar.setVisibility(View.INVISIBLE);
                 declinedProfiles = new ArrayList<>();
                 declinedProfiles.addAll(task.getResult());
+                declinedCount.setText(""+declinedProfiles.size());
                 declinedAdapter.setData(declinedProfiles);
                 declinedAdapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error when retrieving guest list.",e);
+                declinedCount.setText("--");
+                Log.w(TAG,"Error fetching declined list.",e);
                 Toast.makeText(getContext(),"Failed to accepted users for "+event.getName(),Toast.LENGTH_SHORT).show();
             }
         });
@@ -368,6 +384,8 @@ public class Event_Detail_Fragment extends Fragment implements
                 yesNoDialog.setTargetFragment(Event_Detail_Fragment.this,YESNO_REQUEST);
                 yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
         }
+
+        toolbarSearch.setVisibility(View.VISIBLE);
     }
 
     @Override

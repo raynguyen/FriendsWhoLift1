@@ -36,7 +36,7 @@ public class Launch_Activity extends AppCompatActivity {
                     startActivity(loginIntent);
                     finish();
                 }
-                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+                //overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
             }
         };
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
