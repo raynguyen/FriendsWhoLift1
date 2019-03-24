@@ -190,7 +190,7 @@ public class Core_Activity extends AppCompatActivity implements
                 ((Core_Events_Fragment) fragment).filterRecycler(s);
                 break;
             case 1:
-                ((Core_Group_Fragment) fragment).filterRecycler();
+                ((Core_Group_Fragment) fragment).filterRecycler(s);
                 break;
             default:
                 return false;

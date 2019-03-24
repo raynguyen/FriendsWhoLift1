@@ -118,7 +118,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
             public void onChanged(@Nullable List<GroupBase> groupBases) {
                 Log.i(TAG,"There was an update to the GroupBase list!");
                 mAdapter.setData(myGroups);
-                mAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -189,8 +188,8 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         mAdapter.notifyItemInserted(myGroups.size()-1);
     }
 
-    public void filterRecycler(){
-        Log.i(TAG,"Filter groups recycler.");
+    public void filterRecycler(String constraint){
+        mAdapter.getFilter().filter(constraint);
     }
 
 }

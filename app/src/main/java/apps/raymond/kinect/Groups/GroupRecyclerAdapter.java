@@ -6,25 +6,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.R;
 
-public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdapter.GroupViewHolder>{
+public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdapter.GroupViewHolder>
+    implements Filterable {
     private static final String TAG = "GROUP RECYCLER ADAPTER";
-    private List<GroupBase> groupsList;
-    private GroupClickListener groupClickListener;
 
+    private GroupClickListener groupClickListener;
     public interface GroupClickListener {
         void onGroupClick(int position, GroupBase groupBase, View sharedView);
     }
 
-    public GroupRecyclerAdapter(List<GroupBase> myGroups, GroupClickListener groupClickListener){
-        this.groupsList = myGroups;
+    private List<GroupBase> groupsList, groupsListClone;
+    GroupRecyclerAdapter(List<GroupBase> myGroups, GroupClickListener groupClickListener){
         this.groupClickListener =  groupClickListener;
+        this.groupsList = new ArrayList<>(myGroups);
+        groupsListClone = myGroups;
     }
 
     static class GroupViewHolder extends RecyclerView.ViewHolder {
@@ -71,7 +76,9 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     }
 
     public void setData(List<GroupBase> myGroups){
-        this.groupsList = myGroups;
+        this.groupsList = new ArrayList<>(myGroups);
+        groupsListClone = myGroups;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -83,4 +90,37 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        return groupFilter;
+    }
+
+    private Filter groupFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<GroupBase> filteredList = new ArrayList<>();
+
+            if(constraint == null || constraint.length() == 0){
+                filteredList.addAll(groupsListClone);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for(GroupBase group : groupsListClone){
+                    if(group.getName().toLowerCase().contains(filterPattern)){
+                        filteredList.add(group);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            groupsList.clear();
+            groupsList.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 }

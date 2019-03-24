@@ -92,20 +92,18 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     private Filter eventFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
+            Log.i("Adapter","Filtering recycler view.");
             List<GroupEvent> filteredList = new ArrayList<>();
 
             if(constraint == null || constraint.length() == 0){
-                Log.i("ADAPTER","Nothing should be filtered. Need to return the full list.");
                 filteredList.addAll(eventsListClone);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                Log.i("Adapter","Should be filtering through the entire list of events which is currently of size = "+ eventsListFull.size());
-                for(GroupEvent event : eventsListFull){
+                for(GroupEvent event : eventsListClone){
                     if(event.getName().toLowerCase().contains(filterPattern)){
                         filteredList.add(event);
                     }
                 }
-                Log.i("Adapter","AFter filter, we return a list of size = " + filteredList.size());
             }
 
             FilterResults results = new FilterResults();
