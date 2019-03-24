@@ -187,7 +187,7 @@ public class Core_Activity extends AppCompatActivity implements
         Fragment fragment = pagerAdapter.getRegisteredFragment(i);
         switch (i){
             case 0:
-                ((Core_Events_Fragment) fragment).filterRecycler();
+                ((Core_Events_Fragment) fragment).filterRecycler(s);
                 break;
             case 1:
                 ((Core_Group_Fragment) fragment).filterRecycler();
@@ -241,7 +241,7 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.i(TAG,"DISPATCH TOUCH EVENT IN CORE.");
+        //Log.i(TAG,"DISPATCH TOUCH EVENT IN CORE.");
         if(ev.getAction() == MotionEvent.ACTION_DOWN){
             View v = getCurrentFocus();
             if(v instanceof EditText){

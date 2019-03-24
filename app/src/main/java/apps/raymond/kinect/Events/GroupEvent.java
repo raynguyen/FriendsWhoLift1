@@ -7,7 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupEvent implements Parcelable {
+public class GroupEvent implements Parcelable{
     private static final String TAG = "GroupEvent.Class";
 
     public static final Parcelable.Creator<GroupEvent> CREATOR = new Parcelable.Creator<GroupEvent>(){
