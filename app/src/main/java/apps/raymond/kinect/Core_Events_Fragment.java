@@ -161,4 +161,8 @@ public class Core_Events_Fragment extends Fragment implements
         });
     }
 
+    public void filterRecycler(){
+        Log.i(TAG,"Attempting to filter the recycler view in events fragment.");
+    }
+
 }

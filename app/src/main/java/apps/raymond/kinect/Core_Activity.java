@@ -16,6 +16,7 @@ package apps.raymond.kinect;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -26,10 +27,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -48,7 +51,8 @@ import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements
-        Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener {
+        Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
+        SearchView.OnQueryTextListener {
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
     private static final String PROFILE_FRAG = "ProfileFragment";
@@ -68,6 +72,7 @@ public class Core_Activity extends AppCompatActivity implements
     ViewPager viewPager;
     Repository_ViewModel viewModel;
     SearchView toolbarSearch;
+    Core_Activity_Adapter pagerAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +80,7 @@ public class Core_Activity extends AppCompatActivity implements
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
 
-        //postponeEnterTransition();
+        postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
         Toolbar toolbar = findViewById(R.id.core_toolbar);
@@ -86,9 +91,10 @@ public class Core_Activity extends AppCompatActivity implements
         profileBtn.setOnClickListener(this);
 
         toolbarSearch = findViewById(R.id.toolbar_search);
+        toolbarSearch.setOnQueryTextListener(this);
 
         viewPager = findViewById(R.id.core_ViewPager);
-        Core_Activity_Adapter pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
+        pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
@@ -170,6 +176,28 @@ public class Core_Activity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        int i = viewPager.getCurrentItem();
+        Fragment fragment = pagerAdapter.getRegisteredFragment(i);
+        switch (i){
+            case 0:
+                ((Core_Events_Fragment) fragment).filterRecycler();
+                break;
+            case 1:
+                ((Core_Group_Fragment) fragment).filterRecycler();
+                break;
+            default:
+                return false;
+        }
+        return false;
+    }
+
     public void logout(){
         Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
         AuthUI.getInstance().signOut(this);
@@ -233,9 +261,17 @@ public class Core_Activity extends AppCompatActivity implements
 
     public class Core_Activity_Adapter extends FragmentPagerAdapter {
         private static final int NUM_PAGES = 2;
-
+        private SparseArray<Fragment> registeredFragments = new SparseArray<>();
         private Core_Activity_Adapter(FragmentManager fm){
             super(fm);
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container,position);
+            registeredFragments.put(position,fragment);
+            return fragment;
         }
 
         @Override
@@ -265,6 +301,16 @@ public class Core_Activity extends AppCompatActivity implements
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
         }
     }
 }

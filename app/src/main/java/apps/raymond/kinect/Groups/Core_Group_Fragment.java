@@ -189,4 +189,8 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         mAdapter.notifyItemInserted(myGroups.size()-1);
     }
 
+    public void filterRecycler(){
+        Log.i(TAG,"Filter groups recycler.");
+    }
+
 }
