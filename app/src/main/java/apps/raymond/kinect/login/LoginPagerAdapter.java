@@ -1,4 +1,4 @@
-package apps.raymond.kinect.Login;
+package apps.raymond.kinect.login;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

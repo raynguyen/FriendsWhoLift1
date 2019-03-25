@@ -1,4 +1,4 @@
-package apps.raymond.kinect.Login;
+package apps.raymond.kinect.login;
 
 import android.arch.lifecycle.ViewModel;
 

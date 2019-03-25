@@ -6,7 +6,7 @@
  * There is a suspicious event after signing up, there could be two activities starting somehow.
  */
 
-package apps.raymond.kinect.Login;
+package apps.raymond.kinect.login;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,9 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import apps.raymond.kinect.Core_Activity;
-import apps.raymond.kinect.Login.LoginFrag;
-import apps.raymond.kinect.Login.LoginPagerAdapter;
-import apps.raymond.kinect.Login.SignUpFrag;
 import apps.raymond.kinect.R;
 
 public class Login_Activity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn{

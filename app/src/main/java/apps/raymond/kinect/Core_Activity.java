@@ -77,10 +77,8 @@ public class Core_Activity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
 
-        postponeEnterTransition();
         setContentView(R.layout.core_activity);
 
         Toolbar toolbar = findViewById(R.id.core_toolbar);
@@ -99,6 +97,7 @@ public class Core_Activity extends AppCompatActivity implements
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     @Override
@@ -238,7 +237,6 @@ public class Core_Activity extends AppCompatActivity implements
             }
         }
     }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         //Log.i(TAG,"DISPATCH TOUCH EVENT IN CORE.");
@@ -256,62 +254,7 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        viewModel.removeInviteListeners();
-    }
-
-    public class Core_Activity_Adapter extends FragmentPagerAdapter {
-        private static final int NUM_PAGES = 2;
-        private SparseArray<Fragment> registeredFragments = new SparseArray<>();
-        private Core_Activity_Adapter(FragmentManager fm){
-            super(fm);
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container,position);
-            registeredFragments.put(position,fragment);
-            return fragment;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch(i){
-                case 0:
-                    return new Core_Events_Fragment();
-                case 1:
-                    return new Core_Group_Fragment();
-                default:
-                    return null;
-            }
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Events";
-                case 1:
-                    return "Groups";
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            registeredFragments.remove(position);
-            super.destroyItem(container, position, object);
-        }
-
-        public Fragment getRegisteredFragment(int position) {
-            return registeredFragments.get(position);
-        }
+        //viewModel.removeInviteListeners();
     }
 }
 

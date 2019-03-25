@@ -10,7 +10,7 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import apps.raymond.kinect.Login.Login_Activity;
+import apps.raymond.kinect.login.Login_Activity;
 
 public class Launch_Activity extends AppCompatActivity {
     private static final String TAG = "Launch_Activity";
@@ -25,7 +25,6 @@ public class Launch_Activity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
                 FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if(currUser == null){
-
                     Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
