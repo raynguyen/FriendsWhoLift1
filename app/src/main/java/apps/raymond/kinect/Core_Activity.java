@@ -128,6 +128,8 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.core_menu,menu);
+        MenuItem eventCreateAction = menu.findItem(R.id.action_create_event);
+        //eventCreateAction.set
         return true;
     }
 
