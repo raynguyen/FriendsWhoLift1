@@ -72,9 +72,6 @@ public class Core_Events_Fragment extends Fragment implements
         nullImage = getView().findViewById(R.id.null_data_image);
         nullText = getView().findViewById(R.id.null_data_text);
 
-        ImageButton addEventBtn = view.findViewById(R.id.create_event_btn);
-        addEventBtn.setOnClickListener(this);
-
         progressBar = view.findViewById(R.id.progress_bar);
 
         RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
@@ -103,16 +100,6 @@ public class Core_Events_Fragment extends Fragment implements
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.create_event_btn:
-                Log.i(TAG,"Clicked on button to create new event.");
-                Fragment createEventFragment = Event_Create_Fragment.newInstance();
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.core_frame,createEventFragment,Event_Create_Fragment.TAG)
-                        .addToBackStack(Event_Create_Fragment.TAG)
-                        .show(createEventFragment)
-                        .commit();
-                break;
             case R.id.search_events_btn:
                 Log.i(TAG,"Clicked on search events Btn.");
                 Toast.makeText(getContext(),"Search for new events.",Toast.LENGTH_SHORT).show();

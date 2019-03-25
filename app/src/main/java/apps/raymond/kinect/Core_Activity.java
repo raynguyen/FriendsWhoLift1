@@ -52,10 +52,12 @@ import apps.raymond.kinect.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
-        SearchView.OnQueryTextListener {
+        SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
     private static final String PROFILE_FRAG = "ProfileFragment";
+    private static final String CREATE_EVENT_FRAG = "CreateEvent";
+    private static final String CREATE_GROUP_FRAG = "CreateGroup";
 
     public static final int YESNO_REQUEST = 21;
     public UpdateGroupRecycler updateGroupRecycler;
@@ -92,6 +94,7 @@ public class Core_Activity extends AppCompatActivity implements
         toolbarSearch.setOnQueryTextListener(this);
 
         viewPager = findViewById(R.id.core_ViewPager);
+        viewPager.addOnPageChangeListener(this);
         pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
@@ -131,7 +134,7 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.action_logout:
+            /*case R.id.action_logout:
                 Log.i(TAG,"Clicked the logout button.");
                 logout();
                 return true;
@@ -140,24 +143,50 @@ public class Core_Activity extends AppCompatActivity implements
                 return true;
             case R.id.action_test:
                 Log.i(TAG,getSupportFragmentManager().getFragments().toString());
-                return true;
+                return true;*/
             case R.id.action_invites:
                 Log.i(TAG,"Clicked on invites button");
                 InviteDialog inviteDialog = new InviteDialog();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,inviteDialog,INV_FRAG)
                         .addToBackStack(INV_FRAG)
-                        .show(inviteDialog)
+                        .commit();
+                return true;
+            case R.id.action_create_event:
+                Event_Create_Fragment eventFragment = new Event_Create_Fragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.core_frame,eventFragment,CREATE_EVENT_FRAG)
+                        .addToBackStack(CREATE_EVENT_FRAG)
+                        .commit();
+                return true;
+            case R.id.action_create_group:
+                Group_Create_Fragment groupFragment = new Group_Create_Fragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.core_frame,groupFragment,CREATE_GROUP_FRAG)
+                        .addToBackStack(CREATE_GROUP_FRAG)
                         .commit();
                 return true;
             case R.id.action_edit:
-                Log.i(TAG,"HELLO?");
                 return false;
             case R.id.action_save:
                 return false;
 
         }
         return false;
+    }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
     }
 
     @Override
@@ -195,11 +224,6 @@ public class Core_Activity extends AppCompatActivity implements
                 return false;
         }
         return false;
-    }
-
-    public void logout(){
-        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        AuthUI.getInstance().signOut(this);
     }
 
     @Override
@@ -249,6 +273,12 @@ public class Core_Activity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+
+    public void logout(){
+        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        AuthUI.getInstance().signOut(this);
     }
 
     @Override

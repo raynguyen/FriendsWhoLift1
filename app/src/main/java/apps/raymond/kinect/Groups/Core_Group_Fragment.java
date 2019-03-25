@@ -69,25 +69,10 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
 
     GroupRecyclerAdapter mAdapter;
     ProgressBar progressBar;
-    TextView headerTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         myGroups = new ArrayList<>();
-
-        ImageButton createGroupBtn = view.findViewById(R.id.create_group_btn);
-        createGroupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment createGroupFragment = new Group_Create_Fragment();
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.core_frame,createGroupFragment,Group_Create_Fragment.TAG)
-                        .addToBackStack(Group_Create_Fragment.TAG)
-                        .show(createGroupFragment)
-                        .commit();
-            }
-        });
 
         progressBar = view.findViewById(R.id.progress_bar);
 
@@ -163,7 +148,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
             }
         });
     }
-
 
     @Override
     public void onGroupClick(int position, GroupBase groupBase, View sharedView) {

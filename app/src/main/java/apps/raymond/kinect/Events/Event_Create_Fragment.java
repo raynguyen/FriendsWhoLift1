@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,7 +76,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }catch (ClassCastException e){
             Log.i(TAG,"Unable to attach AddEvent interface to activity.");
         }
-
         fm = getActivity().getSupportFragmentManager();
     }
 
@@ -100,6 +100,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return inflater.inflate(R.layout.event_create_frag,container,false);
     }
 
+    SearchView toolbarSearch;
     String startMonth, startDay;
     EditText nameTxt, descTxt;
     TextView startTxt, endTxt;
@@ -113,7 +114,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
+        toolbarSearch.setVisibility(View.GONE);
+
         nameTxt = view.findViewById(R.id.event_name_txt);
+        nameTxt.setHint(R.string.event_name);
         descTxt = view.findViewById(R.id.event_desc_txt);
         startTxt = view.findViewById(R.id.event_start);
         endTxt = view.findViewById(R.id.event_end);
@@ -293,6 +299,14 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     @Override
+    public void onBackPress() {
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setCancelable(false);
+        yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
+        yesNoDialog.show(fm,null);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
             case DIALOG_REQUEST_CODE:
@@ -306,11 +320,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onBackPress() {
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setCancelable(false);
-        yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
-        yesNoDialog.show(fm,null);
+    public void onDestroyView() {
+        super.onDestroyView();
+        toolbarSearch.setVisibility(View.VISIBLE);
     }
-
 }
