@@ -15,14 +15,16 @@
         android:id="@+id/action_create_event"
         android:title="@string/create_event"
         android:icon="@drawable/baseline_playlist_add_black_18dp"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom"
+        android:visible="false">
     </item>
 
     <item
         android:id="@+id/action_create_group"
         android:title="@string/create_group"
         android:icon="@drawable/baseline_add_photo_alternate_black_18dp"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom"
+        android:visible="false">
     </item>
 
 </menu>

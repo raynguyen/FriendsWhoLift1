@@ -34,9 +34,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -105,7 +108,6 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public void onAttachFragment(Fragment fragment) {
-
         if(fragment instanceof Core_Group_Fragment){
             try {
                 updateGroupRecycler = (UpdateGroupRecycler) fragment;
@@ -125,11 +127,23 @@ public class Core_Activity extends AppCompatActivity implements
 
     }
 
+    MenuItem eventCreate, groupCreate;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.core_menu,menu);
-        MenuItem eventCreateAction = menu.findItem(R.id.action_create_event);
-        //eventCreateAction.set
+        eventCreate = menu.findItem(R.id.action_create_event);
+        groupCreate = menu.findItem(R.id.action_create_group);
+
+        switch (viewPager.getCurrentItem()){
+            case 0:
+                eventCreate.setVisible(true);
+                groupCreate.setVisible(false);
+                break;
+            case 1:
+                groupCreate.setVisible(true);
+                eventCreate.setVisible(false);
+                break;
+        }
         return true;
     }
 
@@ -172,23 +186,32 @@ public class Core_Activity extends AppCompatActivity implements
                 return false;
             case R.id.action_save:
                 return false;
-
         }
         return false;
     }
 
     @Override
-    public void onPageScrolled(int i, float v, int i1) {
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
 
     @Override
     public void onPageSelected(int i) {
-
+        switch (i){
+            case 0:
+                eventCreate.setVisible(true);
+                groupCreate.setVisible(false);
+                return;
+            case 1:
+                groupCreate.setVisible(true);
+                eventCreate.setVisible(false);
+                break;
+        }
     }
 
     @Override
     public void onPageScrollStateChanged(int i) {
+
     }
 
     @Override
@@ -265,7 +288,12 @@ public class Core_Activity extends AppCompatActivity implements
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        //Log.i(TAG,"DISPATCH TOUCH EVENT IN CORE.");
+        Log.i(TAG,"Clicked down bruh.");
+
+        if(!toolbarSearch.isIconified()){
+            toolbarSearch.setIconified(true);
+        }
+        
         if(ev.getAction() == MotionEvent.ACTION_DOWN){
             View v = getCurrentFocus();
             if(v instanceof EditText){
