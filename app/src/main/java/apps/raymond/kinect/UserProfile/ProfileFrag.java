@@ -1,27 +1,38 @@
 package apps.raymond.kinect.UserProfile;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toolbar;
 import android.widget.ViewFlipper;
 
 import apps.raymond.kinect.R;
 
-public class ProfileFrag extends Fragment implements View.OnLayoutChangeListener {
+public class ProfileFrag extends Fragment{
     private final static String TAG = "ProfileFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -30,56 +41,31 @@ public class ProfileFrag extends Fragment implements View.OnLayoutChangeListener
         return inflater.inflate(R.layout.user_profile_fragment,container,false);
     }
 
-    private ViewFlipper viewFlipper;
+    SearchView toolbarSearch;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewFlipper = view.findViewById(R.id.profile_name_flipper);
-        viewFlipper.addOnLayoutChangeListener(this);
-        if(viewFlipper.getDisplayedChild() == 0){
-            TextView nameTxt = view.findViewById(R.id.profile_name_txt);
-            ImageButton editBtn = view.findViewById(R.id.name_edit_btn);
-            editBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.i(TAG,"Clicked edit name button.");
-                    viewFlipper.showNext();
-                }
-            });
-            nameTxt.setText("hello");
-        }
-        Log.i(TAG,"viewflipper child is currently: "+viewFlipper.getDisplayedChild());
+        toolbarSearch = requireActivity().findViewById(R.id.toolbar_search);
+        toolbarSearch.setVisibility(View.GONE);
+        toolbarSearch.setEnabled(false);
     }
 
-    private String name;
     @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        int i = viewFlipper.getDisplayedChild();
-        switch (i){
-            case 0:
-                Log.i(TAG,"Current flipper view is: "+viewFlipper.getDisplayedChild());
-                TextView nameField = v.findViewById(R.id.profile_name_txt);
-                nameField.setText(name);
-                break;
-            case 1:
-                Log.i(TAG,"Current flipper view is: "+viewFlipper.getDisplayedChild());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((AppCompatActivity)context).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.MAGENTA));
+    }
 
-                final TextInputEditText newName = v.findViewById(R.id.name_txt_field);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
 
-                Button saveBtn = v.findViewById(R.id.name_edit_save_btn);
-                saveBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(newName.getText().toString().isEmpty()){
-                            Log.i(TAG,"Empty name field.");
-                        } else{
-                            name = newName.getText().toString();
-                            viewFlipper.showPrevious();
-                            Log.i(TAG,"Current name for user is: "+name);
-                        }
-                    }
-                });
-                break;
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        toolbarSearch.setVisibility(View.VISIBLE);
+        toolbarSearch.setEnabled(true);
     }
 }

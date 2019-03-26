@@ -28,13 +28,13 @@
 
         <activity
             android:name="apps.raymond.kinect.login.Login_Activity"
-            android:theme="@style/CoreTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
 
         <activity
             android:name="apps.raymond.kinect.Core_Activity"
-            android:theme="@style/CoreTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
 

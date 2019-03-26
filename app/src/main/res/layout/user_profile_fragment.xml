@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,66 +12,22 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/profile_picture"
         android:background="@drawable/edit_text_border"
         android:src="@drawable/googleg_standard_color_18"/>
 
-    <ViewFlipper
-        android:id="@+id/profile_name_flipper"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/profile_name_txt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/profile_picture"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:hint="@string/profile_display_name"
+        app:layout_constraintTop_toBottomOf="@id/profile_picture"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="24sp"
+        android:layout_marginTop="8dp"/>
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/profile_name_txt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/profile_display_name"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:textSize="18sp"/>
-            <ImageButton
-                android:id="@+id/name_edit_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/fui_ic_twitter_bird_white_24dp"/>
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/edit_name_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/profile_display_name"
-                style="@style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/name_txt_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/name_edit_save_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/edit_name_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="@string/Temp"/>
-        </android.support.constraint.ConstraintLayout>
-    </ViewFlipper>
 </android.support.constraint.ConstraintLayout>

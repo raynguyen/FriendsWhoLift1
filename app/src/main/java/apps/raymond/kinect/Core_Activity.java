@@ -87,8 +87,10 @@ public class Core_Activity extends AppCompatActivity implements
         setContentView(R.layout.core_activity);
 
         Toolbar toolbar = findViewById(R.id.core_toolbar);
+        toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         setSupportActionBar(toolbar);
-        this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
 
         ImageButton profileBtn = findViewById(R.id.action_profile);
         profileBtn.setOnClickListener(this);
@@ -133,6 +135,7 @@ public class Core_Activity extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.core_menu,menu);
         eventCreate = menu.findItem(R.id.action_create_event);
         groupCreate = menu.findItem(R.id.action_create_group);
+
 
         switch (viewPager.getCurrentItem()){
             case 0:
@@ -192,7 +195,6 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
     }
 
     @Override
@@ -288,12 +290,10 @@ public class Core_Activity extends AppCompatActivity implements
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.i(TAG,"Clicked down bruh.");
-
         if(!toolbarSearch.isIconified()){
             toolbarSearch.setIconified(true);
         }
-        
+
         if(ev.getAction() == MotionEvent.ACTION_DOWN){
             View v = getCurrentFocus();
             if(v instanceof EditText){
