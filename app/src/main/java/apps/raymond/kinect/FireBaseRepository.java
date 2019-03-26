@@ -261,14 +261,6 @@ public class FireBaseRepository {
     Task<List<Task<DocumentSnapshot>>> getUsersEvents() {
         // First task retrieves a list of the Groups from the User Document.
         return userCollection.document(userEmail).collection("Events").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.i(TAG, "User's events include: " + document.getId());
-                        }
-                    }
-                })
                 // Second task will return a List of tasks to retrieve a document pertaining to each document retrieved from the first task.
                 .continueWith(new Continuation<QuerySnapshot, List<Task<DocumentSnapshot>>>() {
                     @Override
@@ -359,7 +351,6 @@ public class FireBaseRepository {
                             }
                         } else {
                             Log.i(TAG, "Error creating invitee sub collection.");
-                            //return null;
                         }
                         return null;
                     }
@@ -398,7 +389,6 @@ public class FireBaseRepository {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Log.i(TAG, "Successfully invited " + user.getEmail() + " to " + groupBase.getName());
                                 inviteBatch.set(groupCol.document(user.getEmail()), user);
                             }
                         }
@@ -441,7 +431,6 @@ public class FireBaseRepository {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.i(TAG, "Adding to GroupBase query list: " + document.getId());
                                 groupList.add(document.getId());
                             }
                         }
@@ -454,7 +443,6 @@ public class FireBaseRepository {
                             taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
                                 @Override
                                 public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    Log.i(TAG, "Converting document to GroupBase: " + group);
                                     return task.getResult().toObject(GroupBase.class);
                                 }
                             }));

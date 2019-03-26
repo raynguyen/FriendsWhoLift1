@@ -18,7 +18,6 @@ import apps.raymond.kinect.R;
 
 public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdapter.GroupViewHolder>
     implements Filterable {
-    private static final String TAG = "GROUP RECYCLER ADAPTER";
 
     private GroupClickListener groupClickListener;
     public interface GroupClickListener {
@@ -59,8 +58,6 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     public void onBindViewHolder(@NonNull final GroupRecyclerAdapter.GroupViewHolder viewHolder, int position) {
         if(groupsList !=null){
             final GroupBase currentGroup = groupsList.get(position);
-            Log.i(TAG,"Creating card for: "+currentGroup.getName());
-
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.nameTxt.setTransitionName("Transition"+position);
             viewHolder.descTxt.setText(currentGroup.getDescription());

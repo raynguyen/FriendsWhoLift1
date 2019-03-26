@@ -9,6 +9,11 @@
  *
  * MESSAGING FOR INVITES:
  * Doc listener for a invites doc.
+ *
+ * OPTIMIZE:
+ * If a fragment is committed and has setHasOptionsMenu(true), it will call the parent activity's
+ * onCreateOptionsMenu. This means that to optimize computing, only mandatory calls should be executed
+ * inside the activity's onCreateOptionsMenu method.
  */
 
 package apps.raymond.kinect;
@@ -16,33 +21,22 @@ package apps.raymond.kinect;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-
-import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.DialogFragments.InviteDialog;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
@@ -55,7 +49,8 @@ import apps.raymond.kinect.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
-        SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
+        SearchView.OnQueryTextListener, ProfileFrag.DestroyProfileFrag {
+
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
     private static final String PROFILE_FRAG = "ProfileFragment";
@@ -78,34 +73,27 @@ public class Core_Activity extends AppCompatActivity implements
     Repository_ViewModel viewModel;
     SearchView toolbarSearch;
     Core_Activity_Adapter pagerAdapter;
+    Toolbar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-
         setContentView(R.layout.core_activity);
 
-        Toolbar toolbar = findViewById(R.id.core_toolbar);
-        toolbar.setBackgroundColor(getColor(R.color.colorAccent));
+        toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-
-        ImageButton profileBtn = findViewById(R.id.action_profile);
-        profileBtn.setOnClickListener(this);
 
         toolbarSearch = findViewById(R.id.toolbar_search);
         toolbarSearch.setOnQueryTextListener(this);
 
         viewPager = findViewById(R.id.core_ViewPager);
-        viewPager.addOnPageChangeListener(this);
         pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     @Override
@@ -132,21 +120,15 @@ public class Core_Activity extends AppCompatActivity implements
     MenuItem eventCreate, groupCreate;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        Log.i(TAG,"PLEASE WTF");
         getMenuInflater().inflate(R.menu.core_menu,menu);
+
+        toolbar.setBackgroundColor(getColor(R.color.colorAccent));
+        toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
+        toolbar.setNavigationOnClickListener(this);
+
         eventCreate = menu.findItem(R.id.action_create_event);
         groupCreate = menu.findItem(R.id.action_create_group);
-
-
-        switch (viewPager.getCurrentItem()){
-            case 0:
-                eventCreate.setVisible(true);
-                groupCreate.setVisible(false);
-                break;
-            case 1:
-                groupCreate.setVisible(true);
-                eventCreate.setVisible(false);
-                break;
-        }
         return true;
     }
 
@@ -194,36 +176,14 @@ public class Core_Activity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    }
-
-    @Override
-    public void onPageSelected(int i) {
-        switch (i){
-            case 0:
-                eventCreate.setVisible(true);
-                groupCreate.setVisible(false);
-                return;
-            case 1:
-                groupCreate.setVisible(true);
-                eventCreate.setVisible(false);
-                break;
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int i) {
-
-    }
-
-    @Override
     public void onClick(View v) {
         int i = v.getId();
         switch(i){
-            case R.id.action_profile:
+            case -1:
                 ProfileFrag profileFrag = new ProfileFrag();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,profileFrag,PROFILE_FRAG)
+                        .replace(R.id.full_core_frame,profileFrag,PROFILE_FRAG)
+                        .setCustomAnimations(R.anim.fui_slide_in_right,R.anim.fui_slide_out_left)
                         .addToBackStack(PROFILE_FRAG)
                         .show(profileFrag)
                         .commit();
@@ -305,16 +265,10 @@ public class Core_Activity extends AppCompatActivity implements
         return super.dispatchTouchEvent(ev);
     }
 
-
-    public void logout(){
-        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        AuthUI.getInstance().signOut(this);
-    }
-
     @Override
-    protected void onStop() {
-        super.onStop();
-        //viewModel.removeInviteListeners();
+    public void destroyProfileFrag() {
+        //Log.i(TAG,"WTF" + getSupportFragmentManager().getFragments().toString());
+        getSupportFragmentManager().popBackStack(PROFILE_FRAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }
 

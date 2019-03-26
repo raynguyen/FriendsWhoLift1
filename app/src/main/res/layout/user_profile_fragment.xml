@@ -4,8 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ffffff"
-    android:clickable="true">
+    android:background="@color/colorAccentLight"
+    android:clickable="true"
+    android:padding="12dp">
+
+    <ImageButton
+        android:id="@+id/close_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/cancel"
+        android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+        android:background="@drawable/button_ripple"/>
+
+    <ImageButton
+        android:id="@+id/logout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/logout"
+        android:src="@drawable/baseline_transfer_within_a_station_black_18dp"
+        android:background="@drawable/button_ripple"/>
 
     <ImageView
         android:id="@+id/profile_picture"
@@ -14,8 +35,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="48dp"
         android:contentDescription="@string/profile_picture"
-        android:background="@drawable/edit_text_border"
+        android:background="#0000"
         android:src="@drawable/googleg_standard_color_18"/>
 
     <TextView

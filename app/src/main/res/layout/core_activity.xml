@@ -24,14 +24,14 @@
                 android:layout_height="?android:attr/actionBarSize"
                 android:orientation="horizontal"
                 android:layout_marginTop="4dp">
-                <ImageButton
+                <!--<ImageButton
                     android:id="@+id/action_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_face_black_18dp"
                     android:background="#0000"
                     android:layout_marginTop="4dp"
-                    android:contentDescription="@string/Temp"/>
+                    android:contentDescription="@string/Temp"/>-->
                 <android.support.v7.widget.SearchView
                     android:id="@+id/toolbar_search"
                     android:layout_width="wrap_content"

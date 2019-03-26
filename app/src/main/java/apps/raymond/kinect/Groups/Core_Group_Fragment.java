@@ -77,11 +77,9 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         progressBar = view.findViewById(R.id.progress_bar);
 
         RecyclerView cardRecycler = view.findViewById(R.id.card_container);
-        SearchView groupSearchView = view.findViewById(R.id.groupSearchView);
 
         mAdapter = new GroupRecyclerAdapter(myGroups, this);
         updateCardViews();
-        //cardRecycler.setItemAnimator(new DefaultItemAnimator());
 
         cardRecycler.setAdapter(mAdapter);
         cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
@@ -125,7 +123,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
                     Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                         @Override
                         public void onSuccess(List<Object> objects) {
-                            Log.i(TAG,"Fetching user's groups returned a list of size: "+objects.size());
                             if(objects.size()>0){
                                 myGroups = new ArrayList<>();
                                 for(Object object:objects){
@@ -167,7 +164,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
 
     @Override
     public void updateGroupRecycler(GroupBase groupBase) {
-        Log.i(TAG,"NOTIFIED TO UPDATE THE GROUP RECYCLER NEW GROUP: "+groupBase.getName());
         myGroups.add(groupBase);
         mAdapter.notifyItemInserted(myGroups.size()-1);
     }
