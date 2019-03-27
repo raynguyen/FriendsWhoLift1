@@ -163,8 +163,7 @@
                 android:layout_weight="1"
                 android:text="@string/accepted"
                 android:textColor="@color/colorAccentLight"
-                android:gravity="bottom|center"
-                android:hint="@string/accepted"/>
+                android:gravity="bottom|center"/>
 
             <Button
                 android:id="@+id/declined_profiles_btn"
@@ -173,8 +172,7 @@
                 android:layout_weight="1"
                 android:text="@string/declined"
                 android:textColor="@color/colorAccentLight"
-                android:gravity="bottom|center"
-                android:hint="@string/declined"/>
+                android:gravity="bottom|center"/>
 
             <Button
                 android:id="@+id/invited_profiles_btn"
@@ -182,7 +180,6 @@
                 android:layout_height="80dp"
                 android:layout_weight="1"
                 android:text="@string/invited"
-                android:hint="@string/invited"
                 android:textColor="@color/colorAccentLight"
                 android:gravity="bottom|center" />
         </LinearLayout>

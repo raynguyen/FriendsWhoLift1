@@ -182,10 +182,9 @@ public class Core_Activity extends AppCompatActivity implements
             case -1:
                 ProfileFrag profileFrag = new ProfileFrag();
                 getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_down, 0,0,R.anim.slide_out_up)
                         .replace(R.id.full_core_frame,profileFrag,PROFILE_FRAG)
-                        .setCustomAnimations(R.anim.fui_slide_in_right,R.anim.fui_slide_out_left)
                         .addToBackStack(PROFILE_FRAG)
-                        .show(profileFrag)
                         .commit();
                 break;
         }
@@ -267,7 +266,6 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public void destroyProfileFrag() {
-        //Log.i(TAG,"WTF" + getSupportFragmentManager().getFragments().toString());
         getSupportFragmentManager().popBackStack(PROFILE_FRAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }
