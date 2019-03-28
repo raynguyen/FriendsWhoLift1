@@ -1,5 +1,6 @@
 package apps.raymond.kinect.UserProfile;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,13 +10,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.Repository_ViewModel;
 
 public class ProfileFrag extends Fragment implements View.OnClickListener{
     private final static String TAG = "ProfileFragment";
@@ -30,7 +40,6 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
         super.onAttach(context);
         if(context instanceof Core_Activity){
             try {
-                Log.i(TAG,"We now have a desotryInterface");
                 destroyInterface = (DestroyProfileFrag) context;
             } catch (ClassCastException e){
                 Log.i(TAG,"Core_Group_Fragment does not implement UpdateGroupRecycler interface.");
@@ -38,26 +47,38 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
         }
     }
 
+    Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.user_profile_fragment,container,false);
+        return inflater.inflate(R.layout.profile_fragment,container,false);
     }
 
+    TextView connectionsTxt, interestsTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ImageButton closeBtn = view.findViewById(R.id.close_btn);
         closeBtn.setOnClickListener(this);
-
         ImageButton logoutBtn = view.findViewById(R.id.logout_btn);
         logoutBtn.setOnClickListener(this);
+
+        Button connectionsBtn = view.findViewById(R.id.connections_btn);
+        connectionsBtn.setOnClickListener(this);
+        Button interestsBtn = view.findViewById(R.id.interests_btn);
+        interestsBtn.setOnClickListener(this);
+
+        connectionsTxt = view.findViewById(R.id.connections_txt);
+        interestsTxt = view.findViewById(R.id.interests_txt);
+
+        fetchUserInfo();
     }
 
     @Override
@@ -84,4 +105,35 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
         super.onDestroy();
         Log.i(TAG,"shit is about to die");
     }
+
+    List<UserModel> connectionsList = new ArrayList<>();
+    List<String> interestsList = new ArrayList<>();
+    private void fetchUserInfo(){
+        viewModel.fetchConnections().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"GOT USERS.");
+                    connectionsList.addAll(task.getResult());
+                    connectionsTxt.setText(connectionsList.size());
+                } else {
+                    Toast.makeText(getContext(),"Error retrieving connections.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        viewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<String>> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"GOT INTERESTS");
+                    interestsList.addAll(task.getResult());
+                    interestsTxt.setText(interestsList.size());
+                } else {
+                    Toast.makeText(getContext(),"Error retrieving user interests.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 }

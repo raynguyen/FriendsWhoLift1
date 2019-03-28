@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.UIResources;
 
 import android.content.Context;
 import android.graphics.Canvas;

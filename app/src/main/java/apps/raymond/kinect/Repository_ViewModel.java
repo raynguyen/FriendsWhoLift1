@@ -15,13 +15,24 @@ import apps.raymond.kinect.UserProfile.UserModel;
 public class Repository_ViewModel extends ViewModel {
     private FireBaseRepository mRepository;
 
-
     public Repository_ViewModel(){
         this.mRepository = new FireBaseRepository();
     }
 
     public void removeInviteListeners(){
         mRepository.removeInviteListeners();
+    }
+
+    public Task<Void> addUserConnection(UserModel user){
+        return mRepository.addConnection(user);
+    }
+
+    public Task<List<UserModel>> fetchConnections(){
+        return null;
+    }
+
+    public Task<List<String>> fetchInterests(){
+        return null;
     }
 
     public Task<List<GroupEvent>> fetchEventInvites(){

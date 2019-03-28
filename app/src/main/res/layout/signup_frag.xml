@@ -94,7 +94,7 @@
         android:focusable="true"/>
 
 
-    <apps.raymond.kinect.VerticalTextView
+    <apps.raymond.kinect.UIResources.VerticalTextView
         android:id="@+id/login_vtxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

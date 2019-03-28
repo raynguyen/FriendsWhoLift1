@@ -176,6 +176,11 @@ public class FireBaseRepository {
         });
     }
 
+    Task<Void> addConnection(UserModel user){
+        CollectionReference userConnections = userCollection.document(userEmail).collection(CONNECTIONS);
+        return userConnections.document(user.getEmail()).set(user);
+    }
+
     //*------------------------------------------EVENTS------------------------------------------*//
     /*
      * Creates a new Document in the Events collection. The Document is created as a GroupEvent

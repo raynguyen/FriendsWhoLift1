@@ -26,7 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.UserModel;
-import apps.raymond.kinect.VerticalTextView;
+import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class SignUpFrag extends Fragment implements View.OnClickListener {
     private static final String TAG = "SignUpFrag";

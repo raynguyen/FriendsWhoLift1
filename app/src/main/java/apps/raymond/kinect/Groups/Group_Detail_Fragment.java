@@ -44,7 +44,7 @@ import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.VerticalTextView;
+import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Detail_Fragment";
