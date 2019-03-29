@@ -19,10 +19,6 @@ public class Repository_ViewModel extends ViewModel {
         this.mRepository = new FireBaseRepository();
     }
 
-    public void removeInviteListeners(){
-        mRepository.removeInviteListeners();
-    }
-
     public Task<Void> addUserConnection(UserModel user){
         return mRepository.addConnection(user);
     }
@@ -59,7 +55,7 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addUserToEvent(groupEvent);
     }
 
-    public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
+    Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
         return mRepository.getUsersEvents();
     }
 

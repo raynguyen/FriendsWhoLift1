@@ -41,7 +41,6 @@ import java.util.List;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.Interfaces.ProfileClickListener;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
@@ -50,7 +49,7 @@ import apps.raymond.kinect.UserProfile.UserModel;
 import static apps.raymond.kinect.Core_Activity.YESNO_REQUEST;
 
 public class Event_Detail_Fragment extends Fragment implements
-        View.OnClickListener, ProfileClickListener, BackPressListener{
+        View.OnClickListener, ProfileRecyclerAdapter.ProfileClickListener, BackPressListener{
 
     public static final String TAG = "Event_Detail_Fragment";
     public static final String EVENT = "EventObject";

@@ -6,18 +6,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true">
 
-    <android.support.constraint.Guideline
-        android:id="@+id/overlap_guideline"
+    <ImageButton
+        android:id="@+id/close_members_drawer_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="180dp" />
+        android:background="@drawable/swipe_right_btn"
+        android:contentDescription="@string/Temp"
+        android:src="@drawable/baseline_arrow_forward_ios_black_18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.442" />
 
     <LinearLayout
         android:id="@+id/drawer_frame"
-        android:layout_width="224dp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/close_members_drawer_btn"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@drawable/members_panel_background"
         android:padding="12dp">
@@ -38,17 +44,5 @@
             app:layout_constraintTop_toBottomOf="@id/members_txt">
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/close_members_drawer_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/swipe_right_btn"
-        android:contentDescription="@string/Temp"
-        android:src="@drawable/baseline_arrow_forward_ios_black_18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/drawer_frame"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.442" />
 
 </android.support.constraint.ConstraintLayout>

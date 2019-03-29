@@ -176,11 +176,17 @@ public class FireBaseRepository {
         });
     }
 
-    Task<Void> addConnection(UserModel user){
+    Task<Void> addConnection(final UserModel user){
         CollectionReference userConnections = userCollection.document(userEmail).collection(CONNECTIONS);
-        return userConnections.document(user.getEmail()).set(user);
+        return userConnections.document(user.getEmail()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Successfully created a connection to user: " + user.getEmail());
+                }
+            }
+        });
     }
-
     //*------------------------------------------EVENTS------------------------------------------*//
     /*
      * Creates a new Document in the Events collection. The Document is created as a GroupEvent
@@ -506,7 +512,7 @@ public class FireBaseRepository {
     //*-------------------------------------------ETC--------------------------------------------*//
 
 
-    public void removeInviteListeners() {
+    private void removeInviteListeners() {
         //eventInviteListener.remove();
         //groupInviteListener.remove();
     }
@@ -554,15 +560,6 @@ public class FireBaseRepository {
                         return null;
                     }
                 });
-    }
-
-    // Used to add users to the current user.
-    // ToDo: Create a user Pojo so we can properly store them into firestore
-    Task<Void> createConnection() {
-        CollectionReference connections = userCollection.document(userEmail).collection(CONNECTIONS);
-        Map<String, String> testMap = new HashMap<>();
-        testMap.put("User email", "some email");
-        return connections.document("Some new connection").set(testMap);
     }
 
     public Task<GroupBase> getGroup() {

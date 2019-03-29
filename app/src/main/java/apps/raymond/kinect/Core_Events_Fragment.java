@@ -77,7 +77,6 @@ public class Core_Events_Fragment extends Fragment implements
         RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsRecyclerAdapter(eventList, this);
         eventsRecycler.setAdapter(mAdapter);
-        eventsRecycler.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Button searchEventsBtn = view.findViewById(R.id.search_events_btn);

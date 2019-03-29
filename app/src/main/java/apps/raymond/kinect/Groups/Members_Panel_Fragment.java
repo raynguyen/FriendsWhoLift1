@@ -19,13 +19,12 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Interfaces.ProfileClickListener;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
-public class Members_Panel_Fragment extends Fragment implements ProfileClickListener {
+public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
     private static final String TAG = "Custom_Members_Panel";
     private static final String GROUP_PARCEL = "GroupParcel";
 

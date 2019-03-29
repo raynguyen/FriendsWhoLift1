@@ -6,18 +6,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.kinect.Interfaces.ProfileClickListener;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ProfileViewHolder> {
     private static final String TAG = "PROFILE RECYCLER ADAPTER";
 
-    private List<UserModel> userModels;
     private ProfileClickListener listener;
+    public interface ProfileClickListener {
+        void onProfileClick(UserModel userModel);
+    }
+
+    private List<UserModel> userModels;
 
     public ProfileRecyclerAdapter(List<UserModel> userModels, ProfileClickListener profileClickListener){
         this.userModels = userModels;
@@ -26,7 +30,6 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     static class ProfileViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
-
         private ProfileViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.user_name_txt);
@@ -43,12 +46,12 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     @Override
     public void onBindViewHolder(@NonNull final ProfileViewHolder profileViewHolder, int i) {
         if(userModels!=null){
-            UserModel currUser = userModels.get(i);
+            final UserModel currUser = userModels.get(i);
             profileViewHolder.name.setText(currUser.getEmail());
             profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onProfileClick(userModels.get(profileViewHolder.getAdapterPosition()));
+                    listener.onProfileClick(currUser);
                 }
             });
         } else {
