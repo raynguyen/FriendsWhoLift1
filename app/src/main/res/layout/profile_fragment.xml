@@ -93,27 +93,29 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="24dp"
+            android:layout_gravity="center_horizontal|top"
+            android:paddingTop="18dp"
             android:weightSum="2"
             android:clickable="false"
             android:focusable="false">
 
             <TextView
-                android:id="@+id/connections_txt"
+                android:id="@+id/connections_text"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/null_dashes"
+                android:textSize="26sp"
                 android:gravity="center_horizontal"
                 android:textColor="@color/colorAccent"/>
 
             <TextView
-                android:id="@+id/interests_txt"
+                android:id="@+id/interests_text"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/null_dashes"
+                android:textSize="26sp"
                 android:gravity="center_horizontal"
                 android:textColor="@color/colorAccent"/>
         </LinearLayout>
@@ -198,7 +200,8 @@
                 android:src="@drawable/baseline_edit_black_18dp"
                 android:clickable="false"
                 android:contentDescription="@string/Temp"
-                android:padding="0dp"/>
+                android:padding="0dp"
+                android:background="@color/transparent"/>
         </LinearLayout>
     </LinearLayout>
 

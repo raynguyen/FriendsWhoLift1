@@ -75,8 +75,8 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
         Button interestsBtn = view.findViewById(R.id.interests_btn);
         interestsBtn.setOnClickListener(this);
 
-        connectionsTxt = view.findViewById(R.id.connections_txt);
-        interestsTxt = view.findViewById(R.id.interests_txt);
+        connectionsTxt = view.findViewById(R.id.connections_text);
+        interestsTxt = view.findViewById(R.id.interests_text);
 
         fetchUserInfo();
     }
@@ -113,27 +113,30 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.isSuccessful()){
-                    Log.i(TAG,"GOT USERS.");
-                    connectionsList.addAll(task.getResult());
-                    connectionsTxt.setText(connectionsList.size());
+                    if(task.getResult()!=null){
+                        connectionsList.addAll(task.getResult());
+                    }
+                    connectionsTxt.setText(String.valueOf(connectionsList.size()));
                 } else {
                     Toast.makeText(getContext(),"Error retrieving connections.",Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        viewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        //ToDo This has not been implemented. Need to structure the data in FireStore
+        /*viewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 if(task.isSuccessful()){
-                    Log.i(TAG,"GOT INTERESTS");
-                    interestsList.addAll(task.getResult());
-                    interestsTxt.setText(interestsList.size());
+                    if(task.getResult()!=null){
+                        interestsList.addAll(task.getResult());
+                    }
+                    interestsTxt.setText(String.valueOf(interestsList.size()));
                 } else {
                     Toast.makeText(getContext(),"Error retrieving user interests.",Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
 
 }

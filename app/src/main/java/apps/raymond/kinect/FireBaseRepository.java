@@ -58,6 +58,7 @@ public class FireBaseRepository {
     private static final String EVENTS = "Events";
     private static final String MEMBERS = "Members";
     private static final String CONNECTIONS = "Connections";
+    private static final String INTERESTS = "Interests";
     private static final String INVITED = "Invited";
     private static final String ACCEPTED = "Accepted";
     private static final String DECLINED = "Declined";
@@ -188,6 +189,35 @@ public class FireBaseRepository {
                 }
             }
         });
+    }
+
+    Task<List<UserModel>> getConnections(){
+        CollectionReference userConnections = userCollection.document(userEmail).collection(CONNECTIONS);
+        final List<UserModel> connections = new ArrayList<>();
+        return userConnections.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+            @Override
+            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    if(task.getResult() !=null){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            connections.add(document.toObject(UserModel.class));
+                        }
+                    } else {
+                        Log.w(TAG,"User has no connections.");
+                    }
+                    return connections;
+                } else {
+                    Log.w(TAG,"Error retrieving connections.");
+                    return null;
+                }
+            }
+        });
+    }
+
+    Task<List<String>> getInterests(){
+        CollectionReference userConnections = userCollection.document(userEmail).collection(INTERESTS);
+        final List<String> interests = new ArrayList<>();
+        return null;
     }
     //*------------------------------------------EVENTS------------------------------------------*//
     /*

@@ -23,12 +23,13 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addConnection(user);
     }
 
+
     public Task<List<UserModel>> fetchConnections(){
-        return null;
+        return mRepository.getConnections();
     }
 
     public Task<List<String>> fetchInterests(){
-        return null;
+        return mRepository.getInterests();
     }
 
     public Task<List<Event_Model>> fetchEventInvites(){
