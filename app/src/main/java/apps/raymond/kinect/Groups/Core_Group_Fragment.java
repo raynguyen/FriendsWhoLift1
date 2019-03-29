@@ -165,7 +165,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
     @Override
     public void updateGroupRecycler(GroupBase groupBase) {
         myGroups.add(groupBase);
-        mAdapter.notifyItemInserted(myGroups.size()-1);
+        mAdapter.addData(groupBase);
     }
 
     public void filterRecycler(String constraint){

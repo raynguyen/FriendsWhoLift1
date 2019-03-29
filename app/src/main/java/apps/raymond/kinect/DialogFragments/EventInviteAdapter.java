@@ -2,7 +2,6 @@ package apps.raymond.kinect.DialogFragments;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +10,16 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 
 public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.InviteMessagesViewHolder> {
-    private List<GroupEvent> eventInviteSet;
+    private List<Event_Model> eventInviteSet;
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void onAccept(GroupEvent event,int position);
-        void onDecline(GroupEvent event);
+        void onAccept(Event_Model event, int position);
+        void onDecline(Event_Model event);
         void onDetail();
     }
 
@@ -28,7 +27,7 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
         this.callback = callback;
     }
 
-    public EventInviteAdapter(List<GroupEvent> eventInviteList, InviteResponseListener callback){
+    public EventInviteAdapter(List<Event_Model> eventInviteList, InviteResponseListener callback){
         this.eventInviteSet = eventInviteList;
         this.callback = callback;
     }
@@ -57,7 +56,7 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
     @Override
     public void onBindViewHolder(@NonNull final InviteMessagesViewHolder viewHolder, int i) {
         if(eventInviteSet !=null){
-            final GroupEvent event = eventInviteSet.get(i);
+            final Event_Model event = eventInviteSet.get(i);
             viewHolder.titleTxt.setText(event.getName());
             viewHolder.monthTxt.setText(event.getMonth());
             viewHolder.dayTxt.setText(event.getDay());
@@ -86,7 +85,7 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
         }
     }
 
-    public void setData(List<GroupEvent> eventsInviteList){
+    public void setData(List<Event_Model> eventsInviteList){
         this.eventInviteSet = eventsInviteList;
     }
 }

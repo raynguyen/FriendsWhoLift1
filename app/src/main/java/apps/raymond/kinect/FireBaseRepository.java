@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.UserProfile.UserModel;
 
@@ -63,6 +63,8 @@ public class FireBaseRepository {
     private static final String DECLINED = "Declined";
     private static final String EVENT_INVITES = "EventInvites";
     private static final String GROUP_INVITES = "GroupInvites";
+    private static final String EVENT_ATTEND_FIELD = "attenders";
+    private static final String EVENT_INVITED_FIELD = "invited";
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -137,15 +139,15 @@ public class FireBaseRepository {
                 });
     }
 
-    Task<List<GroupEvent>> fetchEventInvites() {
+    Task<List<Event_Model>> fetchEventInvites() {
         CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
-        final List<GroupEvent> eventInvites = new ArrayList<>();
-        return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<GroupEvent>>() {
+        final List<Event_Model> eventInvites = new ArrayList<>();
+        return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
             @Override
-            public List<GroupEvent> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+            public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        eventInvites.add(document.toObject(GroupEvent.class));
+                        eventInvites.add(document.toObject(Event_Model.class));
                     }
                     return eventInvites;
                 } else if (task.isSuccessful() && task.getResult() == null) {
@@ -189,12 +191,12 @@ public class FireBaseRepository {
     }
     //*------------------------------------------EVENTS------------------------------------------*//
     /*
-     * Creates a new Document in the Events collection. The Document is created as a GroupEvent
+     * Creates a new Document in the Events collection. The Document is created as a Event_Model
      * object. Upon successful creation, we create a Document in the creator's Events collection via
      * the event name. The associated tags for the event are stored as a sub-collection in the event
      * document.
      */
-    Task<Void> createEvent(final GroupEvent groupEvent) {
+    Task<Void> createEvent(final Event_Model groupEvent) {
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
         return eventRef.set(groupEvent, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -204,16 +206,18 @@ public class FireBaseRepository {
         });
     }
 
-    Task<Void> updateEvent(final GroupEvent groupEvent) {
+    Task<Void> updateEvent(final Event_Model groupEvent) {
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
         return eventRef.set(groupEvent, SetOptions.merge());
     }
 
     //Todo: change to accept a document title so we can call this regardless of Event or Group. Consider changing way data is stored under the user's collection.
-    void sendEventInvite(final GroupEvent groupEvent, final List<UserModel> userList) {
-        final CollectionReference eventCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITED);
+    void sendEventInvite(final Event_Model groupEvent, final List<UserModel> userList) {
+        final DocumentReference eventDoc = eventCollection.document(groupEvent.getOriginalName());
+        final CollectionReference eventInvitedCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITED);
         final WriteBatch inviteBatch = db.batch();
-        List<Task<Void>> sendInvites = new ArrayList<>();
+        final List<Task<Void>> sendInvites = new ArrayList<>();
+
         for (final UserModel user : userList) {
             sendInvites.add(userCollection.document(user.getEmail()).collection(EVENT_INVITES)
                     .document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
@@ -221,8 +225,7 @@ public class FireBaseRepository {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Log.i(TAG, "Successfully invited " + user.getEmail() + " to " + groupEvent.getName());
-                                inviteBatch.set(eventCol.document(user.getEmail()), user);
+                                inviteBatch.set(eventInvitedCol.document(user.getEmail()), user);
                             }
                         }
                     }));
@@ -231,11 +234,12 @@ public class FireBaseRepository {
             @Override
             public void onSuccess(List<Object> objects) {
                 inviteBatch.commit();
+                eventDoc.update(EVENT_INVITED_FIELD,sendInvites.size());
             }
         });
     }
 
-    Task<Void> addUserToEvent(final GroupEvent event) {
+    Task<Void> addUserToEvent(final Event_Model event) {
         final CollectionReference usersEvents = userCollection.document(userEmail).collection(EVENTS);
         final CollectionReference usersEventInvites = userCollection.document(userEmail).collection(EVENT_INVITES);
         final CollectionReference acceptedUsers = eventCollection.document(event.getOriginalName()).collection(ACCEPTED);
@@ -286,7 +290,7 @@ public class FireBaseRepository {
                 });
     }
 
-    Task<List<UserModel>> getEventInvitees(final GroupEvent event) {
+    Task<List<UserModel>> getEventInvitees(final Event_Model event) {
         CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection(INVITED);
         final List<UserModel> userList = new ArrayList<>();
         return eventInvitees.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
@@ -310,7 +314,7 @@ public class FireBaseRepository {
         });
     }
 
-    Task<List<UserModel>> getEventResponses(final GroupEvent event, final String status) {
+    Task<List<UserModel>> getEventResponses(final Event_Model event, final String status) {
         CollectionReference responseCollection = eventCollection.document(event.getOriginalName()).collection(status);
 
         return responseCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {

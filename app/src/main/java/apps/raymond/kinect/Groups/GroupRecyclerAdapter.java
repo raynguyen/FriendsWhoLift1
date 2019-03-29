@@ -78,6 +78,11 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
         notifyDataSetChanged();
     }
 
+    public void addData(GroupBase group){
+        groupsList.add(group);
+        notifyItemInserted(groupsList.size()-1);
+    }
+
     @Override
     public int getItemCount() {
         if (groupsList !=null){

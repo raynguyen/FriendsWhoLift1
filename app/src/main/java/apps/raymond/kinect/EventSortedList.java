@@ -2,12 +2,12 @@ package apps.raymond.kinect;
 
 import android.support.v7.util.SortedList;
 
-import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.Events.Event_Model;
 
-public class EventSortedList extends SortedList.Callback<GroupEvent> {
+public class EventSortedList extends SortedList.Callback<Event_Model> {
 
     @Override
-    public int compare(GroupEvent event1, GroupEvent event2) {
+    public int compare(Event_Model event1, Event_Model event2) {
         return 0;
     }
 
@@ -17,12 +17,12 @@ public class EventSortedList extends SortedList.Callback<GroupEvent> {
     }
 
     @Override
-    public boolean areContentsTheSame(GroupEvent event1, GroupEvent event2) {
+    public boolean areContentsTheSame(Event_Model event1, Event_Model event2) {
         return false;
     }
 
     @Override
-    public boolean areItemsTheSame(GroupEvent event1, GroupEvent event2) {
+    public boolean areItemsTheSame(Event_Model event1, Event_Model event2) {
         return false;
     }
 

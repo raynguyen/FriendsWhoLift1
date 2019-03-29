@@ -80,6 +80,7 @@
             android:gravity="center"
             android:paddingTop="12dp"
             android:maxLines="1"/>
+
         </android.support.constraint.ConstraintLayout>
 
         <LinearLayout
@@ -91,21 +92,25 @@
             android:background="@drawable/event_bottom_bgd">
 
             <TextView
+                android:id="@+id/attending_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/accept"
+                android:hint="@string/null_dashes"
                 android:gravity="center_vertical"
                 android:textAlignment="gravity"
+                android:textSize="20sp"
                 android:drawableStart="@drawable/baseline_done_outline_black_18dp"
                 android:scaleY=".75"
                 android:scaleX=".75"/>
 
             <TextView
+                android:id="@+id/invited_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/invited"
+                android:hint="@string/null_dashes"
                 android:gravity="center_vertical"
                 android:textAlignment="gravity"
+                android:textSize="20sp"
                 android:drawableStart="@drawable/baseline_mail_black_18dp"
                 android:scaleY=".75"
                 android:scaleX=".75"/>

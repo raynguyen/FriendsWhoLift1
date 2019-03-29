@@ -21,7 +21,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
@@ -42,7 +42,7 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     }
 
     TextView nullDataTxt;
-    List<GroupEvent> eventInvSet;
+    List<Event_Model> eventInvSet;
     RecyclerView eventInviteRecycler;
     EventInviteAdapter adapter;
     ProgressBar progressBar;
@@ -61,9 +61,9 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     }
 
     private void fetchInvites(){
-        viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<GroupEvent>>() {
+        viewModel.fetchEventInvites().addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<GroupEvent>> task) {
+            public void onComplete(@NonNull Task<List<Event_Model>> task) {
                 progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
                     if(task.getResult() !=null && task.getResult().size()>0){
@@ -83,7 +83,7 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     }
 
     @Override
-    public void onAccept(final GroupEvent event, final int position) {
+    public void onAccept(final Event_Model event, final int position) {
         //if adding user to event is successful, then we should remove from the recycler.
         progressBar.setVisibility(View.VISIBLE);
         viewModel.addUserToEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -101,7 +101,7 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
     }
 
     @Override
-    public void onDecline(GroupEvent event) {
+    public void onDecline(Event_Model event) {
         Log.i(TAG,"Clicked to decline this event.");
     }
 

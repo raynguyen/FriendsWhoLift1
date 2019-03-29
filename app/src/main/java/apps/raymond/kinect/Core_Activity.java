@@ -40,7 +40,7 @@ import android.widget.EditText;
 
 import apps.raymond.kinect.DialogFragments.InviteDialog;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
-import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
@@ -49,24 +49,23 @@ import apps.raymond.kinect.UserProfile.ProfileFrag;
 
 public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
-        SearchView.OnQueryTextListener, ProfileFrag.DestroyProfileFrag {
+        SearchView.OnQueryTextListener, ProfileFrag.DestroyProfileFrag, ViewPager.OnPageChangeListener{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
     private static final String PROFILE_FRAG = "ProfileFragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
-
     public static final int YESNO_REQUEST = 21;
-    public UpdateGroupRecycler updateGroupRecycler;
 
+    public UpdateGroupRecycler updateGroupRecycler;
     public interface UpdateGroupRecycler{
         void updateGroupRecycler(GroupBase groupBase);
     }
 
     public UpdateEventRecycler updateEventRecycler;
     public interface UpdateEventRecycler{
-        void updateEventRecycler(GroupEvent groupEvent);
+        void updateEventRecycler(Event_Model groupEvent);
     }
 
     ViewPager viewPager;
@@ -93,20 +92,12 @@ public class Core_Activity extends AppCompatActivity implements
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(this);
         tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     public void onAttachFragment(Fragment fragment) {
-        if(fragment instanceof Core_Group_Fragment){
-            try {
-                updateGroupRecycler = (UpdateGroupRecycler) fragment;
-            } catch (ClassCastException e){
-                Log.i(TAG,"Core_Group_Fragment does not implement UpdateGroupRecycler interface.");
-            }
-            return;
-        }
-
         if(fragment instanceof Core_Events_Fragment){
             try {
                 updateEventRecycler = (UpdateEventRecycler) fragment;
@@ -114,13 +105,18 @@ public class Core_Activity extends AppCompatActivity implements
                 Log.i(TAG,"Core_Events_Fragment does not implement UpdateEventRecycler interface.");
             }
         }
-
+        if(fragment instanceof Core_Group_Fragment){
+            try {
+                updateGroupRecycler = (UpdateGroupRecycler) fragment;
+            } catch (ClassCastException e){
+                Log.i(TAG,"Core_Group_Fragment does not implement UpdateGroupRecycler interface.");
+            }
+        }
     }
 
     MenuItem eventCreate, groupCreate;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        Log.i(TAG,"PLEASE WTF");
         getMenuInflater().inflate(R.menu.core_menu,menu);
 
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));
@@ -135,16 +131,6 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            /*case R.id.action_logout:
-                Log.i(TAG,"Clicked the logout button.");
-                logout();
-                return true;
-            case R.id.action_settings:
-                Log.i(TAG,"Clicked the settings button.");
-                return true;
-            case R.id.action_test:
-                Log.i(TAG,getSupportFragmentManager().getFragments().toString());
-                return true;*/
             case R.id.action_invites:
                 Log.i(TAG,"Clicked on invites button");
                 InviteDialog inviteDialog = new InviteDialog();
@@ -173,6 +159,34 @@ public class Core_Activity extends AppCompatActivity implements
                 return false;
         }
         return false;
+    }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        switch (i){
+            case 0:
+                eventCreate.setVisible(true);
+                eventCreate.setEnabled(true);
+                groupCreate.setVisible(false);
+                groupCreate.setEnabled(false);
+                break;
+            case 1:
+                eventCreate.setVisible(false);
+                eventCreate.setEnabled(false);
+                groupCreate.setVisible(true);
+                groupCreate.setEnabled(true);
+                break;
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
     }
 
     @Override
@@ -219,7 +233,7 @@ public class Core_Activity extends AppCompatActivity implements
     }
 
     @Override
-    public void addToEventRecycler(GroupEvent groupEvent) {
+    public void addToEventRecycler(Event_Model groupEvent) {
         Log.i(TAG,"Called addToEventRecycler implementation in the CoreAct");
         updateEventRecycler.updateEventRecycler(groupEvent);
     }

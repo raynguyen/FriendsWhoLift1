@@ -5,21 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,15 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Detail_Fragment;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsRecyclerAdapter;
-import apps.raymond.kinect.Events.Event_Create_Fragment;
-import apps.raymond.kinect.Events.GroupEvent;
 
 public class Core_Events_Fragment extends Fragment implements
         EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler{
     private static final String TAG = "Core_EventsFragment";
 
-    private List<GroupEvent> eventList;
+    private List<Event_Model> eventList;
     private ProgressBar progressBar;
     private EventsRecyclerAdapter mAdapter;
 
@@ -86,15 +79,6 @@ public class Core_Events_Fragment extends Fragment implements
         }
     }
 
-
-    @Override
-    public void updateEventRecycler(GroupEvent groupEvent) {
-        eventList.add(groupEvent);
-        nullImage.setVisibility(View.INVISIBLE);
-        nullText.setVisibility(View.INVISIBLE);
-        mAdapter.notifyItemInserted(eventList.size()-1);
-    }
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -106,7 +90,7 @@ public class Core_Events_Fragment extends Fragment implements
     }
 
     @Override
-    public void onEventClick(int position, GroupEvent groupEvent) {
+    public void onEventClick(int position, Event_Model groupEvent) {
         Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
         getFragmentManager().beginTransaction()
                 .replace(R.id.core_frame,detailedEvent,Event_Detail_Fragment.TAG)
@@ -128,8 +112,8 @@ public class Core_Events_Fragment extends Fragment implements
                         @Override
                         public void onSuccess(List<Object> objects) {
                             for(Object object:objects){
-                                //Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(GroupEvent.class).getName() + " to RecyclerView.");
-                                eventList.add(((DocumentSnapshot) object).toObject(GroupEvent.class)); //Do the toObject in the repo
+                                //Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(Event_Model.class).getName() + " to RecyclerView.");
+                                eventList.add(((DocumentSnapshot) object).toObject(Event_Model.class)); //Do the toObject in the repo
                             }
                             progressBar.setVisibility(View.GONE);
                             if(eventList.size() == 0){
@@ -151,4 +135,12 @@ public class Core_Events_Fragment extends Fragment implements
         mAdapter.getFilter().filter(constraint);
     }
 
+    @Override
+    public void updateEventRecycler(Event_Model groupEvent) {
+        Log.i(TAG,"TRYING TO ADD NEW EVENT TO RECYCLER:" +groupEvent.getName());
+        eventList.add(groupEvent);
+        mAdapter.addData(groupEvent);
+        nullImage.setVisibility(View.INVISIBLE);
+        nullText.setVisibility(View.INVISIBLE);
+    }
 }

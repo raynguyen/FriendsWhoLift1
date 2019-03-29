@@ -8,7 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
-import apps.raymond.kinect.Events.GroupEvent;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.UserProfile.UserModel;
 
@@ -31,15 +31,15 @@ public class Repository_ViewModel extends ViewModel {
         return null;
     }
 
-    public Task<List<GroupEvent>> fetchEventInvites(){
+    public Task<List<Event_Model>> fetchEventInvites(){
         return mRepository.fetchEventInvites();
     }
 
-    public Task<Void> createEvent(GroupEvent groupEvent){
+    public Task<Void> createEvent(Event_Model groupEvent){
         return mRepository.createEvent(groupEvent);
     }
 
-    public void sendEventInvites(GroupEvent groupEvent,List<UserModel> inviteList){
+    public void sendEventInvites(Event_Model groupEvent, List<UserModel> inviteList){
         mRepository.sendEventInvite(groupEvent,inviteList);
     }
 
@@ -47,11 +47,11 @@ public class Repository_ViewModel extends ViewModel {
         mRepository.sendGroupInvites(groupBase,inviteList);
     }
 
-    public Task<Void> updateEvent(GroupEvent groupEvent){
+    public Task<Void> updateEvent(Event_Model groupEvent){
         return mRepository.updateEvent(groupEvent);
     }
 
-    public Task<Void> addUserToEvent(GroupEvent groupEvent){
+    public Task<Void> addUserToEvent(Event_Model groupEvent){
         return mRepository.addUserToEvent(groupEvent);
     }
 
@@ -59,11 +59,11 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.getUsersEvents();
     }
 
-    public Task<List<UserModel>> getEventInvitees(GroupEvent event){
+    public Task<List<UserModel>> getEventInvitees(Event_Model event){
         return mRepository.getEventInvitees(event);
     }
 
-    public Task<List<UserModel>> getEventResponses(GroupEvent event, String status){
+    public Task<List<UserModel>> getEventResponses(Event_Model event, String status){
         return mRepository.getEventResponses(event, status);
     }
 

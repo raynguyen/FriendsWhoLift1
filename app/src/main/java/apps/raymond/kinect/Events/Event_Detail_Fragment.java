@@ -61,7 +61,7 @@ public class Event_Detail_Fragment extends Fragment implements
     public Event_Detail_Fragment(){
     }
     //ToDo: The event should be passed as an argument in newInstance!!!!!
-    public static Event_Detail_Fragment newInstance(GroupEvent event){
+    public static Event_Detail_Fragment newInstance(Event_Model event){
         Log.i(TAG,"THE EVENT YOU CLICKED OWNER IS: "+event.getCreator());
         Event_Detail_Fragment fragment = new Event_Detail_Fragment();
         Bundle args = new Bundle();
@@ -70,7 +70,7 @@ public class Event_Detail_Fragment extends Fragment implements
         return fragment;
     }
 
-    GroupEvent event;
+    Event_Model event;
     String currUser;
     private Repository_ViewModel viewModel;
     @Override
@@ -295,7 +295,7 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
-    private void getInviteList(final GroupEvent event){
+    private void getInviteList(final Event_Model event){
         viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
@@ -320,7 +320,7 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
-    private void getAcceptedList(GroupEvent groupEvent){
+    private void getAcceptedList(Event_Model groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
         viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
@@ -344,7 +344,7 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
-    private void getDeclinedList(GroupEvent groupEvent){
+    private void getDeclinedList(Event_Model groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
         viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override

@@ -20,26 +20,28 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
     private EventClickListener eventClickListener;
     public interface EventClickListener {
-        void onEventClick(int position, GroupEvent groupEvent);
+        void onEventClick(int position, Event_Model groupEvent);
     }
 
-    private List<GroupEvent> eventsListFull; //eventsListFull should never be touched.
-    private List<GroupEvent> eventsListClone;
+    private List<Event_Model> eventsListFull; //eventsListFull should never be touched.
+    private List<Event_Model> eventsListClone;
 
-    public EventsRecyclerAdapter(List<GroupEvent> eventsList, EventClickListener eventClickListener){
+    public EventsRecyclerAdapter(List<Event_Model> eventsList, EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
         this.eventsListFull = new ArrayList<>(eventsList);
         eventsListClone = eventsList;
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
-        private TextView eventName, eventDesc, eventDay, eventMonth;
+        private TextView eventName, eventDesc, eventDay, eventMonth, goingTxt, invTxt;
         private EventViewHolder(View view){
             super(view);
             eventName = view.findViewById(R.id.event_title);
             eventDesc = view.findViewById(R.id.event_desc);
             eventDay = view.findViewById(R.id.event_day);
             eventMonth = view.findViewById(R.id.event_month);
+            goingTxt = view.findViewById(R.id.attending_count);
+            invTxt = view.findViewById(R.id.invited_count);
         }
     }
 
@@ -54,7 +56,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     @Override
     public void onBindViewHolder(@NonNull final EventsRecyclerAdapter.EventViewHolder eventViewHolder, int position) {
         if(eventsListFull !=null){
-            final GroupEvent currEvent = eventsListFull.get(position);
+            final Event_Model currEvent = eventsListFull.get(position);
             eventViewHolder.eventName.setText(currEvent.getName());
             eventViewHolder.eventDesc.setText(currEvent.getDesc());
             eventViewHolder.eventMonth.setText(currEvent.getMonth());
@@ -78,10 +80,15 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         }
     }
 
-    public void setData(List<GroupEvent> eventsList){
+    public void setData(List<Event_Model> eventsList){
         this.eventsListFull = new ArrayList<>(eventsList);
         eventsListClone = eventsList;
         notifyDataSetChanged();
+    }
+
+    public void addData(Event_Model event){
+        eventsListFull.add(event);
+        notifyItemInserted(eventsListFull.size() - 1);
     }
 
     @Override
@@ -93,13 +100,13 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             Log.i("Adapter","Filtering recycler view.");
-            List<GroupEvent> filteredList = new ArrayList<>();
+            List<Event_Model> filteredList = new ArrayList<>();
 
             if(constraint == null || constraint.length() == 0){
                 filteredList.addAll(eventsListClone);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                for(GroupEvent event : eventsListClone){
+                for(Event_Model event : eventsListClone){
                     if(event.getName().toLowerCase().contains(filterPattern)){
                         filteredList.add(event);
                     }

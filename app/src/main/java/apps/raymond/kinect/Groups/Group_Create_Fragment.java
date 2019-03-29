@@ -63,7 +63,6 @@ public class Group_Create_Fragment extends Fragment implements
     public static final String TAG = "Group_Create_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
-    private static final int DIALOG_REQUEST_CODE = 21;
 
     private AddGroup addGroupInterface;
     public interface AddGroup{
@@ -136,7 +135,7 @@ public class Group_Create_Fragment extends Fragment implements
 
         invite_Spinner = view.findViewById(R.id.invite_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(getActivity(), R.array.array_invite_authorize,
+                .createFromResource(requireActivity(), R.array.array_invite_authorize,
                         android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         invite_Spinner.setAdapter(adapter);
@@ -189,7 +188,7 @@ public class Group_Create_Fragment extends Fragment implements
      */
     private void getImage(){
         View imgDialogView;
-        if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+        if(requireActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
             imgDialogView = getLayoutInflater().inflate(R.layout.image_alert_dialog,null);
         } else {
             // Prompt dialog without camera option.
@@ -212,7 +211,7 @@ public class Group_Create_Fragment extends Fragment implements
             @Override
             public void onClick(View v) {Log.i(TAG,"Starting intent for launch camera.");
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
                 }
 
@@ -269,7 +268,6 @@ public class Group_Create_Fragment extends Fragment implements
         for(UserModel user : inviteUsersList){
             Log.i(TAG,"Inviting: "+user.getEmail());
         }
-
     }
 
     @Override
@@ -393,11 +391,7 @@ public class Group_Create_Fragment extends Fragment implements
         switch (requestCode){
             case Core_Activity.YESNO_REQUEST:
                 if(resultCode == YesNoDialog.POS_RESULT){
-                    Log.i(TAG,"Group Creation Fragment yes clicked.");
                     fm.popBackStack();
-                } else {
-                    Log.i(TAG,"Resuming group creation.");
-                    // Do Nothing
                 }
                 break;
             case CAMERA_REQUEST_CODE:
@@ -420,7 +414,6 @@ public class Group_Create_Fragment extends Fragment implements
                 }
                 break;
         }
-        //super.onActivityResult(requestCode, resultCode, data);
     }
 
 }

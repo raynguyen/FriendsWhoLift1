@@ -64,7 +64,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     private AddEvent addEventToRecycler;
     public interface AddEvent{
-        void addToEventRecycler(GroupEvent groupEvent);
+        void addToEventRecycler(Event_Model groupEvent);
     }
 
     FragmentManager fm;
@@ -76,7 +76,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }catch (ClassCastException e){
             Log.i(TAG,"Unable to attach AddEvent interface to activity.");
         }
-        fm = getActivity().getSupportFragmentManager();
+        fm = requireActivity().getSupportFragmentManager();
     }
 
     private Repository_ViewModel viewModel;
@@ -258,7 +258,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private void createEvent(){
-        final GroupEvent newEvent = new GroupEvent(
+        final Event_Model newEvent = new Event_Model(
                 FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                 nameTxt.getText().toString(),
                 descTxt.getText().toString(),
@@ -267,7 +267,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 privacy,
                 tagsList);
 
-        Log.i(TAG,"Created new GroupEvent of name: "+ newEvent.getOriginalName());
+        Log.i(TAG,"Created new Event_Model of name: "+ newEvent.getOriginalName());
 
         viewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

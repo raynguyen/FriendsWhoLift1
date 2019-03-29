@@ -7,23 +7,23 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupEvent implements Parcelable{
-    private static final String TAG = "GroupEvent.Class";
+public class Event_Model implements Parcelable{
+    private static final String TAG = "Event_Model.Class";
 
-    public static final Parcelable.Creator<GroupEvent> CREATOR = new Parcelable.Creator<GroupEvent>(){
+    public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
-        public GroupEvent createFromParcel(Parcel source) {
-            return new GroupEvent(source);
+        public Event_Model createFromParcel(Parcel source) {
+            return new Event_Model(source);
         }
 
         @Override
-        public GroupEvent[] newArray(int size) {
-            return new GroupEvent[size];
+        public Event_Model[] newArray(int size) {
+            return new Event_Model[size];
         }
     };
 
     // Empty constructor as required by FireBase.
-    public GroupEvent(){
+    public Event_Model(){
     }
 
     private String creator;
@@ -34,9 +34,11 @@ public class GroupEvent implements Parcelable{
     private String day;
     private String privacy;
     private List<String> tags;
+    private int attenders;
+    private int invited;
 
     @SuppressWarnings("unchecked")
-    private GroupEvent(Parcel in){
+    private Event_Model(Parcel in){
         this.creator = in.readString();
         this.name = in.readString();
         this.originalName = this.name;
@@ -45,10 +47,12 @@ public class GroupEvent implements Parcelable{
         this.day = in.readString();
         this.privacy = in.readString();
         this.tags = in.readArrayList(null);
+        attenders = 1;
+        invited = 0;
     }
 
-    public GroupEvent(String creator, String name, String desc, String month, String day, String privacy,
-                      ArrayList<String> tags){
+    public Event_Model(String creator, String name, String desc, String month, String day, String privacy,
+                       ArrayList<String> tags){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
@@ -57,6 +61,8 @@ public class GroupEvent implements Parcelable{
         this.day = day;
         this.privacy = privacy;
         this.tags = tags;
+        attenders = 1;
+        invited = 0;
     }
 
     public String getCreator(){
@@ -121,6 +127,21 @@ public class GroupEvent implements Parcelable{
 
     public void setTags(ArrayList<String> tags){
         this.tags = tags;
+    }
+
+    public void setAttenders(int i){
+        attenders = i;
+    }
+    public int getAttenders(){
+        return attenders;
+    }
+
+    public void setInvited(int i){
+        invited = i;
+    }
+
+    public int getInvited(){
+        return invited;
     }
 
     @Override
