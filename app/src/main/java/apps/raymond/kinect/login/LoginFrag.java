@@ -43,6 +43,7 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
             Log.e(TAG,"Class cast exception." + e.getMessage());
         }
     }
+
     private Repository_ViewModel viewModel;
     FirebaseAuth mAuth;
     @Override
