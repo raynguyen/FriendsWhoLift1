@@ -78,6 +78,7 @@ public class FireBaseRepository {
     private String userEmail;
     private UserModel curUserModel;
 
+    //ToDo: can make sure this is only called in CoreActivity.
     public FireBaseRepository() {
         try {
             this.userEmail = currentUser.getEmail();
@@ -106,7 +107,9 @@ public class FireBaseRepository {
     //TO GET THE USER DOCUMENT, WE SHOULD USE QUERY THAT WE CONSTRUCT VIA A STRING.
     public Task<UserModel> getCurrentUser(){
         Log.i(TAG,"THIS SHOULD BE 5TH");
-        DocumentReference userDoc = userCollection.document(currentUser.getEmail());
+        Log.i(TAG,"USER EMAIL = " + userEmail);
+
+        DocumentReference userDoc = userCollection.document(userEmail);
 
         return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
             @Override
@@ -615,4 +618,7 @@ public class FireBaseRepository {
         return null;
     }
 
+    public String testString(){
+        return userEmail;
+    }
 }

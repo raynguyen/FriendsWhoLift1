@@ -59,6 +59,8 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
         final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
 
         Log.i(TAG,"THIS SHOULD BE 4TH!");
+        String somestring = viewModel.testString();
+        Log.i(TAG,"Calling repo testString method returned: "+somestring);
         //viewModel.getCurrentUser();
         /*.addOnCompleteListener(new OnCompleteListener<UserModel>() {
             @Override

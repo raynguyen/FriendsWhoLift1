@@ -54,6 +54,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         model = ViewModelProviders.of(requireActivity()).get(Groups_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
         subscribeToModel();
     }
 
@@ -62,9 +63,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.core_groups_frag, container, false);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
-        return view;
+        return inflater.inflate(R.layout.core_groups_frag, container, false);
     }
 
     GroupRecyclerAdapter mAdapter;
@@ -85,12 +84,13 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Button testBtn1 = view.findViewById(R.id.testButton3);
-        testBtn1.setOnClickListener(new View.OnClickListener() {
+        Button testBtn3 = view.findViewById(R.id.testButton3);
+        testBtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG,"CLICKED ON TEST BTN 3");
-                myGroups.add(new GroupBase("HELLO","SOMEDESCRIPTION","YA MOM","public","ANYONE",null));
+                String someString = viewModel.testString();
+                Log.i(TAG,"Calling someString test in group frag resulted in: "+someString);
             }
         });
     }

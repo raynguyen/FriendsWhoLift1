@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/Temp" />
+        android:text="TESTBTN3" />
 
     <Button
         android:id="@+id/testButton4"

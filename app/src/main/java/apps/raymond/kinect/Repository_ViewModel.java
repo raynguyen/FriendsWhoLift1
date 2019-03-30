@@ -115,5 +115,9 @@ public class Repository_ViewModel extends ViewModel {
     public Task<List<UserModel>> fetchGroupMembers(GroupBase group){
         return mRepository.fetchGroupMembers(group);
     }
+
+    public String testString(){
+        return mRepository.testString();
+    }
 }
 
