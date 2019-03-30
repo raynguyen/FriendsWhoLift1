@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
@@ -17,6 +18,10 @@ public class Repository_ViewModel extends ViewModel {
 
     public Repository_ViewModel(){
         this.mRepository = new FireBaseRepository();
+    }
+
+    public Task<AuthResult> signIn(String email, String password){
+        return mRepository.signInWithEmail(email,password);
     }
 
     public Task<UserModel> getCurrentUser(){

@@ -12,7 +12,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,6 +23,9 @@ import android.widget.EditText;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
@@ -56,7 +58,8 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
     public void signedIn() {
         final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
 
-        viewModel.getCurrentUser();
+        Log.i(TAG,"THIS SHOULD BE 4TH!");
+        //viewModel.getCurrentUser();
         /*.addOnCompleteListener(new OnCompleteListener<UserModel>() {
             @Override
             public void onComplete(@NonNull Task<UserModel> task) {

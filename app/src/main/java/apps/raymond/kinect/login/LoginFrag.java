@@ -34,6 +34,15 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         void signedIn();
     }
 
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            signIn = (SignIn) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
+    }
     private Repository_ViewModel viewModel;
     FirebaseAuth mAuth;
     @Override
@@ -76,33 +85,18 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         });
     }
 
-    /*
-        When the fragment is created, it must attach to the host activity. When this occurs, we
-        specify that this host Activity implements our interface.
-        */
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        try{
-            //We need to get an instance of the Class that will execute our interface method.
-            signIn = (SignIn) getActivity();
-        } catch (ClassCastException e) {
-            Log.e(TAG,"Class cast exception." + e.getMessage());
-        }
-    }
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i) {
             case R.id.login_btn:
-                Log.i(TAG,"Attempting to log in.");
                 if (validate(inputFields)) {
                     viewModel.signIn(username_Txt.getText().toString(),password_Txt.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
+                                    Log.i(TAG,"THIS SHOULD BE THIRD");
                                     signIn.signedIn();
                                 } else if (task.getException()!=null){
                                     Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();

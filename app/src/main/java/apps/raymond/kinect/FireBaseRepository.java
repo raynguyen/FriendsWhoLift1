@@ -81,14 +81,7 @@ public class FireBaseRepository {
     public FireBaseRepository() {
         try {
             this.userEmail = currentUser.getEmail();
-            userCollection.document(userEmail).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        curUserModel = task.getResult().toObject(UserModel.class);
-                    }
-                }
-            });
+
         } catch (NullPointerException npe) {
             Log.w(TAG, "Error: " + npe);
         }
@@ -96,21 +89,24 @@ public class FireBaseRepository {
 
     //*------------------------------------------USER-------------------------------------------*//
     public Task<AuthResult> signInWithEmail(final String name, String password) {
+        Log.i(TAG,"THIS SHOULD BE FIRST: "+userEmail);
         return firebaseAuth.signInWithEmailAndPassword(name, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+                            Log.i(TAG,"THIS SHOULD BE SECOND!");
                             userEmail = name;
-                            Log.i(TAG,"userEmail = " + userEmail);
                         }
                     }
                 });
     }
 
+    //WE ARE TRYING TO RETRIEVE INFO REGARDING FIREBASEUSER BEFORE IT CAN BE COMPLETED BY SERVERS.
+    //TO GET THE USER DOCUMENT, WE SHOULD USE QUERY THAT WE CONSTRUCT VIA A STRING.
     public Task<UserModel> getCurrentUser(){
-        Log.i(TAG,"CURRENT USER EMAIL IS "+ userEmail);
-        /*DocumentReference userDoc = userCollection.document(userEmail);
+        Log.i(TAG,"THIS SHOULD BE 5TH");
+        DocumentReference userDoc = userCollection.document(currentUser.getEmail());
 
         return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
             @Override
@@ -123,8 +119,7 @@ public class FireBaseRepository {
                 Log.w(TAG,"ERROR RETRIEVING CURRENT USER.");
                 return null;
             }
-        });*/
-        return null;
+        });
     }
 
     public Task<Void> createUserByEmail(final UserModel userModel, final String password) {
