@@ -45,11 +45,11 @@ import apps.raymond.kinect.Groups.Core_Group_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.UserProfile.ProfileFrag;
+import apps.raymond.kinect.UserProfile.Personal_Frag;
 
 public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
-        SearchView.OnQueryTextListener, ProfileFrag.DestroyProfileFrag, ViewPager.OnPageChangeListener{
+        SearchView.OnQueryTextListener, Personal_Frag.DestroyProfileFrag, ViewPager.OnPageChangeListener{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
@@ -194,7 +194,7 @@ public class Core_Activity extends AppCompatActivity implements
         int i = v.getId();
         switch(i){
             case -1:
-                ProfileFrag profileFrag = new ProfileFrag();
+                Personal_Frag profileFrag = new Personal_Frag();
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_down, 0,0,R.anim.slide_out_up)
                         .replace(R.id.full_core_frame,profileFrag,PROFILE_FRAG)

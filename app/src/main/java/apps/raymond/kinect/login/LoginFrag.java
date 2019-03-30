@@ -1,5 +1,6 @@
 package apps.raymond.kinect.login;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class LoginFrag extends Fragment implements View.OnClickListener{
@@ -32,13 +34,13 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         void signedIn();
     }
 
-    private LoginViewModel mLoginViewModel;
+    private Repository_ViewModel viewModel;
     FirebaseAuth mAuth;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        mLoginViewModel = new LoginViewModel();
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
 
     @Nullable
@@ -96,7 +98,7 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
             case R.id.login_btn:
                 Log.i(TAG,"Attempting to log in.");
                 if (validate(inputFields)) {
-                    mLoginViewModel.signIn(username_Txt.getText().toString(),password_Txt.getText().toString())
+                    viewModel.signIn(username_Txt.getText().toString(),password_Txt.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {

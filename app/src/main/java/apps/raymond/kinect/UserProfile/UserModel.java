@@ -15,6 +15,7 @@ import android.os.Parcelable;
 public class UserModel implements Parcelable {
     private String email;
     private String visibility;
+    private String name;
 
     public UserModel(){}
 
@@ -67,4 +68,11 @@ public class UserModel implements Parcelable {
         return visibility;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
+    }
 }

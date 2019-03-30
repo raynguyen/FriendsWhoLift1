@@ -100,11 +100,31 @@ public class FireBaseRepository {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.i(TAG, "Signed in as " + name);
+                        if(task.isSuccessful()){
+                            userEmail = name;
+                            Log.i(TAG,"userEmail = " + userEmail);
                         }
                     }
                 });
+    }
+
+    public Task<UserModel> getCurrentUser(){
+        Log.i(TAG,"CURRENT USER EMAIL IS "+ userEmail);
+        /*DocumentReference userDoc = userCollection.document(userEmail);
+
+        return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
+            @Override
+            public UserModel then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    if(task.getResult()!=null){
+                        return task.getResult().toObject(UserModel.class);
+                    }
+                }
+                Log.w(TAG,"ERROR RETRIEVING CURRENT USER.");
+                return null;
+            }
+        });*/
+        return null;
     }
 
     public Task<Void> createUserByEmail(final UserModel userModel, final String password) {

@@ -132,6 +132,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
                                 model.setGroups(myGroups);
                             } else {
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
+                                //ToDO WHY IS THIS SHOWING UP TWICE????
                                 Log.i(TAG,"Current user has no Groups associated to them.");
                                 TextView nullText = getView().findViewById(R.id.null_data_text);
                                 nullText.setVisibility(View.VISIBLE);

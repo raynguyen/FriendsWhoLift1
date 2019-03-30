@@ -10,7 +10,9 @@ package apps.raymond.kinect.login;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,17 +21,25 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Login_Activity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn{
     private static final String TAG = "Login_Activity";
 
+    Repository_ViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceStance){
         super.onCreate(savedInstanceStance);
         setContentView(R.layout.login_activity);
 
+        viewModel = new Repository_ViewModel();
         LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
 
         ViewPager mViewPager = findViewById(R.id.login_container);
@@ -44,6 +54,22 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
 
     @Override
     public void signedIn() {
+        final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
+
+        viewModel.getCurrentUser();
+        /*.addOnCompleteListener(new OnCompleteListener<UserModel>() {
+            @Override
+            public void onComplete(@NonNull Task<UserModel> task) {
+                UserModel user = task.getResult();
+                SharedPreferences.Editor editor = userPreferences.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(user);
+                editor.putString("MyProfile",json);
+                editor.apply();
+                Log.i(TAG,"Writing new shared preferences.");
+            }
+        });*/
+
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         startActivity(mainIntent);
         finish();

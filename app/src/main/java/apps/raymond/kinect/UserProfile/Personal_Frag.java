@@ -27,7 +27,7 @@ import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class ProfileFrag extends Fragment implements View.OnClickListener{
+public class Personal_Frag extends Fragment implements View.OnClickListener{
     private final static String TAG = "ProfileFragment";
 
     DestroyProfileFrag destroyInterface;
@@ -58,10 +58,10 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.profile_fragment,container,false);
+        return inflater.inflate(R.layout.personal_fragment,container,false);
     }
 
-    TextView connectionsTxt, interestsTxt;
+    TextView nameTxt, connectionsTxt, interestsTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -69,6 +69,8 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
         closeBtn.setOnClickListener(this);
         ImageButton logoutBtn = view.findViewById(R.id.logout_btn);
         logoutBtn.setOnClickListener(this);
+
+        nameTxt = view.findViewById(R.id.name_txt);
 
         Button connectionsBtn = view.findViewById(R.id.connections_btn);
         connectionsBtn.setOnClickListener(this);
@@ -109,6 +111,8 @@ public class ProfileFrag extends Fragment implements View.OnClickListener{
     List<UserModel> connectionsList = new ArrayList<>();
     List<String> interestsList = new ArrayList<>();
     private void fetchUserInfo(){
+        //READ FROM THE SHARED PREFERENCES HERE!
+
         viewModel.fetchConnections().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {

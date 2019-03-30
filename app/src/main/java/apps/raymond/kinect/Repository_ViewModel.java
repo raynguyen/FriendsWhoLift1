@@ -19,10 +19,13 @@ public class Repository_ViewModel extends ViewModel {
         this.mRepository = new FireBaseRepository();
     }
 
+    public Task<UserModel> getCurrentUser(){
+        return mRepository.getCurrentUser();
+    }
+
     public Task<Void> addUserConnection(UserModel user){
         return mRepository.addConnection(user);
     }
-
 
     public Task<List<UserModel>> fetchConnections(){
         return mRepository.getConnections();
