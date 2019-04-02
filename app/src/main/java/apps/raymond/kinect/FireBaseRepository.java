@@ -67,8 +67,8 @@ public class FireBaseRepository {
     private static final String EVENT_ATTEND_FIELD = "attenders";
     private static final String EVENT_INVITED_FIELD = "invited";
 
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference groupCollection = db.collection(GROUPS);
@@ -110,7 +110,6 @@ public class FireBaseRepository {
         Log.i(TAG,"USER EMAIL = " + userEmail);
 
         DocumentReference userDoc = userCollection.document(userEmail);
-
         return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
             @Override
             public UserModel then(@NonNull Task<DocumentSnapshot> task) throws Exception {

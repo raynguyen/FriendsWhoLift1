@@ -19,26 +19,34 @@ public class Launch_Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.i(TAG,"LAUNCH ACTIVITY FIRST THING OR NO?");
         // ToDo: This needs to be moved to the repository.
         FirebaseAuth.getInstance().addAuthStateListener( new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
+                Log.i(TAG,"Calling auth state change!");
                 FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if(currUser == null){
+                    Log.i(TAG,"SWITCHING TO LOGIN ACTIVITY.");
+
                     Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Log.i(TAG,"Starting login activity.");
                     startActivity(loginIntent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     finish();
+
                 } else {
                     Log.d(TAG,"Current user:" + currUser.getEmail());
-                    Intent loginIntent = new Intent(Launch_Activity.this, Core_Activity.class);
+                    Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Log.i(TAG,"Starting core activity.");
-                    startActivity(loginIntent);
+                    startActivity(coreIntent);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                     finish();
                 }
-                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
             }
         });
 
