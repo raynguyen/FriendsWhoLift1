@@ -120,9 +120,7 @@ public class Core_Activity extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.core_menu,menu);
 
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));
-        toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
         toolbar.setNavigationOnClickListener(this);
-
         eventCreate = menu.findItem(R.id.action_create_event);
         groupCreate = menu.findItem(R.id.action_create_group);
         return true;

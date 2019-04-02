@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,6 +36,19 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
     SignIn signIn;
     public interface SignIn {
         void signedIn();
+    }
+
+    private FragmentActivity activity;
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            //We need to get an instance of the Class that will execute our interface method.
+            signIn = (SignIn) getActivity();
+            this.activity = getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG,"Class cast exception." + e.getMessage());
+        }
     }
 
     FirebaseAuth mAuth;
@@ -82,17 +96,6 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        try{
-            //We need to get an instance of the Class that will execute our interface method.
-            signIn = (SignIn) getActivity();
-        } catch (ClassCastException e) {
-            Log.e(TAG,"Class cast exception." + e.getMessage());
-        }
-    }
-
-    @Override
     public void onClick(View v){
         int i = v.getId();
         switch(i){
@@ -111,10 +114,10 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    Toast.makeText(getContext(),"Successfully registered "+username,Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity,"Successfully registered "+username,Toast.LENGTH_SHORT).show();
                                     signIn.signedIn();
                                 } else {
-                                    Toast.makeText(getContext(),"Error registering user.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity,"Error registering user.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

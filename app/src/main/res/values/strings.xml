@@ -93,7 +93,13 @@
     <string name="connections">Connections</string>
     <string name="interests">Interests</string>
     <string name="visibility">Visibility</string>
-    <string name="group_inv"></string>
+    <string name="open_invite">Anyone can invite me</string>
+    <string name="friends_invite">Only friends can invite me</string>
+    <string name="private_invite">Invites to me are disabled</string>
+    <string name="notifications_on">Notifications ON</string>
+    <string name="notifications_off">Notifications OFF</string>
+
+
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>
 

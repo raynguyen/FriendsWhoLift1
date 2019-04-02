@@ -16,8 +16,7 @@
         android:title="@string/create_event"
         android:icon="@drawable/baseline_playlist_add_black_18dp"
         app:showAsAction="ifRoom"
-        android:visible="true"
-        >
+        android:visible="true">
     </item>
 
     <item
@@ -29,24 +28,3 @@
     </item>
 
 </menu>
-
-<!--
-<item
-android:id="@+id/action_settings"
-android:title="@string/action_settings"
-app:showAsAction="never"
-android:orderInCategory="3">
-</item>
-
-<item
-android:id="@+id/action_logout"
-android:title="@string/logout"
-app:showAsAction="never">
-</item>
-
-<item
-android:id="@+id/action_test"
-android:title="@string/Temp"
-android:icon="@drawable/baseline_edit_black_18dp"
-app:showAsAction="never">
-</item>-->

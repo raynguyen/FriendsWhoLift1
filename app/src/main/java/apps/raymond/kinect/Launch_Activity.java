@@ -27,8 +27,6 @@ public class Launch_Activity extends AppCompatActivity {
                 Log.i(TAG,"Calling auth state change!");
                 FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                 if(currUser == null){
-                    Log.i(TAG,"SWITCHING TO LOGIN ACTIVITY.");
-
                     Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
