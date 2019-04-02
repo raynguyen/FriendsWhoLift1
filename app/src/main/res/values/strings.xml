@@ -1,35 +1,4 @@
 <resources>
-    <string name="action_settings">Settings</string>
-    <string name="summary_title">Most Recent Updates:</string>
-    <string name="squat_line">Squat : </string>
-    <string name="bench_line">Bench Press : </string>
-    <string name="dead_line">Deadlift : </string>
-    <string name="squat_txthldr">Your squat details here</string>
-    <string name="bench_txthldr">Your benchpress details here</string>
-    <string name="dead_txthldr">Your deadlift details here</string>
-    <string name="input_txthldr">Enter new PR</string>
-    <string name="new_pr">"Add PR</string>
-    <string name="definePR">"Define your new PR</string>
-    <string name="checkPRs">Check PRs</string>
-    <string name="selecttype">You must select a lift type.</string>
-    <string name="id">ID</string>
-    <string name="date">Date</string>
-    <string name="weight">Weight</string>
-    <string name="type">Type</string>
-    <string name="addsquat">Update Squat</string>
-    <string name="addbench">Update Bench</string>
-    <string name="adddead">Update Dead</string>
-    <string name="input_field">Add weight here.</string>
-    <string name="date_field">Date of lift.</string>
-    <string name="add_lift">Add Lift</string>
-    <string name="cancel">CANCEL</string>
-    <string name="save">SAVE</string>
-    <string name="update_lift">Update Lift</string>
-    <string name="Delete">Delete</string>
-    <string name="Edit">EDIT</string>
-    <string name="logout">Logout</string>
-    <string name="Temp">Temporary string.</string>
-
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
@@ -62,7 +31,6 @@
     them we can not provide you any suggestions!
     Would you like to register some tags now?</string>
 
-
     <string name="upcoming_events">Upcoming Events</string>
     <string-array name="array_liftsSpinner">
         <item>Choose a lift</item>
@@ -74,6 +42,11 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- General Strings -->
+    <string name="Temp">Temporary String</string>
+    <string name="cancel">Cancel</string>
+
+
+    <!-- General Strings -->
     <string name="app_name">Kinect</string>
     <string name="discard">Discard</string>
     <string name="camera">Camera</string>
@@ -81,7 +54,8 @@
     <string name="search">Search</string>
     <string name="null_data">Nothing was found!</string>
     <string name="null_dashes">--</string>
-
+    <string name="Edit">Edit</string>
+    <string name="Save">Save</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
@@ -96,9 +70,10 @@
     <string name="open_invite">Anyone can invite me</string>
     <string name="friends_invite">Only friends can invite me</string>
     <string name="private_invite">Invites to me are disabled</string>
+    <string name="notifications">Notifications</string>
     <string name="notifications_on">Notifications ON</string>
     <string name="notifications_off">Notifications OFF</string>
-
+    <string name="logout">Logout</string>
 
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>

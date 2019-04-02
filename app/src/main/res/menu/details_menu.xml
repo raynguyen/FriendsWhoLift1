@@ -9,7 +9,7 @@
     </item>
     <item
         android:id="@+id/action_save"
-        android:title="@string/save"
+        android:title="@string/Save"
         app:showAsAction="ifRoom"
         android:visible="false"
         android:enabled="false">

@@ -1,6 +1,7 @@
 package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
@@ -20,8 +21,16 @@ public class Repository_ViewModel extends ViewModel {
         this.mRepository = new FireBaseRepository();
     }
 
+    public String getUserEmail(){
+        return mRepository.getUserEmail();
+    }
+
     public Task<AuthResult> signIn(String email, String password){
         return mRepository.signInWithEmail(email,password);
+    }
+
+    public Task<Void> signOut(Context context){
+        return mRepository.signOut(context);
     }
 
     public Task<UserModel> getCurrentUser(){

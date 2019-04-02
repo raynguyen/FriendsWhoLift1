@@ -34,7 +34,6 @@ public class Launch_Activity extends AppCompatActivity {
                     startActivity(loginIntent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     finish();
-
                 } else {
                     Log.d(TAG,"Current user:" + currUser.getEmail());
                     Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
@@ -45,6 +44,8 @@ public class Launch_Activity extends AppCompatActivity {
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                     finish();
                 }
+                Log.i(TAG,"Removing auth listener");
+                FirebaseAuth.getInstance().removeAuthStateListener(this);
             }
         });
 

@@ -1,3 +1,10 @@
+/*
+ToDo:
+When a mutable field is selected, compare the change to the original value and if they are different,
+store the new value in the respective field. Other option is to compare the old user model object
+to a new temporary one and if they are not equal in all aspects, overwrite the existing user model.
+ */
+
 package apps.raymond.kinect.UserProfile;
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -6,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.Person;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +23,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +35,20 @@ import apps.raymond.kinect.Repository_ViewModel;
 
 public class Personal_Frag extends Fragment implements View.OnClickListener{
     private final static String TAG = "ProfileFragment";
+    private final static String USER = "UserModel";
 
-    DestroyProfileFrag destroyInterface;
-    public interface DestroyProfileFrag {
+    ProfileFragInt destroyInterface;
+    public interface ProfileFragInt {
         void destroyProfileFrag();
+        void signOut();
+    }
+
+    public static Personal_Frag newInstance(UserModel userModel){
+        Personal_Frag frag = new Personal_Frag();
+        Bundle args = new Bundle();
+        args.putParcelable(USER,userModel);
+        frag.setArguments(args);
+        return frag;
     }
 
     @Override
@@ -40,7 +56,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         super.onAttach(context);
         if(context instanceof Core_Activity){
             try {
-                destroyInterface = (DestroyProfileFrag) context;
+                destroyInterface = (ProfileFragInt) context;
             } catch (ClassCastException e){
                 Log.i(TAG,"Core_Group_Fragment does not implement UpdateGroupRecycler interface.");
             }
@@ -48,9 +64,11 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
     }
 
     Repository_ViewModel viewModel;
+    UserModel userModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userModel = getArguments().getParcelable(USER);
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
 
@@ -62,6 +80,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
     }
 
     TextView nameTxt, connectionsTxt, interestsTxt;
+    ImageButton socialEditLock;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -71,6 +90,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         logoutBtn.setOnClickListener(this);
 
         nameTxt = view.findViewById(R.id.name_txt);
+        nameTxt.setText(userModel.getEmail());
 
         Button connectionsBtn = view.findViewById(R.id.connections_btn);
         connectionsBtn.setOnClickListener(this);
@@ -81,6 +101,9 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         interestsTxt = view.findViewById(R.id.interests_text);
 
         fetchUserInfo();
+
+        socialEditLock = view.findViewById(R.id.social_edit_lock);
+        socialEditLock.setOnClickListener(this);
     }
 
     @Override
@@ -88,26 +111,20 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         int i = v.getId();
         switch (i){
             case R.id.close_btn:
-                Log.i(TAG,"hello?");
                 destroyInterface.destroyProfileFrag();
                 break;
             case R.id.logout_btn:
-                logout();
+                destroyInterface.signOut();
                 break;
+            case R.id.social_edit_lock:
+                editSocialSettings();
         }
     }
 
-    public void logout(){
-        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        AuthUI.getInstance().signOut(getContext());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG,"shit is about to die");
-    }
-
+    /*
+    Consider retrieving all data required for this fragment in the calling activity and passing as
+    a bundle to a static method newInstance().
+     */
     List<UserModel> connectionsList = new ArrayList<>();
     List<String> interestsList = new ArrayList<>();
     private void fetchUserInfo(){
@@ -143,4 +160,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         });*/
     }
 
+    private void editSocialSettings(){
+        socialEditLock.setImageResource(R.drawable.baseline_lock_open_black_18dp);
+    }
 }

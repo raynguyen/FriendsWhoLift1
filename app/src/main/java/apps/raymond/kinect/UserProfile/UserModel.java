@@ -52,6 +52,14 @@ public class UserModel implements Parcelable {
         dest.writeString(this.visibility);
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
+    }
+
     public void setEmail(String email){
         this.email = email;
     }
@@ -66,13 +74,5 @@ public class UserModel implements Parcelable {
 
     public String getVisibility(){
         return visibility;
-    }
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public String getName(){
-        return name;
     }
 }

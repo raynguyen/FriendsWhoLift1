@@ -17,10 +17,12 @@
 
 package apps.raymond.kinect;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -89,6 +91,15 @@ public class FireBaseRepository {
     }
 
     //*------------------------------------------USER-------------------------------------------*//
+    public String getUserEmail(){
+        return userEmail;
+    }
+
+    public Task<Void> signOut(Context context){
+        Log.i(TAG,"REPOSITORY LOG OUT METHOD.");
+        return AuthUI.getInstance().signOut(context);
+    }
+
     public Task<AuthResult> signInWithEmail(final String name, String password) {
         Log.i(TAG,"THIS SHOULD BE FIRST: "+userEmail);
         return firebaseAuth.signInWithEmailAndPassword(name, password)
@@ -106,9 +117,6 @@ public class FireBaseRepository {
     //WE ARE TRYING TO RETRIEVE INFO REGARDING FIREBASEUSER BEFORE IT CAN BE COMPLETED BY SERVERS.
     //TO GET THE USER DOCUMENT, WE SHOULD USE QUERY THAT WE CONSTRUCT VIA A STRING.
     public Task<UserModel> getCurrentUser(){
-        Log.i(TAG,"THIS SHOULD BE 5TH");
-        Log.i(TAG,"USER EMAIL = " + userEmail);
-
         DocumentReference userDoc = userCollection.document(userEmail);
         return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
             @Override

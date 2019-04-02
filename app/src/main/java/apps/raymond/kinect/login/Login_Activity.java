@@ -76,9 +76,10 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
             }
         });*/
 
-        /*Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
+        Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         startActivity(mainIntent);
-        finish();*/
+        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+        finish();
     }
 
     @Override
