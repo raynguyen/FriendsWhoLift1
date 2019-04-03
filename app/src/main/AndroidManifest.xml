@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="apps.raymond.kinect">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature
         android:name="android.hardware.camera2"
-        android:required="false"
-        />
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -18,29 +19,39 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name="apps.raymond.kinect.Launch_Activity"
+            android:name=".Launch_Activity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="apps.raymond.kinect.login.Login_Activity"
+            android:name=".login.Login_Activity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
 
         <activity
-            android:name="apps.raymond.kinect.Core_Activity"
+            android:name=".Core_Activity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <activity
-            android:name="apps.raymond.kinect.Connections_Activity">
+        <activity android:name=".Connections_Activity">
         </activity>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="apps.raymond.kinect.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths">
+            </meta-data>
+        </provider>
     </application>
+
 </manifest>

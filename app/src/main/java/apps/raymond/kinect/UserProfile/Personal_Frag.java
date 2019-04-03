@@ -9,33 +9,47 @@ package apps.raymond.kinect.UserProfile;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.Person;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
+import static android.app.Activity.RESULT_OK;
+
 public class Personal_Frag extends Fragment implements View.OnClickListener{
     private final static String TAG = "ProfileFragment";
     private final static String USER = "UserModel";
+    private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     ProfileFragInt destroyInterface;
     public interface ProfileFragInt {
@@ -81,6 +95,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
 
     TextView nameTxt, connectionsTxt, interestsTxt;
     ImageButton socialEditLock;
+    ImageView profilePic;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -88,6 +103,9 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         closeBtn.setOnClickListener(this);
         ImageButton logoutBtn = view.findViewById(R.id.logout_btn);
         logoutBtn.setOnClickListener(this);
+
+        profilePic = view.findViewById(R.id.profile_pic);
+        profilePic.setOnClickListener(this);
 
         nameTxt = view.findViewById(R.id.name_txt);
         nameTxt.setText(userModel.getEmail());
@@ -118,6 +136,19 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
                 break;
             case R.id.social_edit_lock:
                 editSocialSettings();
+                break;
+            case R.id.connections_btn:
+                Log.i(TAG,"Hello");
+                break;
+            case R.id.interests_btn:
+                Log.i(TAG,"Goodbye");
+                break;
+            case R.id.profile_pic:
+                Log.i(TAG,"NEW PHOTO!");
+                updateProfilePicture();
+                break;
+
+
         }
     }
 
@@ -162,5 +193,58 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
 
     private void editSocialSettings(){
         socialEditLock.setImageResource(R.drawable.baseline_lock_open_black_18dp);
+    }
+
+    private void updateProfilePicture(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            File photoFile = null;
+            try{
+                photoFile = createImageFile();
+            } catch(IOException exception){
+                Log.w(TAG,"Error creating photo file.", exception);
+            }
+
+            if(photoFile!=null){
+                Uri photoURI = FileProvider.getUriForFile(getContext(),
+                        getActivity().getApplicationContext().getPackageName() + ".provider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            } else {
+                Log.w(TAG,"Some error when trying to store photo in a file.");
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            Log.i(TAG,"TOOK A NEW PHOTO");
+            Bundle extras = data.getExtras();
+            Bitmap imageBitMap = (Bitmap) extras.get("data");
+            profilePic.setImageBitmap(imageBitMap);
+        }
+    }
+
+    /*
+    TODO: NEED TO REQUEST PERMISSION TO WRITE FILE: https://developer.android.com/training/permissions/requesting.html
+     */
+    String currentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        Log.i(TAG,"In createImageFile");
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CANADA).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 }

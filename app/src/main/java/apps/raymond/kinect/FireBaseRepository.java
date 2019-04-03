@@ -584,7 +584,6 @@ public class FireBaseRepository {
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
     // Todo: Filter our users that have Privacy:private.
     Task<List<UserModel>> fetchUsers() {
-        Log.i(TAG,"FETCHING USERS TO POPULATE INVITE LIST.");
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
             @Override
             public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
