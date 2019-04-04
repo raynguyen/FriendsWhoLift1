@@ -9,6 +9,7 @@ package apps.raymond.kinect.UserProfile;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -199,6 +200,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         socialEditLock.setImageResource(R.drawable.baseline_lock_open_black_18dp);
     }
 
+    Uri photoUri;
     private void updateProfilePicture(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -211,17 +213,19 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
             }
 
             if(photoFile!=null){
-                Uri photoUri = FileProvider.getUriForFile(requireContext(),
+                photoUri = FileProvider.getUriForFile(requireContext(),
                         "apps.raymond.kinect.provider",
                         photoFile);
+                Log.i(TAG,"PhotoUri: "+photoUri.toString());
 
-                Log.i(TAG,"PhotoURi: "+photoUri.toString());
-
-
-
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                Log.i(TAG,"START CAMERA INTENT");
+                if(photoUri!=null){
+                    //Adding this line will not return a bitmap or intent in onActivityResult.
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    Log.i(TAG,"START CAMERA INTENT");
+                    return;
+                }
+                Log.w(TAG,"photoUri is null!");
             } else {
                 Log.w(TAG,"Null file.");
             }
@@ -231,23 +235,35 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK){
-            if(requestCode == REQUEST_IMAGE_CAPTURE ){
-                Log.i(TAG,"TOOK A NEW PHOTO");
-                Bundle extras = data.getExtras();
-                Uri imageUri = data.getData();
-                try {
-                    Bitmap imageBitMap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(),imageUri);
-                    profilePic.setImageBitmap(imageBitMap);
-                } catch (IOException e){
-                    Log.w(TAG,"Error retrieving bitmap.",e);
-                }
+            Log.w(TAG,"THE RESULT IS OK!");
 
+            if(requestCode == REQUEST_IMAGE_CAPTURE ){
+                Log.i(TAG,"Successfully captured photo.");
+
+                setProfilePic();
+                // If we remove putExtra from the intent, we are returned a bitmap from the camera.
+                /*try {
+                    Bitmap imageBitMap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+                    profilePic.setImageBitmap(imageBitMap);
+                } catch (IOException | NullPointerException e){
+                    Log.w(TAG,"Error retrieving bitmap.",e);
+                }*/
 
             }
-        } else {
-            Log.w(TAG,"Activity for result returned error.");
         }
+    }
 
+    private void setProfilePic(){
+        try{
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(),photoUri);
+            if(bitmap!=null){
+                Log.i(TAG,"GOT THE FULL SIZED IMAGE!");
+                profilePic.setImageBitmap(bitmap);
+            }
+        }
+            catch (IOException | NullPointerException e){
+                Log.w(TAG,"Error retrieving full size image.",e);
+        }
     }
 
     //Todo: move this to first launch of the app so that we don't have to check for permission each time the user changes profile.
@@ -282,7 +298,6 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
