@@ -52,6 +52,13 @@
                 android:resource="@xml/file_paths">
             </meta-data>
         </provider>
+
+        <receiver android:name=".ImageBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="MediaSt"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

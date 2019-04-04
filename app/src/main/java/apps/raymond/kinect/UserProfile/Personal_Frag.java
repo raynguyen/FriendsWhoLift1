@@ -8,8 +8,8 @@ to a new temporary one and if they are not equal in all aspects, overwrite the e
 package apps.raymond.kinect.UserProfile;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.Core_Activity;
+import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
@@ -54,8 +55,8 @@ import static android.app.Activity.RESULT_OK;
 public class Personal_Frag extends Fragment implements View.OnClickListener{
     private final static String TAG = "PersonalFragment";
     private final static String USER = "UserModel";
+    private final static int REQUEST_PROFILE_PICTURE = 0;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
-    private final static int REQUEST_WRITE_STORAGE = 2;
 
     ProfileFragInt destroyInterface;
     public interface ProfileFragInt {
@@ -202,34 +203,58 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
 
     Uri photoUri;
     private void updateProfilePicture(){
+        Intent receiver = new Intent(requireContext(), ImageBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(),
+                REQUEST_PROFILE_PICTURE,receiver,PendingIntent.FLAG_UPDATE_CURRENT);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        Intent getPictureIntent = new Intent();
+        getPictureIntent.setType("image/*");
+        getPictureIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        Intent chooserIntent = Intent.createChooser(getPictureIntent,getString(R.string.imageDialogTitle),pendingIntent.getIntentSender());
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePictureIntent});
+
+        startActivityForResult(chooserIntent,REQUEST_PROFILE_PICTURE);
+
+        //Intent.resolveActivity returns the Activity component to execute the intent.
+        /*if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             File photoFile = null;
             try{
-                photoFile = checkWritePermission();
+                photoFile = createImageFile();
             } catch(IOException | NullPointerException exception){
                 Log.w(TAG,"Error creating photo file.", exception);
             }
 
             if(photoFile!=null){
                 photoUri = FileProvider.getUriForFile(requireContext(),
-                        "apps.raymond.kinect.provider",
-                        photoFile);
-                Log.i(TAG,"PhotoUri: "+photoUri.toString());
-
+                        "apps.raymond.kinect.provider", photoFile);
                 if(photoUri!=null){
-                    //Adding this line will not return a bitmap or intent in onActivityResult.
+                    //Note that by providing a Uri via putExtra method, onActivityResult will not return to us a bitmap of the photo taken.
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                    Log.i(TAG,"START CAMERA INTENT");
                     return;
                 }
                 Log.w(TAG,"photoUri is null!");
             } else {
                 Log.w(TAG,"Null file.");
             }
-        }
+        }*/
+    }
+
+    //Create a file that will hold the photo taken by the camera intent.
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CANADA).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        return image;
     }
 
     @Override
@@ -237,18 +262,22 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         if(resultCode == RESULT_OK){
             Log.w(TAG,"THE RESULT IS OK!");
 
-            if(requestCode == REQUEST_IMAGE_CAPTURE ){
-                Log.i(TAG,"Successfully captured photo.");
+            switch (requestCode){
+                case REQUEST_IMAGE_CAPTURE:
+                    Log.i(TAG,"Successfully captured photo.");
 
-                setProfilePic();
-                // If we remove putExtra from the intent, we are returned a bitmap from the camera.
+                    setProfilePic();
+                    // If we remove putExtra from the intent, we are returned a bitmap from the camera.
                 /*try {
                     Bitmap imageBitMap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
                     profilePic.setImageBitmap(imageBitMap);
                 } catch (IOException | NullPointerException e){
                     Log.w(TAG,"Error retrieving bitmap.",e);
                 }*/
-
+                    break;
+                case REQUEST_PROFILE_PICTURE:
+                    Log.i(TAG,"HELLOHELHELHELHAHEARHAEHR");
+                    break;
             }
         }
     }
@@ -266,47 +295,4 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         }
     }
 
-    //Todo: move this to first launch of the app so that we don't have to check for permission each time the user changes profile.
-    private File checkWritePermission() throws IOException {
-        //Request permission to write to external.
-        int permission = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(permission != PackageManager.PERMISSION_GRANTED){
-            //Request permission to write to storage.
-            Log.i(TAG,"Requesting permission to write to external storage.");
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_WRITE_STORAGE);
-            return null;
-        } else {
-            return createImageFile();
-        }
-    }
-
-    String currentPhotoPath;
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CANADA).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        switch (requestCode){
-            case REQUEST_WRITE_STORAGE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Log.i(TAG,"YOU CAN NOW WRITE TO STORAGE!");
-                }
-        }
-    }
 }

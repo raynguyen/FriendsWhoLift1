@@ -42,11 +42,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- General Strings -->
-    <string name="Temp">Temporary String</string>
-    <string name="cancel">Cancel</string>
-
-
-    <!-- General Strings -->
     <string name="app_name">Kinect</string>
     <string name="discard">Discard</string>
     <string name="camera">Camera</string>
@@ -56,6 +51,9 @@
     <string name="null_dashes">--</string>
     <string name="Edit">Edit</string>
     <string name="Save">Save</string>
+    <string name="Temp">Temporary String</string>
+    <string name="cancel">Cancel</string>
+    <string name="imageDialogTitle">Pick an image or take one!</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

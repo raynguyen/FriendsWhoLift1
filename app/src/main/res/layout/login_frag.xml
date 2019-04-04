@@ -19,7 +19,7 @@
             android:id="@+id/login_txt"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:hint="@string/username"
+            android:hint="@string/fui_email_hint"
             android:inputType="textEmailAddress"
             android:gravity="center"
             android:focusable="true"/>
