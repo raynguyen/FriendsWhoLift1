@@ -20,7 +20,7 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
 
     public interface InviteResponseListener{
         void onAccept(GroupBase group, int position);
-        void onDecline(GroupBase group);
+        void onDecline(GroupBase group, int position);
         void onDetail();
     }
 
@@ -60,17 +60,13 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
                 @Override
                 public void onClick(View v) {
                     callback.onAccept(group,viewHolder.getAdapterPosition());
-                    //groupInviteSet.remove(viewHolder.getAdapterPosition());
-                    //notifyItemRemoved(viewHolder.getAdapterPosition());
                 }
             });
 
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onDecline(group);
-                    //groupInviteSet.remove(viewHolder.getAdapterPosition());
-                    //notifyItemRemoved(viewHolder.getAdapterPosition());
+                    callback.onDecline(group,viewHolder.getAdapterPosition());
                 }
             });
         }

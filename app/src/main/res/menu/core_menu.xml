@@ -5,10 +5,10 @@
     <item
         android:id="@+id/action_invites"
         android:title="@string/messages"
-        app:showAsAction="never"
-        android:orderInCategory="1"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="0"
         android:icon="@drawable/baseline_mail_black_18dp"
-        android:visible="false">
+        android:visible="true">
     </item>
 
     <item

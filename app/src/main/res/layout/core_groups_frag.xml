@@ -67,6 +67,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/myGroupParent"
-        android:text="@string/Temp" />
+        android:text="TESTBT4" />
 
 </android.support.constraint.ConstraintLayout>

@@ -100,7 +100,8 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
                                     Log.i(TAG,"THIS SHOULD BE THIRD");
                                     signIn.signedIn();
                                 } else if (task.getException()!=null){
-                                    Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                                    //ToDo: if password error seterror to the password field!
+                                    Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
                                 }
                             }
                         });

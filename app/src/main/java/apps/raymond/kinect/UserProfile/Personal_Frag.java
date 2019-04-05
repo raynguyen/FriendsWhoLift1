@@ -146,12 +146,14 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
                 break;
             case R.id.connections_btn:
                 Log.i(TAG,"Hello");
+                viewConnections();
                 break;
             case R.id.interests_btn:
                 Log.i(TAG,"Goodbye");
                 break;
             case R.id.profile_pic:
-                updateProfilePicture();
+                Toast.makeText(requireActivity(),"There are some bugs when setting image.",Toast.LENGTH_LONG).show();
+                //updateProfilePicture();
                 break;
 
 
@@ -197,10 +199,23 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
         });*/
     }
 
+    private void viewConnections(){
+
+    }
+
     private void editSocialSettings(){
         socialEditLock.setImageResource(R.drawable.baseline_lock_open_black_18dp);
     }
 
+
+
+
+    /*
+    When creating the chooserIntent, we want to create a file to save the photo if the user selects
+    the camera option. How do we create a file only if the user selects the camera option.
+    -Potential solution is to simply create file regardless of the choice but then we have to delete
+    the file if the user does not take a photo > how do we determine if user selects the gallery option?
+     */
     Uri photoUri;
     private void updateProfilePicture(){
         Intent receiver = new Intent(requireContext(), ImageBroadcastReceiver.class);
@@ -261,22 +276,12 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK){
             Log.w(TAG,"THE RESULT IS OK!");
-
             switch (requestCode){
-                case REQUEST_IMAGE_CAPTURE:
-                    Log.i(TAG,"Successfully captured photo.");
-
-                    setProfilePic();
-                    // If we remove putExtra from the intent, we are returned a bitmap from the camera.
-                /*try {
-                    Bitmap imageBitMap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-                    profilePic.setImageBitmap(imageBitMap);
-                } catch (IOException | NullPointerException e){
-                    Log.w(TAG,"Error retrieving bitmap.",e);
-                }*/
-                    break;
                 case REQUEST_PROFILE_PICTURE:
-                    Log.i(TAG,"HELLOHELHELHELHAHEARHAEHR");
+                    Log.i(TAG,"Successfully fetched photo.");
+                    //setProfilePic();
+                    Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                    profilePic.setImageBitmap(imageBitmap);
                     break;
             }
         }

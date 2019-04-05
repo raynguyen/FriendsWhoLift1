@@ -238,6 +238,7 @@ public class Group_Create_Fragment extends Fragment implements
 
     List<UserModel> inviteUsersList;
     private void fetchUsersList(){
+        Log.i(TAG,"Fetching all users from store.");
         viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {

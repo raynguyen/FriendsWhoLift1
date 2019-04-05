@@ -93,6 +93,8 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
                 Log.i(TAG,"Calling someString test in group frag resulted in: "+someString);
             }
         });
+
+        Button testBtn4 = view.findViewById(R.id.testButton4);
     }
 
     private void subscribeToModel(){

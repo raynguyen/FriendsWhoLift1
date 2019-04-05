@@ -57,25 +57,6 @@ public class Login_Activity extends AppCompatActivity implements LoginFrag.SignI
     @Override
     public void signedIn() {
         final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
-
-        Log.i(TAG,"THIS SHOULD BE 4TH!");
-        String somestring = viewModel.testString();
-        Log.i(TAG,"Calling repo testString method returned: "+somestring);
-
-        //viewModel.getCurrentUser();
-        /*.addOnCompleteListener(new OnCompleteListener<UserModel>() {
-            @Override
-            public void onComplete(@NonNull Task<UserModel> task) {
-                UserModel user = task.getResult();
-                SharedPreferences.Editor editor = userPreferences.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(user);
-                editor.putString("MyProfile",json);
-                editor.apply();
-                Log.i(TAG,"Writing new shared preferences.");
-            }
-        });*/
-
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         startActivity(mainIntent);
         overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);

@@ -92,6 +92,7 @@ public class GroupInviteFragment extends Fragment implements GroupInviteAdapter.
                     adapter.notifyItemRemoved(position);
                 } else {
                     Toast.makeText(getContext(),"There was an error!", Toast.LENGTH_SHORT).show();
+                    Log.w(TAG,"ERROR: "+task.getException());
                 }
             }
         });
@@ -99,8 +100,20 @@ public class GroupInviteFragment extends Fragment implements GroupInviteAdapter.
     }
 
     @Override
-    public void onDecline(GroupBase group) {
-
+    public void onDecline(final GroupBase group, final int position) {
+        Log.i(TAG,"calling onDecline");
+        viewModel.declineGroupInvite(group).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"Successfully declined invite to "+group.getName());
+                    groupInvSet.remove(position);
+                    adapter.notifyItemRemoved(position);
+                } else {
+                    Toast.makeText(requireContext(),"Error declining invite to "+group.getOriginalName(),Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override

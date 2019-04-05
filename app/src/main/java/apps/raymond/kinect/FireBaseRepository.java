@@ -84,18 +84,23 @@ public class FireBaseRepository {
     public FireBaseRepository() {
         try {
             this.userEmail = currentUser.getEmail();
-
+            getCurrentUser().addOnCompleteListener(new OnCompleteListener<UserModel>() {
+                @Override
+                public void onComplete(@NonNull Task<UserModel> task) {
+                    curUserModel = task.getResult();
+                }
+            });
         } catch (NullPointerException npe) {
             Log.w(TAG, "Error: " + npe);
         }
     }
 
     //*------------------------------------------USER-------------------------------------------*//
-    public String getUserEmail(){
+    String getUserEmail(){
         return userEmail;
     }
 
-    public Task<Void> signOut(Context context){
+    Task<Void> signOut(Context context){
         Log.i(TAG,"REPOSITORY LOG OUT METHOD.");
         return AuthUI.getInstance().signOut(context);
     }
@@ -116,7 +121,7 @@ public class FireBaseRepository {
 
     //WE ARE TRYING TO RETRIEVE INFO REGARDING FIREBASEUSER BEFORE IT CAN BE COMPLETED BY SERVERS.
     //TO GET THE USER DOCUMENT, WE SHOULD USE QUERY THAT WE CONSTRUCT VIA A STRING.
-    public Task<UserModel> getCurrentUser(){
+    Task<UserModel> getCurrentUser(){
         DocumentReference userDoc = userCollection.document(userEmail);
         return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
             @Override
@@ -487,11 +492,30 @@ public class FireBaseRepository {
         });
     }
 
+    Task<List<UserModel>> fetchGroupMembers(GroupBase group){
+        CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
+
+        return groupMembers.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+            @Override
+            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    List<UserModel> memberList = new ArrayList<>();
+                    if(task.getResult()!=null){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            memberList.add(document.toObject(UserModel.class));
+                        }
+                        return memberList;
+                    }
+                }
+                return null;
+            }
+        });
+    }
     // Info below may be outdated.
     // Steps are to get the keySet corresponding to what groups the user is registered with
-    // Then we want to retrieve the Documentsnapshots of the groups named in the KeySet.
+    // Then we want to retrieve the Document snapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
-    // Finally we want to use the documentsnapshot and the retrieved byte[] to create a groupbase object.
+    // Finally we want to use the document snapshot and the retrieved byte[] to create a group base object.
     Task<List<Task<GroupBase>>> getUsersGroups() {
         final List<String> groupList = new ArrayList<>();
         //First thing to do is retrieve the Group tags from current user.
@@ -523,53 +547,72 @@ public class FireBaseRepository {
     }
 
     Task<Void> addUserToGroup(final GroupBase group) {
-        CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUPS);
-        final CollectionReference usersGroupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
-        final CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
+        String groupName = group.getOriginalName();
+        final CollectionReference groupsMembers = groupCollection.document(groupName).collection(MEMBERS);
+        final CollectionReference groupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
+        final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
 
-        return usersGroups.document(group.getOriginalName()).set(group).continueWithTask(new Continuation<Void, Task<Void>>() {
+        CollectionReference myGroups = userCollection.document(userEmail).collection(GROUPS);
+        return myGroups.document(group.getOriginalName()).set(group).continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                 if (task.isSuccessful()) {
-                    return groupMembers.document(userEmail).set(curUserModel);
+                    Log.i(TAG,"Successfully added Group to user's GroupCollection");
+                    return groupsMembers.document(userEmail).set(curUserModel);
                 } else {
+                    Log.i(TAG,"Error adding user to Group Members collection.", task.getException());
                     return null;
                 }
-
             }
-        })
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if (task.isSuccessful()) {
-                            return usersGroupInvites.document(group.getOriginalName()).delete();
-                        }
-                        return null;
-                    }
-                });
-    }
-
-    Task<List<UserModel>> fetchGroupMembers(GroupBase group){
-        CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
-
-        return groupMembers.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+        }).continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
-            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                if(task.isSuccessful()){
-                    List<UserModel> memberList = new ArrayList<>();
-                    if(task.getResult()!=null){
-                        for(QueryDocumentSnapshot document : task.getResult()){
-                            memberList.add(document.toObject(UserModel.class));
-                        }
-                        return memberList;
-                    }
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                if (task.isSuccessful()) {
+                    Log.i(TAG,"Successfully deleted invite from user group invite collection.");
+                    return groupInvites.document(group.getOriginalName()).delete();
+                } else {
+                    Log.w(TAG,"Unable to delete: "+ group.getOriginalName()+" " +task.getException());
+                    return null;
                 }
-                return null;
+            }
+        }).continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                return invitedMembers.document(userEmail).delete();
             }
         });
     }
-    //*-------------------------------------------ETC--------------------------------------------*//
 
+    Task<Void> declineGroupInvite(final GroupBase group){
+        final String groupName = group.getOriginalName();
+        final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
+        final CollectionReference declinedMembers = groupCollection.document(groupName).collection(DECLINED);
+        final CollectionReference groupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
+
+        return invitedMembers.document(userEmail).delete().continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                if(task.isSuccessful()){
+                    return declinedMembers.document(userEmail).set(curUserModel);
+                } else {
+                    Log.w(TAG,"Error removing user from invited collection for "+groupName);
+                    return null;
+                }
+            }
+        }).continueWithTask(new Continuation<Void, Task<Void>>() {
+            @Override
+            public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                if(task.isSuccessful()){
+                    return groupInvites.document(groupName).delete();
+                } else {
+                    Log.w(TAG,"Error adding user to declined collection in group "+groupName);
+                    return null;
+                }
+            }
+        });
+    }
+
+    //*-------------------------------------------ETC--------------------------------------------*//
 
     private void removeInviteListeners() {
         //eventInviteListener.remove();
@@ -624,7 +667,7 @@ public class FireBaseRepository {
         return null;
     }
 
-    public String testString(){
+    String testString(){
         return userEmail;
     }
 }

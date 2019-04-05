@@ -125,8 +125,16 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.fetchGroupMembers(group);
     }
 
+    public Task<Void> declineGroupInvite(GroupBase group){
+        return mRepository.declineGroupInvite(group);
+    }
+
     public String testString(){
         return mRepository.testString();
     }
+
+    /*public void testCollectionWrite(){
+        mRepository.testCollectionWrite();
+    }*/
 }
 
