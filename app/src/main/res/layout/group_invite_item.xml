@@ -43,13 +43,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.ButtonBar"
-                android:text="@string/decline"/>
+                android:text="@string/decline"
+                android:elevation="2dp"
+                android:background="@drawable/button_ripple"/>
             <Button
                 android:id="@+id/accept_group_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.ButtonBar"
-                android:text="@string/accept"/>
+                android:text="@string/accept"
+                android:elevation="2dp"
+                android:background="@drawable/button_ripple"/>
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
