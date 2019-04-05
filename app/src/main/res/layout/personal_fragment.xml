@@ -14,7 +14,7 @@
         android:padding="12dp">
 
         <ImageButton
-            android:id="@+id/close_btn"
+            android:id="@+id/return_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -134,9 +134,9 @@
             android:id="@+id/social_edit_lock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@+id/social_settings_layout"
-            app:layout_constraintBottom_toTopOf="@id/social_settings_layout"
-            app:layout_constraintEnd_toEndOf="@id/social_settings_layout"
+            app:layout_constraintTop_toTopOf="@+id/social_settings"
+            app:layout_constraintBottom_toTopOf="@id/social_settings"
+            app:layout_constraintEnd_toEndOf="@id/social_settings"
             android:layout_marginEnd="8dp"
             android:src="@drawable/baseline_lock_black_18dp"
             android:contentDescription="@string/Temp"
@@ -146,7 +146,7 @@
             android:elevation="2dp"/>
 
         <LinearLayout
-            android:id="@+id/social_settings_layout"
+            android:id="@+id/social_settings"
             android:layout_width="match_parent"
             android:layout_height="156dp"
             android:layout_marginTop="24dp"
@@ -209,7 +209,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:clickable="false"
-                    android:text="@string/open_invite" />
+                    android:text="@string/open_event_invite" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -257,7 +257,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/social_settings_layout"
+            app:layout_constraintTop_toBottomOf="@id/social_settings"
             android:layout_marginTop="24dp"
             android:padding="12dp"
             android:background="@drawable/settings_section_bg">

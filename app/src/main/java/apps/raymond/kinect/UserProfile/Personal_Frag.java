@@ -7,12 +7,10 @@ to a new temporary one and if they are not equal in all aspects, overwrite the e
 
 package apps.raymond.kinect.UserProfile;
 
-import android.Manifest;
 import android.app.PendingIntent;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,9 +18,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +33,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -106,7 +101,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ImageButton closeBtn = view.findViewById(R.id.close_btn);
+        ImageButton closeBtn = view.findViewById(R.id.return_btn);
         closeBtn.setOnClickListener(this);
         ImageButton logoutBtn = view.findViewById(R.id.logout_btn);
         logoutBtn.setOnClickListener(this);
@@ -135,7 +130,7 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.close_btn:
+            case R.id.return_btn:
                 destroyInterface.destroyProfileFrag();
                 break;
             case R.id.logout_btn:
@@ -155,8 +150,6 @@ public class Personal_Frag extends Fragment implements View.OnClickListener{
                 Toast.makeText(requireActivity(),"There are some bugs when setting image.",Toast.LENGTH_LONG).show();
                 //updateProfilePicture();
                 break;
-
-
         }
     }
 

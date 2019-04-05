@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorAccentLight"
+    android:clickable="true">
+
+    <FrameLayout
+        android:id="@+id/profile_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tab_gradient"
+                android:clickable="true"
+                android:padding="12dp">
+
+                <ImageButton
+                    android:id="@+id/return_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/cancel"
+                    android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+                    android:background="@drawable/button_ripple"
+                    android:tint="@color/white"/>
+
+                <ImageButton
+                    android:id="@+id/logout_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/logout"
+                    android:src="@drawable/baseline_transfer_within_a_station_black_18dp"
+                    android:tint="@color/white"
+                    android:background="@drawable/button_ripple"/>
+
+                <ImageView
+                    android:id="@+id/profile_pic"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="48dp"
+                    android:contentDescription="@string/profile_picture"
+                    android:background="#0000"
+                    android:src="@drawable/baseline_face_black_18dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <TextView
+                    android:id="@+id/name_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/profile_display_name"
+                    app:layout_constraintTop_toBottomOf="@id/profile_pic"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"/>
+
+                <FrameLayout
+                    android:id="@+id/connections_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/name_txt"
+                    android:layout_marginTop="24dp">
+
+                    <LinearLayout
+                        android:id="@+id/invite_flipper_tabs"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/name_txt"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center_horizontal"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/connections_btn"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:text="@string/connections"
+                            android:textColor="@color/colorAccent"
+                            android:gravity="bottom|center"/>
+
+                        <Button
+                            android:id="@+id/interests_btn"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:text="@string/interests"
+                            android:textColor="@color/colorAccent"
+                            android:gravity="bottom|center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center_horizontal|top"
+                        android:paddingTop="18dp"
+                        android:weightSum="2"
+                        android:clickable="false"
+                        android:focusable="false">
+
+                        <TextView
+                            android:id="@+id/connections_text"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="@string/null_dashes"
+                            android:textSize="26sp"
+                            android:gravity="center_horizontal"
+                            android:textColor="@color/colorAccent"/>
+
+                        <TextView
+                            android:id="@+id/interests_text"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="@string/null_dashes"
+                            android:textSize="26sp"
+                            android:gravity="center_horizontal"
+                            android:textColor="@color/colorAccent"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <ImageButton
+                    android:id="@+id/social_edit_lock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@+id/social_settings"
+                    app:layout_constraintBottom_toTopOf="@id/social_settings"
+                    app:layout_constraintEnd_toEndOf="@id/social_settings"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/baseline_lock_black_18dp"
+                    android:contentDescription="@string/Temp"
+                    android:scaleX=".8"
+                    android:scaleY=".8"
+                    android:background="@color/gray"
+                    android:elevation="2dp"/>
+
+                <LinearLayout
+                    android:id="@+id/social_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/settings_section_bg"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/connections_frame"
+                    tools:layout_editor_absoluteX="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:src="@drawable/baseline_visibility_black_18dp" />
+
+                        <TextView
+                            style="@style/UserOptions"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:clickable="false"
+                            android:text="@string/visibility" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:padding="0dp"
+                            android:src="@drawable/baseline_done_outline_black_18dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:src="@drawable/baseline_group_add_black_18dp" />
+
+                        <TextView
+                            style="@style/UserOptions"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:clickable="false"
+                            android:text="@string/open_event_invite" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:padding="0dp"
+                            android:src="@drawable/baseline_done_outline_black_18dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:src="@drawable/baseline_group_add_black_18dp" />
+
+                        <TextView
+                            style="@style/UserOptions"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:clickable="false"
+                            android:text="@string/open_group_invite" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:padding="0dp"
+                            android:src="@drawable/baseline_done_outline_black_18dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:src="@drawable/baseline_mail_black_18dp" />
+
+                        <TextView
+                            style="@style/UserOptions"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:clickable="false"
+                            android:hint="@string/notifications" />
+
+                        <Switch
+                            android:id="@+id/notifications_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/app_settings"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/social_settings"
+                    android:layout_marginTop="24dp"
+                    android:padding="12dp"
+                    android:background="@drawable/settings_section_bg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/baseline_alternate_email_black_18dp"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:layout_gravity="center_vertical"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/all_events"
+                            android:layout_gravity="center_vertical"
+                            style="@style/UserOptions"
+                            android:clickable="false"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/baseline_done_outline_black_18dp"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:padding="0dp"
+                            android:background="@color/transparent"
+                            android:visibility="invisible"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/personal_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@id/app_settings"
+                    android:layout_marginTop="24dp"
+                    android:padding="12dp"
+                    android:background="@drawable/settings_section_bg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/baseline_alternate_email_black_18dp"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:layout_gravity="center_vertical"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/fui_email_hint"
+                            android:layout_gravity="center_vertical"
+                            style="@style/UserOptions"
+                            android:clickable="false"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/baseline_done_outline_black_18dp"
+                            android:clickable="false"
+                            android:contentDescription="@string/Temp"
+                            android:padding="0dp"
+                            android:background="@color/transparent"
+                            android:visibility="invisible"/>
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fui_title_recover_password_activity"/>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete_acc"/>
+                </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

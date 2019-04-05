@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="apps.raymond.kinect">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        />
 
     <uses-feature
         android:name="android.hardware.camera2"
@@ -23,10 +24,10 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".login.Login_Activity"
             android:theme="@style/AppTheme"
@@ -39,7 +40,10 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <activity android:name=".Connections_Activity">
+        <activity
+            android:name=".Profile_Activity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
         </activity>
 
         <provider
@@ -55,9 +59,6 @@
 
         <receiver android:name=".ImageBroadcastReceiver"
             android:exported="false">
-            <intent-filter>
-                <action android:name="MediaSt"></action>
-            </intent-filter>
         </receiver>
     </application>
 

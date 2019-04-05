@@ -203,19 +203,22 @@ public class Core_Activity extends AppCompatActivity implements
         int i = v.getId();
         switch(i){
             case -1:
-                Personal_Frag personal_frag;
+                //Below is code if personal_frag is a fragment and not activity.
+                /*Personal_Frag personal_frag;
                 try{
                     personal_frag = Personal_Frag.newInstance(userModel);
                 } catch (NullPointerException npe){
                     personal_frag = new Personal_Frag();
                     Log.w(TAG,"Unable to start profile fragment.");
                 }
-
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_down, 0,0,R.anim.slide_out_up)
                         .replace(R.id.full_core_frame,personal_frag,PROFILE_FRAG)
                         .addToBackStack(PROFILE_FRAG)
-                        .commit();
+                        .commit();*/
+                Intent profileIntent = new Intent(this,Profile_Activity.class);
+                startActivity(profileIntent);
+                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
                 break;
         }
     }
@@ -277,6 +280,7 @@ public class Core_Activity extends AppCompatActivity implements
             }
         }
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if(!toolbarSearch.isIconified()){
