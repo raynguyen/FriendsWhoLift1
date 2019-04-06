@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
 
 public class Core_Activity_Adapter extends FragmentPagerAdapter {
-    private static final int NUM_PAGES = 2;
+    static final int NUM_PAGES = 2;
     private SparseArray<Fragment> registeredFragments = new SparseArray<>();
-    public Core_Activity_Adapter(FragmentManager fm){
+
+    Core_Activity_Adapter(FragmentManager fm){
         super(fm);
     }
 

@@ -105,6 +105,7 @@ public class Core_Activity extends AppCompatActivity implements
         viewPager.addOnPageChangeListener(this);
         tabLayout.setupWithViewPager(viewPager);
 
+        fmListener();
         getUserModel();
     }
 
@@ -129,13 +130,17 @@ public class Core_Activity extends AppCompatActivity implements
     MenuItem eventCreate, groupCreate;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.core_menu,menu);
-
-        toolbar.setBackgroundColor(getColor(R.color.colorAccent));
-        toolbar.setNavigationOnClickListener(this);
-        eventCreate = menu.findItem(R.id.action_create_event);
-        groupCreate = menu.findItem(R.id.action_create_group);
-        return true;
+        Log.i(TAG,"Creating options menu in core act.");
+       if(getSupportFragmentManager().getBackStackEntryCount()>0){
+            return false;
+        } else {
+            getMenuInflater().inflate(R.menu.core_menu,menu);
+            toolbar.setBackgroundColor(getColor(R.color.colorAccent));
+            toolbar.setNavigationOnClickListener(this);
+            eventCreate = menu.findItem(R.id.action_create_event);
+            groupCreate = menu.findItem(R.id.action_create_group);
+            return true;
+        }
     }
 
     @Override
@@ -320,7 +325,6 @@ public class Core_Activity extends AppCompatActivity implements
                 }
             }
         });
-
     }
 
     public UserModel userModel;
@@ -337,15 +341,23 @@ public class Core_Activity extends AppCompatActivity implements
             }
         });
     }
-}
 
-/* Creates a connection to the current user. Should move so that this code is only called when you are viewing another user.
-    userViewModel.createConnection().addOnCompleteListener(new OnCompleteListener<Void>() {
-        @Override
-        public void onComplete(@NonNull Task<Void> task) {
-            if(task.isSuccessful()){
-                Log.i(TAG,"Successfully added connection.");
+    private void fmListener(){
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                int i = getSupportFragmentManager().getBackStackEntryCount();
+                if(i > 0){
+                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.i(TAG,"OG BEEPER!");
+                            getSupportFragmentManager().popBackStack();
+                        }
+                    });
+                }
             }
-        }
-    });
- */
+        });
+    }
+
+}

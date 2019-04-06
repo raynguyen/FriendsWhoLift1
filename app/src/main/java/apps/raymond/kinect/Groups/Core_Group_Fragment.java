@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,9 +89,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         testBtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG,"CLICKED ON TEST BTN 3");
-                String someString = viewModel.testString();
-                Log.i(TAG,"Calling someString test in group frag resulted in: "+someString);
+                Log.i(TAG,"There are this many fragments: "+getFragmentManager().getBackStackEntryCount());
             }
         });
 

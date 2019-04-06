@@ -14,4 +14,12 @@
         android:visible="false"
         android:enabled="false">
     </item>
+    <item
+        android:id="@+id/action_invite"
+        android:title="@string/invite_users"
+        android:icon="@drawable/message_invite_icon_24x24"
+        app:showAsAction="ifRoom"
+        android:visible="true"
+        android:iconTint="@color/white">
+    </item>
 </menu>

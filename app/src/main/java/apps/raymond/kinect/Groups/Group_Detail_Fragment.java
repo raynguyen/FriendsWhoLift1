@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -67,30 +69,31 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     }
 
     private Repository_ViewModel viewModel;
-    ActionBar actionBar;
     SearchView toolbarSearch;
     FragmentManager fm;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         fm = requireActivity().getSupportFragmentManager();
         toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
 
-        setHasOptionsMenu(true);
-        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        Toolbar toolbar = requireActivity().findViewById(R.id.core_toolbar);
+        toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
+        toolbar.setOnClickListener(this);
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
+    TextView groupName;
     GroupBase groupBase;
     String owner, currUser;
     ViewFlipper viewFlipper;
@@ -99,49 +102,23 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     RadioButton publicBtn,discoverBtn,exclusiveBtn;
     TextInputEditText nameEdit, descEdit;
     ArrayAdapter<CharSequence> adapter;
-    VerticalTextView membersTxt;
+    VerticalTextView membersDrawer;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-
         groupBase = getArguments().getParcelable(GROUP_BASE);
-        String transitionName = getArguments().getString(TRANSITION_NAME);
         owner = groupBase.getOwner();
+
+        //ToDo: This should be a call to a repository method and not to FirebaseAuth itself.
         currUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-        membersTxt = view.findViewById(R.id.members_vtxt);
-        membersTxt.setOnClickListener(this);
+        membersDrawer = view.findViewById(R.id.members_vtxt);
+        membersDrawer.setOnClickListener(this);
 
-        viewFlipper = view.findViewById(R.id.group_edit_flipper);
-
-        if(owner.equals(currUser)){
-            nameEdit = view.findViewById(R.id.group_name_edit);
-            descEdit = view.findViewById(R.id.group_desc_edit);
-
-            publicBtn = view.findViewById(R.id.public_btn);
-            discoverBtn = view.findViewById(R.id.discoverable_btn);
-            exclusiveBtn = view.findViewById(R.id.exclusive_btn);
-
-            privacyGroup = view.findViewById(R.id.privacy_buttons);
-
-            inviteSpinner = view.findViewById(R.id.invite_spinner);
-            adapter = ArrayAdapter.createFromResource(requireActivity(), R.array.array_invite_authorize,
-                            android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-            inviteSpinner.setAdapter(adapter);
-        }
-
-        TextView name = view.findViewById(R.id.detail_group_name_txt);
-
-        name.setText(groupBase.getName());
-        name.setTransitionName(transitionName);
-        //transitionScheduler.scheduleStartTransition(name);
-
-        TextView desc = view.findViewById(R.id.group_desc_txt);
-        desc.setText(groupBase.getDescription());
+        groupName = view.findViewById(R.id.group_name);
+        groupName.setText(groupBase.getName());
 
         final ImageView image = view.findViewById(R.id.group_image);
-
         if(groupBase.getImageURI()!=null && groupBase.getBytes()==null){
             Log.i(TAG,"Fetching the photo for this group.");
             viewModel.getImage(groupBase.getImageURI())
@@ -227,25 +204,15 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
 
                 //Todo: Have to add the ability to modify the image.
                 return true;
+            case R.id.action_invite:
+                Toast.makeText(getContext(),"hello everyone!",Toast.LENGTH_SHORT).show();
         }
         return false;
     }
 
     @Override
     public void onBackPress() {
-        int i = viewFlipper.getDisplayedChild();
-        Log.i(TAG,"Current state of detail fragment: "+i);
-        switch (i){
-            case DETAIL_READ:
-                fm.popBackStack();
-                break;
-            case DETAIL_WRITE:
-                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-                yesNoDialog.setCancelable(false);
-                yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
-                yesNoDialog.show(fm,null);
-                break;
-        }
+        fm.popBackStack();
     }
 
     @Override
@@ -287,7 +254,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         Log.i(TAG, "DESTROYING GROUP DETAIL FRAGMENT.");
-        actionBar.setDisplayShowTitleEnabled(false);
         toolbarSearch.setVisibility(View.VISIBLE);
         super.onDestroy();
     }
