@@ -100,7 +100,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         model.getGroups().observe(this, new Observer<List<GroupBase>>() {
             @Override
             public void onChanged(@Nullable List<GroupBase> groupBases) {
-                Log.i(TAG,"There was an update to the GroupBase list!");
                 mAdapter.setData(myGroups);
             }
         });
@@ -129,7 +128,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
                                 for(Object object:objects){
                                     myGroups.add((GroupBase) object);
                                 }
-                                Log.i(TAG,"MyGroups = "+myGroups.toString());
                                 model.setGroups(myGroups);
                             } else {
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.

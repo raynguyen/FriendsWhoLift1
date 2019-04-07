@@ -24,12 +24,12 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="12dp"
         android:clickable="false"/>
-    <TextView
+    <!--<TextView
         android:id="@+id/authority_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/authority"
         android:maxLines="1"
         android:layout_gravity="center_vertical"
-        android:clickable="false"/>
+        android:clickable="false"/>-->
     </LinearLayout>

@@ -17,7 +17,7 @@ import android.widget.ImageButton;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class InviteDialog extends Fragment{
+public class InviteFragment extends Fragment{
     private static final String TAG = "Invites_Dialog";
 
     Repository_ViewModel viewModel;

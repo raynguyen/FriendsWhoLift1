@@ -38,15 +38,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
+import apps.raymond.kinect.Invite_Users_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
+import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Detail_Fragment";
@@ -81,15 +88,12 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         toolbarSearch.setVisibility(View.GONE);
 
         viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        fetchUserList();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        Toolbar toolbar = requireActivity().findViewById(R.id.core_toolbar);
-        toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
-        toolbar.setOnClickListener(this);
         return inflater.inflate(R.layout.group_detail_frag,container,false);
     }
 
@@ -205,7 +209,12 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
                 //Todo: Have to add the ability to modify the image.
                 return true;
             case R.id.action_invite:
-                Toast.makeText(getContext(),"hello everyone!",Toast.LENGTH_SHORT).show();
+                Fragment usersInviteFragment = Invite_Users_Fragment.newInstance(userModelArrayList);
+                getFragmentManager().beginTransaction()
+                        .add(R.id.core_frame,usersInviteFragment,Core_Activity.INVITE_USERS_FRAG)
+                        .addToBackStack(Core_Activity.INVITE_USERS_FRAG)
+                        .commit();
+                return true;
         }
         return false;
     }
@@ -258,25 +267,17 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         super.onDestroy();
     }
 
-
-    /*
-    TransitionScheduler transitionScheduler;
-    public interface TransitionScheduler{
-        void scheduleStartTransition(View sharedView);
+    ArrayList<UserModel> userModelArrayList;
+    private void fetchUserList(){
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
+                if(task.isSuccessful()){
+                    if(task.getResult().size()>0){
+                        userModelArrayList = new ArrayList<>(task.getResult());
+                    }
+                }
+            }
+        });
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            //We need to get an instance of the Class that will execute our interface method.
-            transitionScheduler = (TransitionScheduler) getActivity();
-        } catch (ClassCastException e) {
-            Log.e(TAG,"Class cast exception." + e.getMessage());
-        }
-    }*/
-
-
-
-
 }

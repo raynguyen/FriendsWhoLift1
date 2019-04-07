@@ -39,8 +39,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
+import apps.raymond.kinect.Invite_Users_Fragment;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
@@ -60,6 +62,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     public Event_Detail_Fragment(){
     }
+
     //ToDo: The event should be passed as an argument in newInstance!!!!!
     public static Event_Detail_Fragment newInstance(Event_Model event){
         Log.i(TAG,"THE EVENT YOU CLICKED OWNER IS: "+event.getCreator());
@@ -76,15 +79,16 @@ public class Event_Detail_Fragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         setHasOptionsMenu(true);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
 
         Bundle args = this.getArguments();
-
         if(args !=null){
             this.event = args.getParcelable(EVENT);
         }
+
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        currUser = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //ToDo: This should be returned by repository.
+        fetchUserList();
     }
 
     @Nullable
@@ -247,6 +251,13 @@ public class Event_Detail_Fragment extends Fragment implements
 
                 //Todo: Have to add the ability to modify the image.
                 return true;
+            case R.id.action_invite:
+                Fragment usersInviteFragment = Invite_Users_Fragment.newInstance(userModelArrayList);
+                getFragmentManager().beginTransaction()
+                        .add(R.id.core_frame,usersInviteFragment, Core_Activity.INVITE_USERS_FRAG)
+                        .addToBackStack(Core_Activity.INVITE_USERS_FRAG)
+                        .commit();
+                return true;
         }
         return false;
     }
@@ -401,5 +412,20 @@ public class Event_Detail_Fragment extends Fragment implements
                 }
                 break;
         }
+    }
+
+    ArrayList<UserModel> userModelArrayList;
+    private void fetchUserList(){
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<UserModel>> task) {
+                Log.i(TAG,"Fetched list of users.");
+                if(task.isSuccessful()){
+                    if(task.getResult().size()>0){
+                        userModelArrayList = new ArrayList<>(task.getResult());
+                    }
+                }
+            }
+        });
     }
 }

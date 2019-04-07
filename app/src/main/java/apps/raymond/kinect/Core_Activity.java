@@ -45,7 +45,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-import apps.raymond.kinect.DialogFragments.InviteDialog;
+import apps.raymond.kinect.DialogFragments.InviteFragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
@@ -53,7 +53,6 @@ import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.Personal_Frag;
-import apps.raymond.kinect.UserProfile.Profile_Frag;
 import apps.raymond.kinect.UserProfile.UserModel;
 import apps.raymond.kinect.login.Login_Activity;
 
@@ -66,6 +65,7 @@ public class Core_Activity extends AppCompatActivity implements
     private static final String PROFILE_FRAG = "ProfileFragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
+    public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
     public static final int YESNO_REQUEST = 21;
 
     public UpdateGroupRecycler updateGroupRecycler;
@@ -83,9 +83,14 @@ public class Core_Activity extends AppCompatActivity implements
     SearchView toolbarSearch;
     Core_Activity_Adapter pagerAdapter;
     Toolbar toolbar;
+    Bundle instanceBundle;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null){
+            instanceBundle = savedInstanceState;
+        }
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
         setContentView(R.layout.core_activity);
@@ -108,6 +113,7 @@ public class Core_Activity extends AppCompatActivity implements
         fmListener();
         getUserModel();
     }
+
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -148,7 +154,7 @@ public class Core_Activity extends AppCompatActivity implements
         switch (item.getItemId()){
             case R.id.action_invites:
                 Log.i(TAG,"Clicked on invites button");
-                InviteDialog inviteDialog = new InviteDialog();
+                InviteFragment inviteDialog = new InviteFragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,inviteDialog,INV_FRAG)
                         .addToBackStack(INV_FRAG)
@@ -277,10 +283,8 @@ public class Core_Activity extends AppCompatActivity implements
             String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
             Fragment topFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
             if(topFragment instanceof BackPressListener){
-                Log.i(TAG,"Top fragment is an instanceof OnBackListener");
                 ((BackPressListener)topFragment).onBackPress();
             } else {
-                Log.i(TAG,"BackPressListener interface is not inherited by this fragment.");
                 super.onBackPressed();
             }
         }
@@ -346,15 +350,28 @@ public class Core_Activity extends AppCompatActivity implements
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
+                Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
                 int i = getSupportFragmentManager().getBackStackEntryCount();
                 if(i > 0){
+                    Log.i(TAG,"Backstack.count > 0");
+                    //ToDo: The navigation icon should switch to the back button if we are creating a group/event and should show yesno dialog on click.
+                    /*String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
+                    if(getSupportFragmentManager().findFragmentByTag(fragmentTag).getClass().isInstance(Group_Create_Fragment.class)){
+                        Log.i(TAG,"YEPIIIPIPPI");
+                    }*/
+                    toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
                     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Log.i(TAG,"OG BEEPER!");
                             getSupportFragmentManager().popBackStack();
                         }
                     });
+                } else {
+                    toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
+                    //ToDo:  need to set the navigation listener back to core activity.
+                    //toolbar.setNavigationOnClickListener((Core_Activity) getBaseContext());
+                    Log.i(TAG,"Backstackcount < 0");
+                    Toast.makeText(getBaseContext(),"There are no extra fragments in the backstack.",Toast.LENGTH_SHORT).show();
                 }
             }
         });

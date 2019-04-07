@@ -641,7 +641,6 @@ public class FireBaseRepository {
                 } else if (task.getResult() == null) {
                     Log.w(TAG, "There are no users to fetch.");
                 }
-                Log.i(TAG,"COMPLETED FETCHING USERS.");
                 return userList;
             }
         });
