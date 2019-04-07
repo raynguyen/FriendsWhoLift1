@@ -78,6 +78,7 @@ public class Core_Activity extends AppCompatActivity implements
         void updateEventRecycler(Event_Model groupEvent);
     }
 
+    Activity thisInstance;
     ViewPager viewPager;
     Repository_ViewModel viewModel;
     SearchView toolbarSearch;
@@ -90,6 +91,7 @@ public class Core_Activity extends AppCompatActivity implements
         if(savedInstanceState!=null){
             instanceBundle = savedInstanceState;
         }
+        thisInstance = this;
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
@@ -369,9 +371,8 @@ public class Core_Activity extends AppCompatActivity implements
                 } else {
                     toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
                     //ToDo:  need to set the navigation listener back to core activity.
-                    //toolbar.setNavigationOnClickListener((Core_Activity) getBaseContext());
+                    toolbar.setNavigationOnClickListener((Core_Activity) thisInstance);
                     Log.i(TAG,"Backstackcount < 0");
-                    Toast.makeText(getBaseContext(),"There are no extra fragments in the backstack.",Toast.LENGTH_SHORT).show();
                 }
             }
         });
