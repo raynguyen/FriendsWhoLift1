@@ -46,11 +46,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.DialogFragments.InviteFragment;
+import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
+import apps.raymond.kinect.Groups.Group_Detail_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.Personal_Frag;
 import apps.raymond.kinect.UserProfile.UserModel;
@@ -355,12 +357,16 @@ public class Core_Activity extends AppCompatActivity implements
                 Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
                 int i = getSupportFragmentManager().getBackStackEntryCount();
                 if(i > 0){
+                    String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
+                    Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
                     Log.i(TAG,"Backstack.count > 0");
-                    //ToDo: The navigation icon should switch to the back button if we are creating a group/event and should show yesno dialog on click.
-                    /*String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
-                    if(getSupportFragmentManager().findFragmentByTag(fragmentTag).getClass().isInstance(Group_Create_Fragment.class)){
-                        Log.i(TAG,"YEPIIIPIPPI");
-                    }*/
+                    if(fragment instanceof Group_Detail_Fragment){
+                        Log.i(TAG,"Instance of: "+fragmentTag);
+                    } else {
+                        Log.i(TAG," ookokokokookokokokookokokokookokokokookokokok ");
+                    }
+
+
                     toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
                     //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
                     toolbar.setNavigationOnClickListener(new View.OnClickListener() {

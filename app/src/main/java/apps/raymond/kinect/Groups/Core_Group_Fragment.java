@@ -100,6 +100,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         model.getGroups().observe(this, new Observer<List<GroupBase>>() {
             @Override
             public void onChanged(@Nullable List<GroupBase> groupBases) {
+                Log.i(TAG,"DOES THIS EVER GET CALLED");
                 mAdapter.setData(myGroups);
             }
         });

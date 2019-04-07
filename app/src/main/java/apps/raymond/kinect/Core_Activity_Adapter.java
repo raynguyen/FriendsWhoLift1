@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
 
 public class Core_Activity_Adapter extends FragmentPagerAdapter {

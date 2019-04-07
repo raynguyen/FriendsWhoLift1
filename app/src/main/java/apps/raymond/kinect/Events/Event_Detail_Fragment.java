@@ -65,7 +65,6 @@ public class Event_Detail_Fragment extends Fragment implements
 
     //ToDo: The event should be passed as an argument in newInstance!!!!!
     public static Event_Detail_Fragment newInstance(Event_Model event){
-        Log.i(TAG,"THE EVENT YOU CLICKED OWNER IS: "+event.getCreator());
         Event_Detail_Fragment fragment = new Event_Detail_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(EVENT,event);
@@ -331,8 +330,8 @@ public class Event_Detail_Fragment extends Fragment implements
         });
     }
 
+    //Todo: called twice??
     private void getAcceptedList(Event_Model groupEvent){
-        Log.i(TAG,"Attempting to get query of accepted users!");
         viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {

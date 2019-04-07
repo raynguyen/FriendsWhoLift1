@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.Events;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +28,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.Events.Event_Detail_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsRecyclerAdapter;
+import apps.raymond.kinect.R;
+import apps.raymond.kinect.Repository_ViewModel;
 
 public class Core_Events_Fragment extends Fragment implements
-        EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler{
-    private static final String TAG = "Core_EventsFragment";
+        EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
+    private static final String TAG = "Core_Events_Fragment";
 
     private List<Event_Model> eventList;
     private ProgressBar progressBar;
@@ -92,6 +96,7 @@ public class Core_Events_Fragment extends Fragment implements
     @Override
     public void onEventClick(int position, Event_Model groupEvent) {
         Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
+        detailedEvent.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
         getFragmentManager().beginTransaction()
                 .replace(R.id.core_frame,detailedEvent,Event_Detail_Fragment.TAG)
                 .addToBackStack(Event_Detail_Fragment.TAG)

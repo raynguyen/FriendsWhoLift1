@@ -73,7 +73,7 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addUserToEvent(groupEvent);
     }
 
-    Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
+    public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
         return mRepository.getUsersEvents();
     }
 

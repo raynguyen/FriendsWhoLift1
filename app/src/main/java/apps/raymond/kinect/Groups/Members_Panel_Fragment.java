@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -57,9 +58,12 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
 
     RecyclerView membersRecycler;
     ProfileRecyclerAdapter pAdapter;
+    TextView membersCountTxt;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        membersCountTxt = view.findViewById(R.id.members_txt);
 
         membersRecycler = view.findViewById(R.id.members_recycler);
         pAdapter = new ProfileRecyclerAdapter(membersList, this);
@@ -89,6 +93,8 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
                 if(task.isSuccessful()){
                     if(task.getResult()!=null){
                         membersList.addAll(task.getResult());
+                        String membersCount = membersList.size() + " MEMBERS";
+                        membersCountTxt.setText(membersCount);
                         pAdapter.setData(membersList);
                         pAdapter.notifyDataSetChanged();
                     }
