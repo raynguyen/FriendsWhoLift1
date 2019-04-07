@@ -362,6 +362,7 @@ public class Core_Activity extends AppCompatActivity implements
                         Log.i(TAG,"YEPIIIPIPPI");
                     }*/
                     toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
+                    //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
                     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -370,12 +371,13 @@ public class Core_Activity extends AppCompatActivity implements
                     });
                 } else {
                     toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
-                    //ToDo:  need to set the navigation listener back to core activity.
                     toolbar.setNavigationOnClickListener((Core_Activity) thisInstance);
                     Log.i(TAG,"Backstackcount < 0");
                 }
             }
         });
     }
+
+
 
 }
