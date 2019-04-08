@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -30,12 +31,14 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,8 +60,7 @@ import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
-        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener,
-        Add_Users_Adapter.CheckProfileInterface, BackPressListener {
+        DatePickerDialog.FetchDate, Add_Users_Adapter.CheckProfileInterface, BackPressListener {
 
     public static final String TAG = "Event_Create_Fragment";
     private static final int DIALOG_REQUEST_CODE = 21;
@@ -101,14 +103,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return inflater.inflate(R.layout.event_create_frag,container,false);
     }
 
+
     SearchView toolbarSearch;
     String startMonth, startDay;
     EditText nameTxt, descTxt;
     TextView startTxt, endTxt;
-    RadioGroup privacyGroup;
     TextView tagsContainer;
     EditText tagsTxt;
     String privacy;
+    Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
     List<UserModel> usersList, inviteUsersList;
@@ -125,6 +128,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         startTxt = view.findViewById(R.id.event_start);
         endTxt = view.findViewById(R.id.event_end);
 
+        visibilitySpinner = view.findViewById(R.id.visibility_spinner);
+
+
         ImageButton dateBtn = view.findViewById(R.id.date_btn);
         dateBtn.setOnClickListener(this);
 
@@ -134,10 +140,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         cancelBtn.setOnClickListener(this);
 
         progressBar = view.findViewById(R.id.create_progress_bar);
-
-        privacyGroup = view.findViewById(R.id.privacy_buttons);
-        privacyGroup.clearCheck();
-        privacyGroup.setOnCheckedChangeListener(this);
 
         ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
         addTagsBtn.setOnClickListener(this);
@@ -185,6 +187,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 DialogFragment newFragment = new DatePickerDialog();
                 newFragment.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
                 newFragment.show(fm, "datePicker");
+                break;
         }
     }
 
@@ -194,12 +197,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         startMonth = new DateFormatSymbols().getMonths()[month];
         String startString = startMonth + ", "+startDay;
         startTxt.setText(startString);
-    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        RadioButton checkedBtn = group.findViewById(checkedId);
-        privacy = checkedBtn.getText().toString();
     }
 
     private void fetchUsersList(){
@@ -248,10 +245,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         if(nameTxt.getText().toString().isEmpty()){
             Log.i(TAG,"Name EditText is empty.");
             Toast.makeText(getContext(),"Finish filling out the crap wtf.",Toast.LENGTH_SHORT).show();
-            check = true;
-        }
-        if(privacyGroup.getCheckedRadioButtonId() == -1){
-            Log.i(TAG,"Privacy has not been selected.");
             check = true;
         }
         return check;

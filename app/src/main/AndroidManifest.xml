@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="apps.raymond.kinect">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <uses-feature
         android:name="android.hardware.camera2"

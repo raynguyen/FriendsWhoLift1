@@ -296,6 +296,23 @@
                             android:layout_gravity="center_vertical" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/baseline_my_location_black_18dp"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/broadcast_range"
+                            android:layout_gravity="center_vertical"
+                            style="@style/UserOptions"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

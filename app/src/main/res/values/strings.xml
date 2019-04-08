@@ -74,6 +74,8 @@
     <string name="notifications_off">Notifications OFF</string>
     <string name="logout">Logout</string>
     <string name="delete_acc">Delete Account</string>
+    <string name="broadcast_range">Broadcast Range</string>
+
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>
     <string name="all_events">Show all events</string>
@@ -102,6 +104,12 @@
     <string name="create_event">Create Event</string>
     <string name="event_tags">Event tags</string>
     <string name="discovery_header">Discovery options</string>
+    <string name="event_visibility">Who can view this event?</string>
+    <string-array name="visibility_options">
+        <item>Anyone can view this event</item>
+        <item>Friends of invited users</item>
+        <item>Only invited users can see this event</item>
+    </string-array>
 
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
