@@ -33,11 +33,10 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
-        private TextView eventName, eventDesc, eventDay, eventMonth, goingTxt, invTxt;
+        private TextView eventName, eventDay, eventMonth, goingTxt, invTxt;
         private EventViewHolder(View view){
             super(view);
             eventName = view.findViewById(R.id.event_title);
-            eventDesc = view.findViewById(R.id.event_desc);
             eventDay = view.findViewById(R.id.event_day);
             eventMonth = view.findViewById(R.id.event_month);
             goingTxt = view.findViewById(R.id.attending_count);
@@ -58,7 +57,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         if(eventsListFull !=null){
             final Event_Model currEvent = eventsListFull.get(position);
             eventViewHolder.eventName.setText(currEvent.getName());
-            eventViewHolder.eventDesc.setText(currEvent.getDesc());
             eventViewHolder.eventMonth.setText(currEvent.getMonth());
             eventViewHolder.eventDay.setText(currEvent.getDay());
 

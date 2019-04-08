@@ -85,10 +85,12 @@
     <string name="declined">Declined</string>
     <string name="invited">Invited</string>
     <string name="empty">Empty</string>
+    <string name="location">Location</string>
+    <string name="host">Host</string>
 
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>
-    <string name="event_desc">DESCRIPTION</string>
+    <string name="event_desc">DESCRIPTION*</string>
     <string name="empty_tags">NO TAGS TIED TO EVENT</string>
     <string name="event_public">Public</string>
     <string name="event_discoverable">Discoverable</string>
@@ -98,6 +100,8 @@
     <string name="event_start">Start Time</string>
     <string name="event_end">End Time</string>
     <string name="create_event">Create Event</string>
+    <string name="event_tags">Event tags</string>
+    <string name="discovery_header">Discovery options</string>
 
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>

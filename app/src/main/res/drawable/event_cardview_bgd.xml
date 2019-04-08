@@ -8,7 +8,5 @@
         android:color="@color/browser_actions_divider_color">
     </solid>
     <corners
-        android:topLeftRadius="12dp"
-        android:topRightRadius="12dp"
-        android:bottomLeftRadius="12dp"/>
+        android:radius="12dp"/>
 </shape>

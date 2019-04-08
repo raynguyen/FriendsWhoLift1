@@ -48,6 +48,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import apps.raymond.kinect.DialogFragments.InviteFragment;
 import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
+import apps.raymond.kinect.Events.Event_Detail_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
@@ -354,31 +355,32 @@ public class Core_Activity extends AppCompatActivity implements
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
+                //Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
                 int i = getSupportFragmentManager().getBackStackEntryCount();
                 if(i > 0){
-                    String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
-                    Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-                    Log.i(TAG,"Backstack.count > 0");
-                    if(fragment instanceof Group_Detail_Fragment){
-                        Log.i(TAG,"Instance of: "+fragmentTag);
-                    } else {
-                        Log.i(TAG," ookokokokookokokokookokokokookokokokookokokok ");
-                    }
-
-
                     toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
-                    //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
-                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            getSupportFragmentManager().popBackStack();
-                        }
-                    });
+                    String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
+                    final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+                    if(fragment instanceof Group_Create_Fragment || fragment instanceof Event_Create_Fragment){
+                        //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
+                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((BackPressListener) fragment).onBackPress();
+                            }
+                        });
+                    } else {
+                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                onBackPressed();
+                                Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
+                            }
+                        });
+                    }
                 } else {
                     toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
                     toolbar.setNavigationOnClickListener((Core_Activity) thisInstance);
-                    Log.i(TAG,"Backstackcount < 0");
                 }
             }
         });

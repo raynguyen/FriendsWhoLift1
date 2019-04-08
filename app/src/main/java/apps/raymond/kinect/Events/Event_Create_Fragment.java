@@ -57,8 +57,9 @@ import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
-        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener, Add_Users_Adapter.CheckProfileInterface,
-        BackPressListener {
+        DatePickerDialog.FetchDate, RadioGroup.OnCheckedChangeListener,
+        Add_Users_Adapter.CheckProfileInterface, BackPressListener {
+
     public static final String TAG = "Event_Create_Fragment";
     private static final int DIALOG_REQUEST_CODE = 21;
 
@@ -169,7 +170,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 createEvent();
                 break;
             case R.id.cancel_btn:
-                getActivity().onBackPressed();
+                onBackPress();
                 break;
             case R.id.event_tag_add_btn:
                 Log.i(TAG,"Adding tag to event.");
@@ -189,7 +190,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     @Override
     public void fetchDate(int year, int month, int day) {
-        Log.i(TAG,"YEAR MONTH DAY = "+year+month+day);
         startDay = String.format(Locale.getDefault(),"%s",day);
         startMonth = new DateFormatSymbols().getMonths()[month];
         String startString = startMonth + ", "+startDay;
