@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
@@ -32,6 +33,7 @@ import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.Events.Event_Detail_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsRecyclerAdapter;
+import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
@@ -74,6 +76,7 @@ public class Core_Events_Fragment extends Fragment implements
         RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsRecyclerAdapter(eventList, this);
         eventsRecycler.setAdapter(mAdapter);
+        eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Button searchEventsBtn = view.findViewById(R.id.search_events_btn);

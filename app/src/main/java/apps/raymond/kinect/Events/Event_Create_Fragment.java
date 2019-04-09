@@ -31,10 +31,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
@@ -60,10 +62,13 @@ import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
-        DatePickerDialog.FetchDate, Add_Users_Adapter.CheckProfileInterface, BackPressListener {
+        DatePickerDialog.FetchDate, Add_Users_Adapter.CheckProfileInterface, BackPressListener,
+        Spinner.OnItemSelectedListener{
 
     public static final String TAG = "Event_Create_Fragment";
+    private static final String DATE_PICKER_FRAG = "DatePicker";
     private static final int DIALOG_REQUEST_CODE = 21;
+
 
     private AddEvent addEventToRecycler;
     public interface AddEvent{
@@ -105,9 +110,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
 
     SearchView toolbarSearch;
-    String startMonth, startDay;
     EditText nameTxt, descTxt;
-    TextView startTxt, endTxt;
+    TextView startMonthTxt, startDayTxt;
     TextView tagsContainer;
     EditText tagsTxt;
     String privacy;
@@ -115,6 +119,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
     List<UserModel> usersList, inviteUsersList;
+    LinearLayout inviteUsersLayout;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -125,14 +130,24 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         nameTxt = view.findViewById(R.id.event_name_txt);
         nameTxt.setHint(R.string.event_name);
         descTxt = view.findViewById(R.id.event_desc_txt);
-        startTxt = view.findViewById(R.id.event_start);
-        endTxt = view.findViewById(R.id.event_end);
+
+        startMonthTxt = view.findViewById(R.id.start_month);
+        startDayTxt = view.findViewById(R.id.start_day);
+
+        Button startBtn = view.findViewById(R.id.start_btn);
+        startBtn.setOnClickListener(this);
+        Button endBtn = view.findViewById(R.id.end_btn);
+        endBtn.setOnClickListener(this);
 
         visibilitySpinner = view.findViewById(R.id.visibility_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter
+                .createFromResource(getContext(),R.array.visibility_options,android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        visibilitySpinner.setAdapter(adapter);
+        visibilitySpinner.setOnItemSelectedListener(this);
 
 
-        ImageButton dateBtn = view.findViewById(R.id.date_btn);
-        dateBtn.setOnClickListener(this);
+        inviteUsersLayout = view.findViewById(R.id.invite_users_layout);
 
         Button saveBtn = view.findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
@@ -146,6 +161,23 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         tagsTxt = view.findViewById(R.id.event_tags_txt);
         tagsContainer = view.findViewById(R.id.tags_container_txt);
+        tagsContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                Log.i(TAG,"bottom = "+bottom + ". Old bottom = "+oldBottom);
+                if(tagsContainer.getVisibility()!=View.GONE){
+                    if(oldBottom==0){
+                        inviteUsersLayout.animate()
+                                .setDuration(300)
+                                .translationY(v.getHeight());
+                    } else {
+                        inviteUsersLayout.animate()
+                                .setDuration(300)
+                                .translationY(bottom - oldBottom);
+                    }
+                }
+            }
+        });
 
         testList = new ArrayList<>();
         tagsList = new ArrayList<>();
@@ -156,6 +188,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new Add_Users_Adapter(usersList, this);
         usersRecycler.setAdapter(userAdapter);
+
+        Button expandRecylcer = view.findViewById(R.id.expand_users_list);
+        expandRecylcer.setOnClickListener(this);
     }
 
     ArrayList<String> tagsList;
@@ -178,25 +213,55 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 Log.i(TAG,"Adding tag to event.");
                 // When this button is pressed, add the String to a container below the TextView that displays all the tags that have been added
                 // Research a way of getting the individual strings as clickable objects.
+                if(tagsContainer.getVisibility() == View.GONE){
+                    tagsContainer.setAlpha(0.0f);
+                    tagsContainer.setVisibility(View.VISIBLE);
+                    tagsContainer.animate().alpha(1.0f).setDuration(300);
+                    inviteUsersLayout.animate()
+                            .setDuration(300)
+                            .translationY(tagsContainer.getHeight());
+
+                }
 
                 tagsList.add(tagsTxt.getText().toString());
                 tagsContainer.setText(tagsList.toString());
                 tagsTxt.getText().clear();
                 break;
+            case R.id.expand_users_list:
+                break;
             case R.id.date_btn:
-                DialogFragment newFragment = new DatePickerDialog();
-                newFragment.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
-                newFragment.show(fm, "datePicker");
+                datePickerDialog();
+                break;
+            case R.id.start_btn:
+                datePickerDialog();
+                break;
+            case R.id.end_btn:
+                datePickerDialog();
                 break;
         }
     }
 
     @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    private void datePickerDialog(){
+        DialogFragment newFragment = new DatePickerDialog();
+        newFragment.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
+        newFragment.show(fm, DATE_PICKER_FRAG);
+    }
+
+    String startMonth, startDay;
+    @Override
     public void fetchDate(int year, int month, int day) {
         startDay = String.format(Locale.getDefault(),"%s",day);
         startMonth = new DateFormatSymbols().getMonths()[month];
-        String startString = startMonth + ", "+startDay;
-        startTxt.setText(startString);
+        startMonthTxt.setText(startMonth);
+        startDayTxt.setText(startDay);
     }
 
     private void fetchUsersList(){
@@ -221,7 +286,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         for(UserModel user : inviteUsersList){
             Log.i(TAG,"Inviting: "+user.getEmail());
         }
-
     }
 
     @Override
@@ -260,8 +324,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 privacy,
                 tagsList);
 
-        Log.i(TAG,"Created new Event_Model of name: "+ newEvent.getOriginalName());
-
         viewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -282,13 +344,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.details_menu,menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+        menu.clear();
     }
 
     @Override

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Core_Activity;
+import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
@@ -82,7 +83,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
         updateCardViews();
 
         cardRecycler.setAdapter(mAdapter);
-        cardRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
+        cardRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Button testBtn3 = view.findViewById(R.id.testButton3);
