@@ -19,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -33,12 +32,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -109,6 +107,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
 
+    AutoCompleteTextView locationTxt;
+    ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
     EditText nameTxt, descTxt;
     TextView startMonthTxt, startDayTxt;
@@ -119,7 +119,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
     List<UserModel> usersList, inviteUsersList;
-    LinearLayout inviteUsersLayout;
+    ArrayList<String> tagsList;
+    LinearLayout eventExtrasLayout;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -141,24 +142,24 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         visibilitySpinner = view.findViewById(R.id.visibility_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(getContext(),R.array.visibility_options,android.R.layout.simple_spinner_dropdown_item);
+                .createFromResource(requireContext(),R.array.visibility_options,android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         visibilitySpinner.setAdapter(adapter);
         visibilitySpinner.setOnItemSelectedListener(this);
 
+        eventExtrasLayout = view.findViewById(R.id.event_extras_layout);
 
-        inviteUsersLayout = view.findViewById(R.id.invite_users_layout);
+        locationTxt = view.findViewById(R.id.location_txt);
+        locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
+        initializeLocations();
 
-        Button saveBtn = view.findViewById(R.id.save_btn);
-        saveBtn.setOnClickListener(this);
-        Button cancelBtn = view.findViewById(R.id.cancel_btn);
-        cancelBtn.setOnClickListener(this);
 
         progressBar = view.findViewById(R.id.create_progress_bar);
 
         ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
         addTagsBtn.setOnClickListener(this);
 
+        tagsList = new ArrayList<>();
         tagsTxt = view.findViewById(R.id.event_tags_txt);
         tagsContainer = view.findViewById(R.id.tags_container_txt);
         tagsContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -167,11 +168,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 Log.i(TAG,"bottom = "+bottom + ". Old bottom = "+oldBottom);
                 if(tagsContainer.getVisibility()!=View.GONE){
                     if(oldBottom==0){
-                        inviteUsersLayout.animate()
+                        int i = v.getHeight() - v.getPaddingBottom();
+                        //Log.i(TAG,"Tagscontainer was prevously invisible. Shifting recycler down by: "+i);
+                        eventExtrasLayout.animate()
                                 .setDuration(300)
-                                .translationY(v.getHeight());
+                                .translationY(v.getHeight()-v.getPaddingBottom());
                     } else {
-                        inviteUsersLayout.animate()
+                        int i = bottom-oldBottom;
+                        //Log.i(TAG,"Translating recyclerview down by : "+i);
+                        eventExtrasLayout.animate()
                                 .setDuration(300)
                                 .translationY(bottom - oldBottom);
                     }
@@ -179,22 +184,24 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             }
         });
 
-        testList = new ArrayList<>();
-        tagsList = new ArrayList<>();
 
         usersList = new ArrayList<>();
+
         inviteUsersList = new ArrayList<>();
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new Add_Users_Adapter(usersList, this);
         usersRecycler.setAdapter(userAdapter);
 
-        Button expandRecylcer = view.findViewById(R.id.expand_users_list);
-        expandRecylcer.setOnClickListener(this);
+        ImageButton expandRecycler = view.findViewById(R.id.expand_users_list);
+        expandRecycler.setOnClickListener(this);
+
+        Button saveBtn = view.findViewById(R.id.save_btn);
+        saveBtn.setOnClickListener(this);
+        Button cancelBtn = view.findViewById(R.id.cancel_btn);
+        cancelBtn.setOnClickListener(this);
     }
 
-    ArrayList<String> tagsList;
-    List<ClickableSpan> testList;
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -217,7 +224,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                     tagsContainer.setAlpha(0.0f);
                     tagsContainer.setVisibility(View.VISIBLE);
                     tagsContainer.animate().alpha(1.0f).setDuration(300);
-                    inviteUsersLayout.animate()
+                    eventExtrasLayout.animate()
                             .setDuration(300)
                             .translationY(tagsContainer.getHeight());
 
@@ -243,6 +250,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //ToDo: Set the visibility option for the event here.
     }
 
     @Override
@@ -263,6 +271,17 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         startMonthTxt.setText(startMonth);
         startDayTxt.setText(startDay);
     }
+
+
+    private void initializeLocations(){
+        ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
+        locationTxt.setAdapter(locationsAdapter);
+    }
+
+
+
+
+
 
     private void fetchUsersList(){
         viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {

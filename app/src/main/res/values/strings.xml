@@ -105,6 +105,7 @@
     <string name="event_tags">Event tags</string>
     <string name="discovery_header">Discovery options</string>
     <string name="event_visibility">Who can view this event?</string>
+    <string name="enter_address">Where will this event be hosted?</string>
     <string-array name="visibility_options">
         <item>Anyone can view this event</item>
         <item>Friends of invited users</item>

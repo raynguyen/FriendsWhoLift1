@@ -60,6 +60,7 @@ public class FireBaseRepository {
     private static final String EVENTS = "Events";
     private static final String MEMBERS = "Members";
     private static final String CONNECTIONS = "Connections";
+    private static final String LOCATIONS = "Locations";
     private static final String INTERESTS = "Interests";
     private static final String INVITED = "Invited";
     private static final String ACCEPTED = "Accepted";
@@ -68,6 +69,7 @@ public class FireBaseRepository {
     private static final String GROUP_INVITES = "GroupInvites";
     private static final String EVENT_ATTEND_FIELD = "attenders";
     private static final String EVENT_INVITED_FIELD = "invited";
+
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -247,6 +249,14 @@ public class FireBaseRepository {
     Task<List<String>> getInterests(){
         CollectionReference userConnections = userCollection.document(userEmail).collection(INTERESTS);
         final List<String> interests = new ArrayList<>();
+        return null;
+    }
+
+    Task<Void> addLocation(){
+        CollectionReference locationCol = userCollection.document(userEmail).collection(LOCATIONS);
+
+        //locationCol.document()
+
         return null;
     }
     //*------------------------------------------EVENTS------------------------------------------*//
