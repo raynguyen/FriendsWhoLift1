@@ -130,5 +130,6 @@
     <string name="accept">ACCEPT</string>
     <string name="decline">DECLINE</string>
     <string name="invitations">INVITATIONS</string>
+    <string name="title_activity_maps_">Map</string>
 
 </resources>

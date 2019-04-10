@@ -55,6 +55,7 @@ import apps.raymond.kinect.Add_Users_Adapter;
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
+import apps.raymond.kinect.Maps_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
@@ -276,6 +277,13 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     private void initializeLocations(){
         ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
         locationTxt.setAdapter(locationsAdapter);
+        locationOptionsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
+                startActivity(mapIntent);
+            }
+        });
     }
 
 
