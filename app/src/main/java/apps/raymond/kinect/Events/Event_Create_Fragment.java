@@ -142,10 +142,25 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         endBtn.setOnClickListener(this);
 
         visibilitySpinner = view.findViewById(R.id.visibility_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(requireContext(),R.array.visibility_options,android.R.layout.simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        visibilitySpinner.setAdapter(adapter);
+        ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.visibility_options) ) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+
+                View v = super.getView(position, convertView, parent);
+                if (position == getCount()) {
+                    ((TextView)v.findViewById(android.R.id.text1)).setText(null);
+                    ((TextView)v.findViewById(android.R.id.text1)).setHint(getItem(getCount()));
+                }
+                return v;
+            }
+            @Override
+            public int getCount() {
+                return super.getCount()-1; //don't display last item. It is used as hint.
+            }
+        };
+        visibilitySpinner.setAdapter(vAdapter);
+        visibilitySpinner.setSelection(3);
         visibilitySpinner.setOnItemSelectedListener(this);
 
         eventExtrasLayout = view.findViewById(R.id.event_extras_layout);
@@ -285,10 +300,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             }
         });
     }
-
-
-
-
 
 
     private void fetchUsersList(){

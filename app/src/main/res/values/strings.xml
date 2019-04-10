@@ -110,6 +110,7 @@
         <item>Anyone can view this event</item>
         <item>Friends of invited users</item>
         <item>Only invited users can see this event</item>
+        <item>Who can see this event?</item>
     </string-array>
 
     <!--GROUPS FRAGMENT-->
