@@ -38,7 +38,8 @@
 
         <activity
             android:name=".Maps_Activity"
-            android:label="@string/title_activity_maps_"></activity>
+            android:label="@string/title_activity_maps_">
+        </activity>
         <activity
             android:name=".Launch_Activity"
             android:theme="@style/SplashTheme">
@@ -51,15 +52,18 @@
         <activity
             android:name=".login.Login_Activity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity
             android:name=".Core_Activity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity
             android:name=".Profile_Activity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize">
+        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -68,12 +72,14 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths">
+            </meta-data>
         </provider>
 
         <receiver
             android:name=".ImageBroadcastReceiver"
-            android:exported="false"></receiver>
+            android:exported="false">
+        </receiver>
     </application>
 
 </manifest>

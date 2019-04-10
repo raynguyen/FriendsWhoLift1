@@ -142,15 +142,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         endBtn.setOnClickListener(this);
 
         visibilitySpinner = view.findViewById(R.id.visibility_spinner);
-        ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.visibility_options) ) {
+        ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_item_layout, getResources().getStringArray(R.array.visibility_options) ) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
                 View v = super.getView(position, convertView, parent);
                 if (position == getCount()) {
-                    ((TextView)v.findViewById(android.R.id.text1)).setText(null);
-                    ((TextView)v.findViewById(android.R.id.text1)).setHint(getItem(getCount()));
+                    ((TextView)v.findViewById(R.id.text1)).setText(null);
+                    ((TextView)v.findViewById(R.id.text1)).setHint(getItem(getCount()));
                 }
                 return v;
             }
