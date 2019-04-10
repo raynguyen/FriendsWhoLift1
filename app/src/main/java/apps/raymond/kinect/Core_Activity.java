@@ -27,7 +27,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -44,29 +43,23 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.DialogFragments.InviteFragment;
 import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
-import apps.raymond.kinect.Events.Event_Detail_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Core_Group_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
-import apps.raymond.kinect.Groups.Group_Detail_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.UserProfile.Personal_Frag;
 import apps.raymond.kinect.UserProfile.UserModel;
-import apps.raymond.kinect.login.Login_Activity;
 
 public class Core_Activity extends AppCompatActivity implements
         Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
-        SearchView.OnQueryTextListener, Personal_Frag.ProfileFragInt, ViewPager.OnPageChangeListener{
+        SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "InviteFragment";
-    private static final String PROFILE_FRAG = "ProfileFragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
@@ -220,19 +213,6 @@ public class Core_Activity extends AppCompatActivity implements
         int i = v.getId();
         switch(i){
             case -1:
-                //Below is code if personal_frag is a fragment and not activity.
-                /*Personal_Frag personal_frag;
-                try{
-                    personal_frag = Personal_Frag.newInstance(userModel);
-                } catch (NullPointerException npe){
-                    personal_frag = new Personal_Frag();
-                    Log.w(TAG,"Unable to start profile fragment.");
-                }
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_down, 0,0,R.anim.slide_out_up)
-                        .replace(R.id.full_core_frame,personal_frag,PROFILE_FRAG)
-                        .addToBackStack(PROFILE_FRAG)
-                        .commit();*/
                 Intent profileIntent = new Intent(this,Profile_Activity.class);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
@@ -311,30 +291,6 @@ public class Core_Activity extends AppCompatActivity implements
             }
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public void destroyProfileFrag() {
-        getSupportFragmentManager().popBackStack(PROFILE_FRAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }
-
-    @Override
-    public void signOut() {
-        Log.d(TAG,"Logging out user:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        viewModel.signOut(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Intent intent = new Intent(Core_Activity.this, Login_Activity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
-                    finish();
-                } else {
-                    Log.w(TAG,"Error signing out user.");
-                    Toast.makeText(getBaseContext(),"Error signing out user. Like what?",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     public UserModel userModel;

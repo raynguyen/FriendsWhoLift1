@@ -38,7 +38,7 @@ public class GroupInviteFragment extends Fragment implements GroupInviteAdapter.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.view_invites_fragment,container,false);
+        return inflater.inflate(R.layout.simple_recycler_fragment,container,false);
     }
 
     TextView nullDataTxt;

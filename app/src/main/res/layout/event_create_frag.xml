@@ -82,7 +82,7 @@
                 <Button
                     android:id="@+id/start_btn"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"/>
                 <Button
                     android:id="@+id/end_btn"
                     android:layout_width="wrap_content"
@@ -160,7 +160,8 @@
             android:layout_marginTop="12dp"
             android:forceHasOverlappingRendering="false"
             android:spinnerMode="dropdown"
-            android:overlapAnchor="false">
+            android:overlapAnchor="false"
+            android:padding="2dp">
         </Spinner>
 
         <LinearLayout
@@ -168,7 +169,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/visibility_spinner">
+            app:layout_constraintTop_toBottomOf="@id/visibility_spinner"
+            android:layout_marginTop="12dp">
 
             <AutoCompleteTextView
                 android:id="@+id/location_txt"
@@ -193,7 +195,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/address_layout">
+            app:layout_constraintTop_toBottomOf="@id/address_layout"
+            android:layout_marginTop="12dp">
 
             <EditText
                 android:id="@+id/event_tags_txt"

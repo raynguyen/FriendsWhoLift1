@@ -108,7 +108,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
 
-    AutoCompleteTextView locationTxt;
+    AutoCompleteTextView locationTxt; //ToDo: Bind the user's locations to this autocomplete.
     ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
     EditText nameTxt, descTxt;
@@ -288,15 +288,17 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         startDayTxt.setText(startDay);
     }
 
-
     private void initializeLocations(){
         ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
         locationTxt.setAdapter(locationsAdapter);
         locationOptionsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
-                startActivity(mapIntent);
+                /*Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
+                startActivity(mapIntent);*/
+
+                //ToDo:Load up a new fragment with a searchview at the top and a recycler view listing all the locations the user stored.
+                //In this fragment should be a button that starts the Maps activity for the user to find a new location.
             }
         });
     }

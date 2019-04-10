@@ -48,12 +48,13 @@
     <string name="gallery">Gallery</string>
     <string name="search">Search</string>
     <string name="null_data">Nothing was found!</string>
-    <string name="null_dashes">--</string>
+    <string name="null_dashes">---</string>
     <string name="Edit">Edit</string>
     <string name="Save">Save</string>
     <string name="Temp">Temporary String</string>
     <string name="cancel">Cancel</string>
     <string name="imageDialogTitle">Pick an image or take one!</string>
+    <string name="locations">Locations</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
