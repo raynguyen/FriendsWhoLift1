@@ -167,6 +167,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         locationTxt = view.findViewById(R.id.location_txt);
         locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
+        locationOptionsBtn.setOnClickListener(this);
         initializeLocations();
 
 
@@ -245,7 +246,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                             .translationY(tagsContainer.getHeight());
 
                 }
-
                 tagsList.add(tagsTxt.getText().toString());
                 tagsContainer.setText(tagsList.toString());
                 tagsTxt.getText().clear();
@@ -261,6 +261,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             case R.id.end_btn:
                 datePickerDialog();
                 break;
+            case R.id.expand_locations_btn:
+                Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
+                startActivity(mapIntent);
+                break;
+
         }
     }
 
@@ -291,16 +296,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     private void initializeLocations(){
         ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
         locationTxt.setAdapter(locationsAdapter);
-        locationOptionsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
-                startActivity(mapIntent);*/
-
-                //ToDo:Load up a new fragment with a searchview at the top and a recycler view listing all the locations the user stored.
-                //In this fragment should be a button that starts the Maps activity for the user to find a new location.
-            }
-        });
     }
 
 

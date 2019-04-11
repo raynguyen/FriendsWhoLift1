@@ -35,6 +35,10 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_);
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         locationGranted = false;
         int locationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if(locationPermission != PackageManager.PERMISSION_GRANTED){
@@ -46,9 +50,7 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+
     }
 
 
@@ -64,12 +66,12 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        getDeviceLocation();
         try{
             mMap.setMyLocationEnabled(true);
         } catch (SecurityException e){
             Log.w(TAG,"User does not have location turned on.");
         }
+        getDeviceLocation();
     }
 
     Location mLastLocation;
@@ -83,7 +85,6 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
                                 if(task.isSuccessful()){
                                     if(task.getResult()!=null){
                                         mLastLocation = task.getResult();
-
                                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                                 new LatLng(mLastLocation.getLatitude(),
                                                         mLastLocation.getLongitude()),
@@ -112,11 +113,12 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
                 if(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     locationGranted=true;
-                    getDeviceLocation();
+                    if(mMap!=null){
+                        getDeviceLocation();
+                    }
                 } else {
                     Toast.makeText(this,"Unable to determine your location.",Toast.LENGTH_LONG).show();
                 }
-                return;
         }
     }
 }

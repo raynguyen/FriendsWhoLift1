@@ -187,7 +187,8 @@
                 android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
                 android:background="@color/transparent"
                 android:contentDescription="@string/Temp"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                android:clickable="true"/>
         </LinearLayout>
 
         <LinearLayout
@@ -232,7 +233,6 @@
             android:background="@drawable/edit_text_border"
             android:padding="8dp"
             android:visibility="gone"/>
-
 
         <LinearLayout
             android:id="@+id/event_extras_layout"
