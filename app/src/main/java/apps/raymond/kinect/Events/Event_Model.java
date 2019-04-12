@@ -30,11 +30,11 @@ public class Event_Model implements Parcelable{
     private String originalName;
     private String name;
     private String desc;
-    private String month;
-    private String day;
+    private String month1, month2;
+    private String day1, day2;
     private String privacy;
     private List<String> tags;
-    private int attenders;
+    private int attending;
     private int invited;
 
     @SuppressWarnings("unchecked")
@@ -43,25 +43,29 @@ public class Event_Model implements Parcelable{
         this.name = in.readString();
         this.originalName = this.name;
         this.desc = in.readString();
-        this.month = in.readString();
-        this.day = in.readString();
+        this.month1 = in.readString();
+        this.day1 = in.readString();
+        this.month2 = in.readString();
+        this.day2 = in.readString();
         this.privacy = in.readString();
         this.tags = in.readArrayList(null);
-        attenders = 1;
+        attending = 1;
         invited = 0;
     }
 
-    public Event_Model(String creator, String name, String desc, String month, String day, String privacy,
+    public Event_Model(String creator, String name, String desc, String month1, String day1, String month2, String day2, String privacy,
                        ArrayList<String> tags){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
         this.desc = desc;
-        this.month = month;
-        this.day = day;
+        this.month1 = month1;
+        this.day1 = day1;
+        this.month2 = month2;
+        this.day2 = day2;
         this.privacy = privacy;
         this.tags = tags;
-        attenders = 1;
+        attending = 1;
         invited = 0;
     }
 
@@ -97,20 +101,36 @@ public class Event_Model implements Parcelable{
         this.desc = desc;
     }
 
-    public String getDay(){
-        return day;
+    public String getDay1(){
+        return day1;
     }
 
-    public void setDay(String day){
-        this.day = day;
+    public void setDay1(String day1){
+        this.day1 = day1;
     }
 
-    public String getMonth(){
-        return month;
+    public String getMonth1(){
+        return month1;
     }
 
-    public void setMonth(String month){
-        this.month = month;
+    public void setMonth1(String month1){
+        this.month1 = month1;
+    }
+
+    public String getMonth2(){
+        return month2;
+    }
+
+    public void setMonth2(String month2){
+        this.month2 = month2;
+    }
+
+    public String getDay2(){
+        return day2;
+    }
+
+    public void setDay2(String day2){
+        this.day2 = day2;
     }
 
     public String getPrivacy(){
@@ -129,11 +149,11 @@ public class Event_Model implements Parcelable{
         this.tags = tags;
     }
 
-    public void setAttenders(int i){
-        attenders = i;
+    public void setAttending(int i){
+        attending = i;
     }
-    public int getAttenders(){
-        return attenders;
+    public int getAttending(){
+        return attending;
     }
 
     public void setInvited(int i){
@@ -156,8 +176,8 @@ public class Event_Model implements Parcelable{
         dest.writeString(creator);
         dest.writeString(name);
         dest.writeString(desc);
-        dest.writeString(month);
-        dest.writeString(day);
+        dest.writeString(month1);
+        dest.writeString(day1);
         dest.writeList(tags);
     }
 }

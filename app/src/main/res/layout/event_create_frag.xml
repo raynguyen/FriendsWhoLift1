@@ -105,12 +105,12 @@
                         android:text="@string/event_start"
                         android:padding="12dp"/>
                     <TextView
-                        android:id="@+id/start_month"
+                        android:id="@+id/month1_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/event_month"/>
                     <TextView
-                        android:id="@+id/start_day"
+                        android:id="@+id/day1_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/event_day"
@@ -129,10 +129,12 @@
                         android:text="@string/event_end"
                         android:padding="12dp"/>
                     <TextView
+                        android:id="@+id/month2_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/event_month"/>
                     <TextView
+                        android:id="@+id/day2_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/event_day"

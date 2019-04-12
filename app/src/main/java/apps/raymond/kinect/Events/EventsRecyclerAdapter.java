@@ -33,14 +33,14 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
-        private TextView eventName, eventDay, eventMonth, goingTxt, invTxt;
+        private TextView eventName, eventDay, eventMonth, attendingCount, invitedCount;
         private EventViewHolder(View view){
             super(view);
             eventName = view.findViewById(R.id.event_title);
             eventDay = view.findViewById(R.id.event_day);
             eventMonth = view.findViewById(R.id.event_month);
-            goingTxt = view.findViewById(R.id.attending_count);
-            invTxt = view.findViewById(R.id.invited_count);
+            attendingCount = view.findViewById(R.id.attending_count);
+            invitedCount = view.findViewById(R.id.invited_count);
         }
     }
 
@@ -57,9 +57,10 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         if(eventsListFull !=null){
             final Event_Model currEvent = eventsListFull.get(position);
             eventViewHolder.eventName.setText(currEvent.getName());
-            eventViewHolder.eventMonth.setText(currEvent.getMonth());
-            eventViewHolder.eventDay.setText(currEvent.getDay());
-
+            eventViewHolder.eventMonth.setText(currEvent.getMonth1());
+            eventViewHolder.eventDay.setText(currEvent.getDay1());
+            eventViewHolder.attendingCount.setText(currEvent.getAttending());
+            eventViewHolder.invitedCount.setText(currEvent.getInvited());
             eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

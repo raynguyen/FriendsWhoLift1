@@ -22,7 +22,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -112,7 +111,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
     EditText nameTxt, descTxt;
-    TextView startMonthTxt, startDayTxt;
+    TextView month1_txt, day1_txt, month2_txt, day2_txt;
     TextView tagsContainer;
     EditText tagsTxt;
     String privacy;
@@ -133,8 +132,10 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         nameTxt.setHint(R.string.event_name);
         descTxt = view.findViewById(R.id.event_desc_txt);
 
-        startMonthTxt = view.findViewById(R.id.start_month);
-        startDayTxt = view.findViewById(R.id.start_day);
+        month1_txt = view.findViewById(R.id.month1_txt);
+        day1_txt = view.findViewById(R.id.day1_txt);
+        month2_txt = view.findViewById(R.id.month2_txt);
+        day2_txt = view.findViewById(R.id.day2_txt);
 
         Button startBtn = view.findViewById(R.id.start_btn);
         startBtn.setOnClickListener(this);
@@ -252,14 +253,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.expand_users_list:
                 break;
-            case R.id.date_btn:
-                datePickerDialog();
-                break;
             case R.id.start_btn:
-                datePickerDialog();
+                datePickerDialog(DatePickerDialog.SEQUENCE_START);
                 break;
             case R.id.end_btn:
-                datePickerDialog();
+                datePickerDialog(DatePickerDialog.SEQUENCE_END);
                 break;
             case R.id.expand_locations_btn:
                 Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
@@ -278,26 +276,33 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    private void datePickerDialog(){
-        DialogFragment newFragment = new DatePickerDialog();
-        newFragment.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
-        newFragment.show(fm, DATE_PICKER_FRAG);
+    private void datePickerDialog(String s){
+        DialogFragment datePicker = DatePickerDialog.newInstance(s);
+        datePicker.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
+        datePicker.show(fm, DATE_PICKER_FRAG);
     }
 
-    String startMonth, startDay;
+    String month1, day1, month2, day2;
     @Override
-    public void fetchDate(int year, int month, int day) {
-        startDay = String.format(Locale.getDefault(),"%s",day);
-        startMonth = new DateFormatSymbols().getMonths()[month];
-        startMonthTxt.setText(startMonth);
-        startDayTxt.setText(startDay);
+    public void returnStartDate(int year, int month, int day) {
+        day1 = String.format(Locale.getDefault(),"%s",day);
+        month1 = new DateFormatSymbols().getMonths()[month];
+        month1_txt.setText(month1);
+        day1_txt.setText(day1);
+    }
+
+    @Override
+    public void returnEndDate(int year, int month, int day) {
+        day2 = String.format(Locale.getDefault(),"%s",day);
+        month2 = new DateFormatSymbols().getMonths()[month];
+        month2_txt.setText(month2);
+        day2_txt.setText(day2);
     }
 
     private void initializeLocations(){
         ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
         locationTxt.setAdapter(locationsAdapter);
     }
-
 
     private void fetchUsersList(){
         viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
@@ -352,12 +357,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     private void createEvent(){
         final Event_Model newEvent = new Event_Model(
                 FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                nameTxt.getText().toString(),
-                descTxt.getText().toString(),
-                startMonth,
-                startDay,
-                privacy,
-                tagsList);
+                nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
+                day2, privacy, tagsList);
 
         viewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

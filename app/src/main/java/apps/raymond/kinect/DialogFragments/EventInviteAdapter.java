@@ -58,8 +58,8 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
         if(eventInviteSet !=null){
             final Event_Model event = eventInviteSet.get(i);
             viewHolder.titleTxt.setText(event.getName());
-            viewHolder.monthTxt.setText(event.getMonth());
-            viewHolder.dayTxt.setText(event.getDay());
+            viewHolder.monthTxt.setText(event.getMonth1());
+            viewHolder.dayTxt.setText(event.getDay1());
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

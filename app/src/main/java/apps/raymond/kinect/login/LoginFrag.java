@@ -102,6 +102,9 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
                                 } else if (task.getException()!=null){
                                     //ToDo: if password error seterror to the password field!
                                     Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                                    Log.w(TAG," "+task.getException());
+                                } else {
+                                    Log.w(TAG,"Some unknown error occurred.");
                                 }
                             }
                         });

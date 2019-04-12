@@ -277,7 +277,7 @@ public class Event_Detail_Fragment extends Fragment implements
     private void updateViews(){
         eventName.setText(event.getName());
         eventDesc.setText(event.getDesc());
-        String eventStartTxt = event.getMonth() + ", " + event.getDay();
+        String eventStartTxt = event.getMonth1() + ", " + event.getDay1();
         String eventEndTxt = "EVENT END Haven't implemented yet :(";
         eventStart.setText(eventStartTxt);
         eventEnd.setText(eventEndTxt);
