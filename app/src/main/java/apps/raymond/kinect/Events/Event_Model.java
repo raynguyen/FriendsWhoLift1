@@ -9,6 +9,9 @@ import java.util.List;
 
 public class Event_Model implements Parcelable{
     private static final String TAG = "Event_Model.Class";
+    public static final int PUBLIC = 0; //Anyone may join the event without prior connections to guests.
+    public static final int CLOSED = 1; //Only users with connected guests may join the event.
+    public static final int EXCLUSIVE = 2; //Invitation only
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
@@ -32,28 +35,28 @@ public class Event_Model implements Parcelable{
     private String desc;
     private String month1, month2;
     private String day1, day2;
-    private String privacy;
+    private int privacy;
     private List<String> tags;
     private int attending;
     private int invited;
 
     @SuppressWarnings("unchecked")
     private Event_Model(Parcel in){
-        this.creator = in.readString();
-        this.name = in.readString();
-        this.originalName = this.name;
-        this.desc = in.readString();
-        this.month1 = in.readString();
-        this.day1 = in.readString();
-        this.month2 = in.readString();
-        this.day2 = in.readString();
-        this.privacy = in.readString();
-        this.tags = in.readArrayList(null);
+        creator = in.readString();
+        name = in.readString();
+        originalName = this.name;
+        desc = in.readString();
+        month1 = in.readString();
+        day1 = in.readString();
+        month2 = in.readString();
+        day2 = in.readString();
+        privacy = in.readInt();
+        tags = in.readArrayList(null);
         attending = 1;
         invited = 0;
     }
 
-    public Event_Model(String creator, String name, String desc, String month1, String day1, String month2, String day2, String privacy,
+    public Event_Model(String creator, String name, String desc, String month1, String day1, String month2, String day2, int privacy,
                        ArrayList<String> tags){
         this.creator = creator;
         this.name = name;
@@ -133,11 +136,11 @@ public class Event_Model implements Parcelable{
         this.day2 = day2;
     }
 
-    public String getPrivacy(){
+    public int getPrivacy(){
         return privacy;
     }
 
-    public void setPrivacy(String privacy){
+    public void setPrivacy(int privacy){
         this.privacy = privacy;
     }
 
@@ -172,12 +175,14 @@ public class Event_Model implements Parcelable{
     // Creates a Parcel of which an instance of the Parcelable class is created from.
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        Log.i(TAG,"Calling the writeToParcel method.");
         dest.writeString(creator);
         dest.writeString(name);
         dest.writeString(desc);
         dest.writeString(month1);
         dest.writeString(day1);
+        dest.writeString(month2);
+        dest.writeString(day2);
+        dest.writeInt(privacy);
         dest.writeList(tags);
     }
 }

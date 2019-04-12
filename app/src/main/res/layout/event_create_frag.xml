@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toBottomOf="@id/event_name_txt_layout"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
             app:boxCornerRadiusTopEnd="8dp"
@@ -154,26 +154,47 @@
             android:clickable="false"
             android:focusable="false"/>
 
-        <Spinner
-            android:id="@+id/visibility_spinner"
+        <LinearLayout
+            android:id="@+id/privacy_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/discovery_txt"
-            android:layout_marginTop="12dp"
-            android:forceHasOverlappingRendering="false"
-            android:spinnerMode="dropdown"
-            android:overlapAnchor="false"
-            android:padding="2dp">
-        </Spinner>
+            android:layout_marginTop="4dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/baseline_mail_black_18dp"
+                android:contentDescription="@string/messages"/>
+
+            <Spinner
+                android:id="@+id/privacy_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:spinnerMode="dropdown"
+                android:overlapAnchor="false"
+                android:padding="2dp"
+                android:layout_weight="1">
+            </Spinner>
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/address_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/visibility_spinner"
+            app:layout_constraintTop_toBottomOf="@id/privacy_layout"
             android:layout_marginTop="12dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/baseline_location_on_black_18dp"
+                android:contentDescription="@string/location"/>
             <AutoCompleteTextView
                 android:id="@+id/location_txt"
                 android:layout_width="0dp"
@@ -201,6 +222,12 @@
             app:layout_constraintTop_toBottomOf="@id/address_layout"
             android:layout_marginTop="12dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/baseline_group_black_18dp"
+                android:contentDescription="@string/event_tags"/>
             <EditText
                 android:id="@+id/event_tags_txt"
                 android:layout_width="0dp"
@@ -257,6 +284,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tags_container_txt"
                     android:layout_weight="1">
                 </android.support.v7.widget.SearchView>
+
                 <ImageButton
                     android:id="@+id/expand_users_list"
                     android:layout_width="wrap_content"

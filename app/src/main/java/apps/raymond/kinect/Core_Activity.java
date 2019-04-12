@@ -7,6 +7,19 @@
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
  * 10.Redefine the layout for the edit group/event
  *
+ * APP LAUNCH
+ * -On first launch, fetch the User object, associated events and groups, and connections?
+ * -Connections: Only needed when user clicks on their profile to view their friends.
+ * --Will have to query connections events to see if user is attending any open events that they are
+ * --attending.
+ *
+ * INVITING USERS TO EVENT
+ * -When creating an event, you should be only allowed in invite users you have connected with
+ * (potentially for users who have connections with users you connected with) otherwise there may
+ * be too much spam invites to events.
+ * -Each user has control whether they can be invited to events. Open to suggestions via locations
+ * of previous events.
+ *
  * MESSAGING FOR INVITES:
  * Doc listener for a invites doc.
  *

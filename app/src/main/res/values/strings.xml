@@ -108,10 +108,10 @@
     <string name="event_visibility">Who can view this event?</string>
     <string name="enter_address">Where will this event be hosted?</string>
     <string-array name="visibility_options">
-        <item>Anyone can view this event</item>
-        <item>Friends of invited users</item>
-        <item>Only invited users can see this event</item>
-        <item>Who can see this event?</item>
+        <item>Anyone</item>
+        <item>Friends of invited guests</item>
+        <item>Invitation only</item>
+        <item>Who may join this event?</item>
     </string-array>
 
     <!--GROUPS FRAGMENT-->

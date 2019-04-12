@@ -114,7 +114,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     TextView month1_txt, day1_txt, month2_txt, day2_txt;
     TextView tagsContainer;
     EditText tagsTxt;
-    String privacy;
+    int privacy;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
@@ -142,7 +142,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         Button endBtn = view.findViewById(R.id.end_btn);
         endBtn.setOnClickListener(this);
 
-        visibilitySpinner = view.findViewById(R.id.visibility_spinner);
+        visibilitySpinner = view.findViewById(R.id.privacy_spinner);
         ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_item_layout, getResources().getStringArray(R.array.visibility_options) ) {
             @NonNull
             @Override
@@ -170,7 +170,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
         locationOptionsBtn.setOnClickListener(this);
         initializeLocations();
-
 
         progressBar = view.findViewById(R.id.create_progress_bar);
 
@@ -267,9 +266,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
+    /*
+    * When an option for a spinner is selected, we want to an appropriate value corresponding to
+    * the selection.
+    */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //ToDo: Set the visibility option for the event here.
+        if(parent.getId()==R.id.privacy_spinner){
+            privacy =  position;
+        }
     }
 
     @Override
