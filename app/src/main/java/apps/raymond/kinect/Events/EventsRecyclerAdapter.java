@@ -33,7 +33,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
-        private TextView eventName, eventDay, eventMonth, attendingCount, invitedCount;
+        private TextView eventName, eventDay, eventMonth, attendingCount, invitedCount, creator, location;
         private EventViewHolder(View view){
             super(view);
             eventName = view.findViewById(R.id.event_title);
@@ -41,6 +41,8 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             eventMonth = view.findViewById(R.id.event_month);
             attendingCount = view.findViewById(R.id.attending_count);
             invitedCount = view.findViewById(R.id.invited_count);
+            creator = view.findViewById(R.id.created_by_txt);
+            location = view.findViewById(R.id.location_txt);
         }
     }
 
@@ -56,11 +58,14 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     public void onBindViewHolder(@NonNull final EventsRecyclerAdapter.EventViewHolder eventViewHolder, int position) {
         if(eventsListFull !=null){
             final Event_Model currEvent = eventsListFull.get(position);
+            String attending = Integer.toString(currEvent.getAttending());
+            String invited = Integer.toString(currEvent.getInvited());
             eventViewHolder.eventName.setText(currEvent.getName());
             eventViewHolder.eventMonth.setText(currEvent.getMonth1());
             eventViewHolder.eventDay.setText(currEvent.getDay1());
-            eventViewHolder.attendingCount.setText(currEvent.getAttending());
-            eventViewHolder.invitedCount.setText(currEvent.getInvited());
+            eventViewHolder.attendingCount.setText(attending);
+            eventViewHolder.invitedCount.setText(invited);
+            eventViewHolder.creator.setText(currEvent.getCreator());
             eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

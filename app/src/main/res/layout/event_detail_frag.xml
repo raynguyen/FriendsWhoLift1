@@ -7,8 +7,7 @@
     android:fillViewport="true"
     android:orientation="vertical"
     android:clickable="true"
-    android:background="#ffffff"
-    android:paddingBottom="4dp">
+    android:background="#ffffff">
 
     <ProgressBar
         android:id="@+id/update_progress_bar"
@@ -31,7 +30,7 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="24dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/event_title"
@@ -47,10 +46,13 @@
                 android:id="@+id/event_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 app:layout_constraintTop_toBottomOf="@id/event_title"
                 android:hint="@string/event_desc"
                 android:textSize="20sp"
-                android:paddingTop="24dp"/>
+                android:padding="8dp"
+                android:background="@drawable/edit_text_border"
+                />
 
             <TextView
                 android:id="@+id/event_start"
@@ -145,7 +147,7 @@
         android:id="@+id/event_members_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/profiles_flipper"
+        app:layout_constraintBottom_toTopOf="@id/guests_layout"
         android:paddingStart="24dp"
         android:paddingEnd="24dp">
 
@@ -228,115 +230,128 @@
 
     </android.support.constraint.ConstraintLayout>
 
-
-    <ViewFlipper
-        android:id="@+id/profiles_flipper"
+    <LinearLayout
+        android:id="@+id/guests_layout"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:padding="12dp"
         android:background="@drawable/edit_text_border">
 
-        <android.support.constraint.ConstraintLayout
+        <SearchView
+            android:id="@+id/guests_search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/accepted_recycler"
+        </SearchView>
+        <ViewFlipper
+            android:id="@+id/profiles_flipper"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:paddingBottom="8dp">
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
 
-            <ProgressBar
-                android:id="@+id/accepted_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toTopOf="parent">
-            </ProgressBar>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/accepted_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
 
-            <TextView
-                android:id="@+id/accepted_null_data_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="@string/empty"
-                android:textSize="24sp"
-                android:visibility="invisible">
-            </TextView>
-        </android.support.constraint.ConstraintLayout>
+                <ProgressBar
+                    android:id="@+id/accepted_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent">
+                </ProgressBar>
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/profiles_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/accepted_null_data_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/empty"
+                    android:textSize="24sp"
+                    android:visibility="invisible">
+                </TextView>
+            </android.support.constraint.ConstraintLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/declined_recycler"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/profiles_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
 
-            <ProgressBar
-                android:id="@+id/declined_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toTopOf="parent">
-            </ProgressBar>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/declined_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
 
-            <TextView
-                android:id="@+id/declined_null_data_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="@string/empty"
-                android:textSize="24sp"
-                android:visibility="invisible"/>
-        </android.support.constraint.ConstraintLayout>
+                <ProgressBar
+                    android:id="@+id/declined_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent">
+                </ProgressBar>
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/invited_recycler"
+                <TextView
+                    android:id="@+id/declined_null_data_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/empty"
+                    android:textSize="24sp"
+                    android:visibility="invisible"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/invited_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
 
-            <ProgressBar
-                android:id="@+id/invited_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toTopOf="parent">
-            </ProgressBar>
+                <ProgressBar
+                    android:id="@+id/invited_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent">
+                </ProgressBar>
 
-            <TextView
-                android:id="@+id/invited_null_data_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="@string/empty"
-                android:textSize="24sp"
-                android:visibility="invisible"/>
-        </android.support.constraint.ConstraintLayout>
-    </ViewFlipper>
+                <TextView
+                    android:id="@+id/invited_null_data_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/empty"
+                    android:textSize="24sp"
+                    android:visibility="invisible"/>
+            </android.support.constraint.ConstraintLayout>
+        </ViewFlipper>
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

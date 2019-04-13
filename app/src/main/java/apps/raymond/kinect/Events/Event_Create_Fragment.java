@@ -129,7 +129,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         toolbarSearch.setVisibility(View.GONE);
 
         nameTxt = view.findViewById(R.id.event_name_txt);
-        nameTxt.setHint(R.string.event_name);
         descTxt = view.findViewById(R.id.event_desc_txt);
 
         month1_txt = view.findViewById(R.id.month1_txt);

@@ -98,6 +98,7 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.core_activity);
         if(savedInstanceState!=null){
             instanceBundle = savedInstanceState;
         }
@@ -105,7 +106,6 @@ public class Core_Activity extends AppCompatActivity implements
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-        setContentView(R.layout.core_activity);
 
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);

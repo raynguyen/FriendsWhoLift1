@@ -56,6 +56,12 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
+        <activity android:name=".Search_Events_Activity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="apps.raymond.kinect.provider"

@@ -55,6 +55,7 @@
     <string name="cancel">Cancel</string>
     <string name="imageDialogTitle">Pick an image or take one!</string>
     <string name="locations">Locations</string>
+    <string name="creator">Created by:</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

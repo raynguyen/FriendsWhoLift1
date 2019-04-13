@@ -92,7 +92,7 @@ public class Core_Events_Fragment extends Fragment implements
         switch (i){
             case R.id.search_events_btn:
                 Log.i(TAG,"Clicked on search events Btn.");
-                Toast.makeText(getContext(),"Search for new events.",Toast.LENGTH_SHORT).show();
+
         }
     }
 
