@@ -10,12 +10,15 @@
 
 package apps.raymond.kinect.Events;
 
+import android.animation.LayoutTransition;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -125,6 +128,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ConstraintLayout layout = view.findViewById(R.id.constraint_layout);
+        animateLayoutChanges(layout);
+
         toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
 
@@ -178,28 +184,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         tagsList = new ArrayList<>();
         tagsTxt = view.findViewById(R.id.event_tags_txt);
         tagsContainer = view.findViewById(R.id.tags_container_txt);
-        tagsContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Log.i(TAG,"bottom = "+bottom + ". Old bottom = "+oldBottom);
-                if(tagsContainer.getVisibility()!=View.GONE){
-                    if(oldBottom==0){
-                        int i = v.getHeight() - v.getPaddingBottom();
-                        //Log.i(TAG,"Tagscontainer was prevously invisible. Shifting recycler down by: "+i);
-                        eventExtrasLayout.animate()
-                                .setDuration(300)
-                                .translationY(v.getHeight()-v.getPaddingBottom());
-                    } else {
-                        int i = bottom-oldBottom;
-                        //Log.i(TAG,"Translating recyclerview down by : "+i);
-                        eventExtrasLayout.animate()
-                                .setDuration(300)
-                                .translationY(bottom - oldBottom);
-                    }
-                }
-            }
-        });
-
 
         usersList = new ArrayList<>();
 
@@ -233,21 +217,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 onBackPress();
                 break;
             case R.id.event_tag_add_btn:
-                Log.i(TAG,"Adding tag to event.");
-                // When this button is pressed, add the String to a container below the TextView that displays all the tags that have been added
-                // Research a way of getting the individual strings as clickable objects.
-                if(tagsContainer.getVisibility() == View.GONE){
-                    tagsContainer.setAlpha(0.0f);
-                    tagsContainer.setVisibility(View.VISIBLE);
-                    tagsContainer.animate().alpha(1.0f).setDuration(300);
-                    eventExtrasLayout.animate()
-                            .setDuration(300)
-                            .translationY(tagsContainer.getHeight());
-
-                }
-                tagsList.add(tagsTxt.getText().toString());
-                tagsContainer.setText(tagsList.toString());
-                tagsTxt.getText().clear();
+                checkTagSyntax();
                 break;
             case R.id.expand_users_list:
                 break;
@@ -303,11 +273,45 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         day2_txt.setText(day2);
     }
 
+    /**
+     * Populate a drop-down list for the auto complete text when user attempts to type in a location
+     * to set the event. The adapter will hold a list of the user's stored locations from FireStore.
+     */
     private void initializeLocations(){
         ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
         locationTxt.setAdapter(locationsAdapter);
     }
 
+    /**
+     * Checks the tag against Java regex for only alphanumerics. If the match returns false and the
+     * length is >0 we add the tag to the list of tags.
+     *
+     * The tags container is set to View.GONE while the tags list is empty. Once the first tag is
+     * added, we set the container view to View.VISIBLE and animate the views below it downwards.
+     *
+     * ToDo: The tags container should house clickable tag icons that are removed upon click.
+     */
+    private void checkTagSyntax(){
+        String checkTag = tagsTxt.getText().toString();
+        if(!checkTag.equals("") && checkTag.matches("^[a-zA-Z0-9]+$")){
+            Toast.makeText(getContext(),"THIS TAG CAN BE ADDED!",Toast.LENGTH_LONG).show();
+
+            if(tagsContainer.getVisibility() == View.GONE){
+                tagsContainer.setVisibility(View.VISIBLE);
+            }
+
+            tagsList.add(tagsTxt.getText().toString());
+            tagsContainer.setText(tagsList.toString());
+            tagsTxt.getText().clear();
+
+        }
+    }
+
+    /**
+     * Calls upon the FireBaseRepository to return a query of all the user documents in FireStore.
+     * This needs to be changed so that we only query an appropriate set of users that are set and
+     * eligible for event invitations.
+     */
     private void fetchUsersList(){
         viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
@@ -412,5 +416,25 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void onDestroyView() {
         super.onDestroyView();
         toolbarSearch.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * A helper method that enables animation automation through Android.
+     *
+     * @param container The view of which we are enabling automatic transitions for.
+     */
+    public static void animateLayoutChanges(ViewGroup container) {
+        final LayoutTransition transition = new LayoutTransition();
+        transition.setDuration(300);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            transition.enableTransitionType(LayoutTransition.CHANGING);
+            transition.enableTransitionType(LayoutTransition.APPEARING);
+            transition.enableTransitionType(LayoutTransition.CHANGE_APPEARING);
+            transition.enableTransitionType(LayoutTransition.DISAPPEARING);
+            transition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
+        }
+
+        container.setLayoutTransition(transition);
     }
 }
