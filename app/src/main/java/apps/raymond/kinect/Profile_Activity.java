@@ -33,8 +33,10 @@ import java.util.Locale;
 import apps.raymond.kinect.UserProfile.UserModel;
 import apps.raymond.kinect.login.Login_Activity;
 
-public class Profile_Activity extends AppCompatActivity implements View.OnClickListener {
+public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
+        Connections_Fragment.LoadConnections {
     private static final String TAG = "ProfileActivity";
+    private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
     private final static int REQUEST_PROFILE_PICTURE = 0;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -45,7 +47,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_activity);
+        setContentView(R.layout.personal_profile_activity);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
 
@@ -112,8 +114,14 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 updateProfilePicture();
                 break;
             case R.id.connections_btn:
+                Connections_Fragment fragment = new Connections_Fragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.profile_frame,fragment,CONNECTIONS_FRAG)
+                        .addToBackStack(CONNECTIONS_FRAG)
+                        .commit();
                 break;
             case R.id.locations_btn:
+                Log.i(TAG," " + getSupportFragmentManager().getFragments().toString());
                 break;
             case R.id.interests_btn:
                 break;
@@ -126,7 +134,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     List<String> interestsList = new ArrayList<>();
     private void fetchUserInfo(){
         //READ FROM THE SHARED PREFERENCES HERE!
-        viewModel.fetchConnections().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
             @Override
             public void onComplete(@NonNull Task<List<UserModel>> task) {
                 if(task.isSuccessful()){
@@ -242,5 +250,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         catch (IOException | NullPointerException e){
             Log.w(TAG,"Error retrieving full size image.",e);
         }
+    }
+
+    @Override
+    public List<UserModel> loadConnections() {
+        return connectionsList;
     }
 }

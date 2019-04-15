@@ -14,21 +14,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.widget.SearchView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -135,7 +128,7 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
                                 //ToDO WHY IS THIS SHOWING UP TWICE????
                                 Log.i(TAG,"Current user has no Groups associated to them.");
-                                TextView nullText = getView().findViewById(R.id.null_data_text);
+                                TextView nullText = getView().findViewById(R.id.fragment_null_data_text);
                                 nullText.setVisibility(View.VISIBLE);
                             }
                             progressBar.setVisibility(View.GONE);

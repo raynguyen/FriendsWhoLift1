@@ -57,7 +57,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import apps.raymond.kinect.DialogFragments.InviteFragment;
+import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
 import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
@@ -72,7 +72,7 @@ public class Core_Activity extends AppCompatActivity implements
         SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener{
 
     private static final String TAG = "Core_Activity";
-    private static final String INV_FRAG = "InviteFragment";
+    private static final String INV_FRAG = "Invite_Messages_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
@@ -166,7 +166,7 @@ public class Core_Activity extends AppCompatActivity implements
         switch (item.getItemId()){
             case R.id.action_invites:
                 Log.i(TAG,"Clicked on invites button");
-                InviteFragment inviteDialog = new InviteFragment();
+                Invite_Messages_Fragment inviteDialog = new Invite_Messages_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,inviteDialog,INV_FRAG)
                         .addToBackStack(INV_FRAG)

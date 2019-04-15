@@ -25,7 +25,7 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class EventInviteFragment extends Fragment implements EventInviteAdapter.InviteResponseListener {
+public class Event_Invites_Fragment extends Fragment implements EventInviteAdapter.InviteResponseListener {
     private static final String TAG = "Event_Invite_Fragment";
 
     Repository_ViewModel viewModel;
@@ -51,8 +51,8 @@ public class EventInviteFragment extends Fragment implements EventInviteAdapter.
         super.onViewCreated(view, savedInstanceState);
 
         progressBar = view.findViewById(R.id.progress_bar);
-        nullDataTxt = view.findViewById(R.id.null_data_text);
-        eventInviteRecycler = view.findViewById(R.id.invite_recycler);
+        nullDataTxt = view.findViewById(R.id.fragment_null_data_text);
+        eventInviteRecycler = view.findViewById(R.id.fragment_recycler);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new EventInviteAdapter(this);
         eventInviteRecycler.setAdapter(adapter);

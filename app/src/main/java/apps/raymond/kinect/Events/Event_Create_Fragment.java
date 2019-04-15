@@ -109,15 +109,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return inflater.inflate(R.layout.event_create_frag,container,false);
     }
 
-
+    int privacy;
     AutoCompleteTextView locationTxt; //ToDo: Bind the user's locations to this autocomplete.
     ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
-    EditText nameTxt, descTxt;
-    TextView month1_txt, day1_txt, month2_txt, day2_txt;
-    TextView tagsContainer;
-    EditText tagsTxt;
-    int privacy;
+    EditText nameTxt, descTxt, tagsTxt;
+    TextView month1_txt, day1_txt, month2_txt, day2_txt,tagsContainer;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;

@@ -172,7 +172,7 @@ public class FireBaseRepository {
                 });
     }
 
-    Task<List<Event_Model>> fetchEventInvites() {
+    Task<List<Event_Model>> getEventInvites() {
         CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
         final List<Event_Model> eventInvites = new ArrayList<>();
         return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
@@ -191,7 +191,7 @@ public class FireBaseRepository {
         });
     }
 
-    Task<List<GroupBase>> fetchGroupInvites() {
+    Task<List<GroupBase>> getGroupInvites() {
         CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUP_INVITES);
         final List<GroupBase> groupInvites = new ArrayList<>();
 
@@ -218,6 +218,8 @@ public class FireBaseRepository {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Log.i(TAG,"Successfully created a connection to user: " + user.getEmail());
+                } else {
+                    Log.w(TAG,"Error adding new connection to user.",task.getException());
                 }
             }
         });

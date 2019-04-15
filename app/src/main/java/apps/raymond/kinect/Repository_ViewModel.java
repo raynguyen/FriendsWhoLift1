@@ -41,7 +41,7 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addConnection(user);
     }
 
-    public Task<List<UserModel>> fetchConnections(){
+    public Task<List<UserModel>> getConnections(){
         return mRepository.getConnections();
     }
 
@@ -50,7 +50,7 @@ public class Repository_ViewModel extends ViewModel {
     }
 
     public Task<List<Event_Model>> fetchEventInvites(){
-        return mRepository.fetchEventInvites();
+        return mRepository.getEventInvites();
     }
 
     public Task<Void> createEvent(Event_Model groupEvent){
@@ -114,7 +114,7 @@ public class Repository_ViewModel extends ViewModel {
     }
 
     public Task<List<GroupBase>> fetchGroupInvites(){
-        return mRepository.fetchGroupInvites();
+        return mRepository.getGroupInvites();
     }
 
     public Task<Void> addUserToGroup(GroupBase group){

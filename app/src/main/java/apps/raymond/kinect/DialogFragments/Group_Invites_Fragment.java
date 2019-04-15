@@ -2,7 +2,6 @@ package apps.raymond.kinect.DialogFragments;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import java.util.List;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.R;
 
-public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.GroupInviteViewHolder> {
+public class Group_Invites_Fragment extends RecyclerView.Adapter<Group_Invites_Fragment.GroupInviteViewHolder> {
     private List<GroupBase> groupInviteSet;
     private InviteResponseListener callback;
 
@@ -24,11 +23,11 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
         void onDetail();
     }
 
-    public GroupInviteAdapter(InviteResponseListener callback){
+    public Group_Invites_Fragment(InviteResponseListener callback){
         this.callback = callback;
     }
 
-    public GroupInviteAdapter(List<GroupBase> groupInviteList, InviteResponseListener callback){
+    public Group_Invites_Fragment(List<GroupBase> groupInviteList, InviteResponseListener callback){
         this.groupInviteSet = groupInviteList;
         this.callback = callback;
     }

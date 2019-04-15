@@ -17,7 +17,7 @@ import android.widget.ImageButton;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class InviteFragment extends Fragment{
+public class Invite_Messages_Fragment extends Fragment{
     private static final String TAG = "Invites_Dialog";
 
     Repository_ViewModel viewModel;
@@ -64,7 +64,7 @@ public class InviteFragment extends Fragment{
         public Fragment getItem(int i) {
             switch(i){
                 case 0:
-                    return new EventInviteFragment();
+                    return new Event_Invites_Fragment();
                 case 1:
                     return new GroupInviteFragment();
                 default:

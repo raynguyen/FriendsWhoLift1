@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
@@ -47,6 +48,7 @@ import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.View_Profile_Activity;
 
 import static apps.raymond.kinect.Core_Activity.YESNO_REQUEST;
 
@@ -111,7 +113,7 @@ public class Event_Detail_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
+        toolbarSearch = requireActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
         editFlipper = view.findViewById(R.id.event_edit_flipper);
         eventName = view.findViewById(R.id.event_title);
@@ -158,13 +160,11 @@ public class Event_Detail_Fragment extends Fragment implements
         RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
         acceptedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
         acceptedRecycler.setAdapter(acceptedAdapter);
-        Log.d(TAG,"Calling accepted list.");
         getAcceptedList(event);
         acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         acceptedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         acceptedBar = view.findViewById(R.id.accepted_progress_bar);
         acceptedNullText = view.findViewById(R.id.accepted_null_data_text);
-
 
         RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
         declinedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
@@ -201,13 +201,11 @@ public class Event_Detail_Fragment extends Fragment implements
         }
     }
 
-    /*
-     * OnClick call returns the Original name of the clicked profile. We then use this to query Firebase
-     * to retrieve the entire profile to load.
-    */
     @Override
     public void onProfileClick(UserModel userModel) {
-        Log.i(TAG,"Clicked on: "+ userModel.getEmail());
+        Intent viewProfileIntent = new Intent(requireActivity(), View_Profile_Activity.class);
+        viewProfileIntent.putExtra(View_Profile_Activity.USER,userModel);
+        startActivity(viewProfileIntent);
     }
 
     MenuItem saveAction, editAction;
@@ -341,7 +339,7 @@ public class Event_Detail_Fragment extends Fragment implements
                 acceptedBar.setVisibility(View.INVISIBLE);
                 acceptedProfiles = new ArrayList<>();
                 acceptedProfiles.addAll(task.getResult());
-                acceptedCount.setText(""+acceptedProfiles.size());
+                acceptedCount.setText(String.format(Locale.getDefault(),"%s",acceptedProfiles.size()));
                 acceptedAdapter.setData(acceptedProfiles);
                 acceptedAdapter.notifyDataSetChanged();
             }

@@ -25,7 +25,7 @@ import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class GroupInviteFragment extends Fragment implements GroupInviteAdapter.InviteResponseListener {
+public class GroupInviteFragment extends Fragment implements Group_Invites_Fragment.InviteResponseListener {
     private static final String TAG = "Group_Invite_Fragment";
 
     Repository_ViewModel viewModel;
@@ -44,17 +44,17 @@ public class GroupInviteFragment extends Fragment implements GroupInviteAdapter.
     TextView nullDataTxt;
     List<GroupBase> groupInvSet;
     RecyclerView groupInviteRecycler;
-    GroupInviteAdapter adapter;
+    Group_Invites_Fragment adapter;
     ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         progressBar = view.findViewById(R.id.progress_bar);
-        nullDataTxt = view.findViewById(R.id.null_data_text);
-        groupInviteRecycler = view.findViewById(R.id.invite_recycler);
+        nullDataTxt = view.findViewById(R.id.fragment_null_data_text);
+        groupInviteRecycler = view.findViewById(R.id.fragment_recycler);
         groupInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new GroupInviteAdapter(this);
+        adapter = new Group_Invites_Fragment(this);
         groupInviteRecycler.setAdapter(adapter);
         groupInvSet = new ArrayList<>();
         fetchInvites();
