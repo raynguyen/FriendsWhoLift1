@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -60,6 +61,8 @@ public class Connections_Fragment extends Fragment implements ProfileRecyclerAda
 
         Toolbar toolbar = view.findViewById(R.id.fragment_toolbar);
         toolbar.setVisibility(View.VISIBLE);
+        toolbar.setTitle(R.string.connections);
+        toolbar.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.colorAccent));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +88,6 @@ public class Connections_Fragment extends Fragment implements ProfileRecyclerAda
 
     @Override
     public void onProfileClick(UserModel userModel) {
-        Toast.makeText(getContext(),"Clicked on profile: "+userModel.getName(),Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(),"Clicked on profile: "+userModel.getEmail(),Toast.LENGTH_LONG).show();
     }
 }
