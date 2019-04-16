@@ -57,19 +57,21 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import apps.raymond.kinect.DialogFragments.Event_Invites_Fragment;
 import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
 import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Groups.Core_Group_Fragment;
+import apps.raymond.kinect.Groups.Core_Groups_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.UserModel;
 
-public class Core_Activity extends AppCompatActivity implements
-        Group_Create_Fragment.AddGroup, Event_Create_Fragment.AddEvent, View.OnClickListener,
-        SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener{
+public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
+        ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
+        Event_Create_Fragment.EventCreatedListener, Group_Create_Fragment.AddGroup,
+        Event_Invites_Fragment.EventResponseListener {
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "Invite_Messages_Fragment";
@@ -83,16 +85,11 @@ public class Core_Activity extends AppCompatActivity implements
         void updateGroupRecycler(GroupBase groupBase);
     }
 
-    public UpdateEventRecycler updateEventRecycler;
-    public interface UpdateEventRecycler{
-        void updateEventRecycler(Event_Model groupEvent);
-    }
-
     Activity thisInstance;
     ViewPager viewPager;
     Repository_ViewModel viewModel;
     SearchView toolbarSearch;
-    Core_Activity_Adapter pagerAdapter;
+    Core_Adapter pagerAdapter;
     Toolbar toolbar;
     Bundle instanceBundle;
     @Override
@@ -115,7 +112,7 @@ public class Core_Activity extends AppCompatActivity implements
         toolbarSearch.setOnQueryTextListener(this);
 
         viewPager = findViewById(R.id.core_ViewPager);
-        pagerAdapter = new Core_Activity_Adapter(getSupportFragmentManager());
+        pagerAdapter = new Core_Adapter(getSupportFragmentManager());
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
@@ -126,21 +123,20 @@ public class Core_Activity extends AppCompatActivity implements
         getUserModel();
     }
 
-
     @Override
     public void onAttachFragment(Fragment fragment) {
-        if(fragment instanceof Core_Events_Fragment){
+        /*if(fragment instanceof Core_Events_Fragment){
             try {
                 updateEventRecycler = (UpdateEventRecycler) fragment;
             } catch (ClassCastException e){
                 Log.i(TAG,"Core_Events_Fragment does not implement UpdateEventRecycler interface.");
             }
-        }
-        if(fragment instanceof Core_Group_Fragment){
+        }*/
+        if(fragment instanceof Core_Groups_Fragment){
             try {
                 updateGroupRecycler = (UpdateGroupRecycler) fragment;
             } catch (ClassCastException e){
-                Log.i(TAG,"Core_Group_Fragment does not implement UpdateGroupRecycler interface.");
+                Log.i(TAG,"Core_Groups_Fragment does not implement UpdateGroupRecycler interface.");
             }
         }
     }
@@ -241,13 +237,13 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     public boolean onQueryTextChange(String s) {
         int i = viewPager.getCurrentItem();
-        Fragment fragment = pagerAdapter.getRegisteredFragment(i);
+        Fragment fragment = pagerAdapter.getFragment(i);
         switch (i){
             case 0:
                 ((Core_Events_Fragment) fragment).filterRecycler(s);
                 break;
             case 1:
-                ((Core_Group_Fragment) fragment).filterRecycler(s);
+                ((Core_Groups_Fragment) fragment).filterRecycler(s);
                 break;
             default:
                 return false;
@@ -262,9 +258,9 @@ public class Core_Activity extends AppCompatActivity implements
     }
 
     @Override
-    public void addToEventRecycler(Event_Model groupEvent) {
-        Log.i(TAG,"Called addToEventRecycler implementation in the CoreAct");
-        updateEventRecycler.updateEventRecycler(groupEvent);
+    public void notifyEventCreated(Event_Model event) {
+        Core_Events_Fragment fragment = (Core_Events_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        fragment.updateEventRecycler(event);
     }
 
     @Override
@@ -356,6 +352,15 @@ public class Core_Activity extends AppCompatActivity implements
         });
     }
 
+    @Override
+    public void eventAccepted(Event_Model event) {
+        Log.i(TAG,"Accepted invite to: "+event.getName());
+        Core_Events_Fragment fragment = (Core_Events_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        fragment.updateEventRecycler(event);
+    }
 
-
+    @Override
+    public void eventDeclined(Event_Model event) {
+        Log.i(TAG,"Declined invite to: "+event.getName());
+    }
 }

@@ -5,25 +5,33 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import apps.raymond.kinect.Events.Core_Events_Fragment;
-import apps.raymond.kinect.Groups.Core_Group_Fragment;
+import apps.raymond.kinect.Groups.Core_Groups_Fragment;
 
-public class Core_Activity_Adapter extends FragmentPagerAdapter {
-    static final int NUM_PAGES = 2;
-    private SparseArray<Fragment> registeredFragments = new SparseArray<>();
+public class Core_Adapter extends FragmentStatePagerAdapter {
+    private static final int NUM_PAGES = 2;
+    public static final int EVENTS_FRAGMENT = 0;
+    public static final int GROUPS_FRAGMENT = 1;
 
-    Core_Activity_Adapter(FragmentManager fm){
+    private List<Fragment> fragments;
+
+    Core_Adapter(FragmentManager fm){
         super(fm);
+        fragments = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Fragment fragment = (Fragment) super.instantiateItem(container,position);
-        registeredFragments.put(position,fragment);
+        fragments.add(position,fragment);
         return fragment;
     }
 
@@ -33,7 +41,7 @@ public class Core_Activity_Adapter extends FragmentPagerAdapter {
             case 0:
                 return new Core_Events_Fragment();
             case 1:
-                return new Core_Group_Fragment();
+                return new Core_Groups_Fragment();
             default:
                 return null;
         }
@@ -58,11 +66,11 @@ public class Core_Activity_Adapter extends FragmentPagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        registeredFragments.remove(position);
+        fragments.remove(position);
         super.destroyItem(container, position, object);
     }
 
-    public Fragment getRegisteredFragment(int position) {
-        return registeredFragments.get(position);
+    public Fragment getFragment(int position) {
+        return fragments.get(position);
     }
 }

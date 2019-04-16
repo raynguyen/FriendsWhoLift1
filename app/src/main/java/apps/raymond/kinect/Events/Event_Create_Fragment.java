@@ -71,9 +71,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     private static final int DIALOG_REQUEST_CODE = 21;
 
 
-    private AddEvent addEventToRecycler;
-    public interface AddEvent{
-        void addToEventRecycler(Event_Model groupEvent);
+    private EventCreatedListener eventCreatedListener;
+    public interface EventCreatedListener {
+        void notifyEventCreated(Event_Model groupEvent);
     }
 
     FragmentManager fm;
@@ -81,9 +81,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            addEventToRecycler = (AddEvent) context;
+            eventCreatedListener = (EventCreatedListener) context;
         }catch (ClassCastException e){
-            Log.i(TAG,"Unable to attach AddEvent interface to activity.");
+            Log.i(TAG,"Unable to attach EventCreatedListener interface to activity.");
         }
         fm = requireActivity().getSupportFragmentManager();
     }
@@ -373,7 +373,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                     Log.i(TAG,"Successfully created event.");
                     Toast.makeText(getContext(),"Created event " + newEvent.getName(),Toast.LENGTH_SHORT).show();
                     viewModel.sendEventInvites(newEvent,inviteUsersList);
-                    addEventToRecycler.addToEventRecycler(newEvent);
+                    eventCreatedListener.notifyEventCreated(newEvent);
                     fm.popBackStack();
                 } else {
                     Log.w(TAG,"Error creating event. " + task.getException());

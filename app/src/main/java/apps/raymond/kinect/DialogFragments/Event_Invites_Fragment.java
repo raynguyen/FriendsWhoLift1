@@ -1,6 +1,7 @@
 package apps.raymond.kinect.DialogFragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,24 @@ import apps.raymond.kinect.Repository_ViewModel;
 
 public class Event_Invites_Fragment extends Fragment implements EventInviteAdapter.InviteResponseListener {
     private static final String TAG = "Event_Invite_Fragment";
+
+    private EventResponseListener eventResponseListener;
+    public interface EventResponseListener{
+        void eventAccepted(Event_Model event);
+        void eventDeclined(Event_Model event);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.i(TAG,"The parent of this is: "+context.toString());
+        try {
+            eventResponseListener = (EventResponseListener) context;
+        } catch (ClassCastException e){
+            Log.w(TAG,"The parent context does not implement required interfaces.",e);
+        }
+
+    }
 
     Repository_ViewModel viewModel;
     @Override
@@ -77,14 +96,12 @@ public class Event_Invites_Fragment extends Fragment implements EventInviteAdapt
                 } else {
                     Log.w(TAG,"There was an error fetching event invites.");
                 }
-
             }
         });
     }
 
     @Override
     public void onAccept(final Event_Model event, final int position) {
-        //if adding user to event is successful, then we should remove from the recycler.
         progressBar.setVisibility(View.VISIBLE);
         viewModel.addUserToEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -92,7 +109,8 @@ public class Event_Invites_Fragment extends Fragment implements EventInviteAdapt
                 progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
                     eventInvSet.remove(position);
-                    adapter.notifyItemRemoved(position);
+                    adapter.notifyItemRemoved(position); //ToDo: Need to move this adapter.notifyItemRemoved into the Adapter class.
+                    eventResponseListener.eventAccepted(event);
                 } else {
                     Toast.makeText(getContext(),"There was an error!",Toast.LENGTH_SHORT).show();
                 }
@@ -102,7 +120,7 @@ public class Event_Invites_Fragment extends Fragment implements EventInviteAdapt
 
     @Override
     public void onDecline(Event_Model event) {
-        Log.i(TAG,"Clicked to decline this event.");
+        eventResponseListener.eventDeclined(event);
     }
 
     @Override

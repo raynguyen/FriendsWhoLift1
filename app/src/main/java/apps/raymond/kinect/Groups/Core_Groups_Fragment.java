@@ -38,12 +38,12 @@ import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
-    private static final String TAG = "Core_Group_Fragment";
+public class Core_Groups_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
+    private static final String TAG = "Core_Groups_Fragment";
     private Groups_ViewModel model;
 
     //Required empty fragment. Not sure why it is needed.
-    public Core_Group_Fragment(){}
+    public Core_Groups_Fragment(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,7 +127,6 @@ public class Core_Group_Fragment extends Fragment implements GroupRecyclerAdapte
                             } else {
                                 // DISPLAY THE NO GROUPS ATTACHED TO USER IMAGE.
                                 //ToDO WHY IS THIS SHOWING UP TWICE????
-                                Log.i(TAG,"Current user has no Groups associated to them.");
                                 TextView nullText = getView().findViewById(R.id.fragment_null_data_text);
                                 nullText.setVisibility(View.VISIBLE);
                             }

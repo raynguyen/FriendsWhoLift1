@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,8 +33,9 @@ import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class Core_Events_Fragment extends Fragment implements
-        EventsRecyclerAdapter.EventClickListener,View.OnClickListener, Core_Activity.UpdateEventRecycler {
+public class Core_Events_Fragment extends Fragment implements View.OnClickListener,
+        EventsRecyclerAdapter.EventClickListener{
+
     private static final String TAG = "Core_Events_Fragment";
 
     private List<Event_Model> eventList;
@@ -86,8 +88,7 @@ public class Core_Events_Fragment extends Fragment implements
         int i = v.getId();
         switch (i){
             case R.id.search_events_btn:
-                Log.i(TAG,"Clicked on search events Btn.");
-
+                Toast.makeText(getContext(),"Not implemented yet.",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -138,12 +139,13 @@ public class Core_Events_Fragment extends Fragment implements
         mAdapter.getFilter().filter(constraint);
     }
 
-    @Override
-    public void updateEventRecycler(Event_Model groupEvent) {
-        Log.i(TAG,"TRYING TO ADD NEW EVENT TO RECYCLER:" +groupEvent.getName());
-        eventList.add(groupEvent);
-        mAdapter.addData(groupEvent);
-        nullImage.setVisibility(View.INVISIBLE);
-        nullText.setVisibility(View.INVISIBLE);
+    public void updateEventRecycler(Event_Model event) {
+        eventList.add(event);
+        mAdapter.addData(event);
+        if(eventList.size() ==0){
+            nullImage.setVisibility(View.INVISIBLE);
+            nullText.setVisibility(View.INVISIBLE);
+        }
     }
+
 }
