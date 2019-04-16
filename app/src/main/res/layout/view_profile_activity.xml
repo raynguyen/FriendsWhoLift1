@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/baseline_keyboard_arrow_left_black_18dp"
+        style="@style/ToolBarTheme">
+    </android.support.v7.widget.Toolbar>
 
     <ImageView
         android:id="@+id/profile_pic"
@@ -13,7 +21,7 @@
         android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:layout_marginTop="48dp"
         android:contentDescription="@string/profile_picture"
         android:background="#0000"
