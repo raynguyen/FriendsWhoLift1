@@ -144,12 +144,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     MenuItem eventCreate, groupCreate;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        Log.i(TAG,"Creating options menu in core act.");
        if(getSupportFragmentManager().getBackStackEntryCount()>0){
             return false;
         } else {
             getMenuInflater().inflate(R.menu.core_menu,menu);
-            toolbar.setBackgroundColor(getColor(R.color.colorAccent));
+            toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
             toolbar.setNavigationOnClickListener(this);
             eventCreate = menu.findItem(R.id.action_create_event);
             groupCreate = menu.findItem(R.id.action_create_group);

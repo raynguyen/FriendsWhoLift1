@@ -43,6 +43,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -115,6 +116,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     SearchView toolbarSearch;
     EditText nameTxt, descTxt, tagsTxt;
     TextView month1_txt, day1_txt, month2_txt, day2_txt,tagsContainer;
+    ToggleButton sportsTag, foodTag, movieTag, drinksTag, chillTag;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;

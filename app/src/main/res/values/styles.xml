@@ -29,4 +29,12 @@
         <item name="android:layout_marginStart">12dp</item>
     </style>
 
+    <style name="PrimaryToggle">
+        <item name="android:textOn">@null</item>
+        <item name="android:textOff">@null</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+    </style>
+
 </resources>

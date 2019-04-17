@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/transparent">
+    </item>
+    <item>
+        <bitmap android:src="@drawable/baseline_movie_creation_black_18dp"
+            android:gravity="center">
+        </bitmap>
+    </item>
+</layer-list>

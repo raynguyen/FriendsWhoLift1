@@ -11,8 +11,6 @@
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
         android:animateLayoutChanges="true">
 
         <ProgressBar
@@ -215,22 +213,43 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toBottomOf="@id/address_layout"
             android:orientation="horizontal"
-            >
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            android:layout_margin="12dp"
+            android:weightSum="5">
+            <ToggleButton
+                android:id="@+id/sports_primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/sports_primary_toggle"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/food_primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/food_primary_toggle"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/drinks_primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/drinks_primary_toggle"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/movies_primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/movie_primary_toggle"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/chill_primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/chill_primary_toggle"
+                style="@style/PrimaryToggle"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/tags_layout"
