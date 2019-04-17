@@ -36,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -65,7 +66,7 @@ import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
         DatePickerDialog.FetchDate, Add_Users_Adapter.CheckProfileInterface, BackPressListener,
-        Spinner.OnItemSelectedListener{
+        Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     public static final String TAG = "Event_Create_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
@@ -116,12 +117,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     SearchView toolbarSearch;
     EditText nameTxt, descTxt, tagsTxt;
     TextView month1_txt, day1_txt, month2_txt, day2_txt,tagsContainer;
-    ToggleButton sportsTag, foodTag, movieTag, drinksTag, chillTag;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
     List<UserModel> usersList, inviteUsersList;
-    ArrayList<String> tagsList;
+    ArrayList<String> tagsList, primesList;
     LinearLayout inviteUsersLayout;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -174,6 +174,19 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
         locationOptionsBtn.setOnClickListener(this);
         initializeLocations();
+
+        primesList = new ArrayList<>();
+        ToggleButton sportsTag = view.findViewById(R.id.sports_primary);
+        ToggleButton foodTag = view.findViewById(R.id.food_primary);
+        ToggleButton drinksTag = view.findViewById(R.id.drinks_primary);
+        ToggleButton moviesTag = view.findViewById(R.id.movies_primary);
+        ToggleButton chillTag = view.findViewById(R.id.chill_primary);
+
+        sportsTag.setOnCheckedChangeListener(this);
+        foodTag.setOnCheckedChangeListener(this);
+        drinksTag.setOnCheckedChangeListener(this);
+        moviesTag.setOnCheckedChangeListener(this);
+        chillTag.setOnCheckedChangeListener(this);
 
         progressBar = view.findViewById(R.id.create_progress_bar);
 
@@ -234,14 +247,52 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
-    /*
-    * When an option for a spinner is selected, we want to an appropriate value corresponding to
-    * the selection.
-    */
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        int i = buttonView.getId();
+        switch (i){
+            case R.id.sports_primary:
+                if(isChecked){
+                    primesList.add(Event_Model.SPORTS);
+                } else {
+                    primesList.remove(Event_Model.SPORTS);
+                }
+                return;
+            case R.id.food_primary:
+                if(isChecked){
+                    primesList.add(Event_Model.FOOD);
+                } else {
+                    primesList.remove(Event_Model.FOOD);
+                }
+                return;
+            case R.id.drinks_primary:
+                if(isChecked){
+                    primesList.add(Event_Model.DRINKS);
+                } else {
+                    primesList.remove(Event_Model.DRINKS);
+                }
+                return;
+            case R.id.movies_primary:
+                if(isChecked){
+                    primesList.add(Event_Model.MOVIES);
+                } else {
+                    primesList.remove(Event_Model.MOVIES);
+                }
+                return;
+            case R.id.chill_primary:
+                if(isChecked){
+                    primesList.add(Event_Model.CHILL);
+                } else {
+                    primesList.remove(Event_Model.CHILL);
+                }
+                break;
+        }
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(parent.getId()==R.id.privacy_spinner){
-            privacy =  position;
+            privacy = position;
         }
     }
 
@@ -361,10 +412,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private void createEvent(){
+        int invitedSize = inviteUsersList.size();
         final Event_Model newEvent = new Event_Model(
                 FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                 nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                day2, privacy, tagsList);
+                day2, privacy, tagsList, primesList, invitedSize);
 
         viewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -432,7 +484,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             transition.enableTransitionType(LayoutTransition.DISAPPEARING);
             transition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
         }
-
         container.setLayoutTransition(transition);
     }
 }

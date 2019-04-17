@@ -107,33 +107,35 @@
                 android:layout_weight=".75">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_free_breakfast_black_18dp"
-                    android:tint="@color/blueish"
-                    android:scaleY="0.75"
-                    android:scaleX="0.75"/>
-                <ImageView
+                    android:id="@+id/sport_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_fitness_center_black_18dp"
-                    android:tint="@color/blueish"
-                    android:scaleY="0.75"
-                    android:scaleX="0.75"/>
+                    style="@style/CardPrimaryTags"/>
                 <ImageView
+                    android:id="@+id/food_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_fastfood_black_18dp"
+                    style="@style/CardPrimaryTags"/>
+                <ImageView
+                    android:id="@+id/drinks_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_local_bar_black_18dp"
-                    android:tint="@color/blueish"
-                    android:scaleY="0.75"
-                    android:scaleX="0.75"/>
+                    style="@style/CardPrimaryTags"/>
                 <ImageView
+                    android:id="@+id/movie_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_restaurant_black_18dp"
-                    android:tint="@color/blueish"
-                    android:scaleY="0.75"
-                    android:scaleX="0.75"/>
+                    android:src="@drawable/baseline_movie_creation_black_18dp"
+                    style="@style/CardPrimaryTags"/>
+                <ImageView
+                    android:id="@+id/chill_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_weekend_black_18dp"
+                    style="@style/CardPrimaryTags"/>
             </LinearLayout>
 
             <LinearLayout
@@ -141,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_weight=".25"
-                android:gravity="right">
+                android:gravity="end">
 
                 <TextView
                     android:id="@+id/attending_count"

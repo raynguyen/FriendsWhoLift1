@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import apps.raymond.kinect.R;
 
@@ -34,6 +36,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
         private TextView eventName, eventDay, eventMonth, attendingCount, invitedCount, creator, location;
+        private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag;
         private EventViewHolder(View view){
             super(view);
             eventName = view.findViewById(R.id.event_title);
@@ -43,6 +46,11 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             invitedCount = view.findViewById(R.id.invited_count);
             creator = view.findViewById(R.id.created_by_txt);
             location = view.findViewById(R.id.location_txt);
+            sportsTag = view.findViewById(R.id.sport_tag);
+            foodTag = view.findViewById(R.id.food_tag);
+            drinksTag = view.findViewById(R.id.drinks_tag);
+            moviesTag = view.findViewById(R.id.movie_tag);
+            chillTag = view.findViewById(R.id.chill_tag);
         }
     }
 
@@ -55,21 +63,43 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final EventsRecyclerAdapter.EventViewHolder eventViewHolder, int position) {
+    public void onBindViewHolder(@NonNull final EventsRecyclerAdapter.EventViewHolder vh, int position) {
         if(eventsListFull !=null){
             final Event_Model currEvent = eventsListFull.get(position);
-            String attending = Integer.toString(currEvent.getAttending());
-            String invited = Integer.toString(currEvent.getInvited());
-            eventViewHolder.eventName.setText(currEvent.getName());
-            eventViewHolder.eventMonth.setText(currEvent.getMonth1());
-            eventViewHolder.eventDay.setText(currEvent.getDay1());
-            eventViewHolder.attendingCount.setText(attending);
-            eventViewHolder.invitedCount.setText(invited);
-            eventViewHolder.creator.setText(currEvent.getCreator());
-            eventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            vh.eventName.setText(currEvent.getName());
+            vh.eventMonth.setText(currEvent.getMonth1());
+            vh.eventDay.setText(currEvent.getDay1());
+            vh.attendingCount.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
+            vh.invitedCount.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
+            vh.creator.setText(currEvent.getCreator());
+
+            List<String> primes = currEvent.getPrimes();
+            if(primes!=null){
+                for(String prime : primes){
+                    switch (prime){
+                        case Event_Model.SPORTS:
+                            vh.sportsTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.FOOD:
+                            vh.foodTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.DRINKS:
+                            vh.drinksTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.MOVIES:
+                            vh.moviesTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.CHILL:
+                            vh.chillTag.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                }
+            }
+
+            vh.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    eventClickListener.onEventClick(eventViewHolder.getAdapterPosition(),currEvent);
+                    eventClickListener.onEventClick(vh.getAdapterPosition(),currEvent);
                 }
             });
         }

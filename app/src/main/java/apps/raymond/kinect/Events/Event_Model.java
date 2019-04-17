@@ -1,8 +1,8 @@
+
 package apps.raymond.kinect.Events;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,11 @@ public class Event_Model implements Parcelable{
     public static final int PUBLIC = 0; //Anyone may join the event without prior connections to guests.
     public static final int CLOSED = 1; //Only users with connected guests may join the event.
     public static final int EXCLUSIVE = 2; //Invitation only
+    public static final String SPORTS = "Sports";
+    public static final String FOOD = "Food";
+    public static final String DRINKS = "Drinks";
+    public static final String MOVIES = "Movies";
+    public static final String CHILL = "Chill";
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
@@ -25,19 +30,14 @@ public class Event_Model implements Parcelable{
         }
     };
 
-    // Empty constructor as required by FireBase.
     public Event_Model(){
+        // Empty constructor as required by FireBase.
     }
 
-    private String creator;
-    private String originalName;
-    private String name;
-    private String desc;
-    private String month1, month2;
-    private String day1, day2;
+    private String creator, originalName, name, desc, month1, month2, day1, day2;
     private int privacy;
-    private List<String> tags;
-    private int attending;
+    private List<String> tags, primes;
+    private int attending = 1;
     private int invited;
 
     @SuppressWarnings("unchecked")
@@ -52,12 +52,13 @@ public class Event_Model implements Parcelable{
         day2 = in.readString();
         privacy = in.readInt();
         tags = in.readArrayList(null);
-        attending = 1;
-        invited = 0;
+        primes = in.readArrayList(null);
+        attending = in.readInt();
+        invited = in.readInt();
     }
 
     public Event_Model(String creator, String name, String desc, String month1, String day1, String month2, String day2, int privacy,
-                       ArrayList<String> tags){
+                       ArrayList<String> tags, ArrayList<String> primes, int invited){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
@@ -68,8 +69,9 @@ public class Event_Model implements Parcelable{
         this.day2 = day2;
         this.privacy = privacy;
         this.tags = tags;
+        this.primes = primes;
         attending = 1;
-        invited = 0;
+        this.invited = invited;
     }
 
     public String getCreator(){
@@ -152,6 +154,14 @@ public class Event_Model implements Parcelable{
         this.tags = tags;
     }
 
+    public List<String> getPrimes(){
+        return primes;
+    }
+
+    public void setPrimes(List<String> primes){
+        this.primes = primes;
+    }
+
     public void setAttending(int i){
         attending = i;
     }
@@ -184,5 +194,8 @@ public class Event_Model implements Parcelable{
         dest.writeString(day2);
         dest.writeInt(privacy);
         dest.writeList(tags);
+        dest.writeList(primes);
+        dest.writeInt(attending);
+        dest.writeInt(invited);
     }
 }

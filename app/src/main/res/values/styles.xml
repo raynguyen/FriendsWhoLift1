@@ -37,4 +37,11 @@
         <item name="android:layout_marginEnd">2dp</item>
     </style>
 
+    <style name="CardPrimaryTags">
+        <item name="android:scaleY">0.75</item>
+        <item name="android:scaleX">0.75</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:tint">@color/colorAccentLight</item>
+    </style>
+
 </resources>
