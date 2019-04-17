@@ -35,7 +35,6 @@ import apps.raymond.kinect.Repository_ViewModel;
 
 public class Core_Events_Fragment extends Fragment implements View.OnClickListener,
         EventsRecyclerAdapter.EventClickListener{
-
     private static final String TAG = "Core_Events_Fragment";
 
     private List<Event_Model> eventList;
@@ -53,19 +52,18 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.core_events_frag, container,false);
     }
 
-    private ImageView nullImage;
     private TextView nullText;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventList = new ArrayList<>();
 
-        nullImage = getView().findViewById(R.id.null_data_image);
         nullText = getView().findViewById(R.id.fragment_null_data_text);
 
         progressBar = view.findViewById(R.id.progress_bar);
@@ -116,13 +114,10 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
                         @Override
                         public void onSuccess(List<Object> objects) {
                             for(Object object:objects){
-                                //Log.i(TAG,"Adding event " +((DocumentSnapshot)object).toObject(Event_Model.class).getName() + " to RecyclerView.");
                                 eventList.add(((DocumentSnapshot) object).toObject(Event_Model.class)); //Do the toObject in the repo
                             }
                             progressBar.setVisibility(View.GONE);
                             if(eventList.size() == 0){
-                                // If there are no upcoming events, we want to fill the fragment with a text that says No Upcoming Events.
-                                nullImage.setVisibility(View.VISIBLE);
                                 nullText.setVisibility(View.VISIBLE);
                             } else {
                                 mAdapter.setData(eventList);
@@ -142,9 +137,8 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
     public void updateEventRecycler(Event_Model event) {
         eventList.add(event);
         mAdapter.addData(event);
-        if(eventList.size() ==0){
-            nullImage.setVisibility(View.INVISIBLE);
-            nullText.setVisibility(View.INVISIBLE);
+        if(eventList.size()==0){
+            nullText.setVisibility(View.VISIBLE);
         }
     }
 

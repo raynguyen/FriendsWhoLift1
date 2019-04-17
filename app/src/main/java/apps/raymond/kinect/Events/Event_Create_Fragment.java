@@ -120,7 +120,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     Add_Users_Adapter userAdapter;
     List<UserModel> usersList, inviteUsersList;
     ArrayList<String> tagsList;
-    LinearLayout eventExtrasLayout;
+    LinearLayout inviteUsersLayout;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -166,7 +166,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         visibilitySpinner.setSelection(3);
         visibilitySpinner.setOnItemSelectedListener(this);
 
-        eventExtrasLayout = view.findViewById(R.id.event_extras_layout);
+        inviteUsersLayout = view.findViewById(R.id.invite_users_layout);
 
         locationTxt = view.findViewById(R.id.location_txt);
         locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
@@ -296,11 +296,9 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             if(tagsContainer.getVisibility() == View.GONE){
                 tagsContainer.setVisibility(View.VISIBLE);
             }
-
             tagsList.add(tagsTxt.getText().toString());
             tagsContainer.setText(tagsList.toString());
             tagsTxt.getText().clear();
-
         }
     }
 
@@ -316,6 +314,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 if(task.isSuccessful()){
                     usersList.addAll(task.getResult());
                     userAdapter.notifyDataSetChanged();
+                    //inviteUsersLayout.setVisibility(View.VISIBLE);
                 } else {
                     Log.i(TAG,"Error retrieving suggested inviteUsersList list. " + task.getException());
                     Toast.makeText(getContext(),"Error retrieving suggested invitees.",Toast.LENGTH_SHORT).show();
