@@ -27,6 +27,10 @@
  * If a fragment is committed and has setHasOptionsMenu(true), it will call the parent activity's
  * onCreateOptionsMenu. This means that to optimize computing, only mandatory calls should be executed
  * inside the activity's onCreateOptionsMenu method.
+ *
+ * SIDE NOTE:
+ * A fragment should always be self contained such that it should never depend on other fragments. By
+ * default, a fragment will always hold a reference to its host activity.
  */
 
 package apps.raymond.kinect;
@@ -62,6 +66,7 @@ import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
 import apps.raymond.kinect.Events.Core_Events_Fragment;
 import apps.raymond.kinect.Events.Event_Create_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Events.Events_Search_Fragment;
 import apps.raymond.kinect.Groups.Core_Groups_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
@@ -77,7 +82,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     private static final String INV_FRAG = "Invite_Messages_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
+    private static final String SEARCH_EVENTS_FRAG = "SearchEvents";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
+
     public static final int YESNO_REQUEST = 21;
 
     public UpdateGroupRecycler updateGroupRecycler;
@@ -362,4 +369,13 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public void eventDeclined(Event_Model event) {
         Log.i(TAG,"Declined invite to: "+event.getName());
     }
+
+    public void searchEvents(){
+        Events_Search_Fragment searchFragment = new Events_Search_Fragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.core_frame,searchFragment,SEARCH_EVENTS_FRAG)
+                .addToBackStack(SEARCH_EVENTS_FRAG)
+                .commit();
+    }
+
 }

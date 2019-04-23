@@ -83,10 +83,8 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        int i = v.getId();
-        switch (i){
-            case R.id.search_events_btn:
-                Toast.makeText(getContext(),"Not implemented yet.",Toast.LENGTH_LONG).show();
+        if(v.getId() == R.id.search_events_btn){
+            getActivity().searchE
         }
     }
 
