@@ -1,6 +1,7 @@
 package apps.raymond.kinect.Events;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,6 +41,21 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
     private List<Event_Model> eventList;
     private ProgressBar progressBar;
     private EventsRecyclerAdapter mAdapter;
+
+    private SearchEvents searchEventsInterface;
+    public interface SearchEvents{
+        void searchEvents();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            searchEventsInterface = (SearchEvents) context;
+        } catch (ClassCastException e){
+            Log.w(TAG,"Host activity does not implement required interface.",e);
+        }
+    }
 
     public Core_Events_Fragment(){}
 
@@ -84,7 +100,11 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.search_events_btn){
-            getActivity().searchE
+            if(searchEventsInterface !=null){
+                searchEventsInterface.searchEvents();
+            } else {
+                Toast.makeText(requireContext(),"Unable to search local events at this time!",Toast.LENGTH_LONG).show();
+            }
         }
     }
 

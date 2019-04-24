@@ -76,7 +76,7 @@ import apps.raymond.kinect.UserProfile.UserModel;
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
         Event_Create_Fragment.EventCreatedListener, Group_Create_Fragment.AddGroup,
-        Event_Invites_Fragment.EventResponseListener {
+        Event_Invites_Fragment.EventResponseListener, Core_Events_Fragment.SearchEvents {
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "Invite_Messages_Fragment";
@@ -370,12 +370,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         Log.i(TAG,"Declined invite to: "+event.getName());
     }
 
-    public void searchEvents(){
+    @Override
+    public void searchEvents() {
         Events_Search_Fragment searchFragment = new Events_Search_Fragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.core_frame,searchFragment,SEARCH_EVENTS_FRAG)
+                .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
                 .addToBackStack(SEARCH_EVENTS_FRAG)
                 .commit();
     }
-
 }
