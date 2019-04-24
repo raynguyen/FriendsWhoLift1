@@ -2,12 +2,18 @@ package apps.raymond.kinect;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -22,6 +28,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Maps_Activity extends FragmentActivity implements OnMapReadyCallback {
     private static final String TAG = "MapsActivity";
     private static final int LOCATION_REQUEST_CODE = 0;
@@ -30,10 +40,26 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     boolean locationGranted;
+    EditText addressSearch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_);
+
+        addressSearch = findViewById(R.id.address_search_txt);
+        addressSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                    geoLocation(v.getText().toString());
+                }
+
+                return false;
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -53,6 +79,25 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
+    private void geoLocation(String query){
+        Log.i(TAG,"Searching for location of: " + query);
+
+        Geocoder geocoder = new Geocoder(Maps_Activity.this);
+        List<Address> list = new ArrayList<>();
+        try{
+            list = geocoder.getFromLocationName(query, 1);
+        }catch (IOException e){
+            Log.e(TAG, "geoLocate: IOException: " + e.getMessage() );
+        }
+
+        if(list.size() > 0){
+            Address address = list.get(0);
+
+            Log.d(TAG, "geoLocate: found a location: " + address.toString());
+            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
 
     /**
      * Manipulates the map once available.
@@ -66,11 +111,6 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        try{
-            mMap.setMyLocationEnabled(true);
-        } catch (SecurityException e){
-            Log.w(TAG,"User does not have location turned on.");
-        }
         getDeviceLocation();
     }
 

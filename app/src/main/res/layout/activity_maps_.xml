@@ -1,8 +1,41 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="apps.raymond.kinect.Maps_Activity" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="8dp">
+
+        <EditText
+            android:id="@+id/address_search_txt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="20sp"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:background="@null"
+            android:maxLines="1"
+            android:hint="@string/search_addresses"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"/>
+    </android.support.v7.widget.CardView>
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="apps.raymond.kinect.Maps_Activity"
+        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+</FrameLayout>
+
+
+
 

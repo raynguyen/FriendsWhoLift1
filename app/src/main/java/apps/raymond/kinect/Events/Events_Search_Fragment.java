@@ -25,6 +25,9 @@ import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.R;
 
+/*
+ * The view should hide the map and there should be a button that expands the map upwards.
+ */
 public class Events_Search_Fragment extends Fragment implements OnMapReadyCallback {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";

@@ -115,6 +115,9 @@
         <item>Who may join this event?</item>
     </string-array>
 
+    <!--MAPS-->
+    <string name="search_addresses">Search an address or location.</string>
+
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
     <string name="explore_groups">EXPLORE GROUPS</string>
