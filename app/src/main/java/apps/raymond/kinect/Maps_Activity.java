@@ -18,14 +18,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
@@ -52,9 +53,8 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
-                    geoLocation(v.getText().toString());
+                    geoLocate(v.getText().toString());
                 }
 
                 return false;
@@ -79,7 +79,8 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    private void geoLocation(String query){
+    private void geoLocate(String query){
+        Log.i(TAG,"Why is this called twice?");
         Log.i(TAG,"Searching for location of: " + query);
 
         Geocoder geocoder = new Geocoder(Maps_Activity.this);
@@ -92,10 +93,8 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
 
         if(list.size() > 0){
             Address address = list.get(0);
-
             Log.d(TAG, "geoLocate: found a location: " + address.toString());
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
-
+            moveToLocation(list);
         }
     }
 
@@ -111,6 +110,13 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getBaseContext(),"Implement details. Show confirmation dialog.",Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
         getDeviceLocation();
     }
 
@@ -144,6 +150,14 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         } catch (SecurityException e){
             Log.w(TAG,"There was an error retrieving the device location.",e);
         }
+    }
+
+    private void moveToLocation(List<Address> addresses){
+        Address address = addresses.get(0);
+        LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory
+                .newLatLngZoom(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM));
+        mMap.addMarker(new MarkerOptions().position(latLng)).setTitle("HAHAHA");
     }
 
     @Override

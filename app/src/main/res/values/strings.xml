@@ -117,7 +117,8 @@
 
     <!--MAPS-->
     <string name="search_addresses">Search an address or location.</string>
-
+    <string name="confirm_txt">Set this address as the location of your event?</string>
+    <string name="confirm">CONFIRM</string>
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
     <string name="explore_groups">EXPLORE GROUPS</string>
