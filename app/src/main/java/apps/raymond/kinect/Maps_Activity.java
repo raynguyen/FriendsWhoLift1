@@ -1,6 +1,7 @@
 package apps.raymond.kinect;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -21,7 +22,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,6 +40,7 @@ import java.util.List;
 //ToDo: Load the user's existing location storage from FireStore. Add markers to each location.
 public class Maps_Activity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
     private static final String TAG = "MapsActivity";
+    public static final String ADDRESS = "Address";
     private static final int LOCATION_REQUEST_CODE = 0;
     private static final float DEFAULT_ZOOM = 17.0f;
 
@@ -90,9 +91,6 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     }
 
     private void geoLocate(String query){
-        Log.i(TAG,"Why is this called twice?");
-        Log.i(TAG,"Searching for location of: " + query);
-
         Geocoder geocoder = new Geocoder(Maps_Activity.this);
         List<Address> list = new ArrayList<>();
         try{
@@ -202,7 +200,10 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         switch(i){
             case R.id.confirm_btn:
                 if(address!=null){
-
+                    Intent intent = new Intent();
+                    intent.putExtra(ADDRESS, address);
+                    setResult(RESULT_OK,intent);
+                    finish();
                 }
                 break;
             case R.id.cancel_btn:

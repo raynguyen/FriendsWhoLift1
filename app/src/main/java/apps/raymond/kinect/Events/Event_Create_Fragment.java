@@ -11,9 +11,11 @@
 package apps.raymond.kinect.Events;
 
 import android.animation.LayoutTransition;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -71,6 +73,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public static final String TAG = "Event_Create_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
     private static final int DIALOG_REQUEST_CODE = 21;
+    private static final int MAP_REQUEST_CODE = 22;
 
 
     private EventCreatedListener eventCreatedListener;
@@ -241,7 +244,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.expand_locations_btn:
                 Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
-                startActivity(mapIntent);
+                startActivityForResult(mapIntent,MAP_REQUEST_CODE);
                 break;
 
         }
@@ -416,7 +419,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         final Event_Model newEvent = new Event_Model(
                 FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                 nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                day2, privacy, tagsList, primesList, invitedSize);
+                day2, privacy, tagsList, primesList, invitedSize, address);
 
         viewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -449,6 +452,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         yesNoDialog.show(fm,null);
     }
 
+    Address address;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
@@ -458,6 +462,14 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 } else {
                     Log.i(TAG,"Resuming event creation.");
                 }
+                break;
+            case MAP_REQUEST_CODE:
+                if(resultCode == Activity.RESULT_OK){
+                    address = data.getParcelableExtra(Maps_Activity.ADDRESS);
+                    String addressStr = address.getAddressLine(0);
+                    locationTxt.setText(addressStr);
+                }
+                Toast.makeText(getContext(),"Returned from map activity!", Toast.LENGTH_LONG).show();
                 break;
         }
     }
