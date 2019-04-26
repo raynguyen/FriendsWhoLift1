@@ -11,8 +11,11 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +36,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Maps_Activity extends FragmentActivity implements OnMapReadyCallback {
+
+//ToDo: Load the user's existing location storage from FireStore. Add markers to each location.
+public class Maps_Activity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
     private static final String TAG = "MapsActivity";
     private static final int LOCATION_REQUEST_CODE = 0;
     private static final float DEFAULT_ZOOM = 17.0f;
@@ -41,7 +46,9 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     boolean locationGranted;
-    EditText addressSearch;
+    private EditText addressSearch;
+    private RelativeLayout mConfirmDialog;
+    private Button addLocationBtn, cancelBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +82,11 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
+        mConfirmDialog = findViewById(R.id.location_confirmation_dialog);
+        addLocationBtn = findViewById(R.id.confirm_btn);
+        cancelBtn = findViewById(R.id.cancel_btn);
+        addLocationBtn.setOnClickListener(this);
+        cancelBtn.setOnClickListener(this);
     }
 
     private void geoLocate(String query){
@@ -114,10 +124,19 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Toast.makeText(getBaseContext(),"Implement details. Show confirmation dialog.",Toast.LENGTH_LONG).show();
+                mConfirmDialog.setVisibility(View.VISIBLE);
                 return false;
             }
         });
         getDeviceLocation();
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(mConfirmDialog.getVisibility()==View.VISIBLE){
+                    mConfirmDialog.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     Location mLastLocation;
@@ -152,8 +171,9 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    private Address address;
     private void moveToLocation(List<Address> addresses){
-        Address address = addresses.get(0);
+        address = addresses.get(0);
         LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
         mMap.moveCamera(CameraUpdateFactory
                 .newLatLngZoom(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM));
@@ -176,5 +196,18 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch(i){
+            case R.id.confirm_btn:
+                if(address!=null){
 
+                }
+                break;
+            case R.id.cancel_btn:
+                mConfirmDialog.setVisibility(View.GONE);
+                break;
+        }
+    }
 }

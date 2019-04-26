@@ -46,7 +46,10 @@
         <RelativeLayout
             android:id="@+id/location_confirmation_dialog"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:clickable="true"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/confirmation_message"
@@ -55,9 +58,12 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:text="@string/confirm_txt"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"/>
 
             <Button
+                android:id="@+id/cancel_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/confirm_btn"

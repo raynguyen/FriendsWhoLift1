@@ -2,6 +2,7 @@ package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.location.Address;
 import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
@@ -127,6 +128,10 @@ public class Repository_ViewModel extends ViewModel {
 
     public Task<Void> declineGroupInvite(GroupBase group){
         return mRepository.declineGroupInvite(group);
+    }
+
+    public Task<Void> addLocation(Address address,String addressName){
+        return mRepository.addLocation(address,addressName);
     }
 
     public String testString(){

@@ -18,6 +18,7 @@
 package apps.raymond.kinect;
 
 import android.content.Context;
+import android.location.Address;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -36,6 +37,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -254,13 +256,12 @@ public class FireBaseRepository {
         return null;
     }
 
-    Task<Void> addLocation(){
+    Task<Void> addLocation(Address address, String addressName){
         CollectionReference locationCol = userCollection.document(userEmail).collection(LOCATIONS);
-
-        //locationCol.document()
-
-        return null;
+        GeoPoint geoPoint = new GeoPoint(address.getLatitude(),address.getLongitude());
+        return locationCol.document(addressName).set(geoPoint);
     }
+
     //*------------------------------------------EVENTS------------------------------------------*//
     /*
      * Creates a new Document in the Events collection. The Document is created as a Event_Model
