@@ -101,6 +101,8 @@
     <string name="event_exclusive">Exclusive</string>
     <string name="event_month">MONTH</string>
     <string name="event_day">DAY</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
     <string name="event_start">Start Time</string>
     <string name="event_end">End Time</string>
     <string name="create_event">Create Event</string>
@@ -108,6 +110,8 @@
     <string name="discovery_header">Discovery Options</string>
     <string name="event_visibility">Who can view this event?</string>
     <string name="enter_address">Where will this event be hosted?</string>
+    <string name="location_tbd">Location: TBD</string>
+    <string name="time_format">HH:MM</string>
     <string-array name="visibility_options">
         <item>Anyone</item>
         <item>Friends of invited guests</item>

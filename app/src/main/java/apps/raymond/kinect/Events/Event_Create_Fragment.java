@@ -52,10 +52,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import apps.raymond.kinect.Add_Users_Adapter;
 import apps.raymond.kinect.Core_Activity;
@@ -67,14 +65,17 @@ import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
-        DatePickerDialog.FetchDate, Add_Users_Adapter.CheckProfileInterface, BackPressListener,
+        Add_Users_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     public static final String TAG = "Event_Create_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
-    private static final int DIALOG_REQUEST_CODE = 21;
+    private static final String SEQUENCE_START = "StartDate";
+    private static final String SEQUENCE_END = "EndDate";
+    private static final int CANCEL_REQUEST_CODE = 21;
     private static final int MAP_REQUEST_CODE = 22;
-
+    private static final int START_DATE_REQUEST = 23;
+    private static final int END_DATE_REQUEST = 24;
 
     private EventCreatedListener eventCreatedListener;
     public interface EventCreatedListener {
@@ -119,7 +120,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
     EditText nameTxt, descTxt, tagsTxt;
-    TextView month1_txt, day1_txt, month2_txt, day2_txt,tagsContainer;
+    TextView startDate, endDate, startTime, endTime ,tagsContainer;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
@@ -138,8 +139,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         nameTxt = view.findViewById(R.id.event_name_txt);
         descTxt = view.findViewById(R.id.event_desc_txt);
+        startDate = view.findViewById(R.id.start_date);
+        startDate.setOnClickListener(this);
+        endDate = view.findViewById(R.id.end_date);
+        endDate.setOnClickListener(this);
 
-        month1_txt = view.findViewById(R.id.month1_txt);
+        /*month1_txt = view.findViewById(R.id.month1_txt);
         day1_txt = view.findViewById(R.id.day1_txt);
         month2_txt = view.findViewById(R.id.month2_txt);
         day2_txt = view.findViewById(R.id.day2_txt);
@@ -147,7 +152,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         Button startBtn = view.findViewById(R.id.start_btn);
         startBtn.setOnClickListener(this);
         Button endBtn = view.findViewById(R.id.end_btn);
-        endBtn.setOnClickListener(this);
+        endBtn.setOnClickListener(this);*/
 
         visibilitySpinner = view.findViewById(R.id.privacy_spinner);
         ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_item_layout, getResources().getStringArray(R.array.visibility_options) ) {
@@ -236,16 +241,23 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.expand_users_list:
                 break;
+            case R.id.expand_locations_btn:
+                Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
+                startActivityForResult(mapIntent,MAP_REQUEST_CODE);
+                break;
+            case R.id.start_date:
+                datePickerDialog(SEQUENCE_START);
+                break;
+            case R.id.end_date:
+                datePickerDialog(SEQUENCE_END);
+                break;
+                /*
             case R.id.start_btn:
                 datePickerDialog(DatePickerDialog.SEQUENCE_START);
                 break;
             case R.id.end_btn:
                 datePickerDialog(DatePickerDialog.SEQUENCE_END);
-                break;
-            case R.id.expand_locations_btn:
-                Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
-                startActivityForResult(mapIntent,MAP_REQUEST_CODE);
-                break;
+                break;*/
 
         }
     }
@@ -305,25 +317,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     private void datePickerDialog(String s){
         DialogFragment datePicker = DatePickerDialog.newInstance(s);
-        datePicker.setTargetFragment(Event_Create_Fragment.this, DIALOG_REQUEST_CODE);
+        switch (s){
+            case SEQUENCE_START:
+                datePicker.setTargetFragment(Event_Create_Fragment.this, START_DATE_REQUEST);
+                break;
+            case SEQUENCE_END:
+                datePicker.setTargetFragment(Event_Create_Fragment.this, END_DATE_REQUEST);
+                break;
+        }
         datePicker.show(fm, DATE_PICKER_FRAG);
-    }
-
-    String month1, day1, month2, day2;
-    @Override
-    public void returnStartDate(int year, int month, int day) {
-        day1 = String.format(Locale.getDefault(),"%s",day);
-        month1 = new DateFormatSymbols().getMonths()[month];
-        month1_txt.setText(month1);
-        day1_txt.setText(day1);
-    }
-
-    @Override
-    public void returnEndDate(int year, int month, int day) {
-        day2 = String.format(Locale.getDefault(),"%s",day);
-        month2 = new DateFormatSymbols().getMonths()[month];
-        month2_txt.setText(month2);
-        day2_txt.setText(day2);
     }
 
     /**
@@ -359,7 +361,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     /**
-     * Calls upon the FireBaseRepository to return a query of all the user documents in FireStore.
+     * Calls upon the FirebaseLayer to return a query of all the user documents in FireStore.
      * This needs to be changed so that we only query an appropriate set of users that are set and
      * eligible for event invitations.
      */
@@ -414,25 +416,37 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return check;
     }
 
+    Event_Model event;
     private void createEvent(){
+        String addressLine = null;
         int invitedSize = inviteUsersList.size();
-        final Event_Model newEvent = new Event_Model(
-                FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                day2, privacy, tagsList, primesList, invitedSize, address);
+        double addressLat = 0;
+        double addressLng = 0;
 
-        viewModel.createEvent(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+        if(address !=null){
+            addressLine = address.getFeatureName() + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
+            addressLat = address.getLatitude();
+            addressLng = address.getLongitude();
+            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                    nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
+                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng);
+        } else {
+            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                    nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
+                    day2, privacy, tagsList, primesList, invitedSize);
+        }
+
+
+        viewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
-                    Log.i(TAG,"Successfully created event.");
-                    Toast.makeText(getContext(),"Created event " + newEvent.getName(),Toast.LENGTH_SHORT).show();
-                    viewModel.sendEventInvites(newEvent,inviteUsersList);
-                    eventCreatedListener.notifyEventCreated(newEvent);
+                    Toast.makeText(getContext(),"Created event " + event.getName(),Toast.LENGTH_SHORT).show();
+                    viewModel.sendEventInvites(event,inviteUsersList);
+                    eventCreatedListener.notifyEventCreated(event);
                     fm.popBackStack();
                 } else {
-                    Log.w(TAG,"Error creating event. " + task.getException());
                     Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -452,25 +466,49 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         yesNoDialog.show(fm,null);
     }
 
-    Address address;
+    Address address = null;
+    String testDay, testMonth, testDate;
+    String month1, day1, month2, day2;
+    int testYear;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Bundle args = null;
+        try{
+            args = data.getExtras();
+        } catch (NullPointerException npe){
+            Log.w(TAG,"There is no data returned from activity.",npe);
+        }
+
         switch (requestCode){
-            case DIALOG_REQUEST_CODE:
+            case CANCEL_REQUEST_CODE:
                 if(resultCode == YesNoDialog.POS_RESULT){
                     fm.popBackStack();
-                } else {
-                    Log.i(TAG,"Resuming event creation.");
                 }
                 break;
             case MAP_REQUEST_CODE:
                 if(resultCode == Activity.RESULT_OK){
                     address = data.getParcelableExtra(Maps_Activity.ADDRESS);
+                    Log.i(TAG,"Address: "+address.getAddressLine(0));
+                    Log.i(TAG,"Address: "+address.toString());
                     String addressStr = address.getAddressLine(0);
                     locationTxt.setText(addressStr);
                 }
                 Toast.makeText(getContext(),"Returned from map activity!", Toast.LENGTH_LONG).show();
                 break;
+            case START_DATE_REQUEST:
+                Log.w(TAG,"Start result from date picker dialog.");
+                if(resultCode==Activity.RESULT_OK && args!=null){
+                    testDay = args.getString(DatePickerDialog.DAY);
+                    testDate = args.getString(DatePickerDialog.DATE);
+                    testMonth = args.getString(DatePickerDialog.MONTH);
+                    testYear = args.getInt(DatePickerDialog.YEAR);
+
+                    String startString = testDay + " " + testDate +", " + testMonth + " " + testYear; //Todo: Research simpledateformat or other means.
+                    startDate.setText(startString);
+                }
+
+            case END_DATE_REQUEST:
+                Log.w(TAG,"End result from date picker dialog.");
         }
     }
 

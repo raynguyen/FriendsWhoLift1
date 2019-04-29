@@ -58,91 +58,87 @@
                 android:layout_height="wrap_content"/>
         </android.support.design.widget.TextInputLayout>
 
-        <FrameLayout
-            android:id="@+id/date_layout"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/date_layout2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:gravity="center_horizontal">
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/start_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_start"
+                android:textSize="22sp"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/start_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"/>
-                <Button
-                    android:id="@+id/end_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:id="@+id/start_date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="2">
-                <LinearLayout
-                    android:id="@+id/start_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_start"
-                        android:padding="12dp"/>
-                    <TextView
-                        android:id="@+id/month1_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_month"/>
-                    <TextView
-                        android:id="@+id/day1_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_day"
-                        android:layout_marginBottom="12dp"/>
-                </LinearLayout>
+                android:layout_below="@id/start_desc"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
 
-                <LinearLayout
-                    android:id="@+id/end_layout"
+                <TextView
+                    android:id="@+id/start_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/start_date"
+                    android:layout_weight="1"
+                    style="@style/EventDateText"/>
+
+                <TextView
+                    android:id="@+id/start_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_end"
-                        android:padding="12dp"/>
-                    <TextView
-                        android:id="@+id/month2_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_month"/>
-                    <TextView
-                        android:id="@+id/day2_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_day"
-                        android:layout_marginBottom="12dp"/>
-                </LinearLayout>
+                    android:hint="@string/time_format"
+                    style="@style/EventDateText"/>
             </LinearLayout>
-        </FrameLayout>
+
+            <TextView
+                android:id="@+id/end_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_end"
+                android:textSize="22sp"
+                android:layout_below="@id/start_date_layout"
+                android:layout_marginTop="12dp"/>
+
+            <LinearLayout
+                android:id="@+id/end_date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/end_desc"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <TextView
+                    android:id="@+id/end_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/end_date"
+                    android:layout_weight="1"
+                    style="@style/EventDateText"/>
+
+                <TextView
+                    android:id="@+id/end_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/time_format"
+                    style="@style/EventDateText"/>
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/discovery_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/date_layout"
+            app:layout_constraintTop_toBottomOf="@id/date_layout2"
             android:textSize="26sp"
             android:text="@string/discovery_header"
             android:clickable="false"
@@ -311,7 +307,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/date_layout"
                 android:textSize="26sp"
                 android:paddingTop="12dp"
                 android:text="@string/invite_users"
@@ -375,3 +370,85 @@
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
+
+<!--
+<FrameLayout
+android:id="@+id/date_layout"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+app:layout_constraintTop_toBottomOf="@id/event_desc_txt_layout"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+android:gravity="center_horizontal"
+android:visibility="gone">
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:visibility="gone">
+    <Button
+        android:id="@+id/start_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"/>
+    <Button
+        android:id="@+id/end_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:weightSum="2">
+    <LinearLayout
+        android:id="@+id/start_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_start"
+            android:padding="12dp"/>
+        <TextView
+            android:id="@+id/month1_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_month"/>
+        <TextView
+            android:id="@+id/day1_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_day"
+            android:layout_marginBottom="12dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/end_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_end"
+            android:padding="12dp"/>
+        <TextView
+            android:id="@+id/month2_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_month"/>
+        <TextView
+            android:id="@+id/day2_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_day"
+            android:layout_marginBottom="12dp"/>
+    </LinearLayout>
+</LinearLayout>
+</FrameLayout>-->

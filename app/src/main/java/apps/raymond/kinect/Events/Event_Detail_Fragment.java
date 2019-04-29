@@ -115,20 +115,14 @@ public class Event_Detail_Fragment extends Fragment implements
 
         toolbarSearch = requireActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
-        editFlipper = view.findViewById(R.id.event_edit_flipper);
+        //editFlipper = view.findViewById(R.id.event_edit_flipper);
         eventName = view.findViewById(R.id.event_title);
         eventDesc = view.findViewById(R.id.event_desc);
         eventStart = view.findViewById(R.id.event_start);
         eventEnd = view.findViewById(R.id.event_end);
 
+        updateBar = view.findViewById(R.id.update_progress_bar);
         creator = event.getCreator();
-        if(creator.equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-            nameEdit = view.findViewById(R.id.event_name_edit);
-            descEdit = view.findViewById(R.id.event_desc_edit);
-            startEdit = view.findViewById(R.id.event_start_write);
-            endEdit = view.findViewById(R.id.event_end_write);
-            updateBar = view.findViewById(R.id.update_progress_bar);
-        }
 
         updateViews();
         Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);

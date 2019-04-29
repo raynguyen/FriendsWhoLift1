@@ -5,15 +5,15 @@ import android.arch.lifecycle.ViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 
-import apps.raymond.kinect.FireBaseRepository;
+import apps.raymond.kinect.FirebaseLayer;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 class LoginViewModel extends ViewModel {
 
-    private FireBaseRepository mRepository;
+    private FirebaseLayer mRepository;
 
     LoginViewModel(){
-        this.mRepository = new FireBaseRepository();
+        this.mRepository = new FirebaseLayer();
     }
 
     Task<Void> createUserByEmail(UserModel userModel, String password){

@@ -55,8 +55,8 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.UserProfile.UserModel;
 
-public class FireBaseRepository {
-    private static final String TAG = "FireBaseRepository";
+public class FirebaseLayer {
+    private static final String TAG = "FirebaseLayer";
     private static final String GROUPS = "Groups";
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
@@ -85,7 +85,7 @@ public class FireBaseRepository {
     private UserModel curUserModel;
 
     //ToDo: can make sure this is only called in CoreActivity.
-    public FireBaseRepository() {
+    public FirebaseLayer() {
         try {
             this.userEmail = currentUser.getEmail();
             getCurrentUser().addOnCompleteListener(new OnCompleteListener<UserModel>() {

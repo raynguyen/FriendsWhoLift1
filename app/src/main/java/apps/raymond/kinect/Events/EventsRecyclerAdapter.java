@@ -72,6 +72,11 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             vh.attendingCount.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
             vh.invitedCount.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
             vh.creator.setText(currEvent.getCreator());
+            if(currEvent.getAddress()!=null){
+                vh.location.setText(currEvent.getAddress());
+            } else {
+                vh.location.setText(R.string.location_tbd);
+            }
 
             List<String> primes = currEvent.getPrimes();
             if(primes!=null){

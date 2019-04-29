@@ -4,6 +4,7 @@ package apps.raymond.kinect.Events;
 import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +31,12 @@ public class Event_Model implements Parcelable{
         }
     };
 
-    public Event_Model(){
-        // Empty constructor as required by FireBase.
-    }
-
-    private String creator, originalName, name, desc, month1, month2, day1, day2;
+    private String creator, originalName, name, desc, month1, month2, day1, day2, address;
+    private double lat, lng;
     private int privacy;
     private List<String> tags, primes;
     private int attending = 1;
     private int invited;
-    private Address address;
 
     @SuppressWarnings("unchecked")
     private Event_Model(Parcel in){
@@ -56,11 +53,37 @@ public class Event_Model implements Parcelable{
         primes = in.readArrayList(null);
         attending = in.readInt();
         invited = in.readInt();
-        address = in.readParcelable(getClass().getClassLoader());
+        address = in.readString();
+        lat = in.readDouble();
+        lng = in.readDouble();
     }
 
-    public Event_Model(String creator, String name, String desc, String month1, String day1, String month2, String day2, int privacy,
-                       ArrayList<String> tags, ArrayList<String> primes, int invited, Address address){
+    public Event_Model(){
+        // Empty constructor as required by FireBase.
+    }
+
+    public Event_Model(String creator, String name, String desc, String month1, String day1,
+                       String month2, String day2, int privacy, ArrayList<String> tags,
+                       ArrayList<String> primes, int invited){
+        this.creator = creator;
+        this.name = name;
+        this.originalName = name;
+        this.desc = desc;
+        this.month1 = month1;
+        this.day1 = day1;
+        this.month2 = month2;
+        this.day2 = day2;
+        this.privacy = privacy;
+        this.tags = tags;
+        this.primes = primes;
+        attending = 1;
+        this.invited = invited;
+        address = "TBD";
+    }
+
+    public Event_Model(String creator, String name, String desc, String month1, String day1,
+                       String month2, String day2, int privacy, ArrayList<String> tags,
+                       ArrayList<String> primes, int invited, String address, double lat, double lng){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
@@ -75,6 +98,8 @@ public class Event_Model implements Parcelable{
         attending = 1;
         this.invited = invited;
         this.address = address;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public String getCreator(){
@@ -180,12 +205,28 @@ public class Event_Model implements Parcelable{
         return invited;
     }
 
-    public void setAddress(Address address){
+    public void setAddress(String address){
         this.address = address;
     }
 
-    public Address getAddress(){
+    public String getAddress(){
         return address;
+    }
+
+    public void setLat(double lat){
+        this.lat = lat;
+    }
+
+    public double getLat(){
+        return lat;
+    }
+
+    public void setLng(double lng){
+        this.lng = lng;
+    }
+
+    public double getLng(){
+        return lng;
     }
 
     @Override
@@ -208,6 +249,8 @@ public class Event_Model implements Parcelable{
         dest.writeList(primes);
         dest.writeInt(attending);
         dest.writeInt(invited);
-        dest.writeParcelable(address,0);
+        dest.writeString(address);
+        dest.writeDouble(lat);
+        dest.writeDouble(lng);
     }
 }

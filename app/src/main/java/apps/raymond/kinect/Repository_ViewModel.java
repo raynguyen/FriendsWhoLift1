@@ -16,10 +16,10 @@ import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Repository_ViewModel extends ViewModel {
-    private FireBaseRepository mRepository;
+    private FirebaseLayer mRepository;
 
     public Repository_ViewModel(){
-        this.mRepository = new FireBaseRepository();
+        this.mRepository = new FirebaseLayer();
     }
 
     public String getUserEmail(){
