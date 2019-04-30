@@ -15,29 +15,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class DatePickerDialog extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
-    private static final String SEQUENCE_TAG = "Sequence";
     public static final String MONTH = "Month";
     public static final String DAY = "Day";
     public static final String YEAR = "Year";
     public static final String DATE = "Date";
-
-    public static DatePickerDialog newInstance(String s){
-        DatePickerDialog dialog = new DatePickerDialog();
-        Bundle args = new Bundle();
-        args.putString(SEQUENCE_TAG, s);
-        dialog.setArguments(args);
-        return dialog;
-    }
-
-    String s; //A flag to determine if we will be returning the start or end date for the event.
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = this.getArguments();
-        if(args !=null){
-            this.s = args.getString(SEQUENCE_TAG);
-        }
-    }
 
     @NonNull
     @Override

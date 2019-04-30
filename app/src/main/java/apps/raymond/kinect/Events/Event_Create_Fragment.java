@@ -70,12 +70,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     public static final String TAG = "Event_Create_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
+    private static final String TIME_PICKER_FRAG = "TimePicker";
     private static final String SEQUENCE_START = "StartDate";
     private static final String SEQUENCE_END = "EndDate";
     private static final int CANCEL_REQUEST_CODE = 21;
     private static final int MAP_REQUEST_CODE = 22;
     private static final int START_DATE_REQUEST = 23;
     private static final int END_DATE_REQUEST = 24;
+    private static final int START_TIME_REQUEST = 25;
+    private static final int END_TIME_REQUEST = 26;
 
     private EventCreatedListener eventCreatedListener;
     public interface EventCreatedListener {
@@ -143,7 +146,10 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         startDate.setOnClickListener(this);
         endDate = view.findViewById(R.id.end_date);
         endDate.setOnClickListener(this);
-
+        startTime = view.findViewById(R.id.start_time);
+        startTime.setOnClickListener(this);
+        endTime = view.findViewById(R.id.end_time);
+        endTime.setOnClickListener(this);
         /*month1_txt = view.findViewById(R.id.month1_txt);
         day1_txt = view.findViewById(R.id.day1_txt);
         month2_txt = view.findViewById(R.id.month2_txt);
@@ -251,13 +257,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             case R.id.end_date:
                 datePickerDialog(SEQUENCE_END);
                 break;
-                /*
-            case R.id.start_btn:
-                datePickerDialog(DatePickerDialog.SEQUENCE_START);
+            case R.id.start_time:
+                timePickerDialog(SEQUENCE_START);
                 break;
-            case R.id.end_btn:
-                datePickerDialog(DatePickerDialog.SEQUENCE_END);
-                break;*/
+            case R.id.end_time:
+                timePickerDialog(SEQUENCE_END);
+                break;
 
         }
     }
@@ -316,7 +321,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private void datePickerDialog(String s){
-        DialogFragment datePicker = DatePickerDialog.newInstance(s);
+        DialogFragment datePicker = new DatePickerDialog();
         switch (s){
             case SEQUENCE_START:
                 datePicker.setTargetFragment(Event_Create_Fragment.this, START_DATE_REQUEST);
@@ -326,6 +331,19 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 break;
         }
         datePicker.show(fm, DATE_PICKER_FRAG);
+    }
+
+    private void timePickerDialog(String s){
+        DialogFragment timeFragment = new TimePickerDialog();
+        switch(s){
+            case SEQUENCE_START:
+                timeFragment.setTargetFragment(Event_Create_Fragment.this,START_TIME_REQUEST);
+                break;
+            case SEQUENCE_END:
+                timeFragment.setTargetFragment(Event_Create_Fragment.this,END_TIME_REQUEST);
+                break;
+        }
+        timeFragment.show(fm,TIME_PICKER_FRAG);
     }
 
     /**
@@ -467,49 +485,55 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     Address address = null;
-    String testDay, testMonth, testDate;
-    String month1, day1, month2, day2;
+    String dayOfWeek, month1, day1, month2, day2;
     int testYear;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Bundle args = null;
-        try{
-            args = data.getExtras();
-        } catch (NullPointerException npe){
-            Log.w(TAG,"There is no data returned from activity.",npe);
-        }
+        if(resultCode==Activity.RESULT_OK || resultCode==YesNoDialog.POS_RESULT){
+            Bundle args = null;
+            try{
+                args = data.getExtras();
+            } catch (NullPointerException npe){
+                Log.i(TAG,"No data returned from activity.");
+            }
 
-        switch (requestCode){
-            case CANCEL_REQUEST_CODE:
-                if(resultCode == YesNoDialog.POS_RESULT){
+            switch (requestCode){
+                case CANCEL_REQUEST_CODE:
                     fm.popBackStack();
-                }
-                break;
-            case MAP_REQUEST_CODE:
-                if(resultCode == Activity.RESULT_OK){
+                    break;
+                case MAP_REQUEST_CODE:
                     address = data.getParcelableExtra(Maps_Activity.ADDRESS);
                     Log.i(TAG,"Address: "+address.getAddressLine(0));
                     Log.i(TAG,"Address: "+address.toString());
                     String addressStr = address.getAddressLine(0);
                     locationTxt.setText(addressStr);
-                }
-                Toast.makeText(getContext(),"Returned from map activity!", Toast.LENGTH_LONG).show();
-                break;
-            case START_DATE_REQUEST:
-                Log.w(TAG,"Start result from date picker dialog.");
-                if(resultCode==Activity.RESULT_OK && args!=null){
-                    testDay = args.getString(DatePickerDialog.DAY);
-                    testDate = args.getString(DatePickerDialog.DATE);
-                    testMonth = args.getString(DatePickerDialog.MONTH);
+                    break;
+                case START_DATE_REQUEST:
+                    dayOfWeek = args.getString(DatePickerDialog.DAY);
                     testYear = args.getInt(DatePickerDialog.YEAR);
-
-                    String startString = testDay + " " + testDate +", " + testMonth + " " + testYear; //Todo: Research simpledateformat or other means.
+                    day1 = args.getString(DatePickerDialog.DATE);
+                    month1 = args.getString(DatePickerDialog.MONTH);
+                    String startString = dayOfWeek + " " + day1 +", " + month1 + " " + testYear; //Todo: Research simpledateformat or other means.
                     startDate.setText(startString);
-                }
+                    break;
+                case END_DATE_REQUEST:
+                    dayOfWeek = args.getString(DatePickerDialog.DAY);
+                    testYear = args.getInt(DatePickerDialog.YEAR);
+                    day2 = args.getString(DatePickerDialog.DATE);
+                    month2 = args.getString(DatePickerDialog.MONTH);
+                    String endString = dayOfWeek + " " + day2 +", " + month2 + " " + testYear; //Todo: Research simpledateformat or other means.
+                    endDate.setText(endString);
+                    break;
+                case START_TIME_REQUEST:
+                    Log.i(TAG,"Start time returned");
+                    break;
+                case END_TIME_REQUEST:
+                    Log.i(TAG,"End time returned.");
+                    break;
+            }
 
-            case END_DATE_REQUEST:
-                Log.w(TAG,"End result from date picker dialog.");
         }
+
     }
 
     @Override
