@@ -8,17 +8,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class DatePickerDialog extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
-    public static final String MONTH = "Month";
-    public static final String DAY = "Day";
+    public static final String DAY = "DayOfMonth";
+    public static final String MONTH = "MonthOfYear";
     public static final String YEAR = "Year";
-    public static final String DATE = "Date";
+    public static final String DATESTRING = "DateString";
+    public static final String DATELONG = "DateLong";
 
     @NonNull
     @Override
@@ -34,22 +38,27 @@ public class DatePickerDialog extends DialogFragment implements android.app.Date
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        Calendar indate = new Calendar.Builder()
-                .setDate(year, monthOfYear, dayOfMonth).build();
-        String dayOfWeek = DateFormat.format("EE",indate).toString(); //Day of week string
-        String date = String.format(Locale.getDefault(),"%s",dayOfMonth); //The numeric day
-        String month = new DateFormatSymbols().getMonths()[monthOfYear];
-
         if(getTargetFragment()!=null){
+            String month = new DateFormatSymbols().getMonths()[monthOfYear];
+            Log.i("DatePicker", "monthOfYear returned: "+ monthOfYear);
+            Log.i("DatePicker","Returned month name: "+month);
+
             Intent intent = new Intent();
             Bundle data = new Bundle();
-            data.putString(DAY,dayOfWeek);
-            data.putString(DATE,date);
-            data.putString(MONTH,month);
+            data.putInt(MONTH,monthOfYear);
+            data.putInt(DAY,dayOfMonth);
             data.putInt(YEAR,year);
+            try {
+                String dateString = dayOfMonth + "." + monthOfYear + "." + year; //String formatted in dd/mm/yyyy
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+                Date _date = sdf.parse(dateString);
+                data.putString(DATESTRING,dateString);
+                data.putLong(DATELONG,_date.getTime());
+            } catch (Exception e){
+                Log.w("DatePickerDialog","Unexpected error: ",e);
+            }
             intent.putExtras(data);
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
         }
-
     }
 }

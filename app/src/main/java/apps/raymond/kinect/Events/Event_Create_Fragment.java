@@ -52,7 +52,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import apps.raymond.kinect.Add_Users_Adapter;
@@ -98,6 +101,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private Repository_ViewModel viewModel;
+    Event_Model event;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +109,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         viewModel = ViewModelProviders.of(getActivity()).get(Repository_ViewModel.class);
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
     }
 
     public static Event_Create_Fragment newInstance(){
@@ -123,7 +128,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
     EditText nameTxt, descTxt, tagsTxt;
-    TextView startDate, endDate, startTime, endTime ,tagsContainer;
+    TextView startDateTxt, endDateTxt, startTimeTxt, endTimeTxt,tagsContainer;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
@@ -142,23 +147,14 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         nameTxt = view.findViewById(R.id.event_name_txt);
         descTxt = view.findViewById(R.id.event_desc_txt);
-        startDate = view.findViewById(R.id.start_date);
-        startDate.setOnClickListener(this);
-        endDate = view.findViewById(R.id.end_date);
-        endDate.setOnClickListener(this);
-        startTime = view.findViewById(R.id.start_time);
-        startTime.setOnClickListener(this);
-        endTime = view.findViewById(R.id.end_time);
-        endTime.setOnClickListener(this);
-        /*month1_txt = view.findViewById(R.id.month1_txt);
-        day1_txt = view.findViewById(R.id.day1_txt);
-        month2_txt = view.findViewById(R.id.month2_txt);
-        day2_txt = view.findViewById(R.id.day2_txt);
-
-        Button startBtn = view.findViewById(R.id.start_btn);
-        startBtn.setOnClickListener(this);
-        Button endBtn = view.findViewById(R.id.end_btn);
-        endBtn.setOnClickListener(this);*/
+        startDateTxt = view.findViewById(R.id.start_date);
+        startDateTxt.setOnClickListener(this);
+        endDateTxt = view.findViewById(R.id.end_date);
+        endDateTxt.setOnClickListener(this);
+        startTimeTxt = view.findViewById(R.id.start_time);
+        startTimeTxt.setOnClickListener(this);
+        endTimeTxt = view.findViewById(R.id.end_time);
+        endTimeTxt.setOnClickListener(this);
 
         visibilitySpinner = view.findViewById(R.id.privacy_spinner);
         ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_item_layout, getResources().getStringArray(R.array.visibility_options) ) {
@@ -417,7 +413,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         }
     }
 
-    /*
+    /**
      * This method is called before creating an Event instance.
      * Checks that all fields are filled and are valid inputs.
      * True if fields require attention.
@@ -434,26 +430,35 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return check;
     }
 
-    Event_Model event;
+    String month1, day1, month2, day2;
+    int startDay, startMonth, startYear, endDay, endMonth, endYear;
+    Long startLong, endLong, startTimeLong, endTimeLong;
+    Date startDate, endDate;
+    private void formatDates(){
+        Date startTime, endTime;
+        startTime = new Date(startLong);
+        endTime = new Date(endLong);
+
+    }
+
     private void createEvent(){
         String addressLine = null;
         int invitedSize = inviteUsersList.size();
         double addressLat = 0;
         double addressLng = 0;
-
+        formatDates();
         if(address !=null){
             addressLine = address.getFeatureName() + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
             addressLat = address.getLatitude();
             addressLng = address.getLongitude();
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng);
+                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng, startDate, endDate);
         } else {
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize);
+                    day2, privacy, tagsList, primesList, invitedSize, startDate, endDate);
         }
-
 
         viewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -485,8 +490,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     Address address = null;
-    String dayOfWeek, month1, day1, month2, day2;
-    int testYear;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode==Activity.RESULT_OK || resultCode==YesNoDialog.POS_RESULT){
@@ -509,32 +512,43 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                     locationTxt.setText(addressStr);
                     break;
                 case START_DATE_REQUEST:
-                    dayOfWeek = args.getString(DatePickerDialog.DAY);
-                    testYear = args.getInt(DatePickerDialog.YEAR);
-                    day1 = args.getString(DatePickerDialog.DATE);
-                    month1 = args.getString(DatePickerDialog.MONTH);
-                    String startString = dayOfWeek + " " + day1 +", " + month1 + " " + testYear; //Todo: Research simpledateformat or other means.
-                    startDate.setText(startString);
+                    setDates(args, requestCode);
                     break;
                 case END_DATE_REQUEST:
-                    dayOfWeek = args.getString(DatePickerDialog.DAY);
-                    testYear = args.getInt(DatePickerDialog.YEAR);
-                    day2 = args.getString(DatePickerDialog.DATE);
-                    month2 = args.getString(DatePickerDialog.MONTH);
-                    String endString = dayOfWeek + " " + day2 +", " + month2 + " " + testYear; //Todo: Research simpledateformat or other means.
-                    endDate.setText(endString);
+                    setDates(args, requestCode);
                     break;
                 case START_TIME_REQUEST:
-                    startTime.setText(args.getString(TimePickerDialog.TIME_12HR));
-                    Log.i(TAG,"Returned from date picker with 24hr: "+ args.getString(TimePickerDialog.TIME_24HR));
+                    startTimeTxt.setText(args.getString(TimePickerDialog.TIME_12HR));
+                    startTimeLong = args.getLong(TimePickerDialog.TIMELONG);
                     break;
                 case END_TIME_REQUEST:
-                    endTime.setText(args.getString(TimePickerDialog.TIME_12HR));
+                    endTimeTxt.setText(args.getString(TimePickerDialog.TIME_12HR));
+                    endTimeLong = args.getLong(TimePickerDialog.TIMELONG);
                     break;
             }
-
         }
+    }
 
+
+    private void setDates(Bundle args, int requestCode){
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
+
+        switch(requestCode){
+            case START_DATE_REQUEST:
+                startDay = args.getInt(DatePickerDialog.DAY);
+                startMonth = args.getInt(DatePickerDialog.MONTH);
+                startYear = args.getInt(DatePickerDialog.YEAR);
+                startLong = args.getLong(DatePickerDialog.DATELONG);
+                startDateTxt.setText(sdf.format(new Date(startLong)));
+                break;
+            case END_DATE_REQUEST:
+                endDay = args.getInt(DatePickerDialog.DAY);
+                endMonth = args.getInt(DatePickerDialog.MONTH);
+                endYear = args.getInt(DatePickerDialog.YEAR);
+                endLong = args.getLong(DatePickerDialog.DATELONG);
+                endDateTxt.setText(sdf.format(new Date(endLong)));
+                break;
+        }
     }
 
     @Override
