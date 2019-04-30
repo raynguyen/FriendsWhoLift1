@@ -525,10 +525,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                     endDate.setText(endString);
                     break;
                 case START_TIME_REQUEST:
-                    Log.i(TAG,"Start time returned");
+                    startTime.setText(args.getString(TimePickerDialog.TIME_12HR));
+                    Log.i(TAG,"Returned from date picker with 24hr: "+ args.getString(TimePickerDialog.TIME_24HR));
                     break;
                 case END_TIME_REQUEST:
-                    Log.i(TAG,"End time returned.");
+                    endTime.setText(args.getString(TimePickerDialog.TIME_12HR));
                     break;
             }
 

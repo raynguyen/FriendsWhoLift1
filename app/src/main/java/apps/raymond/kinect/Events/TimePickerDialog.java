@@ -2,6 +2,7 @@ package apps.raymond.kinect.Events;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,13 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class TimePickerDialog extends DialogFragment implements android.app.TimePickerDialog.OnTimeSetListener {
+    public static final String TIME_24HR = "24HrTime";
+    public static final String TIME_12HR = "12HrTime";
 
     @NonNull
     @Override
@@ -19,7 +26,22 @@ public class TimePickerDialog extends DialogFragment implements android.app.Time
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        Log.i("TimePickerdialog","The set time returned: "+hourOfDay + ":"+minute);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,null);
+        String unformattedTime = String.format(Locale.getDefault(),"%02d:%02d",hourOfDay,minute);
+        try{
+            Intent data = new Intent();
+            SimpleDateFormat _24HrFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat _12HrFormat = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
+            Date _24HrDate = _24HrFormat.parse(unformattedTime);
+            String _24HrTime = _24HrFormat.format(_24HrDate);
+            String _12HrTime = _12HrFormat.format(_24HrDate);
+
+            data.putExtra(TIME_24HR,_24HrTime);
+            data.putExtra(TIME_12HR,_12HrTime);
+
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+        } catch (Exception e){
+            Log.d("TimePicker","Error is : " + e);
+        }
+
     }
 }
