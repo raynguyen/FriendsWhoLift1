@@ -8,11 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.DatePicker;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,10 +53,10 @@ public class DatePickerFragment extends DialogFragment implements android.app.Da
         int day = c.get(Calendar.DAY_OF_MONTH);
         // Create a new instance of DatePickerFragment and return it
         DatePickerDialog dialog = new DatePickerDialog(requireActivity(), this, year, month, day);
-        if(getTargetRequestCode()==Event_Create_Fragment.START_DATE_REQUEST){
+        if(getTargetRequestCode()== EventCreateFragment.START_DATE_REQUEST){
             dialog.getDatePicker().setMinDate(c.getTimeInMillis());
         }
-        if(getTargetRequestCode()==Event_Create_Fragment.END_DATE_REQUEST){
+        if(getTargetRequestCode()== EventCreateFragment.END_DATE_REQUEST){
             dialog.getDatePicker().setMinDate(minDate);
         }
         return dialog;

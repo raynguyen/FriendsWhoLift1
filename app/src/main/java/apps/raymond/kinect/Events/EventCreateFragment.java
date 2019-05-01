@@ -66,11 +66,11 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
-public class Event_Create_Fragment extends Fragment implements View.OnClickListener,
+public class EventCreateFragment extends Fragment implements View.OnClickListener,
         Add_Users_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
-    public static final String TAG = "Event_Create_Fragment";
+    public static final String TAG = "EventCreateFragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
     private static final String TIME_PICKER_FRAG = "TimePicker";
     private static final String SEQUENCE_START = "StartDate";
@@ -110,8 +110,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
-    public static Event_Create_Fragment newInstance(){
-        return new Event_Create_Fragment();
+    public static EventCreateFragment newInstance(){
+        return new EventCreateFragment();
     }
 
     @Nullable
@@ -178,7 +178,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
         inviteUsersLayout = view.findViewById(R.id.invite_users_layout);
 
-        locationTxt = view.findViewById(R.id.location_txt);
+        locationTxt = view.findViewById(R.id.text_location);
         locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
         locationOptionsBtn.setOnClickListener(this);
         initializeLocations();
@@ -319,12 +319,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         switch (s){
             case SEQUENCE_START:
                 DatePickerFragment datePickerFragment = new DatePickerFragment();
-                datePickerFragment.setTargetFragment(Event_Create_Fragment.this,START_DATE_REQUEST);
+                datePickerFragment.setTargetFragment(EventCreateFragment.this,START_DATE_REQUEST);
                 datePickerFragment.show(fm,DATE_PICKER_FRAG);
                 break;
             case SEQUENCE_END:
                 DatePickerFragment datePicker = DatePickerFragment.init(startDateLong);
-                datePicker.setTargetFragment(Event_Create_Fragment.this, END_DATE_REQUEST);
+                datePicker.setTargetFragment(EventCreateFragment.this, END_DATE_REQUEST);
                 datePicker.show(fm, DATE_PICKER_FRAG);
                 break;
         }
@@ -335,10 +335,10 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         DialogFragment timeFragment = new TimePickerDialog();
         switch(s){
             case SEQUENCE_START:
-                timeFragment.setTargetFragment(Event_Create_Fragment.this,START_TIME_REQUEST);
+                timeFragment.setTargetFragment(EventCreateFragment.this,START_TIME_REQUEST);
                 break;
             case SEQUENCE_END:
-                timeFragment.setTargetFragment(Event_Create_Fragment.this,END_TIME_REQUEST);
+                timeFragment.setTargetFragment(EventCreateFragment.this,END_TIME_REQUEST);
                 break;
         }
         timeFragment.show(fm,TIME_PICKER_FRAG);
@@ -365,8 +365,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     private void checkTagSyntax(){
         String checkTag = tagsTxt.getText().toString();
         if(!checkTag.equals("") && checkTag.matches("^[a-zA-Z0-9]+$")){
-            Toast.makeText(getContext(),"THIS TAG CAN BE ADDED!",Toast.LENGTH_LONG).show();
-
             if(tagsContainer.getVisibility() == View.GONE){
                 tagsContainer.setVisibility(View.VISIBLE);
             }
@@ -401,9 +399,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     public void addToCheckedList(UserModel clickedUser) {
         Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
         inviteUsersList.add(clickedUser);
-        for(UserModel user : inviteUsersList){
-            Log.i(TAG,"Inviting: "+user.getEmail());
-        }
     }
 
     @Override
@@ -443,12 +438,13 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             addressLat = address.getLatitude();
             addressLng = address.getLongitude();
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                    nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng, startDateTimeLong, endDateTimeLong);
+                    nameTxt.getText().toString(),descTxt.getText().toString(),privacy, tagsList,
+                    primesList, invitedSize, addressLine, addressLat, addressLng, startDateTimeLong,
+                    endDateTimeLong);
         } else {
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                    nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
+                    nameTxt.getText().toString(),descTxt.getText().toString(),
+                    privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
         }
 
         viewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -480,7 +476,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         yesNoDialog.show(fm,null);
     }
 
-    String month1, day1, month2, day2;
     int startDay, startMonth, startYear, endDay, endMonth, endYear;
     Long startDateLong, endDateLong;
     long startDateTimeLong, endDateTimeLong;
@@ -553,15 +548,16 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         String endDateString = endDay + "." + endMonth + "." + endYear+"." + endTime;
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH:mm");
         try {
-            if(startDateLong !=null && startTime!=null){
+            if(startDateLong !=null || startTime!=null){
                 Date startDateTimeDate = sdf.parse(startDateString);
                 startDateTimeLong = startDateTimeDate.getTime();
             }
-            if(endDateLong !=null && endTime!=null){
+            if(endDateLong !=null || endTime!=null){
                 Date endStartDateTimeDate = sdf.parse(endDateString);
                 endDateTimeLong = endStartDateTimeDate.getTime();
             }
         } catch (Exception e){
+            //Throw an alert dialog of the start date is empty or returns null.
             Log.w(TAG,"Error.",e);
         }
     }

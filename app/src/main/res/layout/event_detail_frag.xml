@@ -25,7 +25,7 @@
             android:padding="4dp">
 
             <TextView
-                android:id="@+id/event_title"
+                android:id="@+id/text_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/event_title"
+                app:layout_constraintTop_toBottomOf="@id/text_name"
                 android:hint="@string/event_desc"
                 android:textSize="20sp"
                 />

@@ -185,7 +185,7 @@
                 android:src="@drawable/baseline_location_on_black_18dp"
                 android:contentDescription="@string/location"/>
             <AutoCompleteTextView
-                android:id="@+id/location_txt"
+                android:id="@+id/text_location"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_address"

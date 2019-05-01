@@ -39,8 +39,8 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
         private InviteMessagesViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTxt = itemView.findViewById(R.id.event_name);
-            monthTxt = itemView.findViewById(R.id.event_month);
-            dayTxt = itemView.findViewById(R.id.event_day);
+            monthTxt = itemView.findViewById(R.id.text_month);
+            dayTxt = itemView.findViewById(R.id.text_day);
             acceptBtn = itemView.findViewById(R.id.accept_event_btn);
             declineBtn = itemView.findViewById(R.id.decline_event_btn);
         }
@@ -58,8 +58,6 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
         if(eventInviteSet !=null){
             final Event_Model event = eventInviteSet.get(i);
             viewHolder.titleTxt.setText(event.getName());
-            viewHolder.monthTxt.setText(event.getMonth1());
-            viewHolder.dayTxt.setText(event.getDay1());
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

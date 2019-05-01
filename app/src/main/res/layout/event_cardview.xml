@@ -28,14 +28,14 @@
             android:padding="8dp"
             android:background="@drawable/event_date_background">
             <TextView
-                android:id="@+id/event_month"
+                android:id="@+id/text_month"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_month"
                 android:gravity="center"
                 android:textColor="@color/white" />
             <TextView
-                android:id="@+id/event_day"
+                android:id="@+id/text_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_day"
@@ -43,6 +43,7 @@
                 android:paddingTop="4dp"
                 android:textColor="@color/white"/>
             <TextView
+                android:id="@+id/text_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -51,7 +52,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/event_title"
+            android:id="@+id/text_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
@@ -65,28 +66,28 @@
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/location_txt"
+            android:id="@+id/text_location"
             android:layout_width="0dp"
             android:layout_height="27dp"
-            android:layout_below="@+id/event_title"
+            android:layout_below="@+id/text_name"
             android:gravity="center"
             android:maxLines="1"
             android:hint="@string/location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
-            app:layout_constraintTop_toBottomOf="@id/event_title" />
+            app:layout_constraintTop_toBottomOf="@id/text_name" />
 
         <TextView
-            android:id="@+id/created_by_txt"
+            android:id="@+id/text_host"
             android:layout_width="0dp"
             android:layout_height="27dp"
-            android:layout_below="@+id/event_title"
+            android:layout_below="@+id/text_name"
             android:gravity="center"
             android:maxLines="1"
             android:hint="@string/creator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
-            app:layout_constraintTop_toBottomOf="@id/location_txt" />
+            app:layout_constraintTop_toBottomOf="@id/text_location" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -94,7 +95,7 @@
             android:orientation="horizontal"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/created_by_txt"
+            app:layout_constraintTop_toBottomOf="@id/text_host"
             android:baselineAligned="false"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
@@ -107,31 +108,31 @@
                 android:layout_weight=".75">
 
                 <ImageView
-                    android:id="@+id/sport_tag"
+                    android:id="@+id/image_sport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_fitness_center_black_18dp"
                     style="@style/CardPrimaryTags"/>
                 <ImageView
-                    android:id="@+id/food_tag"
+                    android:id="@+id/image_food"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_fastfood_black_18dp"
                     style="@style/CardPrimaryTags"/>
                 <ImageView
-                    android:id="@+id/drinks_tag"
+                    android:id="@+id/image_drinks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_local_bar_black_18dp"
                     style="@style/CardPrimaryTags"/>
                 <ImageView
-                    android:id="@+id/movie_tag"
+                    android:id="@+id/image_movie"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_movie_creation_black_18dp"
                     style="@style/CardPrimaryTags"/>
                 <ImageView
-                    android:id="@+id/chill_tag"
+                    android:id="@+id/image_chill"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_weekend_black_18dp"
@@ -146,7 +147,7 @@
                 android:gravity="end">
 
                 <TextView
-                    android:id="@+id/attending_count"
+                    android:id="@+id/text_attending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="@string/null_dashes"
@@ -159,7 +160,7 @@
                     android:scaleX=".75"/>
 
                 <TextView
-                    android:id="@+id/invited_count"
+                    android:id="@+id/text_invited"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="@string/null_dashes"

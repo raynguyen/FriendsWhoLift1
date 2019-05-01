@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,18 +28,17 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class Core_Events_Fragment extends Fragment implements View.OnClickListener,
-        EventsRecyclerAdapter.EventClickListener{
-    private static final String TAG = "Core_Events_Fragment";
+public class EventsFragmentCore extends Fragment implements View.OnClickListener,
+        EventsAdapterCore.EventClickListener{
+    private static final String TAG = "EventsFragmentCore";
 
     private List<Event_Model> eventList;
     private ProgressBar progressBar;
-    private EventsRecyclerAdapter mAdapter;
+    private EventsAdapterCore mAdapter;
 
     private SearchEvents searchEventsInterface;
     public interface SearchEvents{
@@ -57,7 +55,7 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
         }
     }
 
-    public Core_Events_Fragment(){}
+    public EventsFragmentCore(){}
 
     private Repository_ViewModel viewModel;
     @Override
@@ -85,7 +83,7 @@ public class Core_Events_Fragment extends Fragment implements View.OnClickListen
         progressBar = view.findViewById(R.id.progress_bar);
 
         RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
-        mAdapter = new EventsRecyclerAdapter(eventList, this);
+        mAdapter = new EventsAdapterCore(eventList, this);
         eventsRecycler.setAdapter(mAdapter);
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

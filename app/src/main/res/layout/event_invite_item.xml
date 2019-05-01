@@ -44,7 +44,7 @@
             android:background="#000000">
 
             <TextView
-                android:id="@+id/event_month"
+                android:id="@+id/text_month"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_month"
@@ -53,7 +53,7 @@
                 android:textColor="#ffffff"
                 android:layout_marginBottom="8dp"/>
             <TextView
-                android:id="@+id/event_day"
+                android:id="@+id/text_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_day"

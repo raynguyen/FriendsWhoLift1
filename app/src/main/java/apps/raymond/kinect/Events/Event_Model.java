@@ -32,49 +32,37 @@ public class Event_Model implements Parcelable{
         }
     };
 
-    private String creator, originalName, name, desc, month1, month2, day1, day2;
+    private String creator, originalName, name, desc;
     private double lat, lng;
     private int privacy;
     private List<String> tags, primes;
     private String address = "TBD";
     private int attending = 1;
     private int invited;
-    private long long1, long2;
-    @ServerTimestamp
-    private Date date1, date2;
+    private long long1, long2; //long1 should be a mandatory field that is mutable.
 
     public Event_Model(){
         // Empty constructor as required by FireBase.
     }
 
-    public Event_Model(String creator, String name, String desc, String month1, String day1,
-                       String month2, String day2, int privacy, ArrayList<String> tags,
+    public Event_Model(String creator, String name, String desc, int privacy, ArrayList<String> tags,
                        ArrayList<String> primes, int invited){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
         this.desc = desc;
-        this.month1 = month1;
-        this.day1 = day1;
-        this.month2 = month2;
-        this.day2 = day2;
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
         this.invited = invited;
     }
 
-    public Event_Model(String creator, String name, String desc, String month1, String day1,
-                       String month2, String day2, int privacy, ArrayList<String> tags,
+    public Event_Model(String creator, String name, String desc,int privacy, ArrayList<String> tags,
                        ArrayList<String> primes, int invited, long long1, long long2){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
         this.desc = desc;
-        this.month1 = month1;
-        this.day1 = day1;
-        this.month2 = month2;
-        this.day2 = day2;
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
@@ -83,18 +71,13 @@ public class Event_Model implements Parcelable{
         this.long2 = long2;
     }
 
-    public Event_Model(String creator, String name, String desc, String month1, String day1,
-                       String month2, String day2, int privacy, ArrayList<String> tags,
+    public Event_Model(String creator, String name, String desc, int privacy, ArrayList<String> tags,
                        ArrayList<String> primes, int invited, String address, double lat, double lng,
                        long long1, long long2) {
         this.creator = creator;
         this.name = name;
         this.originalName = name;
         this.desc = desc;
-        this.month1 = month1;
-        this.day1 = day1;
-        this.month2 = month2;
-        this.day2 = day2;
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
@@ -112,10 +95,6 @@ public class Event_Model implements Parcelable{
         name = in.readString();
         originalName = this.name;
         desc = in.readString();
-        month1 = in.readString();
-        day1 = in.readString();
-        month2 = in.readString();
-        day2 = in.readString();
         privacy = in.readInt();
         tags = in.readArrayList(null);
         primes = in.readArrayList(null);
@@ -156,38 +135,6 @@ public class Event_Model implements Parcelable{
 
     public void setDesc(String desc){
         this.desc = desc;
-    }
-
-    public String getDay1(){
-        return day1;
-    }
-
-    public void setDay1(String day1){
-        this.day1 = day1;
-    }
-
-    public String getMonth1(){
-        return month1;
-    }
-
-    public void setMonth1(String month1){
-        this.month1 = month1;
-    }
-
-    public String getMonth2(){
-        return month2;
-    }
-
-    public void setMonth2(String month2){
-        this.month2 = month2;
-    }
-
-    public String getDay2(){
-        return day2;
-    }
-
-    public void setDay2(String day2){
-        this.day2 = day2;
     }
 
     public int getPrivacy(){
@@ -279,10 +226,6 @@ public class Event_Model implements Parcelable{
         dest.writeString(creator);
         dest.writeString(name);
         dest.writeString(desc);
-        dest.writeString(month1);
-        dest.writeString(day1);
-        dest.writeString(month2);
-        dest.writeString(day2);
         dest.writeInt(privacy);
         dest.writeList(tags);
         dest.writeList(primes);

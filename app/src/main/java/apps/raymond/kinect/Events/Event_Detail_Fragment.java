@@ -116,7 +116,7 @@ public class Event_Detail_Fragment extends Fragment implements
         toolbarSearch = requireActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
         //editFlipper = view.findViewById(R.id.event_edit_flipper);
-        eventName = view.findViewById(R.id.event_title);
+        eventName = view.findViewById(R.id.text_name);
         eventDesc = view.findViewById(R.id.event_desc);
         eventStart = view.findViewById(R.id.event_start);
         eventEnd = view.findViewById(R.id.event_end);
@@ -269,10 +269,6 @@ public class Event_Detail_Fragment extends Fragment implements
     private void updateViews(){
         eventName.setText(event.getName());
         eventDesc.setText(event.getDesc());
-        String eventStartTxt = event.getMonth1() + ", " + event.getDay1();
-        String eventEndTxt = "EVENT END Haven't implemented yet :(";
-        eventStart.setText(eventStartTxt);
-        eventEnd.setText(eventEndTxt);
     }
 
     private void editEvent(){

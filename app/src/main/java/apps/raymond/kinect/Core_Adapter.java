@@ -4,15 +4,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.Core_Events_Fragment;
+import apps.raymond.kinect.Events.EventsFragmentCore;
 import apps.raymond.kinect.Groups.Core_Groups_Fragment;
 
 public class Core_Adapter extends FragmentStatePagerAdapter {
@@ -39,7 +37,7 @@ public class Core_Adapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int i) {
         switch(i){
             case 0:
-                return new Core_Events_Fragment();
+                return new EventsFragmentCore();
             case 1:
                 return new Core_Groups_Fragment();
             default:
