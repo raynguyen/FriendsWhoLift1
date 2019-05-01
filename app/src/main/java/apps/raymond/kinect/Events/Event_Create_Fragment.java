@@ -52,7 +52,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,8 +77,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     private static final String SEQUENCE_END = "EndDate";
     private static final int CANCEL_REQUEST_CODE = 21;
     private static final int MAP_REQUEST_CODE = 22;
-    private static final int START_DATE_REQUEST = 23;
-    private static final int END_DATE_REQUEST = 24;
+    public static final int START_DATE_REQUEST = 23;
+    public static final int END_DATE_REQUEST = 24;
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
 
@@ -109,7 +108,6 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         viewModel = ViewModelProviders.of(getActivity()).get(Repository_ViewModel.class);
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
     }
 
     public static Event_Create_Fragment newInstance(){
@@ -317,16 +315,20 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
     }
 
     private void datePickerDialog(String s){
-        DialogFragment datePicker = new DatePickerDialog();
+
         switch (s){
             case SEQUENCE_START:
-                datePicker.setTargetFragment(Event_Create_Fragment.this, START_DATE_REQUEST);
+                DatePickerFragment datePickerFragment = new DatePickerFragment();
+                datePickerFragment.setTargetFragment(Event_Create_Fragment.this,START_DATE_REQUEST);
+                datePickerFragment.show(fm,DATE_PICKER_FRAG);
                 break;
             case SEQUENCE_END:
+                DatePickerFragment datePicker = DatePickerFragment.init(startLong);
                 datePicker.setTargetFragment(Event_Create_Fragment.this, END_DATE_REQUEST);
+                datePicker.show(fm, DATE_PICKER_FRAG);
                 break;
         }
-        datePicker.show(fm, DATE_PICKER_FRAG);
+
     }
 
     private void timePickerDialog(String s){
@@ -430,34 +432,23 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         return check;
     }
 
-    String month1, day1, month2, day2;
-    int startDay, startMonth, startYear, endDay, endMonth, endYear;
-    Long startLong, endLong, startTimeLong, endTimeLong;
-    Date startDate, endDate;
-    private void formatDates(){
-        Date startTime, endTime;
-        startTime = new Date(startLong);
-        endTime = new Date(endLong);
-
-    }
-
     private void createEvent(){
         String addressLine = null;
+        initDates();
         int invitedSize = inviteUsersList.size();
         double addressLat = 0;
         double addressLng = 0;
-        formatDates();
         if(address !=null){
             addressLine = address.getFeatureName() + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
             addressLat = address.getLatitude();
             addressLng = address.getLongitude();
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng, startDate, endDate);
+                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng, startLong, endLong);
         } else {
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, startDate, endDate);
+                    day2, privacy, tagsList, primesList, invitedSize, startLong, endLong);
         }
 
         viewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -489,7 +480,12 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         yesNoDialog.show(fm,null);
     }
 
+    String month1, day1, month2, day2;
+    int startDay, startMonth, startYear, endDay, endMonth, endYear;
+    Long startLong, endLong;
+    Date startDate, endDate;
     Address address = null;
+    String startTime, endTime;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode==Activity.RESULT_OK || resultCode==YesNoDialog.POS_RESULT){
@@ -512,42 +508,61 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                     locationTxt.setText(addressStr);
                     break;
                 case START_DATE_REQUEST:
-                    setDates(args, requestCode);
+                    initializeDates(args, requestCode);
                     break;
                 case END_DATE_REQUEST:
-                    setDates(args, requestCode);
+                    initializeDates(args, requestCode);
                     break;
                 case START_TIME_REQUEST:
                     startTimeTxt.setText(args.getString(TimePickerDialog.TIME_12HR));
-                    startTimeLong = args.getLong(TimePickerDialog.TIMELONG);
+                    startTime = args.getString(TimePickerDialog.TIME_24HR);
                     break;
                 case END_TIME_REQUEST:
                     endTimeTxt.setText(args.getString(TimePickerDialog.TIME_12HR));
-                    endTimeLong = args.getLong(TimePickerDialog.TIMELONG);
+                    endTime = args.getString(TimePickerDialog.TIME_24HR);
                     break;
             }
         }
     }
 
-
-    private void setDates(Bundle args, int requestCode){
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy");
-
+    private void initializeDates(Bundle args, int requestCode){
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE MMM d, yyyy");
         switch(requestCode){
             case START_DATE_REQUEST:
-                startDay = args.getInt(DatePickerDialog.DAY);
-                startMonth = args.getInt(DatePickerDialog.MONTH);
-                startYear = args.getInt(DatePickerDialog.YEAR);
-                startLong = args.getLong(DatePickerDialog.DATELONG);
+                startDay = args.getInt(DatePickerFragment.DAY);
+                startMonth = args.getInt(DatePickerFragment.MONTH);
+                startYear = args.getInt(DatePickerFragment.YEAR);
+                startLong = args.getLong(DatePickerFragment.DATELONG);
                 startDateTxt.setText(sdf.format(new Date(startLong)));
                 break;
             case END_DATE_REQUEST:
-                endDay = args.getInt(DatePickerDialog.DAY);
-                endMonth = args.getInt(DatePickerDialog.MONTH);
-                endYear = args.getInt(DatePickerDialog.YEAR);
-                endLong = args.getLong(DatePickerDialog.DATELONG);
+                endDay = args.getInt(DatePickerFragment.DAY);
+                endMonth = args.getInt(DatePickerFragment.MONTH);
+                endYear = args.getInt(DatePickerFragment.YEAR);
+                endLong = args.getLong(DatePickerFragment.DATELONG);
                 endDateTxt.setText(sdf.format(new Date(endLong)));
                 break;
+        }
+    }
+
+    /**
+     * Method call to concatenate date and time vars into a single date-time Date.
+     */
+    private void initDates() {
+        String startDateString = startDay + "." + startMonth + "." + startYear + "." + startTime;
+        String endDateString = endDay + "." + endMonth + "." + endYear+"." + endTime;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH:mm");
+        try {
+            if(startLong !=null && startTime!=null){
+                startDate = sdf.parse(startDateString);
+                Log.w(TAG,"Testing start date returns: "+startDate);
+            }
+            if(endLong!=null && endTime!=null){
+                endDate = sdf.parse(endDateString);
+                Log.w(TAG,"Testing end date returns: "+endDate);
+            }
+        } catch (Exception e){
+            Log.w(TAG,"Error.",e);
         }
     }
 

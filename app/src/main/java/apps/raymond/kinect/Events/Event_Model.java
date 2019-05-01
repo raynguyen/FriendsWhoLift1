@@ -1,10 +1,8 @@
 
 package apps.raymond.kinect.Events;
 
-import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.firebase.firestore.ServerTimestamp;
 
@@ -68,7 +66,7 @@ public class Event_Model implements Parcelable{
 
     public Event_Model(String creator, String name, String desc, String month1, String day1,
                        String month2, String day2, int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited, Date date1, Date date2){
+                       ArrayList<String> primes, int invited, long long1, long long2){
         this.creator = creator;
         this.name = name;
         this.originalName = name;
@@ -81,35 +79,14 @@ public class Event_Model implements Parcelable{
         this.tags = tags;
         this.primes = primes;
         this.invited = invited;
-        this.date1 = date1;
-        this.date2 = date2;
-    }
-
-    public Event_Model(String creator, String name, String desc, String month1, String day1,
-                       String month2, String day2, int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited, String address, double lat, double lng){
-        this.creator = creator;
-        this.name = name;
-        this.originalName = name;
-        this.desc = desc;
-        this.month1 = month1;
-        this.day1 = day1;
-        this.month2 = month2;
-        this.day2 = day2;
-        this.privacy = privacy;
-        this.tags = tags;
-        this.primes = primes;
-        attending = 1;
-        this.invited = invited;
-        this.address = address;
-        this.lat = lat;
-        this.lng = lng;
+        this.long1 = long1;
+        this.long2 = long2;
     }
 
     public Event_Model(String creator, String name, String desc, String month1, String day1,
                        String month2, String day2, int privacy, ArrayList<String> tags,
                        ArrayList<String> primes, int invited, String address, double lat, double lng,
-                       Date date1, Date date2){
+                       long long1, long long2) {
         this.creator = creator;
         this.name = name;
         this.originalName = name;
@@ -121,36 +98,12 @@ public class Event_Model implements Parcelable{
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
-        attending = 1;
         this.invited = invited;
         this.address = address;
         this.lat = lat;
         this.lng = lng;
-        this.date1 = date1;
-        this.date2 = date2;
-    }
-
-    public Event_Model(String creator, String name, String desc, String month1, String day1,
-                       String month2, String day2, int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited, String address, double lat, double lng,
-                       Date date1){
-        this.creator = creator;
-        this.name = name;
-        this.originalName = name;
-        this.desc = desc;
-        this.month1 = month1;
-        this.day1 = day1;
-        this.month2 = month2;
-        this.day2 = day2;
-        this.privacy = privacy;
-        this.tags = tags;
-        this.primes = primes;
-        attending = 1;
-        this.invited = invited;
-        this.address = address;
-        this.lat = lat;
-        this.lng = lng;
-        this.date1 = date1;
+        this.long1 = long1;
+        this.long2 = long2;
     }
 
     @SuppressWarnings("unchecked")
@@ -300,12 +253,27 @@ public class Event_Model implements Parcelable{
         return lng;
     }
 
+    public void setLong1(long long1){
+        this.long1 = long1;
+    }
+
+    public long getLong1(){
+        return long1;
+    }
+
+    public void setLong2(long long2){
+        this.long2 = long2;
+    }
+
+    public long getLong2(){
+        return long2;
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
 
-    // Creates a Parcel of which an instance of the Parcelable class is created from.
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(creator);

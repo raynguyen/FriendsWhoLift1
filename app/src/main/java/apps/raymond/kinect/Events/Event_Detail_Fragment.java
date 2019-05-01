@@ -373,19 +373,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     @Override
     public void onBackPress() {
-        int i = editFlipper.getDisplayedChild();
-        switch(i){
-            case DETAIL_READ:
-                Log.i(TAG,"Detail currently in read mode.");
-                getActivity().getSupportFragmentManager().popBackStack();
-                break;
-            case DETAIL_WRITE:
-                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-                yesNoDialog.setCancelable(false);
-                yesNoDialog.setTargetFragment(Event_Detail_Fragment.this,YESNO_REQUEST);
-                yesNoDialog.show(getActivity().getSupportFragmentManager(),null);
-        }
-
+        getActivity().getSupportFragmentManager().popBackStack();
         toolbarSearch.setVisibility(View.VISIBLE);
     }
 
