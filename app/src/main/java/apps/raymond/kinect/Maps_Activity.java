@@ -121,7 +121,6 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Toast.makeText(getBaseContext(),"Implement details. Show confirmation dialog.",Toast.LENGTH_LONG).show();
                 mConfirmDialog.setVisibility(View.VISIBLE);
                 return false;
             }
@@ -175,22 +174,25 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
         LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
         mMap.moveCamera(CameraUpdateFactory
                 .newLatLngZoom(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM));
-        mMap.addMarker(new MarkerOptions().position(latLng)).setTitle("HAHAHA");
+        String markerTitle = String.format("%s %s, %s",
+                address.getSubThoroughfare(),
+                address.getThoroughfare(),
+                address.getLocality());
+        mMap.addMarker(new MarkerOptions().position(latLng)).setTitle(markerTitle);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case LOCATION_REQUEST_CODE:
-                if(grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    locationGranted=true;
-                    if(mMap!=null){
-                        getDeviceLocation();
-                    }
-                } else {
-                    Toast.makeText(this,"Unable to determine your location.",Toast.LENGTH_LONG).show();
+        if(requestCode == LOCATION_REQUEST_CODE){
+            if(grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                locationGranted=true;
+                if(mMap!=null){
+                    getDeviceLocation();
                 }
+            } else {
+                Toast.makeText(this,"Unable to determine your location.",Toast.LENGTH_LONG).show();
+            }
         }
     }
 
