@@ -323,7 +323,7 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 datePickerFragment.show(fm,DATE_PICKER_FRAG);
                 break;
             case SEQUENCE_END:
-                DatePickerFragment datePicker = DatePickerFragment.init(startLong);
+                DatePickerFragment datePicker = DatePickerFragment.init(startDateLong);
                 datePicker.setTargetFragment(Event_Create_Fragment.this, END_DATE_REQUEST);
                 datePicker.show(fm, DATE_PICKER_FRAG);
                 break;
@@ -444,11 +444,11 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
             addressLng = address.getLongitude();
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng, startLong, endLong);
+                    day2, privacy, tagsList, primesList, invitedSize, addressLine, addressLat, addressLng, startDateTimeLong, endDateTimeLong);
         } else {
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(), month1, day1, month2,
-                    day2, privacy, tagsList, primesList, invitedSize, startLong, endLong);
+                    day2, privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
         }
 
         viewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -482,8 +482,8 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
 
     String month1, day1, month2, day2;
     int startDay, startMonth, startYear, endDay, endMonth, endYear;
-    Long startLong, endLong;
-    Date startDate, endDate;
+    Long startDateLong, endDateLong;
+    long startDateTimeLong, endDateTimeLong;
     Address address = null;
     String startTime, endTime;
     @Override
@@ -532,15 +532,15 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
                 startDay = args.getInt(DatePickerFragment.DAY);
                 startMonth = args.getInt(DatePickerFragment.MONTH);
                 startYear = args.getInt(DatePickerFragment.YEAR);
-                startLong = args.getLong(DatePickerFragment.DATELONG);
-                startDateTxt.setText(sdf.format(new Date(startLong)));
+                startDateLong = args.getLong(DatePickerFragment.DATELONG);
+                startDateTxt.setText(sdf.format(new Date(startDateLong)));
                 break;
             case END_DATE_REQUEST:
                 endDay = args.getInt(DatePickerFragment.DAY);
                 endMonth = args.getInt(DatePickerFragment.MONTH);
                 endYear = args.getInt(DatePickerFragment.YEAR);
-                endLong = args.getLong(DatePickerFragment.DATELONG);
-                endDateTxt.setText(sdf.format(new Date(endLong)));
+                endDateLong = args.getLong(DatePickerFragment.DATELONG);
+                endDateTxt.setText(sdf.format(new Date(endDateLong)));
                 break;
         }
     }
@@ -553,13 +553,13 @@ public class Event_Create_Fragment extends Fragment implements View.OnClickListe
         String endDateString = endDay + "." + endMonth + "." + endYear+"." + endTime;
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH:mm");
         try {
-            if(startLong !=null && startTime!=null){
-                startDate = sdf.parse(startDateString);
-                Log.w(TAG,"Testing start date returns: "+startDate);
+            if(startDateLong !=null && startTime!=null){
+                Date startDateTimeDate = sdf.parse(startDateString);
+                startDateTimeLong = startDateTimeDate.getTime();
             }
-            if(endLong!=null && endTime!=null){
-                endDate = sdf.parse(endDateString);
-                Log.w(TAG,"Testing end date returns: "+endDate);
+            if(endDateLong !=null && endTime!=null){
+                Date endStartDateTimeDate = sdf.parse(endDateString);
+                endDateTimeLong = endStartDateTimeDate.getTime();
             }
         } catch (Exception e){
             Log.w(TAG,"Error.",e);
