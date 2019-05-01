@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DatePickerFragment extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
+public class DatePicker_Fragment extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
     public static final String DAY = "DayOfMonth";
     public static final String MONTH = "MonthOfYear";
     public static final String YEAR = "Year";
@@ -24,8 +24,8 @@ public class DatePickerFragment extends DialogFragment implements android.app.Da
     public static final String DATELONG = "DateLong";
     private static final String MINDATE = "MinDate";
 
-    public static DatePickerFragment init(long minDate){
-        DatePickerFragment fragment = new DatePickerFragment();
+    public static DatePicker_Fragment init(long minDate){
+        DatePicker_Fragment fragment = new DatePicker_Fragment();
         Bundle args = new Bundle();
         args.putLong(MINDATE,minDate);
         fragment.setArguments(args);
@@ -51,12 +51,12 @@ public class DatePickerFragment extends DialogFragment implements android.app.Da
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        // Create a new instance of DatePickerFragment and return it
+        // Create a new instance of DatePicker_Fragment and return it
         DatePickerDialog dialog = new DatePickerDialog(requireActivity(), this, year, month, day);
-        if(getTargetRequestCode()== EventCreateFragment.START_DATE_REQUEST){
+        if(getTargetRequestCode()== EventCreate_Fragment.START_DATE_REQUEST){
             dialog.getDatePicker().setMinDate(c.getTimeInMillis());
         }
-        if(getTargetRequestCode()== EventCreateFragment.END_DATE_REQUEST){
+        if(getTargetRequestCode()== EventCreate_Fragment.END_DATE_REQUEST){
             dialog.getDatePicker().setMinDate(minDate);
         }
         return dialog;
@@ -79,7 +79,7 @@ public class DatePickerFragment extends DialogFragment implements android.app.Da
                 data.putString(DATESTRING,dateString);
                 data.putLong(DATELONG,_date.getTime());
             } catch (Exception e){
-                Log.w("DatePickerFragment","Unexpected error: ",e);
+                Log.w("DatePicker_Fragment","Unexpected error: ",e);
             }
             intent.putExtras(data);
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);

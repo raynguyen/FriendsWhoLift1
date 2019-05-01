@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import apps.raymond.kinect.R;
 
-public class EventsAdapterCore extends RecyclerView.Adapter<EventsAdapterCore.EventViewHolder>
+public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.EventViewHolder>
     implements Filterable {
 
     private EventClickListener eventClickListener;
@@ -32,7 +32,7 @@ public class EventsAdapterCore extends RecyclerView.Adapter<EventsAdapterCore.Ev
     private List<Event_Model> eventsListFull;
     private List<Event_Model> eventsListClone;
 
-    public EventsAdapterCore(List<Event_Model> eventsList, EventClickListener eventClickListener){
+    public EventsCore_Adapter(List<Event_Model> eventsList, EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
         this.eventsListFull = new ArrayList<>(eventsList);
         eventsListClone = eventsList;
@@ -61,14 +61,14 @@ public class EventsAdapterCore extends RecyclerView.Adapter<EventsAdapterCore.Ev
 
     @NonNull
     @Override
-    public EventsAdapterCore.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+    public EventsCore_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.event_cardview,viewGroup,false);
         return new EventViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final EventsAdapterCore.EventViewHolder vh, int position) {
+    public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
         if(eventsListFull !=null){
             final Event_Model currEvent = eventsListFull.get(position);
 

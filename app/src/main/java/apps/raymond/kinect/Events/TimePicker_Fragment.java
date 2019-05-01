@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TimePickerDialog extends DialogFragment implements android.app.TimePickerDialog.OnTimeSetListener {
+public class TimePicker_Fragment extends DialogFragment implements android.app.TimePickerDialog.OnTimeSetListener {
     public static final String TIME_24HR = "24HrTime";
     public static final String TIME_12HR = "12HrTime";
     public static final String TIMELONG = "TimeLong";

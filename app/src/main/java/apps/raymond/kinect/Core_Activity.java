@@ -63,8 +63,8 @@ import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.DialogFragments.Event_Invites_Fragment;
 import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
-import apps.raymond.kinect.Events.EventsFragmentCore;
-import apps.raymond.kinect.Events.EventCreateFragment;
+import apps.raymond.kinect.Events.EventCreate_Fragment;
+import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.Events_Search_Fragment;
 import apps.raymond.kinect.Groups.Core_Groups_Fragment;
@@ -75,8 +75,8 @@ import apps.raymond.kinect.UserProfile.UserModel;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        EventCreateFragment.EventCreatedListener, Group_Create_Fragment.AddGroup,
-        Event_Invites_Fragment.EventResponseListener, EventsFragmentCore.SearchEvents {
+        EventCreate_Fragment.EventCreatedListener, Group_Create_Fragment.AddGroup,
+        Event_Invites_Fragment.EventResponseListener, EventsCore_Fragment.SearchEvents {
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "Invite_Messages_Fragment";
@@ -132,11 +132,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onAttachFragment(Fragment fragment) {
-        /*if(fragment instanceof EventsFragmentCore){
+        /*if(fragment instanceof EventsCore_Fragment){
             try {
                 updateEventRecycler = (UpdateEventRecycler) fragment;
             } catch (ClassCastException e){
-                Log.i(TAG,"EventsFragmentCore does not implement UpdateEventRecycler interface.");
+                Log.i(TAG,"EventsCore_Fragment does not implement UpdateEventRecycler interface.");
             }
         }*/
         if(fragment instanceof Core_Groups_Fragment){
@@ -175,7 +175,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .commit();
                 return true;
             case R.id.action_create_event:
-                EventCreateFragment eventFragment = new EventCreateFragment();
+                EventCreate_Fragment eventFragment = new EventCreate_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,eventFragment,CREATE_EVENT_FRAG)
                         .addToBackStack(CREATE_EVENT_FRAG)
@@ -246,7 +246,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         Fragment fragment = pagerAdapter.getFragment(i);
         switch (i){
             case 0:
-                ((EventsFragmentCore) fragment).filterRecycler(s);
+                ((EventsCore_Fragment) fragment).filterRecycler(s);
                 break;
             case 1:
                 ((Core_Groups_Fragment) fragment).filterRecycler(s);
@@ -265,7 +265,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void notifyEventCreated(Event_Model event) {
-        EventsFragmentCore fragment = (EventsFragmentCore) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
         fragment.updateEventRecycler(event);
     }
 
@@ -333,7 +333,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                     toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
                     String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
                     final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-                    if(fragment instanceof Group_Create_Fragment || fragment instanceof EventCreateFragment){
+                    if(fragment instanceof Group_Create_Fragment || fragment instanceof EventCreate_Fragment){
                         //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
                         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                             @Override
@@ -361,7 +361,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void eventAccepted(Event_Model event) {
         Log.i(TAG,"Accepted invite to: "+event.getName());
-        EventsFragmentCore fragment = (EventsFragmentCore) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
         fragment.updateEventRecycler(event);
     }
 

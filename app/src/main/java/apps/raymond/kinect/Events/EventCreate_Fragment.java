@@ -66,11 +66,11 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.UserModel;
 
-public class EventCreateFragment extends Fragment implements View.OnClickListener,
+public class EventCreate_Fragment extends Fragment implements View.OnClickListener,
         Add_Users_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
-    public static final String TAG = "EventCreateFragment";
+    public static final String TAG = "EventCreate_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
     private static final String TIME_PICKER_FRAG = "TimePicker";
     private static final String SEQUENCE_START = "StartDate";
@@ -110,8 +110,8 @@ public class EventCreateFragment extends Fragment implements View.OnClickListene
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
-    public static EventCreateFragment newInstance(){
-        return new EventCreateFragment();
+    public static EventCreate_Fragment newInstance(){
+        return new EventCreate_Fragment();
     }
 
     @Nullable
@@ -318,13 +318,13 @@ public class EventCreateFragment extends Fragment implements View.OnClickListene
 
         switch (s){
             case SEQUENCE_START:
-                DatePickerFragment datePickerFragment = new DatePickerFragment();
-                datePickerFragment.setTargetFragment(EventCreateFragment.this,START_DATE_REQUEST);
+                DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
+                datePickerFragment.setTargetFragment(EventCreate_Fragment.this,START_DATE_REQUEST);
                 datePickerFragment.show(fm,DATE_PICKER_FRAG);
                 break;
             case SEQUENCE_END:
-                DatePickerFragment datePicker = DatePickerFragment.init(startDateLong);
-                datePicker.setTargetFragment(EventCreateFragment.this, END_DATE_REQUEST);
+                DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
+                datePicker.setTargetFragment(EventCreate_Fragment.this, END_DATE_REQUEST);
                 datePicker.show(fm, DATE_PICKER_FRAG);
                 break;
         }
@@ -332,13 +332,13 @@ public class EventCreateFragment extends Fragment implements View.OnClickListene
     }
 
     private void timePickerDialog(String s){
-        DialogFragment timeFragment = new TimePickerDialog();
+        DialogFragment timeFragment = new TimePicker_Fragment();
         switch(s){
             case SEQUENCE_START:
-                timeFragment.setTargetFragment(EventCreateFragment.this,START_TIME_REQUEST);
+                timeFragment.setTargetFragment(EventCreate_Fragment.this,START_TIME_REQUEST);
                 break;
             case SEQUENCE_END:
-                timeFragment.setTargetFragment(EventCreateFragment.this,END_TIME_REQUEST);
+                timeFragment.setTargetFragment(EventCreate_Fragment.this,END_TIME_REQUEST);
                 break;
         }
         timeFragment.show(fm,TIME_PICKER_FRAG);
@@ -509,12 +509,12 @@ public class EventCreateFragment extends Fragment implements View.OnClickListene
                     initializeDates(args, requestCode);
                     break;
                 case START_TIME_REQUEST:
-                    startTimeTxt.setText(args.getString(TimePickerDialog.TIME_12HR));
-                    startTime = args.getString(TimePickerDialog.TIME_24HR);
+                    startTimeTxt.setText(args.getString(TimePicker_Fragment.TIME_12HR));
+                    startTime = args.getString(TimePicker_Fragment.TIME_24HR);
                     break;
                 case END_TIME_REQUEST:
-                    endTimeTxt.setText(args.getString(TimePickerDialog.TIME_12HR));
-                    endTime = args.getString(TimePickerDialog.TIME_24HR);
+                    endTimeTxt.setText(args.getString(TimePicker_Fragment.TIME_12HR));
+                    endTime = args.getString(TimePicker_Fragment.TIME_24HR);
                     break;
             }
         }
@@ -524,17 +524,17 @@ public class EventCreateFragment extends Fragment implements View.OnClickListene
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE MMM d, yyyy");
         switch(requestCode){
             case START_DATE_REQUEST:
-                startDay = args.getInt(DatePickerFragment.DAY);
-                startMonth = args.getInt(DatePickerFragment.MONTH);
-                startYear = args.getInt(DatePickerFragment.YEAR);
-                startDateLong = args.getLong(DatePickerFragment.DATELONG);
+                startDay = args.getInt(DatePicker_Fragment.DAY);
+                startMonth = args.getInt(DatePicker_Fragment.MONTH);
+                startYear = args.getInt(DatePicker_Fragment.YEAR);
+                startDateLong = args.getLong(DatePicker_Fragment.DATELONG);
                 startDateTxt.setText(sdf.format(new Date(startDateLong)));
                 break;
             case END_DATE_REQUEST:
-                endDay = args.getInt(DatePickerFragment.DAY);
-                endMonth = args.getInt(DatePickerFragment.MONTH);
-                endYear = args.getInt(DatePickerFragment.YEAR);
-                endDateLong = args.getLong(DatePickerFragment.DATELONG);
+                endDay = args.getInt(DatePicker_Fragment.DAY);
+                endMonth = args.getInt(DatePicker_Fragment.MONTH);
+                endYear = args.getInt(DatePicker_Fragment.YEAR);
+                endDateLong = args.getLong(DatePicker_Fragment.DATELONG);
                 endDateTxt.setText(sdf.format(new Date(endDateLong)));
                 break;
         }

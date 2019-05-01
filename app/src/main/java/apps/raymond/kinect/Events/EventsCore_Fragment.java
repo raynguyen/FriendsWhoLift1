@@ -32,13 +32,13 @@ import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class EventsFragmentCore extends Fragment implements View.OnClickListener,
-        EventsAdapterCore.EventClickListener{
-    private static final String TAG = "EventsFragmentCore";
+public class EventsCore_Fragment extends Fragment implements View.OnClickListener,
+        EventsCore_Adapter.EventClickListener{
+    private static final String TAG = "EventsCore_Fragment";
 
     private List<Event_Model> eventList;
     private ProgressBar progressBar;
-    private EventsAdapterCore mAdapter;
+    private EventsCore_Adapter mAdapter;
 
     private SearchEvents searchEventsInterface;
     public interface SearchEvents{
@@ -55,7 +55,7 @@ public class EventsFragmentCore extends Fragment implements View.OnClickListener
         }
     }
 
-    public EventsFragmentCore(){}
+    public EventsCore_Fragment(){}
 
     private Repository_ViewModel viewModel;
     @Override
@@ -83,7 +83,7 @@ public class EventsFragmentCore extends Fragment implements View.OnClickListener
         progressBar = view.findViewById(R.id.progress_bar);
 
         RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
-        mAdapter = new EventsAdapterCore(eventList, this);
+        mAdapter = new EventsCore_Adapter(eventList, this);
         eventsRecycler.setAdapter(mAdapter);
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

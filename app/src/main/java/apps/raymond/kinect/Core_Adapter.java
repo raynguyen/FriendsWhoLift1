@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.EventsFragmentCore;
+import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Groups.Core_Groups_Fragment;
 
 public class Core_Adapter extends FragmentStatePagerAdapter {
@@ -37,7 +37,7 @@ public class Core_Adapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int i) {
         switch(i){
             case 0:
-                return new EventsFragmentCore();
+                return new EventsCore_Fragment();
             case 1:
                 return new Core_Groups_Fragment();
             default:
