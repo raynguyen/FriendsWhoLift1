@@ -36,6 +36,7 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -71,7 +72,7 @@ import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
@@ -95,6 +96,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     Activity thisInstance;
     ViewPager viewPager;
     Repository_ViewModel viewModel;
+    TestViewModel testViewModel;
     SearchView toolbarSearch;
     Core_Adapter pagerAdapter;
     Toolbar toolbar;
@@ -110,6 +112,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+
 
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
@@ -226,12 +229,10 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        switch(i){
-            case -1:
-                Intent profileIntent = new Intent(this,Profile_Activity.class);
-                startActivity(profileIntent);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
-                break;
+        if(v.getId()== -1){
+            Intent profileIntent = new Intent(this,Profile_Activity.class);
+            startActivity(profileIntent);
+            overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
         }
     }
 
@@ -308,11 +309,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         return super.dispatchTouchEvent(ev);
     }
 
-    public UserModel userModel;
+    public User_Model userModel;
     private void getUserModel(){
-        viewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<UserModel>() {
+        viewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
             @Override
-            public void onComplete(@NonNull Task<UserModel> task) {
+            public void onComplete(@NonNull Task<User_Model> task) {
                 if(task.isSuccessful()){
                     userModel = task.getResult();
                     Toast.makeText(getBaseContext(),"Welcome "+userModel.getEmail(),Toast.LENGTH_SHORT).show();

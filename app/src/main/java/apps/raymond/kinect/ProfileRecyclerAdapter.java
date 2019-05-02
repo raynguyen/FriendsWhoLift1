@@ -6,24 +6,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ProfileViewHolder> {
     private static final String TAG = "PROFILE RECYCLER ADAPTER";
 
     private ProfileClickListener listener;
     public interface ProfileClickListener {
-        void onProfileClick(UserModel userModel);
+        void onProfileClick(User_Model userModel);
     }
 
-    private List<UserModel> userModels;
+    private List<User_Model> userModels;
 
-    public ProfileRecyclerAdapter(List<UserModel> userModels, ProfileClickListener profileClickListener){
+    public ProfileRecyclerAdapter(List<User_Model> userModels, ProfileClickListener profileClickListener){
         this.userModels = userModels;
         this.listener = profileClickListener;
     }
@@ -46,7 +45,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     @Override
     public void onBindViewHolder(@NonNull final ProfileViewHolder profileViewHolder, int i) {
         if(userModels!=null){
-            final UserModel currUser = userModels.get(i);
+            final User_Model currUser = userModels.get(i);
             profileViewHolder.name.setText(currUser.getEmail());
             profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -68,7 +67,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         }
     }
 
-    public void setData(List<UserModel> profiles){
+    public void setData(List<User_Model> profiles){
         this.userModels = profiles;
     }
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class SearchUsersDialog extends DialogFragment {
     private static final String TAG = "SearchUsersDialog";
@@ -32,7 +32,7 @@ public class SearchUsersDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
-    List<UserModel> usersList;
+    List<User_Model> usersList;
     RecyclerView usersRecycler;
     @Nullable
     @Override

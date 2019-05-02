@@ -15,7 +15,7 @@
 
 // LOCAL DATABASE CAHCE WITH REST API
 
-package apps.raymond.kinect;
+package apps.raymond.kinect.FireBaseRepo;
 
 import android.content.Context;
 import android.location.Address;
@@ -32,7 +32,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,10 +52,15 @@ import java.util.Map;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.GroupBase;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
-public class FirebaseLayer {
-    private static final String TAG = "FirebaseLayer";
+/**
+ * Repository class to abstract data communication between the application and Firebase backend.
+ *
+ *
+ */
+public class FireBase_Repository {
+    private static final String TAG = "FireBase_Repository";
     private static final String GROUPS = "Groups";
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
@@ -73,45 +77,44 @@ public class FirebaseLayer {
     private static final String EVENT_INVITED_FIELD = "invited";
 
 
-    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference groupCollection = db.collection(GROUPS);
-    private CollectionReference userCollection = db.collection(USERS);
-    private CollectionReference eventCollection = db.collection(EVENTS);
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
+    private CollectionReference groupCollection = mStore.collection(GROUPS);
+    private CollectionReference userCollection = mStore.collection(USERS);
+    private CollectionReference eventCollection = mStore.collection(EVENTS);
 
     private String userEmail;
-    private UserModel curUserModel;
+    private User_Model curUserModel;
 
-    //ToDo: can make sure this is only called in CoreActivity.
-    public FirebaseLayer() {
+    public FireBase_Repository() {
+        Log.w(TAG,"Creating new instance of FireBase_Repository");
         try {
-            this.userEmail = currentUser.getEmail();
-            getCurrentUser().addOnCompleteListener(new OnCompleteListener<UserModel>() {
+            this.userEmail = mAuth.getCurrentUser().getEmail();
+            getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
                 @Override
-                public void onComplete(@NonNull Task<UserModel> task) {
+                public void onComplete(@NonNull Task<User_Model> task) {
                     curUserModel = task.getResult();
                 }
             });
         } catch (NullPointerException npe) {
-            Log.w(TAG, "Error: " + npe);
+            Log.w(TAG, "Error.",npe);
         }
     }
 
     //*------------------------------------------USER-------------------------------------------*//
-    String getUserEmail(){
+    public String getUserEmail(){
         return userEmail;
     }
 
-    Task<Void> signOut(Context context){
+    public Task<Void> signOut(Context context){
         Log.i(TAG,"REPOSITORY LOG OUT METHOD.");
         return AuthUI.getInstance().signOut(context);
     }
 
-    public Task<AuthResult> signInWithEmail(final String name, String password) {
+    public Task<AuthResult> emailSignIn(final String name, String password) {
         Log.i(TAG,"THIS SHOULD BE FIRST: "+userEmail);
-        return firebaseAuth.signInWithEmailAndPassword(name, password)
+        return mAuth.signInWithEmailAndPassword(name, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -123,32 +126,30 @@ public class FirebaseLayer {
                 });
     }
 
-    //WE ARE TRYING TO RETRIEVE INFO REGARDING FIREBASEUSER BEFORE IT CAN BE COMPLETED BY SERVERS.
-    //TO GET THE USER DOCUMENT, WE SHOULD USE QUERY THAT WE CONSTRUCT VIA A STRING.
-    Task<UserModel> getCurrentUser(){
+    public Task<User_Model> getCurrentUser(){
         DocumentReference userDoc = userCollection.document(userEmail);
-        return userDoc.get().continueWith(new Continuation<DocumentSnapshot, UserModel>() {
+        return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
             @Override
-            public UserModel then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+            public User_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                 if(task.isSuccessful()){
                     if(task.getResult()!=null){
-                        return task.getResult().toObject(UserModel.class);
+                        return task.getResult().toObject(User_Model.class);
                     }
                 }
-                Log.w(TAG,"ERROR RETRIEVING CURRENT USER.");
+                Log.w(TAG,"ERROR RETRIEVING CURRENT USER.", task.getException());
                 return null;
             }
         });
     }
 
-    public Task<Void> createUserByEmail(final UserModel userModel, final String password) {
+    public Task<Void> createUserByEmail(final User_Model userModel, final String password) {
         final String name = userModel.getEmail();
         Log.i(TAG, "Creating new user " + name);
-        return firebaseAuth.createUserWithEmailAndPassword(name, password)
+        return mAuth.createUserWithEmailAndPassword(name, password)
                 .continueWithTask(new Continuation<AuthResult, Task<AuthResult>>() {
                     @Override
                     public Task<AuthResult> then(@NonNull Task<AuthResult> task) throws Exception {
-                        return signInWithEmail(name, password);
+                        return emailSignIn(name, password);
                     }
                 }).continueWithTask(new Continuation<AuthResult, Task<Void>>() {
                     @Override
@@ -158,7 +159,7 @@ public class FirebaseLayer {
                 });
     }
 
-    private Task<Void> createUserDoc(UserModel userModel) {
+    private Task<Void> createUserDoc(User_Model userModel) {
         final String name = userModel.getEmail();
         Log.i(TAG, "Creating new user Document " + name);
         return userCollection.document(name).set(userModel)
@@ -174,7 +175,7 @@ public class FirebaseLayer {
                 });
     }
 
-    Task<List<Event_Model>> getEventInvites() {
+    public Task<List<Event_Model>> getEventInvites() {
         CollectionReference eventMessages = userCollection.document(userEmail).collection(EVENT_INVITES);
         final List<Event_Model> eventInvites = new ArrayList<>();
         return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
@@ -193,7 +194,7 @@ public class FirebaseLayer {
         });
     }
 
-    Task<List<GroupBase>> getGroupInvites() {
+    public Task<List<GroupBase>> getGroupInvites() {
         CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUP_INVITES);
         final List<GroupBase> groupInvites = new ArrayList<>();
 
@@ -213,7 +214,7 @@ public class FirebaseLayer {
         });
     }
 
-    Task<Void> addConnection(final UserModel user){
+    public Task<Void> addConnection(final User_Model user){
         CollectionReference userConnections = userCollection.document(userEmail).collection(CONNECTIONS);
         return userConnections.document(user.getEmail()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -227,16 +228,16 @@ public class FirebaseLayer {
         });
     }
 
-    Task<List<UserModel>> getConnections(){
+    public Task<List<User_Model>> getConnections(){
         CollectionReference userConnections = userCollection.document(userEmail).collection(CONNECTIONS);
-        final List<UserModel> connections = new ArrayList<>();
-        return userConnections.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+        final List<User_Model> connections = new ArrayList<>();
+        return userConnections.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
-            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+            public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 if(task.isSuccessful()){
                     if(task.getResult() !=null){
                         for(QueryDocumentSnapshot document : task.getResult()){
-                            connections.add(document.toObject(UserModel.class));
+                            connections.add(document.toObject(User_Model.class));
                         }
                     } else {
                         Log.w(TAG,"User has no connections.");
@@ -250,13 +251,13 @@ public class FirebaseLayer {
         });
     }
 
-    Task<List<String>> getInterests(){
+    public Task<List<String>> getInterests(){
         CollectionReference userConnections = userCollection.document(userEmail).collection(INTERESTS);
         final List<String> interests = new ArrayList<>();
         return null;
     }
 
-    Task<Void> addLocation(Address address, String addressName){
+    public Task<Void> addLocation(Address address, String addressName){
         CollectionReference locationCol = userCollection.document(userEmail).collection(LOCATIONS);
         GeoPoint geoPoint = new GeoPoint(address.getLatitude(),address.getLongitude());
         return locationCol.document(addressName).set(geoPoint);
@@ -269,7 +270,7 @@ public class FirebaseLayer {
      * the event name. The associated tags for the event are stored as a sub-collection in the event
      * document.
      */
-    Task<Void> createEvent(final Event_Model groupEvent) {
+    public Task<Void> createEvent(final Event_Model groupEvent) {
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
         return eventRef.set(groupEvent, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -279,19 +280,19 @@ public class FirebaseLayer {
         });
     }
 
-    Task<Void> updateEvent(final Event_Model groupEvent) {
+    public Task<Void> updateEvent(final Event_Model groupEvent) {
         final DocumentReference eventRef = eventCollection.document(groupEvent.getOriginalName());
         return eventRef.set(groupEvent, SetOptions.merge());
     }
 
     //Todo: change to accept a document title so we can call this regardless of Event or Group. Consider changing way data is stored under the user's collection.
-    void sendEventInvite(final Event_Model groupEvent, final List<UserModel> userList) {
+    public void sendEventInvite(final Event_Model groupEvent, final List<User_Model> userList) {
         final DocumentReference eventDoc = eventCollection.document(groupEvent.getOriginalName());
         final CollectionReference eventInvitedCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITED);
-        final WriteBatch inviteBatch = db.batch();
+        final WriteBatch inviteBatch = mStore.batch();
         final List<Task<Void>> sendInvites = new ArrayList<>();
 
-        for (final UserModel user : userList) {
+        for (final User_Model user : userList) {
             sendInvites.add(userCollection.document(user.getEmail()).collection(EVENT_INVITES)
                     .document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -312,7 +313,7 @@ public class FirebaseLayer {
         });
     }
 
-    Task<Void> addUserToEvent(final Event_Model event) {
+    public Task<Void> addUserToEvent(final Event_Model event) {
         final CollectionReference usersEvents = userCollection.document(userEmail).collection(EVENTS);
         final CollectionReference usersEventInvites = userCollection.document(userEmail).collection(EVENT_INVITES);
         final CollectionReference acceptedUsers = eventCollection.document(event.getOriginalName()).collection(ACCEPTED);
@@ -346,7 +347,7 @@ public class FirebaseLayer {
                 });
     }
 
-    Task<List<Task<DocumentSnapshot>>> getUsersEvents() {
+    public Task<List<Task<DocumentSnapshot>>> getUsersEvents() {
         // First task retrieves a list of the Groups from the User Document.
         return userCollection.document(userEmail).collection("Events").get()
                 // Second task will return a List of tasks to retrieve a document pertaining to each document retrieved from the first task.
@@ -363,16 +364,16 @@ public class FirebaseLayer {
                 });
     }
 
-    Task<List<UserModel>> getEventInvitees(final Event_Model event) {
+    public Task<List<User_Model>> getEventInvitees(final Event_Model event) {
         CollectionReference eventInvitees = eventCollection.document(event.getOriginalName()).collection(INVITED);
-        final List<UserModel> userList = new ArrayList<>();
-        return eventInvitees.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+        final List<User_Model> userList = new ArrayList<>();
+        return eventInvitees.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
-            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+            public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 if (task.isSuccessful()) {
                     if (!task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            userList.add(document.toObject(UserModel.class));
+                            userList.add(document.toObject(User_Model.class));
                         }
                     } else {
                         Log.i(TAG, "No invited users for: " + event.getName());
@@ -387,17 +388,17 @@ public class FirebaseLayer {
         });
     }
 
-    Task<List<UserModel>> getEventResponses(final Event_Model event, final String status) {
+    public Task<List<User_Model>> getEventResponses(final Event_Model event, final String status) {
         CollectionReference responseCollection = eventCollection.document(event.getOriginalName()).collection(status);
 
-        return responseCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+        return responseCollection.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
-            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<UserModel> userModels = new ArrayList<>();
+            public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                List<User_Model> userModels = new ArrayList<>();
                 if (task.isSuccessful()) {
                     if (task.getResult() != null) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            userModels.add(document.toObject(UserModel.class));
+                            userModels.add(document.toObject(User_Model.class));
                         }
                     } else {
                         Log.i(TAG, "No guests have accepted event: " + event.getName());
@@ -418,7 +419,7 @@ public class FirebaseLayer {
      * Logic:
      * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    Task<Void> createGroup(final GroupBase groupBase, final List<UserModel> inviteList) {
+    public Task<Void> createGroup(final GroupBase groupBase, final List<User_Model> inviteList) {
         final DocumentReference groupDoc = groupCollection.document(groupBase.getOriginalName());
         final Map<String, String> holderMap = new HashMap<>();
         holderMap.put("Access", "Owner");
@@ -434,7 +435,7 @@ public class FirebaseLayer {
                     @Override
                     public Void then(@NonNull Task<Void> task) throws Exception {
                         if (task.isSuccessful()) {
-                            for (UserModel user : inviteList) {
+                            for (User_Model user : inviteList) {
                                 groupDoc.collection(INVITED).document(user.getEmail()).set(user);
                             }
                         } else {
@@ -465,12 +466,12 @@ public class FirebaseLayer {
 
     }
 
-    void sendGroupInvites(final GroupBase groupBase, final List<UserModel> userList) {
+    public void sendGroupInvites(final GroupBase groupBase, final List<User_Model> userList) {
         final CollectionReference groupCol = groupCollection.document(groupBase.getOriginalName()).collection(INVITED);
-        final WriteBatch inviteBatch = db.batch();
+        final WriteBatch inviteBatch = mStore.batch();
         List<Task<Void>> sendInvites = new ArrayList<>();
 
-        for (final UserModel user : userList) {
+        for (final User_Model user : userList) {
             sendInvites.add(userCollection.document(user.getEmail()).collection(GROUP_INVITES)
                     .document(groupBase.getName()).set(groupBase, SetOptions.merge())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -490,7 +491,7 @@ public class FirebaseLayer {
         });
     }
 
-    void editGroup(final GroupBase groupBase) {
+    public void editGroup(final GroupBase groupBase) {
         groupCollection.document(groupBase.getOriginalName()).set(groupBase)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -505,17 +506,17 @@ public class FirebaseLayer {
         });
     }
 
-    Task<List<UserModel>> fetchGroupMembers(GroupBase group){
+    public Task<List<User_Model>> fetchGroupMembers(GroupBase group){
         CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
 
-        return groupMembers.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+        return groupMembers.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
-            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+            public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 if(task.isSuccessful()){
-                    List<UserModel> memberList = new ArrayList<>();
+                    List<User_Model> memberList = new ArrayList<>();
                     if(task.getResult()!=null){
                         for(QueryDocumentSnapshot document : task.getResult()){
-                            memberList.add(document.toObject(UserModel.class));
+                            memberList.add(document.toObject(User_Model.class));
                         }
                         return memberList;
                     }
@@ -529,7 +530,7 @@ public class FirebaseLayer {
     // Then we want to retrieve the Document snapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the document snapshot and the retrieved byte[] to create a group base object.
-    Task<List<Task<GroupBase>>> getUsersGroups() {
+    public Task<List<Task<GroupBase>>> getUsersGroups() {
         final List<String> groupList = new ArrayList<>();
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(userEmail).collection("Groups").get()
@@ -559,7 +560,7 @@ public class FirebaseLayer {
                 });
     }
 
-    Task<Void> addUserToGroup(final GroupBase group) {
+    public Task<Void> addUserToGroup(final GroupBase group) {
         String groupName = group.getOriginalName();
         final CollectionReference groupsMembers = groupCollection.document(groupName).collection(MEMBERS);
         final CollectionReference groupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
@@ -596,7 +597,7 @@ public class FirebaseLayer {
         });
     }
 
-    Task<Void> declineGroupInvite(final GroupBase group){
+    public Task<Void> declineGroupInvite(final GroupBase group){
         final String groupName = group.getOriginalName();
         final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
         final CollectionReference declinedMembers = groupCollection.document(groupName).collection(DECLINED);
@@ -632,21 +633,21 @@ public class FirebaseLayer {
         //groupInviteListener.remove();
     }
 
-    Task<byte[]> getImage(String uri) {
+    public Task<byte[]> getImage(String uri) {
         StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uri);
         return imageRef.getBytes(1024 * 1024 * 3);
     }
 
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
     // Todo: Filter our users that have Privacy:private.
-    Task<List<UserModel>> fetchUsers() {
-        return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<UserModel>>() {
+    public Task<List<User_Model>> fetchUsers() {
+        return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
-            public List<UserModel> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<UserModel> userList = new ArrayList<>();
+            public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                List<User_Model> userList = new ArrayList<>();
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        UserModel model = document.toObject(UserModel.class);
+                        User_Model model = document.toObject(User_Model.class);
                         if(!model.getEmail().equals(userEmail)){
                             userList.add(model);
                         }
@@ -660,8 +661,8 @@ public class FirebaseLayer {
     }
 
     // Task to upload an image and on success return the downloadUri.
-    Task<Uri> uploadImage(Uri uri, String groupName) {
-        final StorageReference childStorage = storageRef.child("images/" + groupName);
+    public Task<Uri> uploadImage(Uri uri, String groupName) {
+        final StorageReference childStorage = mStorageRef.child("images/" + groupName);
         return childStorage.putFile(uri)
                 .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
@@ -679,7 +680,4 @@ public class FirebaseLayer {
         return null;
     }
 
-    String testString(){
-        return userEmail;
-    }
 }

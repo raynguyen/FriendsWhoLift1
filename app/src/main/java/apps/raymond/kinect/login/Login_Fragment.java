@@ -25,8 +25,8 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 
-public class LoginFrag extends Fragment implements View.OnClickListener{
-    private static final String TAG = "LoginFrag";
+public class Login_Fragment extends Fragment implements View.OnClickListener{
+    private static final String TAG = "Login_Fragment";
     private static final int NUM_FIELDS = 2;
 
     private SignIn signIn;
@@ -59,17 +59,17 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         return inflater.inflate(R.layout.login_frag, container, false);
     }
 
-    Button login_Btn;
     private TextInputEditText username_Txt, password_Txt;
     private TextInputEditText[] inputFields;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        login_Btn = view.findViewById(R.id.login_btn);
+
+        Button login_Btn = view.findViewById(R.id.login_btn);
+        login_Btn.setOnClickListener(this);
+
         username_Txt = view.findViewById(R.id.login_txt);
         password_Txt = view.findViewById(R.id.password_txt);
-
-        login_Btn.setOnClickListener(this);
 
         inputFields = new TextInputEditText[NUM_FIELDS];
         inputFields[0] = username_Txt;
@@ -79,7 +79,6 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         signupTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG,"Swap views to login");
                 ViewPager viewPager = getActivity().findViewById(R.id.login_container);
                 viewPager.setCurrentItem(1);
             }
@@ -92,12 +91,11 @@ public class LoginFrag extends Fragment implements View.OnClickListener{
         switch (i) {
             case R.id.login_btn:
                 if (validate(inputFields)) {
-                    viewModel.signIn(username_Txt.getText().toString(),password_Txt.getText().toString())
+                    viewModel.emailSignIn(username_Txt.getText().toString(),password_Txt.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    Log.i(TAG,"THIS SHOULD BE THIRD");
                                     signIn.signedIn();
                                 } else if (task.getException()!=null){
                                     //ToDo: if password error seterror to the password field!

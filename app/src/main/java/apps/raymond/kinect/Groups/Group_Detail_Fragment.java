@@ -18,10 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +32,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,7 +49,7 @@ import apps.raymond.kinect.Invite_Users_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
     public static final String TAG = "Group_Detail_Fragment";
@@ -267,11 +263,11 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         super.onDestroy();
     }
 
-    ArrayList<UserModel> userModelArrayList;
+    ArrayList<User_Model> userModelArrayList;
     private void fetchUserList(){
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
                     if(task.getResult().size()>0){
                         userModelArrayList = new ArrayList<>(task.getResult());

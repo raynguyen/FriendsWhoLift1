@@ -12,9 +12,9 @@ import android.widget.TextView;
 import apps.raymond.kinect.R;
 
 public class Profile_Frag extends Fragment {
-    private static final String USER_MODEL = "UserModel";
+    private static final String USER_MODEL = "User_Model";
 
-    public Profile_Frag newInstance(UserModel user){
+    public Profile_Frag newInstance(User_Model user){
         Profile_Frag frag = new Profile_Frag();
         Bundle args = new Bundle();
         args.putParcelable(USER_MODEL,user);
@@ -22,7 +22,7 @@ public class Profile_Frag extends Fragment {
         return frag;
     }
 
-    private UserModel userModel;
+    private User_Model userModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,7 @@ public class Profile_Frag extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.personal_profile_activity,container,false);
+        return inflater.inflate(R.layout.activity_profile_,container,false);
     }
 
     TextView nameTxt;

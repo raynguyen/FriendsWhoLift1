@@ -10,13 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class View_Profile_Activity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG ="ViewProfile";
-    public static final String USER = "UserModel";
+    public static final String USER = "User_Model";
 
-    UserModel user;
+    User_Model user;
     Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

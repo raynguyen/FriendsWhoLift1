@@ -12,19 +12,19 @@ package apps.raymond.kinect.UserProfile;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class UserModel implements Parcelable {
+public class User_Model implements Parcelable {
     private String email;
     private String visibility;
     private String name;
 
-    public UserModel(){}
+    public User_Model(){}
 
-    public UserModel(String email, String visibility){
+    public User_Model(String email, String visibility){
         this.email = email;
         this.visibility = visibility;
     }
 
-    public UserModel(Parcel in){
+    public User_Model(Parcel in){
         this.email = in.readString();
         this.visibility = in.readString();
     }
@@ -32,12 +32,12 @@ public class UserModel implements Parcelable {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
         @Override
         public Object createFromParcel(Parcel source) {
-            return new UserModel(source);
+            return new User_Model(source);
         }
 
         @Override
         public Object[] newArray(int size) {
-            return new UserModel[size];
+            return new User_Model[size];
         }
     };
 
@@ -75,4 +75,6 @@ public class UserModel implements Parcelable {
     public String getVisibility(){
         return visibility;
     }
+
+    
 }

@@ -23,7 +23,7 @@ import java.util.List;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
     private static final String TAG = "Custom_Members_Panel";
@@ -40,7 +40,7 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
 
     Repository_ViewModel viewModel;
     GroupBase group;
-    List<UserModel> membersList;
+    List<User_Model> membersList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,15 +81,15 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
     }
 
     @Override
-    public void onProfileClick(UserModel user) {
+    public void onProfileClick(User_Model user) {
         Log.i(TAG,"Need to implement user inflation for: "+user.getEmail());
     }
 
     private void fetchMembersList(){
         Log.i(TAG,"Fetching members of " + group.getOriginalName());
-        viewModel.fetchGroupMembers(group).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchGroupMembers(group).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
                     if(task.getResult()!=null){
                         membersList.addAll(task.getResult());

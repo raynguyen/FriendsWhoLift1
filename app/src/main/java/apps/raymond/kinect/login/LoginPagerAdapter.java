@@ -20,7 +20,7 @@ public class LoginPagerAdapter extends FragmentPagerAdapter {
         //the position parameter is used to determine which fragment the Adapter needs to create.
         switch(position){
             case 0:
-                return new LoginFrag();
+                return new Login_Fragment();
             case 1:
                 return new SignUpFrag();
             default:

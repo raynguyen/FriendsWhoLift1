@@ -12,37 +12,38 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.FireBaseRepo.FireBase_Repository;
 import apps.raymond.kinect.Groups.GroupBase;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Repository_ViewModel extends ViewModel {
-    private FirebaseLayer mRepository;
+    private FireBase_Repository mRepository;
 
     public Repository_ViewModel(){
-        this.mRepository = new FirebaseLayer();
+        this.mRepository = new FireBase_Repository();
     }
 
     public String getUserEmail(){
         return mRepository.getUserEmail();
     }
 
-    public Task<AuthResult> signIn(String email, String password){
-        return mRepository.signInWithEmail(email,password);
+    public Task<AuthResult> emailSignIn(String email, String password){
+        return mRepository.emailSignIn(email,password);
     }
 
     public Task<Void> signOut(Context context){
         return mRepository.signOut(context);
     }
 
-    public Task<UserModel> getCurrentUser(){
+    public Task<User_Model> getCurrentUser(){
         return mRepository.getCurrentUser();
     }
 
-    public Task<Void> addUserConnection(UserModel user){
+    public Task<Void> addUserConnection(User_Model user){
         return mRepository.addConnection(user);
     }
 
-    public Task<List<UserModel>> getConnections(){
+    public Task<List<User_Model>> getConnections(){
         return mRepository.getConnections();
     }
 
@@ -58,11 +59,11 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.createEvent(groupEvent);
     }
 
-    public void sendEventInvites(Event_Model groupEvent, List<UserModel> inviteList){
+    public void sendEventInvites(Event_Model groupEvent, List<User_Model> inviteList){
         mRepository.sendEventInvite(groupEvent,inviteList);
     }
 
-    public void sendGroupInvites(GroupBase groupBase,List<UserModel> inviteList){
+    public void sendGroupInvites(GroupBase groupBase,List<User_Model> inviteList){
         mRepository.sendGroupInvites(groupBase,inviteList);
     }
 
@@ -78,19 +79,19 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.getUsersEvents();
     }
 
-    public Task<List<UserModel>> getEventInvitees(Event_Model event){
+    public Task<List<User_Model>> getEventInvitees(Event_Model event){
         return mRepository.getEventInvitees(event);
     }
 
-    public Task<List<UserModel>> getEventResponses(Event_Model event, String status){
+    public Task<List<User_Model>> getEventResponses(Event_Model event, String status){
         return mRepository.getEventResponses(event, status);
     }
 
-    public Task<List<UserModel>> fetchUsers(){
+    public Task<List<User_Model>> fetchUsers(){
         return mRepository.fetchUsers();
     }
 
-    public Task<Void> createGroup(GroupBase groupBase, List<UserModel> inviteList){
+    public Task<Void> createGroup(GroupBase groupBase, List<User_Model> inviteList){
         return mRepository.createGroup(groupBase, inviteList);
     }
 
@@ -122,7 +123,7 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addUserToGroup(group);
     }
 
-    public Task<List<UserModel>> fetchGroupMembers(GroupBase group){
+    public Task<List<User_Model>> fetchGroupMembers(GroupBase group){
         return mRepository.fetchGroupMembers(group);
     }
 
@@ -134,12 +135,5 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addLocation(address,addressName);
     }
 
-    public String testString(){
-        return mRepository.testString();
-    }
-
-    /*public void testCollectionWrite(){
-        mRepository.testCollectionWrite();
-    }*/
 }
 

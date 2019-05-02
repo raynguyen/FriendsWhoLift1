@@ -62,7 +62,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
             viewHolder.nameTxt.setTransitionName("Transition"+position);
             viewHolder.descTxt.setText(currentGroup.getDescription());
 
-            // Todo: Best to move this into onCreateViewHolder otherwise each UserModel that is bound to a holder will create  anew onclick listener. It is better to create one.
+            // Todo: Best to move this into onCreateViewHolder otherwise each User_Model that is bound to a holder will create  anew onclick listener. It is better to create one.
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

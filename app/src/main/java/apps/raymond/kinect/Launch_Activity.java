@@ -25,8 +25,6 @@ public class Launch_Activity extends AppCompatActivity {
 
         //checkPermissions();
 
-        Log.i(TAG,"LAUNCH ACTIVITY FIRST THING OR NO?");
-        // ToDo: This needs to be moved to the repository.
         FirebaseAuth.getInstance().addAuthStateListener( new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {

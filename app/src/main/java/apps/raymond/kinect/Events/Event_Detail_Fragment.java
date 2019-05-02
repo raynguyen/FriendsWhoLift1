@@ -47,7 +47,7 @@ import apps.raymond.kinect.Invite_Users_Fragment;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.View_Profile_Activity;
 
 import static apps.raymond.kinect.Core_Activity.YESNO_REQUEST;
@@ -101,7 +101,7 @@ public class Event_Detail_Fragment extends Fragment implements
 
     ViewFlipper editFlipper, profilesFlipper;
     TextInputEditText nameEdit, descEdit;
-    List<UserModel> invitedProfiles,declinedProfiles, acceptedProfiles;
+    List<User_Model> invitedProfiles,declinedProfiles, acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
     TextView eventName,eventDesc,eventStart,eventEnd;
@@ -196,7 +196,7 @@ public class Event_Detail_Fragment extends Fragment implements
     }
 
     @Override
-    public void onProfileClick(UserModel userModel) {
+    public void onProfileClick(User_Model userModel) {
         Intent viewProfileIntent = new Intent(requireActivity(), View_Profile_Activity.class);
         viewProfileIntent.putExtra(View_Profile_Activity.USER,userModel);
         startActivity(viewProfileIntent);
@@ -294,9 +294,9 @@ public class Event_Detail_Fragment extends Fragment implements
     }
 
     private void getInviteList(final Event_Model event){
-        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 invitedBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     if(task.getResult().isEmpty()){
@@ -320,9 +320,9 @@ public class Event_Detail_Fragment extends Fragment implements
 
     //Todo: called twice??
     private void getAcceptedList(Event_Model groupEvent){
-        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.getResult().isEmpty()){
                     acceptedNullText.setVisibility(View.VISIBLE);
                 }
@@ -344,9 +344,9 @@ public class Event_Detail_Fragment extends Fragment implements
 
     private void getDeclinedList(Event_Model groupEvent){
         Log.i(TAG,"Attempting to get query of accepted users!");
-        viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.getResult().isEmpty()){
                     declinedNullText.setVisibility(View.VISIBLE);
                 }
@@ -389,11 +389,11 @@ public class Event_Detail_Fragment extends Fragment implements
         }
     }
 
-    ArrayList<UserModel> userModelArrayList;
+    ArrayList<User_Model> userModelArrayList;
     private void fetchUserList(){
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 Log.i(TAG,"Fetched list of users.");
                 if(task.isSuccessful()){
                     if(task.getResult().size()>0){

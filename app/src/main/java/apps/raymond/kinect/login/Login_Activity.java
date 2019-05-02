@@ -20,19 +20,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.UserProfile.UserModel;
 
-public class Login_Activity extends AppCompatActivity implements LoginFrag.SignIn, SignUpFrag.SignIn{
+public class Login_Activity extends AppCompatActivity implements Login_Fragment.SignIn, SignUpFrag.SignIn{
     private static final String TAG = "Login_Activity";
 
     Repository_ViewModel viewModel;

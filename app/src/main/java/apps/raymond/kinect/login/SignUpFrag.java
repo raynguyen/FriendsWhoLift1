@@ -26,7 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class SignUpFrag extends Fragment implements View.OnClickListener {
@@ -108,7 +108,7 @@ public class SignUpFrag extends Fragment implements View.OnClickListener {
                 final String username,password;
                 username = username_Txt.getText().toString();
                 password = password_Txt.getText().toString();
-                UserModel userModel = new UserModel(username,"invisible");
+                User_Model userModel = new User_Model(username,"invisible");
                 mLoginViewModel.createUserByEmail(userModel,password)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

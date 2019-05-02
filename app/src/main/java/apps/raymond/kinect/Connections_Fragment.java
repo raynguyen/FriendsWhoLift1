@@ -18,15 +18,15 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Connections_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener{
     private static final String TAG = "ConnectionsFragment";
 
-    private List<UserModel> connectionsList;
+    private List<User_Model> connectionsList;
 
     public interface LoadConnections{
-        List<UserModel> loadConnections();
+        List<User_Model> loadConnections();
     }
 
     private LoadConnections connectionsInterface;
@@ -87,7 +87,7 @@ public class Connections_Fragment extends Fragment implements ProfileRecyclerAda
     }
 
     @Override
-    public void onProfileClick(UserModel userModel) {
+    public void onProfileClick(User_Model userModel) {
         Toast.makeText(getContext(),"Clicked on profile: "+userModel.getEmail(),Toast.LENGTH_LONG).show();
     }
 }

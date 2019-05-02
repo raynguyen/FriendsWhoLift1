@@ -10,18 +10,18 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.UserViewHolder> {
 
     public interface CheckProfileInterface{
-        void addToCheckedList(UserModel clickedUser);
-        void removeFromCheckedList(UserModel clickedUser);
+        void addToCheckedList(User_Model clickedUser);
+        void removeFromCheckedList(User_Model clickedUser);
     }
 
-    private List<UserModel> users;
+    private List<User_Model> users;
     private CheckProfileInterface checkedInterface;
-    public Add_Users_Adapter(List<UserModel> users, CheckProfileInterface checkedInterface){
+    public Add_Users_Adapter(List<User_Model> users, CheckProfileInterface checkedInterface){
         this.users = users;
         this.checkedInterface = checkedInterface;
     }
@@ -47,7 +47,7 @@ public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.Us
 
     @Override
     public void onBindViewHolder(@NonNull final UserViewHolder userViewHolder, int i) {
-        final UserModel currentUser = users.get(i);
+        final User_Model currentUser = users.get(i);
         userViewHolder.nameTxt.setText(currentUser.getEmail());
 
         userViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

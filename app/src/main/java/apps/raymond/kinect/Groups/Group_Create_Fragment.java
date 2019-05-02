@@ -7,7 +7,6 @@
 package apps.raymond.kinect.Groups;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -57,7 +56,7 @@ import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Group_Create_Fragment extends Fragment implements
         View.OnClickListener, BackPressListener, Add_Users_Adapter.CheckProfileInterface {
@@ -82,7 +81,7 @@ public class Group_Create_Fragment extends Fragment implements
     }
 
     private FragmentManager fm;
-    List<UserModel> usersList;
+    List<User_Model> usersList;
     private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -237,12 +236,12 @@ public class Group_Create_Fragment extends Fragment implements
         });
     }
 
-    List<UserModel> inviteUsersList;
+    List<User_Model> inviteUsersList;
     private void fetchUsersList(){
         Log.i(TAG,"Fetching all users from store.");
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
                     inviteUsersList = new ArrayList<>();
                     Log.i(TAG,"Successfully fetched suggested inviteUsersList list.");
@@ -264,19 +263,19 @@ public class Group_Create_Fragment extends Fragment implements
     }
 
     @Override
-    public void addToCheckedList(UserModel clickedUser) {
+    public void addToCheckedList(User_Model clickedUser) {
         Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
         inviteUsersList.add(clickedUser);
-        for(UserModel user : inviteUsersList){
+        for(User_Model user : inviteUsersList){
             Log.i(TAG,"Inviting: "+user.getEmail());
         }
     }
 
     @Override
-    public void removeFromCheckedList(UserModel clickedUser) {
+    public void removeFromCheckedList(User_Model clickedUser) {
         Log.i(TAG,"Removing user from list to invite: "+clickedUser.getEmail());
         inviteUsersList.remove(clickedUser);
-        for(UserModel user : inviteUsersList){
+        for(User_Model user : inviteUsersList){
             Log.i(TAG,"Inviting: "+user.getEmail());
         }
     }

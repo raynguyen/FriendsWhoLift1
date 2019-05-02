@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +13,13 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Invite_Users_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
     private final static String TAG = "InviteUsersFragment";
     private final static String USER_LIST = "UsersList";
 
-    public static Invite_Users_Fragment newInstance(ArrayList<UserModel> userModelList){
+    public static Invite_Users_Fragment newInstance(ArrayList<User_Model> userModelList){
         Invite_Users_Fragment fragment = new Invite_Users_Fragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(USER_LIST,userModelList);
@@ -31,7 +30,7 @@ public class Invite_Users_Fragment extends Fragment implements ProfileRecyclerAd
     public Invite_Users_Fragment(){
     }
 
-    ArrayList<UserModel> userModelList;
+    ArrayList<User_Model> userModelList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +56,7 @@ public class Invite_Users_Fragment extends Fragment implements ProfileRecyclerAd
     }
 
     @Override
-    public void onProfileClick(UserModel userModel) {
+    public void onProfileClick(User_Model userModel) {
         Log.i(TAG,"hello you clicked on a profile!");
     }
 }

@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.login.Login_Activity;
 
 public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
@@ -47,7 +47,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.personal_profile_activity);
+        setContentView(R.layout.activity_profile_);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
 
@@ -76,18 +76,6 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
 
         socialEditLock = findViewById(R.id.social_edit_lock);
         socialEditLock.setOnClickListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i(TAG,"Pausing profile activity.");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG,"Destroying profile activity.");
     }
 
     @Override
@@ -130,13 +118,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    List<UserModel> connectionsList = new ArrayList<>();
+    List<User_Model> connectionsList = new ArrayList<>();
     List<String> interestsList = new ArrayList<>();
     private void fetchUserInfo(){
         //READ FROM THE SHARED PREFERENCES HERE!
-        viewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
                     if(task.getResult()!=null){
                         connectionsList.addAll(task.getResult());
@@ -253,7 +241,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public List<UserModel> loadConnections() {
+    public List<User_Model> loadConnections() {
         return connectionsList;
     }
 }

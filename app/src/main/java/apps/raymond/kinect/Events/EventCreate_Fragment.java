@@ -64,7 +64,7 @@ import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.Maps_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.UserProfile.UserModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Fragment extends Fragment implements View.OnClickListener,
         Add_Users_Adapter.CheckProfileInterface, BackPressListener,
@@ -130,7 +130,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     Spinner visibilitySpinner;
     ProgressBar progressBar;
     Add_Users_Adapter userAdapter;
-    List<UserModel> usersList, inviteUsersList;
+    List<User_Model> usersList, inviteUsersList;
     ArrayList<String> tagsList, primesList;
     LinearLayout inviteUsersLayout;
     @Override
@@ -375,14 +375,14 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     }
 
     /**
-     * Calls upon the FirebaseLayer to return a query of all the user documents in FireStore.
+     * Calls upon the FireBase_Repository to return a query of all the user documents in FireStore.
      * This needs to be changed so that we only query an appropriate set of users that are set and
      * eligible for event invitations.
      */
     private void fetchUsersList(){
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<UserModel>>() {
+        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<UserModel>> task) {
+            public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
                     usersList.addAll(task.getResult());
                     userAdapter.notifyDataSetChanged();
@@ -396,16 +396,16 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void addToCheckedList(UserModel clickedUser) {
+    public void addToCheckedList(User_Model clickedUser) {
         Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
         inviteUsersList.add(clickedUser);
     }
 
     @Override
-    public void removeFromCheckedList(UserModel clickedUser) {
+    public void removeFromCheckedList(User_Model clickedUser) {
         Log.i(TAG,"Removing user from list to invite: "+clickedUser.getEmail());
         inviteUsersList.remove(clickedUser);
-        for(UserModel user : inviteUsersList){
+        for(User_Model user : inviteUsersList){
             Log.i(TAG,"Inviting: "+user.getEmail());
         }
     }
