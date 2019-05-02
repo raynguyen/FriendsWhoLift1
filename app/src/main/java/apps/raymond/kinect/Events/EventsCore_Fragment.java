@@ -73,7 +73,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     }
 
     private TextView nullText;
-    int testInt = 0;
+    int scrolledHeight = 0;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -89,20 +89,20 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        final Button searchEventsBtn = view.findViewById(R.id.search_events_btn);
-        searchEventsBtn.setOnClickListener(this);
+        final Button exploreEventsBtn = view.findViewById(R.id.search_events_btn);
+        exploreEventsBtn.setOnClickListener(this);
 
         eventsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                testInt = testInt + dy;
-                if(testInt >= searchEventsBtn.getHeight() && searchEventsBtn.getVisibility()==View.VISIBLE){
-                    searchEventsBtn.setVisibility(View.GONE);
-                    eventsRecycler.scrollTo(0,testInt);
+                scrolledHeight = scrolledHeight + dy;
+                if(scrolledHeight >= exploreEventsBtn.getHeight() && exploreEventsBtn.getVisibility()==View.VISIBLE){
+                    exploreEventsBtn.setVisibility(View.GONE);
+                    eventsRecycler.scrollTo(0, scrolledHeight);
                 }
-                if(testInt < searchEventsBtn.getHeight()){
-                    searchEventsBtn.setVisibility(View.VISIBLE);
+                if(scrolledHeight < exploreEventsBtn.getHeight()){
+                    exploreEventsBtn.setVisibility(View.VISIBLE);
                 }
             }
         });

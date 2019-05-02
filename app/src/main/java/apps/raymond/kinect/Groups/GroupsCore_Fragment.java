@@ -38,12 +38,12 @@ import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
-public class Core_Groups_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
-    private static final String TAG = "Core_Groups_Fragment";
+public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
+    private static final String TAG = "GroupsCore_Fragment";
     private Groups_ViewModel model;
 
     //Required empty fragment. Not sure why it is needed.
-    public Core_Groups_Fragment(){}
+    public GroupsCore_Fragment(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,26 +58,41 @@ public class Core_Groups_Fragment extends Fragment implements GroupRecyclerAdapt
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.core_groups_frag, container, false);
+        return inflater.inflate(R.layout.groups_core_fragment, container, false);
     }
 
     GroupRecyclerAdapter mAdapter;
     ProgressBar progressBar;
+    int scrolledHeight = 0;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         myGroups = new ArrayList<>();
-
         progressBar = view.findViewById(R.id.progress_bar);
 
-        RecyclerView cardRecycler = view.findViewById(R.id.card_container);
+        final Button exploreGroupsBtn = view.findViewById(R.id.explore_groups_btn);
+        final RecyclerView groupsRecycler = view.findViewById(R.id.card_container);
+        groupsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                scrolledHeight = scrolledHeight + dy;
+                if(scrolledHeight >= exploreGroupsBtn.getHeight() && exploreGroupsBtn.getVisibility()==View.VISIBLE){
+                    exploreGroupsBtn.setVisibility(View.GONE);
+                    groupsRecycler.scrollTo(0,scrolledHeight);
+                }
+                if(scrolledHeight < exploreGroupsBtn.getHeight()){
+                    exploreGroupsBtn.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         mAdapter = new GroupRecyclerAdapter(myGroups, this);
         updateCardViews();
 
-        cardRecycler.setAdapter(mAdapter);
-        cardRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
-        cardRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        groupsRecycler.setAdapter(mAdapter);
+        groupsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
+        groupsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Button testBtn3 = view.findViewById(R.id.testButton3);
         testBtn3.setOnClickListener(new View.OnClickListener() {

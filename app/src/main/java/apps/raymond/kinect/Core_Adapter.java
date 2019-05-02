@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.EventsCore_Fragment;
-import apps.raymond.kinect.Groups.Core_Groups_Fragment;
+import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 
 public class Core_Adapter extends FragmentStatePagerAdapter {
     private static final int NUM_PAGES = 2;
@@ -39,7 +39,7 @@ public class Core_Adapter extends FragmentStatePagerAdapter {
             case 0:
                 return new EventsCore_Fragment();
             case 1:
-                return new Core_Groups_Fragment();
+                return new GroupsCore_Fragment();
             default:
                 return null;
         }

@@ -67,7 +67,7 @@ import apps.raymond.kinect.Events.EventCreate_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.Events_Search_Fragment;
-import apps.raymond.kinect.Groups.Core_Groups_Fragment;
+import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
@@ -139,11 +139,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 Log.i(TAG,"EventsCore_Fragment does not implement UpdateEventRecycler interface.");
             }
         }*/
-        if(fragment instanceof Core_Groups_Fragment){
+        if(fragment instanceof GroupsCore_Fragment){
             try {
                 updateGroupRecycler = (UpdateGroupRecycler) fragment;
             } catch (ClassCastException e){
-                Log.i(TAG,"Core_Groups_Fragment does not implement UpdateGroupRecycler interface.");
+                Log.i(TAG,"GroupsCore_Fragment does not implement UpdateGroupRecycler interface.");
             }
         }
     }
@@ -249,7 +249,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 ((EventsCore_Fragment) fragment).filterRecycler(s);
                 break;
             case 1:
-                ((Core_Groups_Fragment) fragment).filterRecycler(s);
+                ((GroupsCore_Fragment) fragment).filterRecycler(s);
                 break;
             default:
                 return false;
