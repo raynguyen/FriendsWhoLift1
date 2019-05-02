@@ -33,7 +33,7 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
 public class EventsCore_Fragment extends Fragment implements View.OnClickListener,
-        EventsCore_Adapter.EventClickListener{
+        EventsCore_Adapter.EventClickListener {
     private static final String TAG = "EventsCore_Fragment";
 
     private List<Event_Model> eventList;
@@ -69,10 +69,11 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.core_events_frag, container,false);
+        return inflater.inflate(R.layout.events_core_fragment, container,false);
     }
 
     private TextView nullText;
+    int testInt = 0;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -82,14 +83,30 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
 
         progressBar = view.findViewById(R.id.progress_bar);
 
-        RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
+        final RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsCore_Adapter(eventList, this);
         eventsRecycler.setAdapter(mAdapter);
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Button searchEventsBtn = view.findViewById(R.id.search_events_btn);
+        final Button searchEventsBtn = view.findViewById(R.id.search_events_btn);
         searchEventsBtn.setOnClickListener(this);
+
+        eventsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                testInt = testInt + dy;
+                if(testInt >= searchEventsBtn.getHeight() && searchEventsBtn.getVisibility()==View.VISIBLE){
+                    searchEventsBtn.setVisibility(View.GONE);
+                    eventsRecycler.scrollTo(0,testInt);
+                }
+                if(testInt < searchEventsBtn.getHeight()){
+                    searchEventsBtn.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
             updateEvents();
         }
@@ -157,5 +174,6 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             nullText.setVisibility(View.VISIBLE);
         }
     }
+
 
 }

@@ -497,10 +497,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
                     break;
                 case MAP_REQUEST_CODE:
                     address = data.getParcelableExtra(Maps_Activity.ADDRESS);
-                    Log.i(TAG,"Address: "+address.getAddressLine(0));
-                    Log.i(TAG,"Address: "+address.toString());
-                    String addressStr = address.getAddressLine(0);
-                    locationTxt.setText(addressStr);
+                    locationTxt.setText(address.getAddressLine(0));
                     break;
                 case START_DATE_REQUEST:
                     initializeDates(args, requestCode);
