@@ -12,6 +12,7 @@
 
     <string name="null_events">You have no upcoming events.</string>
     <string name="null_groups">You are not associated with any groups.</string>
+
     <!-- Strings that are used in group_create_frag -->
     <string name="group_name">GROUP NAME</string>
     <string name="descriptor">Description for the group.</string>
@@ -90,7 +91,7 @@
     <string name="invited">Invited</string>
     <string name="empty">Empty</string>
     <string name="location">Location</string>
-    <string name="host">Host</string>
+    <string name="host">Created By: </string>
 
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>

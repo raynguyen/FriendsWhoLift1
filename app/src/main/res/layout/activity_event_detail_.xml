@@ -33,11 +33,20 @@
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
+        <TextView
+            android:id="@+id/text_host"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_name"
+            android:textSize="18sp"
+            android:hint="@string/host"
+            android:gravity="center_horizontal"/>
+
         <LinearLayout
             android:id="@+id/layout_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_name"
+            android:layout_below="@id/text_host"
             android:orientation="horizontal"
             android:layout_marginTop="2dp">
 
@@ -101,7 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/button_view_users"
         android:layout_alignParentBottom="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/event_members_frame"
@@ -203,6 +212,7 @@
                 android:layout_height="wrap_content">
 
             </SearchView>
+
             <ViewFlipper
                 android:id="@+id/profiles_flipper"
                 android:layout_width="match_parent"

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +27,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.EventDetail_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
@@ -124,13 +124,17 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onEventClick(int position, Event_Model groupEvent) {
-        Fragment detailedEvent = Event_Detail_Fragment.newInstance(groupEvent);
+    public void onEventClick(int position, Event_Model event) {
+        //Legacy event detail fragment. Have since moved to activity as we are now only interested in a single Event (separation of concerns).
+        /*Fragment detailedEvent = Event_Detail_Fragment.newInstance(event);
         detailedEvent.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
         getFragmentManager().beginTransaction()
                 .replace(R.id.core_frame,detailedEvent,Event_Detail_Fragment.TAG)
                 .addToBackStack(Event_Detail_Fragment.TAG)
-                .commit();
+                .commit();*/
+
+        EventDetail_Activity.init(event, getContext());
+
     }
 
     /*

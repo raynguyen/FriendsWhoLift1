@@ -13,9 +13,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class User_Model implements Parcelable {
+    //TODO: There should be a URL to FirebaseStorage where hte user profile picture is stored.
     private String email;
     private String visibility;
     private String name;
+
 
     public User_Model(){}
 
