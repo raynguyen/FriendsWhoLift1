@@ -89,17 +89,22 @@ public class FireBase_Repository {
 
     public FireBase_Repository() {
         Log.w(TAG,"Creating new instance of FireBase_Repository");
-        try {
-            this.userEmail = mAuth.getCurrentUser().getEmail();
-            getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
-                @Override
-                public void onComplete(@NonNull Task<User_Model> task) {
-                    curUserModel = task.getResult();
-                }
-            });
-        } catch (NullPointerException npe) {
-            Log.w(TAG, "Error.",npe);
+        if(mAuth.getCurrentUser()!=null){
+            try {
+                this.userEmail = mAuth.getCurrentUser().getEmail();
+                getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
+                    @Override
+                    public void onComplete(@NonNull Task<User_Model> task) {
+                        curUserModel = task.getResult();
+                    }
+                });
+            } catch (NullPointerException npe) {
+                Log.w(TAG, "Error.",npe);
+            }
+        } else {
+            getCurrentUser();
         }
+
     }
 
     //*------------------------------------------USER-------------------------------------------*//

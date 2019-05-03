@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
@@ -13,267 +13,306 @@
         android:id="@+id/update_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_centerInParent="true"
         android:visibility="invisible"/>
 
-        <!--READ EVENT-->
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="4dp">
+    <RelativeLayout
+        android:id="@+id/layout_information"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp">
 
-            <TextView
-                android:id="@+id/text_name"
+        <TextView
+            android:id="@+id/text_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:hint="@string/event_name"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:id="@+id/layout_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_name"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="@string/event_name"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:orientation="vertical"
+                android:background="@color/black"
+                android:padding="4dp"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/text_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/event_month"
+                    android:textColor="@color/white"
+                    android:gravity="center_horizontal"/>
+
+                <TextView
+                    android:id="@+id/text_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/start_date"
+                    android:textColor="@color/white"
+                    android:gravity="center_horizontal"/>
+
+                <TextView
+                    android:id="@+id/text_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/time_format"
+                    android:textColor="@color/white"
+                    android:gravity="center_horizontal"/>
+
+            </LinearLayout>
             <TextView
-                android:id="@+id/event_desc"
+                android:id="@+id/text_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/event_desc"
+                android:textSize="18sp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:maxLines="3"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/button_view_users"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_information"
+        android:text="@string/view_users"
+        android:drawablePadding="0dp" />
+
+    <RelativeLayout
+        android:id="@+id/layout_users"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_view_users"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/event_members_frame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <LinearLayout
+                android:id="@+id/invite_flipper_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/button_accepted_users"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:text="@string/accepted"
+                    android:textColor="@color/colorAccentLight"
+                    android:gravity="bottom|center"/>
+
+                <Button
+                    android:id="@+id/button_declined_users"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:text="@string/declined"
+                    android:textColor="@color/colorAccentLight"
+                    android:gravity="bottom|center"/>
+
+                <Button
+                    android:id="@+id/button_invited_users"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:text="@string/invited"
+                    android:textColor="@color/colorAccentLight"
+                    android:gravity="bottom|center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/member_mask_text_views"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/text_name"
-                android:hint="@string/event_desc"
-                android:textSize="20sp"
-                />
+                android:paddingTop="12dp"
+                android:weightSum="3"
+                android:clickable="false"
+                android:focusable="false">
 
-            <TextView
-                android:id="@+id/event_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/event_start"
-                android:textSize="20sp"
-                android:layout_marginTop="12dp"
-                app:layout_constraintTop_toBottomOf="@id/event_desc"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/accepted_count_txt"
+                    android:textColor="@color/blueish"
+                    android:textSize="24sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/null_dashes" />
+                <TextView
+                    android:id="@+id/declined_count_txt"
+                    android:textColor="@color/blueish"
+                    android:textSize="24sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/null_dashes" />
+                <TextView
+                    android:id="@+id/invited_count_txt"
+                    android:textColor="@color/blueish"
+                    android:textSize="24sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/null_dashes" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/event_end"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/event_end"
-                android:textSize="20sp"
-                android:layout_marginTop="12dp"
-                app:layout_constraintTop_toBottomOf="@id/event_start"
-                app:layout_constraintStart_toStartOf="parent"/>
         </android.support.constraint.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/event_members_frame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/guests_layout"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp">
-
         <LinearLayout
-            android:id="@+id/invite_flipper_tabs"
+            android:id="@+id/guests_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_below="@+id/event_members_frame"
+            android:background="@drawable/edit_text_border">
 
-            <Button
-                android:id="@+id/accepted_profiles_btn"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="1"
-                android:text="@string/accepted"
-                android:textColor="@color/colorAccentLight"
-                android:gravity="bottom|center"/>
+            <SearchView
+                android:id="@+id/guests_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/declined_profiles_btn"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="1"
-                android:text="@string/declined"
-                android:textColor="@color/colorAccentLight"
-                android:gravity="bottom|center"/>
+            </SearchView>
+            <ViewFlipper
+                android:id="@+id/profiles_flipper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:paddingBottom="8dp">
 
-            <Button
-                android:id="@+id/invited_profiles_btn"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="1"
-                android:text="@string/invited"
-                android:textColor="@color/colorAccentLight"
-                android:gravity="bottom|center" />
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/accepted_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </android.support.v7.widget.RecyclerView>
+
+                    <ProgressBar
+                        android:id="@+id/accepted_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_gravity="center"
+                        app:layout_constraintTop_toTopOf="parent">
+                    </ProgressBar>
+
+                    <TextView
+                        android:id="@+id/accepted_null_data_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_gravity="center"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/empty"
+                        android:textSize="24sp"
+                        android:visibility="invisible">
+                    </TextView>
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/profiles_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/declined_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </android.support.v7.widget.RecyclerView>
+
+                    <ProgressBar
+                        android:id="@+id/declined_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_gravity="center"
+                        app:layout_constraintTop_toTopOf="parent">
+                    </ProgressBar>
+
+                    <TextView
+                        android:id="@+id/declined_null_data_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_gravity="center"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/empty"
+                        android:textSize="24sp"
+                        android:visibility="invisible"/>
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/invited_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </android.support.v7.widget.RecyclerView>
+
+                    <ProgressBar
+                        android:id="@+id/invited_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_gravity="center"
+                        app:layout_constraintTop_toTopOf="parent">
+                    </ProgressBar>
+
+                    <TextView
+                        android:id="@+id/invited_null_data_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_gravity="center"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/empty"
+                        android:textSize="24sp"
+                        android:visibility="invisible"/>
+                </android.support.constraint.ConstraintLayout>
+            </ViewFlipper>
         </LinearLayout>
+    </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/member_mask_text_views"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="4dp"
-            android:paddingTop="12dp"
-            android:weightSum="3"
-            android:clickable="false"
-            android:focusable="false">
 
-            <TextView
-                android:id="@+id/accepted_count_txt"
-                android:textColor="@color/blueish"
-                android:textSize="24sp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:hint="@string/null_dashes" />
-            <TextView
-                android:id="@+id/declined_count_txt"
-                android:textColor="@color/blueish"
-                android:textSize="24sp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:hint="@string/null_dashes" />
-            <TextView
-                android:id="@+id/invited_count_txt"
-                android:textColor="@color/blueish"
-                android:textSize="24sp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:hint="@string/null_dashes" />
-        </LinearLayout>
-
-    </android.support.constraint.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/guests_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/edit_text_border">
-
-        <SearchView
-            android:id="@+id/guests_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </SearchView>
-        <ViewFlipper
-            android:id="@+id/profiles_flipper"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:paddingBottom="8dp">
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/accepted_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </android.support.v7.widget.RecyclerView>
-
-                <ProgressBar
-                    android:id="@+id/accepted_progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent">
-                </ProgressBar>
-
-                <TextView
-                    android:id="@+id/accepted_null_data_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="@string/empty"
-                    android:textSize="24sp"
-                    android:visibility="invisible">
-                </TextView>
-            </android.support.constraint.ConstraintLayout>
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/profiles_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/declined_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </android.support.v7.widget.RecyclerView>
-
-                <ProgressBar
-                    android:id="@+id/declined_progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent">
-                </ProgressBar>
-
-                <TextView
-                    android:id="@+id/declined_null_data_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="@string/empty"
-                    android:textSize="24sp"
-                    android:visibility="invisible"/>
-            </android.support.constraint.ConstraintLayout>
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/invited_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </android.support.v7.widget.RecyclerView>
-
-                <ProgressBar
-                    android:id="@+id/invited_progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent">
-                </ProgressBar>
-
-                <TextView
-                    android:id="@+id/invited_null_data_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:text="@string/empty"
-                    android:textSize="24sp"
-                    android:visibility="invisible"/>
-            </android.support.constraint.ConstraintLayout>
-        </ViewFlipper>
-    </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

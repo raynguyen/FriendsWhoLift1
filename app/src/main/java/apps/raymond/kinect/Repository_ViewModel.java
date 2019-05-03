@@ -18,6 +18,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Repository_ViewModel extends ViewModel {
     private FireBase_Repository mRepository;
+    private User_Model mUser;
 
     public Repository_ViewModel(){
         this.mRepository = new FireBase_Repository();

@@ -36,7 +36,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -74,8 +78,8 @@ public class Event_Detail_Fragment extends Fragment implements
         return fragment;
     }
 
-    Event_Model event;
-    String currUser;
+    private String currUser;
+    private Event_Model event;
     private Repository_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,35 +103,46 @@ public class Event_Detail_Fragment extends Fragment implements
         return inflater.inflate(R.layout.event_detail_frag,container,false);
     }
 
+    SearchView toolbarSearch;
+    ViewGroup informationLayout, usersLayout;
     ViewFlipper editFlipper, profilesFlipper;
     TextInputEditText nameEdit, descEdit;
     List<User_Model> invitedProfiles,declinedProfiles, acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
-    TextView eventName,eventDesc,eventStart,eventEnd;
+    TextView textName, textDesc, textMonth, textDate, textTime;
     TextView acceptedNullText,invitedNullText,declinedNullText, startEdit, endEdit;
     TextView acceptedCount, declinedCount, invitedCount;
     String creator;
-    SearchView toolbarSearch;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         toolbarSearch = requireActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
-        //editFlipper = view.findViewById(R.id.event_edit_flipper);
-        eventName = view.findViewById(R.id.text_name);
-        eventDesc = view.findViewById(R.id.event_desc);
-        eventStart = view.findViewById(R.id.event_start);
-        eventEnd = view.findViewById(R.id.event_end);
+
+        informationLayout = view.findViewById(R.id.layout_information);
+        textName = view.findViewById(R.id.text_name);
+        textName.setText(event.getName());
+        textDesc = view.findViewById(R.id.text_description);
+        textDesc.setText(event.getDesc());
+
+        textMonth = view.findViewById(R.id.text_month);
+        textDate = view.findViewById(R.id.text_date);
+        textTime = view.findViewById(R.id.text_time);
+        convertLongToDate();
+
+        usersLayout = view.findViewById(R.id.layout_users);
+        Button btnViewUsers = view.findViewById(R.id.button_view_users);
+        btnViewUsers.setOnClickListener(this);
 
         updateBar = view.findViewById(R.id.update_progress_bar);
         creator = event.getCreator();
 
         updateViews();
-        Button acceptedBtn = view.findViewById(R.id.accepted_profiles_btn);
-        Button declinedBtn = view.findViewById(R.id.declined_profiles_btn);
-        Button invitedBtn = view.findViewById(R.id.invited_profiles_btn);
+        Button acceptedBtn = view.findViewById(R.id.button_accepted_users);
+        Button declinedBtn = view.findViewById(R.id.button_declined_users);
+        Button invitedBtn = view.findViewById(R.id.button_invited_users);
         acceptedCount = view.findViewById(R.id.accepted_count_txt);
         declinedCount = view.findViewById(R.id.declined_count_txt);
         invitedCount = view.findViewById(R.id.invited_count_txt);
@@ -183,16 +198,36 @@ public class Event_Detail_Fragment extends Fragment implements
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.accepted_profiles_btn:
+            case R.id.button_accepted_users:
                 profilesFlipper.setDisplayedChild(0);
                 break;
-            case R.id.declined_profiles_btn:
+            case R.id.button_declined_users:
                 profilesFlipper.setDisplayedChild(1);
                 break;
-            case R.id.invited_profiles_btn:
+            case R.id.button_invited_users:
                 profilesFlipper.setDisplayedChild(2);
                 break;
+            case R.id.button_view_users:
+                if(usersLayout.getVisibility()!=View.VISIBLE){
+                    usersLayout.setVisibility(View.VISIBLE);
+                } else {
+                    usersLayout.setVisibility(View.GONE);
+                }
+                break;
         }
+    }
+
+    /**
+     * Converts event long field to a date field and populates the appropriate views.
+     */
+    private void convertLongToDate(){
+        long long1 = event.getLong1();
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(long1);
+        textMonth.setText(new SimpleDateFormat("MMM",Locale.getDefault()).format(c.getTime()));
+        textDate.setText(String.valueOf(c.get(Calendar.DATE)));
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
+        textTime.setText(sdf.format(new Date(long1)));
     }
 
     @Override
@@ -267,8 +302,8 @@ public class Event_Detail_Fragment extends Fragment implements
     }
 
     private void updateViews(){
-        eventName.setText(event.getName());
-        eventDesc.setText(event.getDesc());
+        textName.setText(event.getName());
+        //eventDesc.setText(event.getDesc());
     }
 
     private void editEvent(){
