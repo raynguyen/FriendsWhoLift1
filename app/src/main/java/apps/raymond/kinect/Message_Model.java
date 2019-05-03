@@ -38,6 +38,31 @@ public class Message_Model implements Parcelable {
         this.timestamp = timestamp;
     }
 
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public void setAuthor(String author){
+        this.author = author;
+    }
+
+    public String getAuthor(){
+        return author;
+    }
+
+    public void setTimestamp(long timestamp){
+        this.timestamp = timestamp;
+    }
+
+    public long getTimestamp(){
+        return timestamp;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;

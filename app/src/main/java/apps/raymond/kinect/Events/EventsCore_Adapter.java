@@ -38,27 +38,6 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         eventsListClone = eventsList;
     }
 
-    static class EventViewHolder extends RecyclerView.ViewHolder{
-        private TextView nameTxt, dayTxt, monthTxt, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;
-        private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag;
-        private EventViewHolder(View view){
-            super(view);
-            nameTxt = view.findViewById(R.id.text_name);
-            dayTxt = view.findViewById(R.id.text_day);
-            monthTxt = view.findViewById(R.id.text_month);
-            attendingTxt = view.findViewById(R.id.text_attending);
-            invitedTxt = view.findViewById(R.id.text_invited);
-            hostTxt = view.findViewById(R.id.text_host);
-            locationTxt = view.findViewById(R.id.text_location);
-            timeTxt = view.findViewById(R.id.text_time);
-            sportsTag = view.findViewById(R.id.image_sport);
-            foodTag = view.findViewById(R.id.image_food);
-            drinksTag = view.findViewById(R.id.image_drinks);
-            moviesTag = view.findViewById(R.id.image_movie);
-            chillTag = view.findViewById(R.id.image_chill);
-        }
-    }
-
     @NonNull
     @Override
     public EventsCore_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
@@ -178,4 +157,25 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             notifyDataSetChanged();
         }
     };
+
+    static class EventViewHolder extends RecyclerView.ViewHolder{
+        private TextView nameTxt, dayTxt, monthTxt, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;
+        private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag;
+        private EventViewHolder(View view){
+            super(view);
+            nameTxt = view.findViewById(R.id.text_name);
+            dayTxt = view.findViewById(R.id.text_day);
+            monthTxt = view.findViewById(R.id.text_month);
+            attendingTxt = view.findViewById(R.id.text_attending);
+            invitedTxt = view.findViewById(R.id.text_invited);
+            hostTxt = view.findViewById(R.id.text_host);
+            locationTxt = view.findViewById(R.id.text_location);
+            timeTxt = view.findViewById(R.id.text_time);
+            sportsTag = view.findViewById(R.id.image_sport);
+            foodTag = view.findViewById(R.id.image_food);
+            drinksTag = view.findViewById(R.id.image_drinks);
+            moviesTag = view.findViewById(R.id.image_movie);
+            chillTag = view.findViewById(R.id.image_chill);
+        }
+    }
 }

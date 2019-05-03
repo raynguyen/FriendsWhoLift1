@@ -29,6 +29,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
         </LinearLayout>
+        <TextView
+            android:id="@+id/text_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_body"
+            android:hint="@string/time_format"/>
 
         <ImageButton
             android:layout_width="wrap_content"
