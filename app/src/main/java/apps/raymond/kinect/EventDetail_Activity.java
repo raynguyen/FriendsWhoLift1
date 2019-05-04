@@ -42,7 +42,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     public static final String EVENT = "Event";
     private static final String EVENT_ACCEPTED = "Accepted";
     private static final String EVENT_DECLINED = "Declined";
-    private static final int NUM_PAGES = 1;
+    private static final int NUM_PAGES = 2;
 
     public static void init(Event_Model event, Context context){
         Intent intent = new Intent(context, EventDetail_Activity.class);
@@ -54,8 +54,6 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     Event_Model event;
     ViewGroup informationLayout, usersLayout;
     ViewFlipper profilesFlipper;
-    List<User_Model> invitedProfiles,declinedProfiles,acceptedProfiles;
-    ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
     ProgressBar updateBar;
     TextView textName, textHost, textDesc, textMonth, textDate, textTime;
     ViewPager mViewPager;
@@ -114,7 +112,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
                 if(mViewPager.getCurrentItem()==0){
                     mViewPager.setCurrentItem(1);
                 } else if(mViewPager.getCurrentItem()==1){
-                    //mViewPager.setCurrentItem(0);
+                    mViewPager.setCurrentItem(0);
                 }
                 break;
         }
@@ -161,9 +159,9 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new Messages_Fragment();
+                    return Messages_Fragment.newInstance(event);
                 case 1:
-                    //return new EventUsers_Fragment();
+                    return EventUsers_Fragment.newInstance(event);
                 default:
                     return null;
             }

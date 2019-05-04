@@ -8,7 +8,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Groups.GroupBase;
+
 public class Messages_Fragment extends Fragment {
+    private static final String EVENT = "Event";
+    private static final String GROUP = "Group";
+
+    public static Messages_Fragment newInstance(Event_Model event){
+        Messages_Fragment fragment = new Messages_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable(EVENT, event);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static Messages_Fragment newInstance(GroupBase groupBase){
+        Messages_Fragment fragment = new Messages_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable(GROUP,groupBase);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

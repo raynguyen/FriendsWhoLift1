@@ -25,7 +25,17 @@ import java.util.List;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventUsers_Fragment extends Fragment {
+public class EventUsers_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
+    private static final String TAG = "EventUsers_Fragment";
+    private static final String EVENT = "Event";
+
+    public static EventUsers_Fragment newInstance(Event_Model event){
+        EventUsers_Fragment fragments = new EventUsers_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable(EVENT, event);
+        fragments.setArguments(args);
+        return fragments;
+    }
 
     Repository_ViewModel viewModel;
     @Override
@@ -41,6 +51,7 @@ public class EventUsers_Fragment extends Fragment {
         return view;
     }
 
+    List<User_Model> invitedProfiles,declinedProfiles,acceptedProfiles;
     RecyclerView mAcceptedRecycler, mInvitedRecycler, mDeclinedRecycler;
     ProgressBar mAcceptedBar, mInvitedBar, mDeclinedBar;
     TextView acceptedCount, declinedCount, invitedCount, acceptedNullText, invitedNullText, declinedNullText;
@@ -66,7 +77,8 @@ public class EventUsers_Fragment extends Fragment {
          * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
          * When user clicks on a user, load the full Profile using the name in the list as our query field.
          */
-        acceptedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
+
+        ProfileRecyclerAdapter acceptedAdapter = new ProfileRecyclerAdapter(acceptedProfiles,this);
         mAcceptedRecycler.setAdapter(acceptedAdapter);
         getAcceptedList(event);
         mAcceptedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
@@ -74,7 +86,7 @@ public class EventUsers_Fragment extends Fragment {
         mAcceptedBar = view.findViewById(R.id.progress_accepted);
         acceptedNullText = view.findViewById(R.id.text_accepted_null);
 
-        declinedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
+        ProfileRecyclerAdapter declinedAdapter = new ProfileRecyclerAdapter(declinedProfiles,this);
         mDeclinedRecycler.setAdapter(declinedAdapter);
         getDeclinedList(event);
         mDeclinedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
@@ -82,8 +94,8 @@ public class EventUsers_Fragment extends Fragment {
         mDeclinedBar = view.findViewById(R.id.progress_declined);
         declinedNullText = view.findViewById(R.id.text_declined_null);
 
-        invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
-        getInviteList(event);
+        ProfileRecyclerAdapter invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
+        getInviteList();
         mInvitedRecycler.setAdapter(invitedAdapter);
         mInvitedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
         mInvitedRecycler.setLayoutManager(new LinearLayoutManager(requireActivity()));
@@ -161,5 +173,10 @@ public class EventUsers_Fragment extends Fragment {
                 Log.w(TAG,"Error fetching declined list.",e);
             }
         });
+    }
+
+    @Override
+    public void onProfileClick(User_Model userModel) {
+
     }
 }
