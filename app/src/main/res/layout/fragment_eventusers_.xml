@@ -121,13 +121,13 @@
                 android:layout_height="match_parent">
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/accepted_recycler"
+                    android:id="@+id/recycler_accepted"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 </android.support.v7.widget.RecyclerView>
 
                 <ProgressBar
-                    android:id="@+id/accepted_progress_bar"
+                    android:id="@+id/progress_accepted"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -137,7 +137,7 @@
                 </ProgressBar>
 
                 <TextView
-                    android:id="@+id/accepted_null_data_text"
+                    android:id="@+id/text_accepted_null"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -156,13 +156,13 @@
                 android:layout_height="match_parent">
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/declined_recycler"
+                    android:id="@+id/recycler_declined"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 </android.support.v7.widget.RecyclerView>
 
                 <ProgressBar
-                    android:id="@+id/declined_progress_bar"
+                    android:id="@+id/progress_declined"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -172,7 +172,7 @@
                 </ProgressBar>
 
                 <TextView
-                    android:id="@+id/declined_null_data_text"
+                    android:id="@+id/text_declined_null"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -188,13 +188,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/invited_recycler"
+                    android:id="@+id/recycler_invited"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 </android.support.v7.widget.RecyclerView>
 
                 <ProgressBar
-                    android:id="@+id/invited_progress_bar"
+                    android:id="@+id/progress_invited"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -204,7 +204,7 @@
                 </ProgressBar>
 
                 <TextView
-                    android:id="@+id/invited_null_data_text"
+                    android:id="@+id/text_invited_null"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"

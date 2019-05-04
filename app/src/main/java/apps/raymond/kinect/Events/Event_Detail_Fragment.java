@@ -165,32 +165,32 @@ public class Event_Detail_Fragment extends Fragment implements
          * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
          * When user clicks on a user, load the full Profile using the name in the list as our query field.
          */
-        RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
+        RecyclerView acceptedRecycler = view.findViewById(R.id.recycler_accepted);
         acceptedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
         acceptedRecycler.setAdapter(acceptedAdapter);
         getAcceptedList(event);
         acceptedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         acceptedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        acceptedBar = view.findViewById(R.id.accepted_progress_bar);
-        acceptedNullText = view.findViewById(R.id.accepted_null_data_text);
+        acceptedBar = view.findViewById(R.id.progress_accepted);
+        acceptedNullText = view.findViewById(R.id.text_accepted_null);
 
-        RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
+        RecyclerView declinedRecycler = view.findViewById(R.id.recycler_declined);
         declinedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
         declinedRecycler.setAdapter(declinedAdapter);
         getDeclinedList(event);
         declinedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         declinedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        declinedBar = view.findViewById(R.id.declined_progress_bar);
-        declinedNullText = view.findViewById(R.id.declined_null_data_text);
+        declinedBar = view.findViewById(R.id.progress_declined);
+        declinedNullText = view.findViewById(R.id.text_declined_null);
 
-        RecyclerView invitedRecycler = view.findViewById(R.id.invited_recycler);
+        RecyclerView invitedRecycler = view.findViewById(R.id.recycler_invited);
         invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
         getInviteList(event);
         invitedRecycler.setAdapter(invitedAdapter);
         invitedRecycler.addItemDecoration(new DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL));
         invitedRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        invitedBar = view.findViewById(R.id.invited_progress_bar);
-        invitedNullText = view.findViewById(R.id.invited_null_data_text);
+        invitedBar = view.findViewById(R.id.progress_invited);
+        invitedNullText = view.findViewById(R.id.text_invited_null);
     }
 
     @Override

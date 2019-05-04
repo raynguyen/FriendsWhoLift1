@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -57,10 +56,8 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     ViewFlipper profilesFlipper;
     List<User_Model> invitedProfiles,declinedProfiles,acceptedProfiles;
     ProfileRecyclerAdapter invitedAdapter, declinedAdapter, acceptedAdapter;
-    ProgressBar acceptedBar,invitedBar,declinedBar,updateBar;
+    ProgressBar updateBar;
     TextView textName, textHost, textDesc, textMonth, textDate, textTime;
-    TextView acceptedNullText,invitedNullText,declinedNullText;
-    TextView acceptedCount, declinedCount, invitedCount;
     ViewPager mViewPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,12 +93,8 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
         updateBar = findViewById(R.id.update_progress_bar);
 
-
-
-
         profilesFlipper = findViewById(R.id.profiles_flipper);
 
-        //setMemberRecyclers(findViewById(android.R.id.content));
     }
 
     @Override
@@ -118,10 +111,10 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
                 profilesFlipper.setDisplayedChild(2);
                 break;
             case R.id.button_view_users:
-                if(usersLayout.getVisibility()!=View.VISIBLE){
-                    usersLayout.setVisibility(View.VISIBLE);
-                } else {
-                    usersLayout.setVisibility(View.GONE);
+                if(mViewPager.getCurrentItem()==0){
+                    mViewPager.setCurrentItem(1);
+                } else if(mViewPager.getCurrentItem()==1){
+                    //mViewPager.setCurrentItem(0);
                 }
                 break;
         }
@@ -140,110 +133,6 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         textTime.setText(sdf.format(new Date(long1)));
     }
 
-    private void setMemberRecyclers(View view){
-        /*
-         * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
-         * When user clicks on a user, load the full Profile using the name in the list as our query field.
-         */
-        RecyclerView acceptedRecycler = view.findViewById(R.id.accepted_recycler);
-        acceptedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
-        acceptedRecycler.setAdapter(acceptedAdapter);
-        getAcceptedList(event);
-        acceptedRecycler.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        acceptedRecycler.setLayoutManager(new LinearLayoutManager(this));
-        acceptedBar = view.findViewById(R.id.accepted_progress_bar);
-        acceptedNullText = view.findViewById(R.id.accepted_null_data_text);
-
-        RecyclerView declinedRecycler = view.findViewById(R.id.declined_recycler);
-        declinedAdapter = new ProfileRecyclerAdapter(invitedProfiles,this);
-        declinedRecycler.setAdapter(declinedAdapter);
-        getDeclinedList(event);
-        declinedRecycler.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        declinedRecycler.setLayoutManager(new LinearLayoutManager(this));
-        declinedBar = view.findViewById(R.id.declined_progress_bar);
-        declinedNullText = view.findViewById(R.id.declined_null_data_text);
-
-        RecyclerView invitedRecycler = view.findViewById(R.id.invited_recycler);
-        invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
-        getInviteList(event);
-        invitedRecycler.setAdapter(invitedAdapter);
-        invitedRecycler.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        invitedRecycler.setLayoutManager(new LinearLayoutManager(this));
-        invitedBar = view.findViewById(R.id.invited_progress_bar);
-        invitedNullText = view.findViewById(R.id.invited_null_data_text);
-    }
-
-    private void getInviteList(final Event_Model event){
-        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                invitedBar.setVisibility(View.INVISIBLE);
-                if(task.isSuccessful()){
-                    if(task.getResult().isEmpty()){
-                        invitedNullText.setVisibility(View.VISIBLE);
-                    }
-                    invitedProfiles = new ArrayList<>();
-                    invitedProfiles.addAll(task.getResult());
-                    invitedCount.setText(String.valueOf(invitedProfiles.size()));
-                    invitedAdapter.setData(invitedProfiles);
-                    invitedAdapter.notifyDataSetChanged();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error fetching invited list.",e);
-            }
-        });
-    }
-
-    //Todo: called twice??
-    private void getAcceptedList(Event_Model groupEvent){
-        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                if(task.getResult().isEmpty()){
-                    acceptedNullText.setVisibility(View.VISIBLE);
-                }
-                acceptedBar.setVisibility(View.INVISIBLE);
-                acceptedProfiles = new ArrayList<>();
-                acceptedProfiles.addAll(task.getResult());
-                acceptedCount.setText(String.valueOf(acceptedProfiles.size()));
-                acceptedAdapter.setData(acceptedProfiles);
-                acceptedAdapter.notifyDataSetChanged();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error fetching accepted list.",e);
-            }
-        });
-    }
-
-    private void getDeclinedList(Event_Model groupEvent){
-        Log.i(TAG,"Attempting to get query of accepted users!");
-        viewModel.getEventResponses(groupEvent, EVENT_DECLINED).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                if(task.getResult().isEmpty()){
-                    declinedNullText.setVisibility(View.VISIBLE);
-                }
-                declinedBar.setVisibility(View.INVISIBLE);
-                declinedProfiles = new ArrayList<>();
-                declinedProfiles.addAll(task.getResult());
-                declinedCount.setText(String.valueOf(declinedProfiles.size()));
-                declinedAdapter.setData(declinedProfiles);
-                declinedAdapter.notifyDataSetChanged();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                declinedCount.setText("--");
-                Log.w(TAG,"Error fetching declined list.",e);
-            }
-        });
-    }
-
     @Override
     public void onProfileClick(User_Model userModel) {
         Intent viewProfileIntent = new Intent(this, View_Profile_Activity.class);
@@ -251,6 +140,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         startActivity(viewProfileIntent);
     }
 
+    //TODO: WHEN CREATING THE FRAGMENTS, CONSIDER RETRIEVING THE DATA IN THE ACTIVITY AND PASSING TO THE FRAGMENTS.
     private class DetailPagerAdapter extends FragmentStatePagerAdapter{
 
         private List<Fragment> fragments;
@@ -272,7 +162,8 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
             switch (i) {
                 case 0:
                     return new Messages_Fragment();
-
+                case 1:
+                    //return new EventUsers_Fragment();
                 default:
                     return null;
             }
