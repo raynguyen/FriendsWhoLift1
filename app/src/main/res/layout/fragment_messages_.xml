@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_users"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/button_view_users"
+    android:layout_alignParentBottom="true"
+    android:visibility="visible">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/event_members_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <LinearLayout
+            android:id="@+id/invite_flipper_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <Button
+                android:id="@+id/button_accepted_users"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="@string/accepted"
+                android:textColor="@color/colorAccentLight"
+                android:gravity="bottom|center"/>
+
+            <Button
+                android:id="@+id/button_declined_users"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="@string/declined"
+                android:textColor="@color/colorAccentLight"
+                android:gravity="bottom|center"/>
+
+            <Button
+                android:id="@+id/button_invited_users"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="@string/invited"
+                android:textColor="@color/colorAccentLight"
+                android:gravity="bottom|center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/member_mask_text_views"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="4dp"
+            android:weightSum="3"
+            android:clickable="false"
+            android:focusable="false">
+
+            <TextView
+                android:id="@+id/accepted_count_txt"
+                android:textColor="@color/blueish"
+                android:textSize="24sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:hint="@string/null_dashes" />
+            <TextView
+                android:id="@+id/declined_count_txt"
+                android:textColor="@color/blueish"
+                android:textSize="24sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:hint="@string/null_dashes" />
+            <TextView
+                android:id="@+id/invited_count_txt"
+                android:textColor="@color/blueish"
+                android:textSize="24sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:hint="@string/null_dashes" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/guests_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/event_members_frame"
+        android:background="@drawable/edit_text_border">
+
+        <SearchView
+            android:id="@+id/guests_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </SearchView>
+
+        <ViewFlipper
+            android:id="@+id/profiles_flipper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:paddingBottom="8dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/accepted_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+
+                <ProgressBar
+                    android:id="@+id/accepted_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent">
+                </ProgressBar>
+
+                <TextView
+                    android:id="@+id/accepted_null_data_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/empty"
+                    android:textSize="24sp"
+                    android:visibility="invisible">
+                </TextView>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/profiles_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/declined_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+
+                <ProgressBar
+                    android:id="@+id/declined_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent">
+                </ProgressBar>
+
+                <TextView
+                    android:id="@+id/declined_null_data_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/empty"
+                    android:textSize="24sp"
+                    android:visibility="invisible"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/invited_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+
+                <ProgressBar
+                    android:id="@+id/invited_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent">
+                </ProgressBar>
+
+                <TextView
+                    android:id="@+id/invited_null_data_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/empty"
+                    android:textSize="24sp"
+                    android:visibility="invisible"/>
+            </android.support.constraint.ConstraintLayout>
+        </ViewFlipper>
+    </LinearLayout>
+</RelativeLayout>

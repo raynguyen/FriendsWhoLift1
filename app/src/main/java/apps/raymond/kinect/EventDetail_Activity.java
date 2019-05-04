@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,6 +43,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     public static final String EVENT = "Event";
     private static final String EVENT_ACCEPTED = "Accepted";
     private static final String EVENT_DECLINED = "Declined";
+    private static final int NUM_PAGES = 1;
 
     public static void init(Event_Model event, Context context){
         Intent intent = new Intent(context, EventDetail_Activity.class);
@@ -56,6 +61,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     TextView textName, textHost, textDesc, textMonth, textDate, textTime;
     TextView acceptedNullText,invitedNullText,declinedNullText;
     TextView acceptedCount, declinedCount, invitedCount;
+    ViewPager mViewPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,26 +85,23 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         textTime = findViewById(R.id.text_time);
         convertLongToDate();
 
+        mViewPager = findViewById(R.id.viewpager_messages);
+        DetailPagerAdapter adapter = new DetailPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(adapter);
+
+
         usersLayout = findViewById(R.id.layout_users);
         Button btnViewUsers = findViewById(R.id.button_view_users);
         btnViewUsers.setOnClickListener(this);
 
         updateBar = findViewById(R.id.update_progress_bar);
 
-        Button acceptedBtn = findViewById(R.id.button_accepted_users);
-        Button declinedBtn = findViewById(R.id.button_declined_users);
-        Button invitedBtn = findViewById(R.id.button_invited_users);
-        acceptedCount = findViewById(R.id.accepted_count_txt);
-        declinedCount = findViewById(R.id.declined_count_txt);
-        invitedCount = findViewById(R.id.invited_count_txt);
 
-        acceptedBtn.setOnClickListener(this);
-        declinedBtn.setOnClickListener(this);
-        invitedBtn.setOnClickListener(this);
+
 
         profilesFlipper = findViewById(R.id.profiles_flipper);
 
-        setMemberRecyclers(findViewById(android.R.id.content));
+        //setMemberRecyclers(findViewById(android.R.id.content));
     }
 
     @Override
@@ -246,5 +249,38 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         Intent viewProfileIntent = new Intent(this, View_Profile_Activity.class);
         viewProfileIntent.putExtra(View_Profile_Activity.USER,userModel);
         startActivity(viewProfileIntent);
+    }
+
+    private class DetailPagerAdapter extends FragmentStatePagerAdapter{
+
+        private List<Fragment> fragments;
+        private DetailPagerAdapter(FragmentManager fm) {
+            super(fm);
+            fragments = new ArrayList<>();
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            fragments.add(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    return new Messages_Fragment();
+
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
     }
 }

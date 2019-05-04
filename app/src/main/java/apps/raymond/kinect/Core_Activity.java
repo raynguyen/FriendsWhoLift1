@@ -45,6 +45,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +55,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -61,6 +63,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import apps.raymond.kinect.DialogFragments.Event_Invites_Fragment;
 import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
@@ -80,6 +85,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         Event_Invites_Fragment.EventResponseListener, EventsCore_Fragment.SearchEvents {
 
     private static final String TAG = "Core_Activity";
+    private static final int NUM_PAGES = 2;
     private static final String INV_FRAG = "Invite_Messages_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
@@ -112,7 +118,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-
 
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
@@ -379,4 +384,62 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 .addToBackStack(SEARCH_EVENTS_FRAG)
                 .commit();
     }
+
+    public class Core_Adapter extends FragmentStatePagerAdapter {
+        private static final int EVENTS_FRAGMENT = 0;
+
+        private List<Fragment> fragments;
+        private Core_Adapter(FragmentManager fm) {
+            super(fm);
+            fragments = new ArrayList<>();
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            fragments.add(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    return new EventsCore_Fragment();
+                case 1:
+                    return new GroupsCore_Fragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Events";
+                case 1:
+                    return "Groups";
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            fragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        private Fragment getFragment(int position) {
+            return fragments.get(position);
+        }
+    }
+
 }
