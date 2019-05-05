@@ -144,5 +144,6 @@
     <string name="decline">DECLINE</string>
     <string name="invitations">INVITATIONS</string>
     <string name="title_activity_maps_">Map</string>
+    <string name="new_message">Write a new message.</string>
 
 </resources>

@@ -63,7 +63,7 @@
             android:focusable="false">
 
             <TextView
-                android:id="@+id/accepted_count_txt"
+                android:id="@+id/text_accepted_count"
                 android:textColor="@color/blueish"
                 android:textSize="24sp"
                 android:layout_width="0dp"
@@ -72,7 +72,7 @@
                 android:gravity="center_horizontal"
                 android:hint="@string/null_dashes" />
             <TextView
-                android:id="@+id/declined_count_txt"
+                android:id="@+id/text_declined_count"
                 android:textColor="@color/blueish"
                 android:textSize="24sp"
                 android:layout_width="0dp"
@@ -81,7 +81,7 @@
                 android:gravity="center_horizontal"
                 android:hint="@string/null_dashes" />
             <TextView
-                android:id="@+id/invited_count_txt"
+                android:id="@+id/text_invited_count"
                 android:textColor="@color/blueish"
                 android:textSize="24sp"
                 android:layout_width="0dp"
@@ -109,7 +109,7 @@
         </SearchView>
 
         <ViewFlipper
-            android:id="@+id/profiles_flipper"
+            android:id="@+id/viewflipper_profiles"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="4dp"

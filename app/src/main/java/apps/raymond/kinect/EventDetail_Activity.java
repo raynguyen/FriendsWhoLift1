@@ -11,20 +11,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 import android.widget.ViewFlipper;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,8 +34,6 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         ProfileRecyclerAdapter.ProfileClickListener{
     private static final String TAG = "EventDetail";
     public static final String EVENT = "Event";
-    private static final String EVENT_ACCEPTED = "Accepted";
-    private static final String EVENT_DECLINED = "Declined";
     private static final int NUM_PAGES = 2;
 
     public static void init(Event_Model event, Context context){
@@ -52,9 +44,9 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
     Repository_ViewModel viewModel;
     Event_Model event;
+    Toolbar toolbar;
     ViewGroup informationLayout, usersLayout;
     ViewFlipper profilesFlipper;
-    ProgressBar updateBar;
     TextView textName, textHost, textDesc, textMonth, textDate, textTime;
     ViewPager mViewPager;
     @Override
@@ -63,6 +55,11 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_event_detail_);
         Intent initIntent = getIntent();
         event = initIntent.getParcelableExtra(EVENT);
+
+        toolbar = findViewById(R.id.toolbar_event);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(this);
 
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
 
@@ -89,16 +86,21 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         Button btnViewUsers = findViewById(R.id.button_view_users);
         btnViewUsers.setOnClickListener(this);
 
-        updateBar = findViewById(R.id.update_progress_bar);
+        profilesFlipper = findViewById(R.id.viewflipper_profiles);
+    }
 
-        profilesFlipper = findViewById(R.id.profiles_flipper);
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
+            case -1:
+                onBackPressed();
+                break;
             case R.id.button_accepted_users:
                 profilesFlipper.setDisplayedChild(0);
                 break;

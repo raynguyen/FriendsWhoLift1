@@ -37,6 +37,7 @@
             android:hint="@string/time_format"/>
 
         <ImageButton
+            android:id="@+id/button_endorse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_plus_one_black_24dp"
