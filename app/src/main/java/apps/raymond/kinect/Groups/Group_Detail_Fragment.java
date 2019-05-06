@@ -1,5 +1,5 @@
 /*
- * Instead of deleting an existing document when the name changes, added another field to GroupBase
+ * Instead of deleting an existing document when the name changes, added another field to Group_Model
  * class that is unchangeable and is equal to the value of the Group name when it is first created.
  * This original name is the field that will be used to query fire store for the group.
  *
@@ -62,7 +62,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     public Group_Detail_Fragment(){
     }
 
-    public static Group_Detail_Fragment newInstance(GroupBase groupBase, String transitionName){
+    public static Group_Detail_Fragment newInstance(Group_Model groupBase, String transitionName){
         Group_Detail_Fragment _group_Detail_fragment = new Group_Detail_Fragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(GROUP_BASE, groupBase);
@@ -94,7 +94,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     }
 
     TextView groupName;
-    GroupBase groupBase;
+    Group_Model groupBase;
     String owner, currUser;
     ViewFlipper viewFlipper;
     Spinner inviteSpinner;

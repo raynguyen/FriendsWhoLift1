@@ -66,7 +66,7 @@ public class Group_Create_Fragment extends Fragment implements
 
     private AddGroup addGroupInterface;
     public interface AddGroup{
-        void addToGroupRecycler(GroupBase groupBase);
+        void addToGroupRecycler(Group_Model groupBase);
     }
 
     @Override
@@ -308,7 +308,7 @@ public class Group_Create_Fragment extends Fragment implements
         privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
         String privacy = privacyBtn.getText().toString();
         String inviteText = invite_Spinner.getSelectedItem().toString();
-        final GroupBase newGroup = new GroupBase(groupName, descText, currentUser.getEmail(),privacy,inviteText, null);
+        final Group_Model newGroup = new Group_Model(groupName, descText, currentUser.getEmail(),privacy,inviteText, null);
 
         if(imageUri!=null){
             viewModel.uploadImage(imageUri, groupName)

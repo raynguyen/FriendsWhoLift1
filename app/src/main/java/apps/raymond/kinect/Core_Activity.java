@@ -36,7 +36,6 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -73,8 +72,8 @@ import apps.raymond.kinect.Events.EventCreate_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.Events_Search_Fragment;
+import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Groups.GroupsCore_Fragment;
-import apps.raymond.kinect.Groups.GroupBase;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -82,21 +81,21 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
         EventCreate_Fragment.EventCreatedListener, Group_Create_Fragment.AddGroup,
-        Event_Invites_Fragment.EventResponseListener, EventsCore_Fragment.SearchEvents {
+        Event_Invites_Fragment.EventResponseListener, EventsCore_Fragment.EventCore_Interface {
 
     private static final String TAG = "Core_Activity";
     private static final int NUM_PAGES = 2;
     private static final String INV_FRAG = "Invite_Messages_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
-    private static final String SEARCH_EVENTS_FRAG = "SearchEvents";
+    private static final String SEARCH_EVENTS_FRAG = "EventCore_Interface";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
 
     public static final int YESNO_REQUEST = 21;
 
     public UpdateGroupRecycler updateGroupRecycler;
     public interface UpdateGroupRecycler{
-        void updateGroupRecycler(GroupBase groupBase);
+        void updateGroupRecycler(Group_Model groupBase);
     }
 
     Activity thisInstance;
@@ -107,6 +106,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     Core_Adapter pagerAdapter;
     Toolbar toolbar;
     Bundle instanceBundle;
+    private User_Model mCurrUser;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +118,17 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+        viewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
+            @Override
+            public void onComplete(@NonNull Task<User_Model> task) {
+                if(task.isSuccessful()){
+                    mCurrUser = task.getResult();
+                    Toast.makeText(getBaseContext(),"Welcome "+ mCurrUser.getEmail(),Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.w(TAG,"Unable to fetch user doc to POJO");
+                }
+            }
+        });
 
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
@@ -135,18 +146,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         tabLayout.setupWithViewPager(viewPager);
 
         fmListener();
-        getUserModel();
     }
 
     @Override
     public void onAttachFragment(Fragment fragment) {
-        /*if(fragment instanceof EventsCore_Fragment){
-            try {
-                updateEventRecycler = (UpdateEventRecycler) fragment;
-            } catch (ClassCastException e){
-                Log.i(TAG,"EventsCore_Fragment does not implement UpdateEventRecycler interface.");
-            }
-        }*/
+        //ToDo: The fragment should not implement activity method. Check what was changed for the events and do the same for Group.
         if(fragment instanceof GroupsCore_Fragment){
             try {
                 updateGroupRecycler = (UpdateGroupRecycler) fragment;
@@ -267,7 +271,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void addToGroupRecycler(GroupBase groupBase) {
+    public void addToGroupRecycler(Group_Model groupBase) {
         Log.i(TAG,"Called addToGroupRecycler implementation in Core Activity");
         updateGroupRecycler.updateGroupRecycler(groupBase);
     }
@@ -315,21 +319,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             }
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    public User_Model userModel;
-    private void getUserModel(){
-        viewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
-            @Override
-            public void onComplete(@NonNull Task<User_Model> task) {
-                if(task.isSuccessful()){
-                    userModel = task.getResult();
-                    Toast.makeText(getBaseContext(),"Welcome "+userModel.getEmail(),Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.w(TAG,"Unable to fetch user doc to POJO");
-                }
-            }
-        });
     }
 
     private void fmListener(){
@@ -386,6 +375,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
                 .addToBackStack(SEARCH_EVENTS_FRAG)
                 .commit();
+    }
+
+    @Override
+    public void startDetailActivity(Event_Model event) {
+        EventDetail_Activity.init(event, mCurrUser, this);
     }
 
     public class Core_Adapter extends FragmentStatePagerAdapter {

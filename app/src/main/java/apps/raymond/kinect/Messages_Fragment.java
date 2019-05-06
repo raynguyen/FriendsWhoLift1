@@ -1,5 +1,7 @@
 package apps.raymond.kinect;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,15 +15,35 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Groups.GroupBase;
+import apps.raymond.kinect.Groups.Group_Model;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Messages_Fragment extends Fragment implements View.OnClickListener, Messages_Adapter.ProfileClickListener{
+    private static final String TAG = "MessagesFragment";
     private static final String EVENT = "Event";
     private static final String GROUP = "Group";
+
+    private MessagesFragment_Interface activityInterface;
+    public interface MessagesFragment_Interface{
+        User_Model getCurrentUser();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            activityInterface = (MessagesFragment_Interface) context;
+        }catch (ClassCastException e){
+            Log.w(TAG,"Exception.",e);
+        }
+    }
 
     public static Messages_Fragment newInstance(Event_Model event){
         Messages_Fragment fragment = new Messages_Fragment();
@@ -31,7 +53,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         return fragment;
     }
 
-    public static Messages_Fragment newInstance(GroupBase groupBase){
+    public static Messages_Fragment newInstance(Group_Model groupBase){
         Messages_Fragment fragment = new Messages_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(GROUP,groupBase);
@@ -39,10 +61,22 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         return fragment;
     }
 
-    List<Message_Model> messages = new ArrayList<>();
+    Repository_ViewModel viewModel;
+    Event_Model event;
+    Group_Model group;
+    User_Model currUser;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        try{
+            event = getArguments().getParcelable(EVENT);
+            group = getArguments().getParcelable(GROUP);
+        } catch (Exception e){
+            Log.w(TAG, "Some exception caught:",e);
+        }
+
+        currUser = activityInterface.getCurrentUser();
     }
 
     @Nullable
@@ -52,6 +86,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         return view;
     }
 
+    List<Message_Model> messages = new ArrayList<>();
     Button btnPostMessage, btnDiscardMessage;
     RecyclerView messagesRecycler;
     Messages_Adapter mAdapter;
@@ -96,10 +131,23 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
 
     }
 
-    private void createMessage(String message){
-        String author = "Me";
+    private void loadMessages(){
+    }
+
+    private void createMessage(String messageBody){
+        String author = currUser.getEmail();
         long timeStamp = System.currentTimeMillis();
-        Message_Model newMessage = new Message_Model(author,message,timeStamp);
-        mAdapter.addNewMessage(newMessage);
+        final Message_Model newMessage = new Message_Model(author,messageBody,timeStamp);
+        viewModel.postNewMessage(event, newMessage).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    mAdapter.addNewMessage(newMessage);
+                    return;
+                }
+                Log.w(TAG,"Some error when creating message.",task.getException());
+            }
+        });
+
     }
 }

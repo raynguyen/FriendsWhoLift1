@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Groups.GroupBase;
+import apps.raymond.kinect.Groups.Group_Model;
+import apps.raymond.kinect.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /**
@@ -64,6 +65,7 @@ public class FireBase_Repository {
     private static final String GROUPS = "Groups";
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
+    private static final String MESSAGES = "Messages";
     private static final String MEMBERS = "Members";
     private static final String CONNECTIONS = "Connections";
     private static final String LOCATIONS = "Locations";
@@ -87,6 +89,9 @@ public class FireBase_Repository {
     private String userEmail;
     private User_Model curUserModel;
 
+    /*ToDo: There should be no Java code in the Repository class.
+        This method should not hold the userEmail or curUserMode, these should be passed as required to repository calls.
+    */
     public FireBase_Repository() {
         Log.w(TAG,"Creating new instance of FireBase_Repository");
         if(mAuth.getCurrentUser()!=null){
@@ -108,9 +113,6 @@ public class FireBase_Repository {
     }
 
     //*------------------------------------------USER-------------------------------------------*//
-    public String getUserEmail(){
-        return userEmail;
-    }
 
     public Task<Void> signOut(Context context){
         Log.i(TAG,"REPOSITORY LOG OUT METHOD.");
@@ -132,19 +134,24 @@ public class FireBase_Repository {
     }
 
     public Task<User_Model> getCurrentUser(){
-        DocumentReference userDoc = userCollection.document(userEmail);
-        return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
-            @Override
-            public User_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                if(task.isSuccessful()){
-                    if(task.getResult()!=null){
-                        return task.getResult().toObject(User_Model.class);
+        try{
+            DocumentReference userDoc = userCollection.document(userEmail);
+            return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
+                @Override
+                public User_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                    if(task.isSuccessful()){
+                        if(task.getResult()!=null){
+                            return task.getResult().toObject(User_Model.class);
+                        }
                     }
+                    Log.w(TAG,"ERROR RETRIEVING CURRENT USER.", task.getException());
+                    return null;
                 }
-                Log.w(TAG,"ERROR RETRIEVING CURRENT USER.", task.getException());
-                return null;
-            }
-        });
+            });
+        } catch (Exception e){
+            Log.w(TAG,"Exception occured:",e);
+            return null;
+        }
     }
 
     public Task<Void> createUserByEmail(final User_Model userModel, final String password) {
@@ -199,17 +206,17 @@ public class FireBase_Repository {
         });
     }
 
-    public Task<List<GroupBase>> getGroupInvites() {
+    public Task<List<Group_Model>> getGroupInvites() {
         CollectionReference usersGroups = userCollection.document(userEmail).collection(GROUP_INVITES);
-        final List<GroupBase> groupInvites = new ArrayList<>();
+        final List<Group_Model> groupInvites = new ArrayList<>();
 
-        return usersGroups.get().continueWith(new Continuation<QuerySnapshot, List<GroupBase>>() {
+        return usersGroups.get().continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
             @Override
-            public List<GroupBase> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+            public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 if (task.isSuccessful()) {
                     if (task.getResult() != null) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            groupInvites.add(document.toObject(GroupBase.class));
+                            groupInvites.add(document.toObject(Group_Model.class));
                         }
                         return groupInvites;
                     }
@@ -416,19 +423,27 @@ public class FireBase_Repository {
         });
     }
 
+    public Task<Void> postMessage(final Event_Model event,final Message_Model message){
+        CollectionReference eventMessagesRef = mStore.collection(EVENTS)
+                .document(event.getOriginalName())
+                .collection(MESSAGES);
+
+        return eventMessagesRef.document().set(message);
+    }
+
     //*------------------------------------------GROUPS------------------------------------------*//
     /*
-     * Call when creating a new GroupBase object and store the details on FireStore. When storing
+     * Call when creating a new Group_Model object and store the details on FireStore. When storing
      * the object for the first time, we attach a tag to User's document. This tag is used to read
      * the groups connected to the user.
      * Logic:
      * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    public Task<Void> createGroup(final GroupBase groupBase, final List<User_Model> inviteList) {
+    public Task<Void> createGroup(final Group_Model groupBase, final List<User_Model> inviteList) {
         final DocumentReference groupDoc = groupCollection.document(groupBase.getOriginalName());
         final Map<String, String> holderMap = new HashMap<>();
         holderMap.put("Access", "Owner");
-        // Create a document from the GroupBase object under the creation name.
+        // Create a document from the Group_Model object under the creation name.
         return groupDoc.set(groupBase)
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
@@ -471,7 +486,7 @@ public class FireBase_Repository {
 
     }
 
-    public void sendGroupInvites(final GroupBase groupBase, final List<User_Model> userList) {
+    public void sendGroupInvites(final Group_Model groupBase, final List<User_Model> userList) {
         final CollectionReference groupCol = groupCollection.document(groupBase.getOriginalName()).collection(INVITED);
         final WriteBatch inviteBatch = mStore.batch();
         List<Task<Void>> sendInvites = new ArrayList<>();
@@ -496,7 +511,7 @@ public class FireBase_Repository {
         });
     }
 
-    public void editGroup(final GroupBase groupBase) {
+    public void editGroup(final Group_Model groupBase) {
         groupCollection.document(groupBase.getOriginalName()).set(groupBase)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -511,7 +526,7 @@ public class FireBase_Repository {
         });
     }
 
-    public Task<List<User_Model>> fetchGroupMembers(GroupBase group){
+    public Task<List<User_Model>> fetchGroupMembers(Group_Model group){
         CollectionReference groupMembers = groupCollection.document(group.getOriginalName()).collection(MEMBERS);
 
         return groupMembers.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
@@ -535,7 +550,7 @@ public class FireBase_Repository {
     // Then we want to retrieve the Document snapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the document snapshot and the retrieved byte[] to create a group base object.
-    public Task<List<Task<GroupBase>>> getUsersGroups() {
+    public Task<List<Task<Group_Model>>> getUsersGroups() {
         final List<String> groupList = new ArrayList<>();
         //First thing to do is retrieve the Group tags from current user.
         return userCollection.document(userEmail).collection("Groups").get()
@@ -548,15 +563,15 @@ public class FireBase_Repository {
                             }
                         }
                     }
-                }).continueWith(new Continuation<QuerySnapshot, List<Task<GroupBase>>>() {
+                }).continueWith(new Continuation<QuerySnapshot, List<Task<Group_Model>>>() {
                     @Override
-                    public List<Task<GroupBase>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Task<GroupBase>> taskList = new ArrayList<>();
+                    public List<Task<Group_Model>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Task<Group_Model>> taskList = new ArrayList<>();
                         for (final String group : groupList) {
-                            taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, GroupBase>() {
+                            taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, Group_Model>() {
                                 @Override
-                                public GroupBase then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    return task.getResult().toObject(GroupBase.class);
+                                public Group_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                    return task.getResult().toObject(Group_Model.class);
                                 }
                             }));
                         }
@@ -565,7 +580,7 @@ public class FireBase_Repository {
                 });
     }
 
-    public Task<Void> addUserToGroup(final GroupBase group) {
+    public Task<Void> addUserToGroup(final Group_Model group) {
         String groupName = group.getOriginalName();
         final CollectionReference groupsMembers = groupCollection.document(groupName).collection(MEMBERS);
         final CollectionReference groupInvites = userCollection.document(userEmail).collection(GROUP_INVITES);
@@ -602,7 +617,7 @@ public class FireBase_Repository {
         });
     }
 
-    public Task<Void> declineGroupInvite(final GroupBase group){
+    public Task<Void> declineGroupInvite(final Group_Model group){
         final String groupName = group.getOriginalName();
         final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
         final CollectionReference declinedMembers = groupCollection.document(groupName).collection(DECLINED);
@@ -681,7 +696,7 @@ public class FireBase_Repository {
                 });
     }
 
-    public Task<GroupBase> getGroup() {
+    public Task<Group_Model> getGroup() {
         return null;
     }
 

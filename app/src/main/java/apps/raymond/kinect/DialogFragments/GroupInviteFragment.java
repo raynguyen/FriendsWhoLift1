@@ -21,7 +21,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Groups.GroupBase;
+import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
@@ -42,7 +42,7 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
     }
 
     TextView nullDataTxt;
-    List<GroupBase> groupInvSet;
+    List<Group_Model> groupInvSet;
     RecyclerView groupInviteRecycler;
     Group_Invites_Fragment adapter;
     ProgressBar progressBar;
@@ -61,9 +61,9 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
     }
 
     private void fetchInvites(){
-        viewModel.fetchGroupInvites().addOnCompleteListener(new OnCompleteListener<List<GroupBase>>() {
+        viewModel.fetchGroupInvites().addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<GroupBase>> task) {
+            public void onComplete(@NonNull Task<List<Group_Model>> task) {
                 progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
                     if(task.getResult()!=null && task.getResult().size()>0){
@@ -81,7 +81,7 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
     }
 
     @Override
-    public void onAccept(final GroupBase group, final int position) {
+    public void onAccept(final Group_Model group, final int position) {
         progressBar.setVisibility(View.VISIBLE);
         viewModel.addUserToGroup(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -100,7 +100,7 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
     }
 
     @Override
-    public void onDecline(final GroupBase group, final int position) {
+    public void onDecline(final Group_Model group, final int position) {
         Log.i(TAG,"calling onDecline");
         viewModel.declineGroupInvite(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

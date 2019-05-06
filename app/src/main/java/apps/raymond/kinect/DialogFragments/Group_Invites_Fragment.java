@@ -10,16 +10,16 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.kinect.Groups.GroupBase;
+import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.R;
 
 public class Group_Invites_Fragment extends RecyclerView.Adapter<Group_Invites_Fragment.GroupInviteViewHolder> {
-    private List<GroupBase> groupInviteSet;
+    private List<Group_Model> groupInviteSet;
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void onAccept(GroupBase group, int position);
-        void onDecline(GroupBase group, int position);
+        void onAccept(Group_Model group, int position);
+        void onDecline(Group_Model group, int position);
         void onDetail();
     }
 
@@ -27,7 +27,7 @@ public class Group_Invites_Fragment extends RecyclerView.Adapter<Group_Invites_F
         this.callback = callback;
     }
 
-    public Group_Invites_Fragment(List<GroupBase> groupInviteList, InviteResponseListener callback){
+    public Group_Invites_Fragment(List<Group_Model> groupInviteList, InviteResponseListener callback){
         this.groupInviteSet = groupInviteList;
         this.callback = callback;
     }
@@ -53,7 +53,7 @@ public class Group_Invites_Fragment extends RecyclerView.Adapter<Group_Invites_F
     @Override
     public void onBindViewHolder(@NonNull final GroupInviteViewHolder viewHolder, int i) {
         if(groupInviteSet !=null){
-            final GroupBase group = groupInviteSet.get(i);
+            final Group_Model group = groupInviteSet.get(i);
             viewHolder.titleTxt.setText(group.getName());
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,7 +80,7 @@ public class Group_Invites_Fragment extends RecyclerView.Adapter<Group_Invites_F
         }
     }
 
-    public void setData(List<GroupBase> groupInviteList){
+    public void setData(List<Group_Model> groupInviteList){
         this.groupInviteSet = groupInviteList;
     }
 }

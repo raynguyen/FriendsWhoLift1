@@ -36,17 +36,20 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventDetail_Activity extends AppCompatActivity implements View.OnClickListener,
-        ProfileRecyclerAdapter.ProfileClickListener{
+        ProfileRecyclerAdapter.ProfileClickListener, Messages_Fragment.MessagesFragment_Interface{
     private static final String TAG = "EventDetail";
     public static final String EVENT = "Event";
+    public static final String USER = "User";
     private static final int NUM_PAGES = 2;
 
-    public static void init(Event_Model event, Context context){
+    public static void init(Event_Model event,User_Model user, Context context){
         Intent intent = new Intent(context, EventDetail_Activity.class);
         intent.putExtra(EVENT, event);
+        intent.putExtra(USER, user);
         context.startActivity(intent);
     }
 
+    User_Model currUser;
     Repository_ViewModel viewModel;
     Event_Model event;
     Toolbar toolbar;
@@ -60,6 +63,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_event_detail_);
         Intent initIntent = getIntent();
         event = initIntent.getParcelableExtra(EVENT);
+        currUser = initIntent.getParcelableExtra(USER);
 
         toolbar = findViewById(R.id.toolbar_event);
         setSupportActionBar(toolbar);
@@ -94,6 +98,19 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         profilesFlipper = findViewById(R.id.viewflipper_profiles);
     }
 
+    /**
+     * Converts event long field to a date field and populates the appropriate views.
+     */
+    private void convertLongToDate(){
+        long long1 = event.getLong1();
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(long1);
+        textMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(c.getTime()));
+        textDate.setText(String.valueOf(c.get(Calendar.DATE)));
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
+        textTime.setText(sdf.format(new Date(long1)));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
@@ -125,17 +142,9 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    /**
-     * Converts event long field to a date field and populates the appropriate views.
-     */
-    private void convertLongToDate(){
-        long long1 = event.getLong1();
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(long1);
-        textMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(c.getTime()));
-        textDate.setText(String.valueOf(c.get(Calendar.DATE)));
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
-        textTime.setText(sdf.format(new Date(long1)));
+    @Override
+    public User_Model getCurrentUser() {
+        return currUser;
     }
 
     @Override
@@ -143,6 +152,43 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         Intent viewProfileIntent = new Intent(this, View_Profile_Activity.class);
         viewProfileIntent.putExtra(View_Profile_Activity.USER,userModel);
         startActivity(viewProfileIntent);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(menu.size()==0){
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.event_detail_menu, menu);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.option_leave_event:
+                AlertDialog.Builder builder = new AlertDialog.Builder(EventDetail_Activity.this);
+                builder.setTitle("Warning!")
+                        .setMessage(R.string.leave_event_message)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(),"Leaving event",Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(),"Cancel",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                builder.create().show();
+                return true;
+            default:
+                return false;
+
+        }
     }
 
     //TODO: WHEN CREATING THE FRAGMENTS, CONSIDER RETRIEVING THE DATA IN THE ACTIVITY AND PASSING TO THE FRAGMENTS.
@@ -177,43 +223,6 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         @Override
         public int getCount() {
             return NUM_PAGES;
-        }
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if(menu.size()==0){
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.event_detail_meu, menu);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case R.id.option_leave_event:
-                AlertDialog.Builder builder = new AlertDialog.Builder(EventDetail_Activity.this);
-                builder.setTitle("Warning!")
-                        .setMessage(R.string.leave_event_message)
-                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getBaseContext(),"Leaving event",Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getBaseContext(),"Cancel",Toast.LENGTH_LONG).show();
-                            }
-                        });
-                builder.create().show();
-                return true;
-            default:
-                return false;
-
         }
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.FireBase_Repository;
-import apps.raymond.kinect.Groups.GroupBase;
+import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Repository_ViewModel extends ViewModel {
@@ -22,10 +22,8 @@ public class Repository_ViewModel extends ViewModel {
 
     public Repository_ViewModel(){
         this.mRepository = new FireBase_Repository();
-    }
-
-    public String getUserEmail(){
-        return mRepository.getUserEmail();
+        //When creating instance of ViewModel, retrieve the current user from FirebaseAuth by attaching
+        //a listener that updates everytime there is a change in the currentuser.
     }
 
     public Task<AuthResult> emailSignIn(String email, String password){
@@ -64,7 +62,7 @@ public class Repository_ViewModel extends ViewModel {
         mRepository.sendEventInvite(groupEvent,inviteList);
     }
 
-    public void sendGroupInvites(GroupBase groupBase,List<User_Model> inviteList){
+    public void sendGroupInvites(Group_Model groupBase, List<User_Model> inviteList){
         mRepository.sendGroupInvites(groupBase,inviteList);
     }
 
@@ -74,6 +72,10 @@ public class Repository_ViewModel extends ViewModel {
 
     public Task<Void> addUserToEvent(Event_Model groupEvent){
         return mRepository.addUserToEvent(groupEvent);
+    }
+
+    public Task<Void> postNewMessage(Event_Model event, Message_Model message){
+        return mRepository.postMessage(event,message);
     }
 
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
@@ -92,15 +94,15 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.fetchUsers();
     }
 
-    public Task<Void> createGroup(GroupBase groupBase, List<User_Model> inviteList){
+    public Task<Void> createGroup(Group_Model groupBase, List<User_Model> inviteList){
         return mRepository.createGroup(groupBase, inviteList);
     }
 
-    public Task<List<Task<GroupBase>>> getUsersGroups(){
+    public Task<List<Task<Group_Model>>> getUsersGroups(){
         return mRepository.getUsersGroups();
     }
 
-    public Task<GroupBase> getGroup(){
+    public Task<Group_Model> getGroup(){
         return mRepository.getGroup();
     }
 
@@ -112,23 +114,23 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.getImage(uri);
     }
 
-    public void updateGroup(GroupBase groupBase){
+    public void updateGroup(Group_Model groupBase){
         mRepository.editGroup(groupBase);
     }
 
-    public Task<List<GroupBase>> fetchGroupInvites(){
+    public Task<List<Group_Model>> fetchGroupInvites(){
         return mRepository.getGroupInvites();
     }
 
-    public Task<Void> addUserToGroup(GroupBase group){
+    public Task<Void> addUserToGroup(Group_Model group){
         return mRepository.addUserToGroup(group);
     }
 
-    public Task<List<User_Model>> fetchGroupMembers(GroupBase group){
+    public Task<List<User_Model>> fetchGroupMembers(Group_Model group){
         return mRepository.fetchGroupMembers(group);
     }
 
-    public Task<Void> declineGroupInvite(GroupBase group){
+    public Task<Void> declineGroupInvite(Group_Model group){
         return mRepository.declineGroupInvite(group);
     }
 

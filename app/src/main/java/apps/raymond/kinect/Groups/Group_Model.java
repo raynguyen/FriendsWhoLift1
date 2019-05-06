@@ -8,7 +8,7 @@ package apps.raymond.kinect.Groups;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class GroupBase implements Parcelable {
+public class Group_Model implements Parcelable {
 
     private String originalName; // We use this to query Firestore in case the display name is modified.
     private String name; // The display name that inviteUsersList see.
@@ -20,10 +20,10 @@ public class GroupBase implements Parcelable {
     private byte[] bytes;
 
     // Empty constructor as required by FireBase.
-    public GroupBase() {
+    public Group_Model() {
     }
 
-    public GroupBase(String name, String description, String owner, String visibility, String invite, String imageURI){
+    public Group_Model(String name, String description, String owner, String visibility, String invite, String imageURI){
         this.originalName = name;
         this.name = name;
         this.description = description;
@@ -33,7 +33,7 @@ public class GroupBase implements Parcelable {
         this.imageURI = imageURI;
     }
 
-    public GroupBase(Parcel in){
+    public Group_Model(Parcel in){
         this.name = in.readString();
         this.originalName = this.name;
         this.description = in.readString();
@@ -43,15 +43,15 @@ public class GroupBase implements Parcelable {
         this.imageURI = in.readString();
     }
 
-    public static final Parcelable.Creator<GroupBase> CREATOR = new Parcelable.Creator<GroupBase>(){
+    public static final Parcelable.Creator<Group_Model> CREATOR = new Parcelable.Creator<Group_Model>(){
         @Override
-        public GroupBase createFromParcel(Parcel source) {
-            return new GroupBase(source);
+        public Group_Model createFromParcel(Parcel source) {
+            return new Group_Model(source);
         }
 
         @Override
-        public GroupBase[] newArray(int size) {
-            return new GroupBase[size];
+        public Group_Model[] newArray(int size) {
+            return new Group_Model[size];
         }
     };
 

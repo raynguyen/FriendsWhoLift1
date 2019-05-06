@@ -29,7 +29,7 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
     private static final String TAG = "Custom_Members_Panel";
     private static final String GROUP_PARCEL = "GroupParcel";
 
-    public static Members_Panel_Fragment newInstance(GroupBase group){
+    public static Members_Panel_Fragment newInstance(Group_Model group){
         Members_Panel_Fragment membersPanel = new Members_Panel_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(GROUP_PARCEL, group);
@@ -39,7 +39,7 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
     }
 
     Repository_ViewModel viewModel;
-    GroupBase group;
+    Group_Model group;
     List<User_Model> membersList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -2,7 +2,6 @@ package apps.raymond.kinect.Groups;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +20,11 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
 
     private GroupClickListener groupClickListener;
     public interface GroupClickListener {
-        void onGroupClick(int position, GroupBase groupBase, View sharedView);
+        void onGroupClick(int position, Group_Model groupBase, View sharedView);
     }
 
-    private List<GroupBase> groupsList, groupsListClone;
-    GroupRecyclerAdapter(List<GroupBase> myGroups, GroupClickListener groupClickListener){
+    private List<Group_Model> groupsList, groupsListClone;
+    GroupRecyclerAdapter(List<Group_Model> myGroups, GroupClickListener groupClickListener){
         this.groupClickListener =  groupClickListener;
         this.groupsList = new ArrayList<>(myGroups);
         groupsListClone = myGroups;
@@ -57,7 +56,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull final GroupRecyclerAdapter.GroupViewHolder viewHolder, int position) {
         if(groupsList !=null){
-            final GroupBase currentGroup = groupsList.get(position);
+            final Group_Model currentGroup = groupsList.get(position);
             viewHolder.nameTxt.setText(currentGroup.getName());
             viewHolder.nameTxt.setTransitionName("Transition"+position);
             viewHolder.descTxt.setText(currentGroup.getDescription());
@@ -72,13 +71,13 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
         }
     }
 
-    public void setData(List<GroupBase> myGroups){
+    public void setData(List<Group_Model> myGroups){
         this.groupsList = new ArrayList<>(myGroups);
         groupsListClone = myGroups;
         notifyDataSetChanged();
     }
 
-    public void addData(GroupBase group){
+    public void addData(Group_Model group){
         groupsList.add(group);
         notifyItemInserted(groupsList.size()-1);
     }
@@ -100,13 +99,13 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     private Filter groupFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<GroupBase> filteredList = new ArrayList<>();
+            List<Group_Model> filteredList = new ArrayList<>();
 
             if(constraint == null || constraint.length() == 0){
                 filteredList.addAll(groupsListClone);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                for(GroupBase group : groupsListClone){
+                for(Group_Model group : groupsListClone){
                     if(group.getName().toLowerCase().contains(filterPattern)){
                         filteredList.add(group);
                     }

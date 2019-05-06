@@ -31,25 +31,23 @@ import apps.raymond.kinect.EventDetail_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventsCore_Fragment extends Fragment implements View.OnClickListener,
         EventsCore_Adapter.EventClickListener {
     private static final String TAG = "EventsCore_Fragment";
 
-    private List<Event_Model> eventList;
-    private ProgressBar progressBar;
-    private EventsCore_Adapter mAdapter;
-
-    private SearchEvents searchEventsInterface;
-    public interface SearchEvents{
+    private EventCore_Interface interfaceCore;
+    public interface EventCore_Interface {
         void searchEvents();
+        void startDetailActivity(Event_Model event);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            searchEventsInterface = (SearchEvents) context;
+            interfaceCore = (EventCore_Interface) context;
         } catch (ClassCastException e){
             Log.w(TAG,"Host activity does not implement required interface.",e);
         }
@@ -58,6 +56,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     public EventsCore_Fragment(){}
 
     private Repository_ViewModel viewModel;
+    private User_Model currUser;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +73,9 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
 
     private TextView nullText;
     int scrolledHeight = 0;
+    private List<Event_Model> eventList;
+    private ProgressBar progressBar;
+    private EventsCore_Adapter mAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -107,6 +109,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             }
         });
 
+
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
             updateEvents();
         }
@@ -115,8 +118,8 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.search_events_btn){
-            if(searchEventsInterface !=null){
-                searchEventsInterface.searchEvents();
+            if(interfaceCore !=null){
+                interfaceCore.searchEvents();
             } else {
                 Toast.makeText(requireContext(),"Unable to search local events at this time!",Toast.LENGTH_LONG).show();
             }
@@ -125,7 +128,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onEventClick(int position, Event_Model event) {
-          EventDetail_Activity.init(event, getContext());
+        interfaceCore.startDetailActivity(event);
     }
 
     /*
@@ -169,6 +172,4 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             nullText.setVisibility(View.VISIBLE);
         }
     }
-
-
 }

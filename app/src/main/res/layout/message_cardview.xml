@@ -15,7 +15,7 @@
             android:src="@drawable/sports_toggle_on"
             android:contentDescription="@string/profile_picture"
             android:layout_centerVertical="true"
-            android:padding="0dp"/>
+            android:layout_margin="4dp"/>
 
         <TextView
             android:id="@+id/text_author"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/image_profile"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/text_message"
@@ -37,8 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_below="@id/text_message"
-            android:hint="@string/time_format" />
+            android:layout_below="@id/text_message"/>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

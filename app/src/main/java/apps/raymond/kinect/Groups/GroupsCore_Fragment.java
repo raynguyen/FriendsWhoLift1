@@ -54,7 +54,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
     }
 
     Repository_ViewModel viewModel;
-    ArrayList<GroupBase> myGroups;
+    ArrayList<Group_Model> myGroups;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -106,9 +106,9 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
     }
 
     private void subscribeToModel(){
-        model.getGroups().observe(this, new Observer<List<GroupBase>>() {
+        model.getGroups().observe(this, new Observer<List<Group_Model>>() {
             @Override
-            public void onChanged(@Nullable List<GroupBase> groupBases) {
+            public void onChanged(@Nullable List<Group_Model> groupBases) {
                 Log.i(TAG,"DOES THIS EVER GET CALLED");
                 mAdapter.setData(myGroups);
             }
@@ -117,7 +117,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
 
     /*
      * To truly follow SoC principle, the Fragment should not do the conversion from
-     * DocumentSnapshot to GroupBase object, it should be dealt with by the repository.
+     * DocumentSnapshot to Group_Model object, it should be dealt with by the repository.
      *
      * Need to check to see what happens if there is no photoURI in the group.
      *
@@ -126,9 +126,9 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
      */
     //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
     private void updateCardViews(){
-        viewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<GroupBase>>>() {
+        viewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
             @Override
-            public void onComplete(@NonNull Task<List<Task<GroupBase>>> task) {
+            public void onComplete(@NonNull Task<List<Task<Group_Model>>> task) {
                 if(task.getResult()!=null){
                     Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                         @Override
@@ -136,7 +136,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
                             if(objects.size()>0){
                                 myGroups = new ArrayList<>();
                                 for(Object object:objects){
-                                    myGroups.add((GroupBase) object);
+                                    myGroups.add((Group_Model) object);
                                 }
                                 model.setGroups(myGroups);
                             } else {
@@ -156,7 +156,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
     }
 
     @Override
-    public void onGroupClick(int position, GroupBase groupBase, View sharedView) {
+    public void onGroupClick(int position, Group_Model groupBase, View sharedView) {
         Fragment detailedGroup = Group_Detail_Fragment.newInstance(groupBase,
                 sharedView.getTransitionName());
 
@@ -172,7 +172,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
     }
 
     @Override
-    public void updateGroupRecycler(GroupBase groupBase) {
+    public void updateGroupRecycler(Group_Model groupBase) {
         myGroups.add(groupBase);
         mAdapter.addData(groupBase);
     }
