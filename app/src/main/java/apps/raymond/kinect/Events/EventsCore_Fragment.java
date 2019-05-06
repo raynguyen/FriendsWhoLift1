@@ -125,16 +125,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onEventClick(int position, Event_Model event) {
-        //Legacy event detail fragment. Have since moved to activity as we are now only interested in a single Event (separation of concerns).
-        /*Fragment detailedEvent = Event_Detail_Fragment.newInstance(event);
-        detailedEvent.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
-        getFragmentManager().beginTransaction()
-                .replace(R.id.core_frame,detailedEvent,Event_Detail_Fragment.TAG)
-                .addToBackStack(Event_Detail_Fragment.TAG)
-                .commit();*/
-
-        EventDetail_Activity.init(event, getContext());
-
+          EventDetail_Activity.init(event, getContext());
     }
 
     /*

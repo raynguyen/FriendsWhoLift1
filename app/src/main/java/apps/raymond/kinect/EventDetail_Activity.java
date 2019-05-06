@@ -2,6 +2,7 @@ package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,14 +11,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.text.SimpleDateFormat;
@@ -172,6 +177,43 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(menu.size()==0){
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.event_detail_meu, menu);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.option_leave_event:
+                AlertDialog.Builder builder = new AlertDialog.Builder(EventDetail_Activity.this);
+                builder.setTitle("Warning!")
+                        .setMessage(R.string.leave_event_message)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(),"Leaving event",Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(),"Cancel",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                builder.create().show();
+                return true;
+            default:
+                return false;
+
         }
     }
 }

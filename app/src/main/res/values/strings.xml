@@ -92,6 +92,8 @@
     <string name="empty">Empty</string>
     <string name="location">Location</string>
     <string name="host">Created By: </string>
+    <string name="leave_event">Unattend Event</string>
+    <string name="leave_event_message">Are you sure you want to un-attend the event?</string>
 
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>
@@ -145,5 +147,8 @@
     <string name="invitations">INVITATIONS</string>
     <string name="title_activity_maps_">Map</string>
     <string name="new_message">Write a new message.</string>
+
+    <!--MESSAGES-->
+    <string name="post">Post</string>
 
 </resources>

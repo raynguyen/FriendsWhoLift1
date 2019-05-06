@@ -5,14 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class Message_Adapter extends RecyclerView.Adapter<Message_Adapter.MessageViewHolder> {
+public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.MessageViewHolder> {
 
     private ProfileClickListener listener;
     public interface ProfileClickListener{
@@ -20,7 +21,7 @@ public class Message_Adapter extends RecyclerView.Adapter<Message_Adapter.Messag
     }
 
     private List<Message_Model> messages;
-    public Message_Adapter(List<Message_Model> messages, ProfileClickListener listener){
+    public Messages_Adapter(List<Message_Model> messages, ProfileClickListener listener){
         this.messages = new ArrayList<>(messages);
         this.listener = listener;
     }
@@ -35,14 +36,14 @@ public class Message_Adapter extends RecyclerView.Adapter<Message_Adapter.Messag
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder vh, int i) {
-        if(messages !=null){
+        if(messages!=null && messages.size()!=0){
             final Message_Model message = messages.get(i);
-            vh.messageTxt.setText(message.getMessage());
-
-            long timelong = message.getTimestamp();
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(timelong);
-            vh.timestampTxt.setText(c.getTime().toString());
+            vh.textAuthor.setText(message.getAuthor());
+            vh.textMessage.setText(message.getMessage());
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault());
+            Date date = new Date(message.getTimestamp());
+            String timeStamp = sdf.format(date);
+            vh.textTimestamp.setText(timeStamp);
         }
     }
 
@@ -51,15 +52,19 @@ public class Message_Adapter extends RecyclerView.Adapter<Message_Adapter.Messag
         return messages.size();
     }
 
+    public void addNewMessage(Message_Model newMessage){
+        messages.add(newMessage);
+        notifyItemInserted(messages.size()-1);
+    }
+
     static class MessageViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView messageTxt, timestampTxt;
-        private ImageView profileImg;
+        private TextView textAuthor,textMessage,textTimestamp;
         private MessageViewHolder(View view){
             super(view);
-            messageTxt = view.findViewById(R.id.text_message);
-            timestampTxt = view.findViewById(R.id.text_timestamp);
-            profileImg = view.findViewById(R.id.image_profile);
+            textAuthor = view.findViewById(R.id.text_author);
+            textMessage = view.findViewById(R.id.text_message);
+            textTimestamp = view.findViewById(R.id.text_timestamp);
         }
     }
 }

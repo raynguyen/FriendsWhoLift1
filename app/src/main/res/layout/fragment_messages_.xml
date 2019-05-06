@@ -4,20 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/layout_new_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <EditText
+            android:id="@+id/edit_new_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="5"
+            android:scrollHorizontally="false"
+            android:inputType="text|textMultiLine"
+            android:padding="4dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_alignParentTop="true"
+            android:hint="@string/new_message"
+            android:background="@drawable/edit_text_border"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <Button
+            android:id="@+id/button_discard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/discard"
+            android:layout_toStartOf="@+id/button_post"
+            android:layout_below="@id/edit_new_message"/>
+        <Button
+            android:id="@+id/button_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/edit_new_message"/>
+
+    </RelativeLayout>
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_messages"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/text_new_message"
-        android:layout_alignParentTop="true">
+        android:layout_height="0dp"
+        android:layout_below="@id/layout_new_message"
+        android:layout_alignParentBottom="true">
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/text_new_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="3"
-        android:layout_alignParentBottom="true"
-        android:hint="@string/new_message"
-        android:gravity="end"/>
 </RelativeLayout>
