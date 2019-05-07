@@ -1,10 +1,13 @@
 package apps.raymond.kinect;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.location.Address;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -19,6 +22,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class Repository_ViewModel extends ViewModel {
     private FireBase_Repository mRepository;
     private User_Model mUser;
+    private MutableLiveData<List<Message_Model>> messagesList = new MutableLiveData<>();
 
     public Repository_ViewModel(){
         this.mRepository = new FireBase_Repository();
@@ -76,6 +80,18 @@ public class Repository_ViewModel extends ViewModel {
 
     public Task<Void> postNewMessage(Event_Model event, Message_Model message){
         return mRepository.postMessage(event,message);
+    }
+
+    public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
+        mRepository.getMessages(event).addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Message_Model>> task) {
+                if(task.getResult()!=null){
+                    messagesList.setValue(task.getResult());
+                }
+            }
+        });
+        return messagesList;
     }
 
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){

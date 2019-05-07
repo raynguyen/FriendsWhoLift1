@@ -387,8 +387,6 @@ public class FireBase_Repository {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             userList.add(document.toObject(User_Model.class));
                         }
-                    } else {
-                        Log.i(TAG, "No invited users for: " + event.getName());
                     }
 
                 } else {
@@ -429,6 +427,25 @@ public class FireBase_Repository {
                 .collection(MESSAGES);
 
         return eventMessagesRef.document().set(message);
+    }
+
+    public Task<List<Message_Model>> getMessages(Event_Model event){
+        CollectionReference eventMessagesRef = mStore.collection(EVENTS)
+                .document(event.getOriginalName())
+                .collection(MESSAGES);
+
+        return eventMessagesRef.get().continueWith(new Continuation<QuerySnapshot, List<Message_Model>>() {
+            @Override
+            public List<Message_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                List<Message_Model> messagesList = new ArrayList<>();
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document: task.getResult()){
+                        messagesList.add(document.toObject(Message_Model.class));
+                    }
+                }
+                return messagesList;
+            }
+        });
     }
 
     //*------------------------------------------GROUPS------------------------------------------*//

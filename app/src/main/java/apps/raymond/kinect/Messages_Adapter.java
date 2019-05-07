@@ -2,6 +2,7 @@ package apps.raymond.kinect;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +53,14 @@ public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.Mess
         return messages.size();
     }
 
+    public void updateData(List<Message_Model> newMessages){
+        messages = newMessages;
+        notifyDataSetChanged();
+    }
+
     public void addNewMessage(Message_Model newMessage){
-        messages.add(newMessage);
-        notifyItemInserted(messages.size()-1);
+        messages.add(0,newMessage);
+        notifyItemInserted(0);
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder{

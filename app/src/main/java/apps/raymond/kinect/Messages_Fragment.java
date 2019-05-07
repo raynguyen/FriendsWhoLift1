@@ -1,5 +1,6 @@
 package apps.raymond.kinect;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,8 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,10 +65,12 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         return fragment;
     }
 
+
     Repository_ViewModel viewModel;
     Event_Model event;
     Group_Model group;
     User_Model currUser;
+    List<Message_Model> messagesList = new ArrayList<>();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,12 +91,13 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         View view = inflater.inflate(R.layout.fragment_messages_,container,false);
         return view;
     }
-
+    TextView textEmptyMessages;
     List<Message_Model> messages = new ArrayList<>();
     Button btnPostMessage, btnDiscardMessage;
-    RecyclerView messagesRecycler;
+    RecyclerView mRecyclerView;
     Messages_Adapter mAdapter;
     EditText editNewMessage;
+    ProgressBar progressBar;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -100,10 +107,14 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         btnPostMessage.setOnClickListener(this);
         btnDiscardMessage.setOnClickListener(this);
 
-        messagesRecycler = view.findViewById(R.id.recyclerview_messages);
+        mRecyclerView = view.findViewById(R.id.recyclerview_messages);
         mAdapter = new Messages_Adapter(messages, this);
-        messagesRecycler.setAdapter(mAdapter);
-        messagesRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        progressBar = view.findViewById(R.id.progress_loading_messages);
+        textEmptyMessages = view.findViewById(R.id.text_empty_messages);
+        loadMessages();
 
         editNewMessage = view.findViewById(R.id.edit_new_message);
     }
@@ -113,9 +124,14 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         switch(v.getId()){
             case R.id.button_post:
                 if(editNewMessage.getText().toString().trim().length()>0){
-                    Log.w("MessageFragment","Message is: "+editNewMessage.getText().toString());
                     createMessage(editNewMessage.getText().toString());
                     editNewMessage.getText().clear();
+                    try {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                    } catch (Exception e){
+                        //Purposely empty.
+                    }
                 }
                 return;
             case R.id.button_discard:
@@ -131,7 +147,22 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
 
     }
 
+    /**
+     * Observe LiveData messages list held by the ViewModel.
+     */
     private void loadMessages(){
+        Observer<List<Message_Model>> mObserver = new Observer<List<Message_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Message_Model> newMessages) {
+                if(newMessages==null || newMessages.size()==0){
+                    textEmptyMessages.setVisibility(View.VISIBLE);
+                }
+                messagesList = newMessages;
+                mAdapter.updateData(newMessages);
+                progressBar.setVisibility(View.GONE);
+            }
+        };
+        viewModel.getMessages(event).observe(this,mObserver);
     }
 
     private void createMessage(String messageBody){
@@ -142,12 +173,14 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    if(textEmptyMessages.getVisibility()==View.VISIBLE){
+                        textEmptyMessages.setVisibility(View.GONE);
+                    }
                     mAdapter.addNewMessage(newMessage);
-                    return;
+                    LinearLayoutManager manager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                    manager.scrollToPositionWithOffset(0,0);
                 }
-                Log.w(TAG,"Some error when creating message.",task.getException());
             }
         });
-
     }
 }
