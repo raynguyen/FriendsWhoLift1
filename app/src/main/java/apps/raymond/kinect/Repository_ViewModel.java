@@ -6,6 +6,7 @@ import android.content.Context;
 import android.location.Address;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,6 +24,7 @@ public class Repository_ViewModel extends ViewModel {
     private FireBase_Repository mRepository;
     private User_Model mUser;
     private MutableLiveData<List<Message_Model>> messagesList = new MutableLiveData<>();
+    private MutableLiveData<List<Event_Model>> publicEvents = new MutableLiveData<>();
 
     public Repository_ViewModel(){
         this.mRepository = new FireBase_Repository();
@@ -82,17 +84,7 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.postMessage(event,message);
     }
 
-    public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
-        mRepository.getMessages(event).addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Message_Model>> task) {
-                if(task.getResult()!=null){
-                    messagesList.setValue(task.getResult());
-                }
-            }
-        });
-        return messagesList;
-    }
+
 
     public Task<List<Task<DocumentSnapshot>>> getUsersEvents(){
         return mRepository.getUsersEvents();
@@ -154,5 +146,33 @@ public class Repository_ViewModel extends ViewModel {
         return mRepository.addLocation(address,addressName);
     }
 
+    //-------------------------LIVE DATA STUFF--------------------//
+    public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
+        mRepository.getMessages(event).addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Message_Model>> task) {
+                if(task.getResult()!=null){
+                    messagesList.setValue(task.getResult());
+                }
+            }
+        });
+        return messagesList;
+    }
+
+    //Set the result of the repository method as a LiveData object in the repository class and obersve the class from here!
+    public MutableLiveData<List<Event_Model>> getPublicEvents(){
+        mRepository.getPublicEvents().addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Event_Model>> task) {
+                Log.w("RepositoryMethods","Task to fetch public events from store completed.");
+                if(task.isSuccessful()){
+                    Log.w("RepositoryModel","Getting public events complete with list size = " +task.getResult().size());
+                    publicEvents.setValue(task.getResult());
+                }
+            }
+        });
+
+        return publicEvents;
+    }
 }
 

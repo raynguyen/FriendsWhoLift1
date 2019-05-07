@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Event_Model implements Parcelable{
+    public static final String PRIVACY = "privacy";
     public static final int PUBLIC = 0; //Anyone may join the event without prior connections to guests.
     public static final int CLOSED = 1; //Only users with connected guests may join the event.
     public static final int EXCLUSIVE = 2; //Invitation only

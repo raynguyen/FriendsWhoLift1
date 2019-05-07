@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -446,6 +447,43 @@ public class FireBase_Repository {
                 return messagesList;
             }
         });
+    }
+
+    //ToDo: this has to be refactored to accept a location object input and return a list of events within some radius of the latlng.
+    public Task<List<Event_Model>> getPublicEvents(){
+        CollectionReference eventsRef = mStore.collection(EVENTS);
+
+        return eventsRef.whereEqualTo("privacy",0).get()
+                .continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
+                    @Override
+                    public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        if(task.isSuccessful()){
+                            List<Event_Model> publicEvents = new ArrayList<>();
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                Event_Model event = document.toObject(Event_Model.class);
+                                Log.w(TAG,"Retrieved event: " + event.getName());
+                                publicEvents.add(document.toObject(Event_Model.class));
+                            }
+                            return publicEvents;
+                        }
+                        return null;
+                    }
+                });
+    }
+
+    //Test method to see if we can query the correct documents. Simple analysis says yes it works.
+    public Task<QuerySnapshot> testVoid(){
+        CollectionReference eventsRef = mStore.collection(EVENTS);
+
+        return eventsRef.whereEqualTo("privacy",0).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            Log.w(TAG,"Size of the Query = "+task.getResult().size());
+                        }
+                    }
+                });
     }
 
     //*------------------------------------------GROUPS------------------------------------------*//

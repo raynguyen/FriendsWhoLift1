@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 
+//ToDo: Add a tab for invited/declined invitations. Allow for swipe left to decline or swipe right to accept!
 public class Invite_Messages_Fragment extends Fragment{
     private static final String TAG = "Invites_Dialog";
 

@@ -1,6 +1,8 @@
 package apps.raymond.kinect.Events;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -20,24 +22,53 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 /*
  * The view should hide the map and there should be a button that expands the map upwards.
  */
-public class Events_Search_Fragment extends Fragment implements OnMapReadyCallback {
+public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private static final String USER = "User";
     private static final float DEFAULT_ZOOM = 17.0f; //This is already defined in Maps_Activity.
 
+    public static EventSearch_Fragment newInstance(User_Model userModel){
+        EventSearch_Fragment fragment = new EventSearch_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable(USER,userModel);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     FusedLocationProviderClient mFusedLocationClient;
+    Repository_ViewModel mViewModel;
+    User_Model mUser;
+    List<Event_Model> eventList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        mViewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+
+        /*
+        try{
+            mUser = getArguments().getParcelable(USER);
+        } catch (NullPointerException npe){
+            Log.w(TAG,"Error.",npe);
+        }
+        */
+        //mViewModel.testTask();
     }
 
     @Nullable
@@ -54,6 +85,8 @@ public class Events_Search_Fragment extends Fragment implements OnMapReadyCallba
         mMapView = view.findViewById(R.id.events_list_map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
+
+        getNearbyEventList();
     }
 
     private GoogleMap gMap;
@@ -148,4 +181,28 @@ public class Events_Search_Fragment extends Fragment implements OnMapReadyCallba
             Log.w(TAG,"There was an error retrieving the device location.",e);
         }
     }
+
+    /**
+     * ToDo: We are currently retrieving the full list of public events. This has to refined to only
+     * nearby events to limit the reads from Firestore and to reduce load time.
+     */
+    private void getNearbyEventList(){
+        Observer<List<Event_Model>> mObserver = new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w(TAG,"LiveData changed: "+event_models.toString());
+                //Make markers for each event at the location.
+                for(Event_Model event:event_models){
+                    double lat = event.getLat();
+                    double lng = event.getLng();
+                    LatLng latLng = new LatLng(lat,lng);
+                    if(gMap!=null){
+                        gMap.addMarker(new MarkerOptions().position(latLng)).setTitle(event.getName());
+                    }
+                }
+            }
+        };
+        mViewModel.getPublicEvents().observe(this, mObserver);
+    }
+
 }

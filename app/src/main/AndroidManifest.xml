@@ -57,7 +57,7 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <activity android:name=".Search_Events_Activity"
+        <activity android:name=".SearchEvents_Activity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
 

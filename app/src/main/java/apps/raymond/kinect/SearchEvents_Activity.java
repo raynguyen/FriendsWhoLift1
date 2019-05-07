@@ -16,8 +16,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-public class Search_Events_Activity extends AppCompatActivity {
-    private static final String TAG = "Search_Events_Activity";
+public class SearchEvents_Activity extends AppCompatActivity {
+    private static final String TAG = "SearchEvents_Activity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
