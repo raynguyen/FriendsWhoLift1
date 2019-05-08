@@ -2,23 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="2dp"
-        android:background="@null">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/events_search_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:navigationIcon="@drawable/baseline_keyboard_arrow_left_black_18dp"
-            android:background="@color/transparent">
-        </android.support.v7.widget.Toolbar>
-    </RelativeLayout>
 
     <com.google.android.gms.maps.MapView
         android:layout_width="match_parent"

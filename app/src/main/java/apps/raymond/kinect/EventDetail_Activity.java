@@ -151,13 +151,15 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     private int scrollDist = 0;
     boolean isVisible = true;
     @Override
-    public void onScrolled(View v, int dy) {
+    public void onMessagesScrolled(View view, int dy) {
         if(isVisible && scrollDist > 25){
             informationLayout.setVisibility(View.GONE);
+            view.setVisibility(View.GONE);
             isVisible = false;
             scrollDist = 0;
         } else if(!isVisible && scrollDist <-25){
             informationLayout.setVisibility(View.VISIBLE);
+            view.setVisibility(View.VISIBLE);
             isVisible = true;
             scrollDist = 0;
         }

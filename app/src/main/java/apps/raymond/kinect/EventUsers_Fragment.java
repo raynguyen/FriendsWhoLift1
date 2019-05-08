@@ -27,6 +27,9 @@ import java.util.List;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+
+//ToDo: Currently three separate views that are navigated via ViewFlipper. This should be converted to a
+// ViewPager if there are no plans to implement animations when clicking on users.
 public class EventUsers_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener, View.OnClickListener{
     private static final String TAG = "EventUsers_Fragment";

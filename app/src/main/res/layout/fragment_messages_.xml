@@ -1,54 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:animateLayoutChanges="true">
-
-    <RelativeLayout
-        android:id="@+id/layout_new_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <EditText
-            android:id="@+id/edit_new_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:scrollHorizontally="false"
-            android:inputType="text|textMultiLine"
-            android:padding="4dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:layout_alignParentTop="true"
-            android:hint="@string/new_message"
-            android:background="@drawable/edit_text_border"
-            android:clickable="true"
-            android:focusable="true"/>
-
-        <Button
-            android:id="@+id/button_discard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/discard"
-            android:layout_toStartOf="@+id/button_post"
-            android:layout_below="@id/edit_new_message"/>
-        <Button
-            android:id="@+id/button_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/post"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/edit_new_message"/>
-
-    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/layout_new_message"
-        android:layout_alignParentBottom="true">
+        android:layout_weight="1"
+        >
 
         <ProgressBar
             android:id="@+id/progress_loading_messages"
@@ -73,5 +35,37 @@
 
     </FrameLayout>
 
+    <LinearLayout
+        android:id="@+id/layout_new_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/edit_text_border"
+        >
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/edit_new_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="5"
+            android:scrollHorizontally="false"
+            android:inputType="text|textMultiLine"
+            android:background="@color/transparent"
+            android:padding="8dp"
+            android:hint="@string/new_message"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/button_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send_black_24dp"
+            android:background="@color/transparent"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

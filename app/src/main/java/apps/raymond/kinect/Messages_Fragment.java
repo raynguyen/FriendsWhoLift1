@@ -14,8 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,8 +29,7 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Messages_Fragment extends Fragment implements View.OnClickListener,
-        Messages_Adapter.ProfileClickListener {
+public class Messages_Fragment extends Fragment implements Messages_Adapter.ProfileClickListener {
     private static final String TAG = "MessagesFragment";
     private static final String EVENT = "Event";
     private static final String GROUP = "Group";
@@ -38,7 +37,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
     private MessagesFragment_Interface activityInterface;
     public interface MessagesFragment_Interface{
         User_Model getCurrentUser();
-        void onScrolled(View v,int dy);
+        void onMessagesScrolled(View v, int dy);
     }
 
     @Override
@@ -94,42 +93,23 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
 
     TextView textEmptyMessages;
     List<Message_Model> messages = new ArrayList<>();
-    Button btnPostMessage, btnDiscardMessage;
+    ImageButton btnPostMessage;
     RecyclerView mRecyclerView;
     Messages_Adapter mAdapter;
     EditText editNewMessage;
     ProgressBar progressBar;
+    ViewGroup mNewMessageView;
+    int scrollDist = 0;
+    boolean isVisible = true;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mNewMessageView = view.findViewById(R.id.layout_new_message);
         btnPostMessage = view.findViewById(R.id.button_post);
-        btnDiscardMessage = view.findViewById(R.id.button_discard);
-        btnPostMessage.setOnClickListener(this);
-        btnDiscardMessage.setOnClickListener(this);
-
-        mRecyclerView = view.findViewById(R.id.recyclerview_messages);
-        mAdapter = new Messages_Adapter(messages, this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        btnPostMessage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                activityInterface.onScrolled(mRecyclerView, dy);
-            }
-        });
-
-        progressBar = view.findViewById(R.id.progress_loading_messages);
-        textEmptyMessages = view.findViewById(R.id.text_empty_messages);
-        loadMessages();
-
-        editNewMessage = view.findViewById(R.id.edit_new_message);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.button_post:
+            public void onClick(View v) {
                 if(editNewMessage.getText().toString().trim().length()>0){
                     createMessage(editNewMessage.getText().toString());
                     editNewMessage.getText().clear();
@@ -140,14 +120,27 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
                         //Purposely empty.
                     }
                 }
-                return;
-            case R.id.button_discard:
-                editNewMessage.getText().clear();
-                return;
-            default:
-                break;
-        }
+            }
+        });
+
+        mRecyclerView = view.findViewById(R.id.recyclerview_messages);
+        mAdapter = new Messages_Adapter(messages, this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                activityInterface.onMessagesScrolled(mNewMessageView,dy);
+            }
+        });
+
+        progressBar = view.findViewById(R.id.progress_loading_messages);
+        textEmptyMessages = view.findViewById(R.id.text_empty_messages);
+        loadMessages();
+
+        editNewMessage = view.findViewById(R.id.edit_new_message);
     }
+
 
     @Override
     public void loadProfile() {

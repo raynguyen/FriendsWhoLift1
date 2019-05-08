@@ -22,6 +22,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,7 +33,7 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback {
+public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
@@ -57,14 +58,11 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         mViewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
 
-        /*
         try{
             mUser = getArguments().getParcelable(USER);
-        } catch (NullPointerException npe){
-            Log.w(TAG,"Error.",npe);
+        } catch (NullPointerException npe) {
+            Log.w(TAG, "Error.", npe);
         }
-        */
-        //mViewModel.testTask();
     }
 
     @Nullable
@@ -81,22 +79,29 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
         mMapView = view.findViewById(R.id.events_list_map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-
-        getNearbyEventList();
     }
 
-    private GoogleMap gMap;
+    private GoogleMap mMap;
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        gMap = googleMap;
+        mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        mMap.setOnMarkerClickListener(this);
         googleMap.setMyLocationEnabled(true);
         getDeviceLocation();
+        getNearbyEventList();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Event_Model markerEvent = (Event_Model) marker.getTag();
+
+        return true;
     }
 
     @Override
@@ -151,7 +156,6 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
     //Consolidate getDeviceLocations to a single class?
     Location mLastLocation;
     private void getDeviceLocation(){
-        Log.w(TAG,"CALLING GET DEVICE LOCATION");
         try{
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(requireActivity(), new OnCompleteListener<Location>() {
@@ -161,19 +165,14 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
                                 if(task.getResult()!=null){
                                     Log.w(TAG,"MOVING TO LAST KNOWN LOCATION.");
                                     mLastLocation = task.getResult();
-                                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(mLastLocation.getLatitude(),
                                                     mLastLocation.getLongitude()),
                                             DEFAULT_ZOOM
                                     ));
                                 }
-                            } else {
-                                Log.d(TAG, "Current location is null. Using defaults.");
-                                Log.e(TAG, "Exception: %s", task.getException());
-                                //ToDo: Set a default location and zoom when unable to retrieve current location.
-                                //gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-                                //gMap.getUiSettings().setMyLocationButtonEnabled(false);
                             }
+                            //ToDo: Set a default location and zoom when unable to retrieve current location.
                         }
                     });
         } catch (SecurityException e){
@@ -193,9 +192,13 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
                     double lat = event.getLat();
                     double lng = event.getLng();
                     LatLng latLng = new LatLng(lat,lng);
-                    if(gMap!=null){
-                        gMap.addMarker(new MarkerOptions().position(latLng)).setTitle(event.getName());
+                    if(mMap !=null){
+                        Marker marker =  mMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(event.getName()));
+                        marker.setTag(event);
                     }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
                 }
             }
         };
