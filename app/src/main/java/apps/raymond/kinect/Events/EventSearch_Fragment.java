@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -65,13 +66,16 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_events_fragment,container,false);
-        return view;
+        View root = inflater.inflate(R.layout.fragment_search_events,container,false);
+        return root;
     }
 
+    ViewGroup cardView;
+    TextView textEventName, textDesc, textThoroughfare, textMonth, textDate, textTime;
     private MapView mMapView;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -79,6 +83,14 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
         mMapView = view.findViewById(R.id.events_list_map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
+
+        cardView = view.findViewById(R.id.cardview_event_search);
+        textEventName = view.findViewById(R.id.text_name);
+        textDesc = view.findViewById(R.id.text_description);
+        textThoroughfare = view.findViewById(R.id.text_thoroughfare);
+        textMonth = view.findViewById(R.id.text_month);
+        textDate = view.findViewById(R.id.text_date);
+        textTime = view.findViewById(R.id.text_time);
     }
 
     private GoogleMap mMap;
@@ -91,16 +103,32 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(cardView.getVisibility()==View.VISIBLE){
+                    cardView.setVisibility(View.GONE);
+                }
+            }
+        });
+        googleMap.setPadding(0,400,0,0);
         googleMap.setMyLocationEnabled(true);
+
+        mMap.setOnMarkerClickListener(this);
         getDeviceLocation();
         getNearbyEventList();
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        cardView.setVisibility(View.VISIBLE);
         Event_Model markerEvent = (Event_Model) marker.getTag();
-
+        textEventName.setText(markerEvent.getName());
+        textDesc.setText(markerEvent.getDesc());
+        textThoroughfare.setText(markerEvent.getAddress());
+        textMonth.setText("Oct");
+        textDate.setText("24");
+        textThoroughfare.setText("3:20 PM");
         return true;
     }
 
@@ -193,6 +221,7 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
                     double lng = event.getLng();
                     LatLng latLng = new LatLng(lat,lng);
                     if(mMap !=null){
+                        //Todo: Custom marker to show the primes on top of the date.
                         Marker marker =  mMap.addMarker(new MarkerOptions()
                                 .position(latLng)
                                 .title(event.getName()));
