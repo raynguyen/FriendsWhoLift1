@@ -38,7 +38,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
     private MessagesFragment_Interface activityInterface;
     public interface MessagesFragment_Interface{
         User_Model getCurrentUser();
-        void onScrolled(int dy);
+        void onScrolled(View v,int dy);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                activityInterface.onScrolled(dy);
+                activityInterface.onScrolled(mRecyclerView, dy);
             }
         });
 

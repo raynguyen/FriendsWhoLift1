@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -146,13 +147,23 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         return currUser;
     }
 
-    //On scrolled total down > height of layout, hide the layout.
-    //On scrolled up total > height/2 layout, show layout.
+    //ToDo:Need to test this on a device, it is too difficult to test via emulator.
+    private int scrollDist = 0;
+    boolean isVisible = true;
     @Override
-    public void onScrolled(int dy) {
-        Log.i("EventDetail","Height of view = " + informationLayout.getHeight()+ " and scrolled value = " +dy);
-        if(dy > informationLayout.getHeight()){
-            Log.w("EventDetail","Holy canoli");
+    public void onScrolled(View v, int dy) {
+        if(isVisible && scrollDist > 25){
+            informationLayout.setVisibility(View.GONE);
+            isVisible = false;
+            scrollDist = 0;
+        } else if(!isVisible && scrollDist <-25){
+            informationLayout.setVisibility(View.VISIBLE);
+            isVisible = true;
+            scrollDist = 0;
+        }
+
+        if((isVisible && dy > 0)||(!isVisible && dy < 0)){
+            scrollDist += dy;
         }
     }
 

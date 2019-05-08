@@ -26,16 +26,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-/*
- * The view should hide the map and there should be a button that expands the map upwards.
- */
 public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -152,8 +148,10 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
         mMapView.onLowMemory();
     }
 
+    //Consolidate getDeviceLocations to a single class?
     Location mLastLocation;
     private void getDeviceLocation(){
+        Log.w(TAG,"CALLING GET DEVICE LOCATION");
         try{
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(requireActivity(), new OnCompleteListener<Location>() {
@@ -161,6 +159,7 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
                         public void onComplete(@NonNull Task<Location> task) {
                             if(task.isSuccessful()){
                                 if(task.getResult()!=null){
+                                    Log.w(TAG,"MOVING TO LAST KNOWN LOCATION.");
                                     mLastLocation = task.getResult();
                                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(mLastLocation.getLatitude(),
@@ -172,8 +171,8 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
                                 Log.d(TAG, "Current location is null. Using defaults.");
                                 Log.e(TAG, "Exception: %s", task.getException());
                                 //ToDo: Set a default location and zoom when unable to retrieve current location.
-                                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-                                gMap.getUiSettings().setMyLocationButtonEnabled(false);
+                                //gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                                //gMap.getUiSettings().setMyLocationButtonEnabled(false);
                             }
                         }
                     });
@@ -190,8 +189,6 @@ public class EventSearch_Fragment extends Fragment implements OnMapReadyCallback
         Observer<List<Event_Model>> mObserver = new Observer<List<Event_Model>>() {
             @Override
             public void onChanged(@Nullable List<Event_Model> event_models) {
-                Log.w(TAG,"LiveData changed: "+event_models.toString());
-                //Make markers for each event at the location.
                 for(Event_Model event:event_models){
                     double lat = event.getLat();
                     double lng = event.getLng();
