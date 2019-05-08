@@ -37,7 +37,6 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventDetail_Activity extends AppCompatActivity implements View.OnClickListener,
         ProfileRecyclerAdapter.ProfileClickListener, Messages_Fragment.MessagesFragment_Interface{
-    private static final String TAG = "EventDetail";
     public static final String EVENT = "Event";
     public static final String USER = "User";
     private static final int NUM_PAGES = 2;
@@ -145,6 +144,16 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     @Override
     public User_Model getCurrentUser() {
         return currUser;
+    }
+
+    //On scrolled total down > height of layout, hide the layout.
+    //On scrolled up total > height/2 layout, show layout.
+    @Override
+    public void onScrolled(int dy) {
+        Log.i("EventDetail","Height of view = " + informationLayout.getHeight()+ " and scrolled value = " +dy);
+        if(dy > informationLayout.getHeight()){
+            Log.w("EventDetail","Holy canoli");
+        }
     }
 
     @Override

@@ -29,7 +29,8 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Messages_Fragment extends Fragment implements View.OnClickListener, Messages_Adapter.ProfileClickListener{
+public class Messages_Fragment extends Fragment implements View.OnClickListener,
+        Messages_Adapter.ProfileClickListener {
     private static final String TAG = "MessagesFragment";
     private static final String EVENT = "Event";
     private static final String GROUP = "Group";
@@ -37,6 +38,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
     private MessagesFragment_Interface activityInterface;
     public interface MessagesFragment_Interface{
         User_Model getCurrentUser();
+        void onScrolled(int dy);
     }
 
     @Override
@@ -65,7 +67,6 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         return fragment;
     }
 
-
     Repository_ViewModel viewModel;
     Event_Model event;
     Group_Model group;
@@ -81,7 +82,6 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         } catch (Exception e){
             Log.w(TAG, "Some exception caught:",e);
         }
-
         currUser = activityInterface.getCurrentUser();
     }
 
@@ -91,6 +91,7 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         View view = inflater.inflate(R.layout.fragment_messages_,container,false);
         return view;
     }
+
     TextView textEmptyMessages;
     List<Message_Model> messages = new ArrayList<>();
     Button btnPostMessage, btnDiscardMessage;
@@ -111,6 +112,12 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
         mAdapter = new Messages_Adapter(messages, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                activityInterface.onScrolled(dy);
+            }
+        });
 
         progressBar = view.findViewById(R.id.progress_loading_messages);
         textEmptyMessages = view.findViewById(R.id.text_empty_messages);
@@ -183,4 +190,5 @@ public class Messages_Fragment extends Fragment implements View.OnClickListener,
             }
         });
     }
+
 }

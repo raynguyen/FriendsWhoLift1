@@ -109,7 +109,6 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             }
         });
 
-
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
             updateEvents();
         }
