@@ -71,7 +71,7 @@ import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
 import apps.raymond.kinect.Events.EventCreate_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Events.EventSearch_Fragment;
+import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Groups.Group_Create_Fragment;
@@ -368,8 +368,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void searchEvents() {
-        EventSearch_Fragment searchFragment = new EventSearch_Fragment();
+    public void exploreEvents() {
+        EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mCurrUser);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
                 .addToBackStack(SEARCH_EVENTS_FRAG)

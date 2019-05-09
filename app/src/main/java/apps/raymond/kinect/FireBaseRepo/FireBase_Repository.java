@@ -121,13 +121,11 @@ public class FireBase_Repository {
     }
 
     public Task<AuthResult> emailSignIn(final String name, String password) {
-        Log.i(TAG,"THIS SHOULD BE FIRST: "+userEmail);
         return mAuth.signInWithEmailAndPassword(name, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Log.i(TAG,"THIS SHOULD BE SECOND!");
                             userEmail = name;
                         }
                     }

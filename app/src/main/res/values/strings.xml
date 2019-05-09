@@ -58,6 +58,7 @@
     <string name="locations">Locations</string>
     <string name="creator">Created by:</string>
     <string name="empty">Nothing to show</string>
+    <string name="attend">Attend</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

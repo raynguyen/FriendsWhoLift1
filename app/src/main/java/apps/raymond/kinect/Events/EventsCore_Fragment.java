@@ -27,19 +27,19 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.EventDetail_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Repository_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+//ToDo: Listen to changes in Store from the EventsExplore fragment - we don't currently update the recyclerview if we attend an event via Explore fragment.
 public class EventsCore_Fragment extends Fragment implements View.OnClickListener,
         EventsCore_Adapter.EventClickListener {
     private static final String TAG = "EventsCore_Fragment";
 
     private EventCore_Interface interfaceCore;
     public interface EventCore_Interface {
-        void searchEvents();
+        void exploreEvents();
         void startDetailActivity(Event_Model event);
     }
 
@@ -118,7 +118,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         if(v.getId() == R.id.search_events_btn){
             if(interfaceCore !=null){
-                interfaceCore.searchEvents();
+                interfaceCore.exploreEvents();
             } else {
                 Toast.makeText(requireContext(),"Unable to search local events at this time!",Toast.LENGTH_LONG).show();
             }

@@ -64,7 +64,6 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
                     geoLocate(v.getText().toString());
                 }
-
                 return false;
             }
         });
@@ -184,14 +183,13 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == LOCATION_REQUEST_CODE){
-            if(grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 locationGranted=true;
                 if(mMap!=null){
                     getDeviceLocation();
                 }
             } else {
-                Toast.makeText(this,"Unable to determine your location.",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"Unable to access your location.",Toast.LENGTH_LONG).show();
             }
         }
     }
