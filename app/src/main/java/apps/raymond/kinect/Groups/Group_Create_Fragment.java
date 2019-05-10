@@ -55,7 +55,7 @@ import apps.raymond.kinect.DialogFragments.SearchUsersDialog;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Group_Create_Fragment extends Fragment implements
@@ -82,7 +82,7 @@ public class Group_Create_Fragment extends Fragment implements
 
     private FragmentManager fm;
     List<User_Model> usersList;
-    private Repository_ViewModel viewModel;
+    private Core_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +91,7 @@ public class Group_Create_Fragment extends Fragment implements
         } catch (NullPointerException npe){
             Log.e(TAG,"Unable to get fragment manager for fragment.",npe);
         }
-        viewModel = ViewModelProviders.of(getActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
         usersList = new ArrayList<>();
         fetchUsersList();
     }

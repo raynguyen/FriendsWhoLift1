@@ -3,13 +3,13 @@ package apps.raymond.kinect.Events;
 import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +37,15 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /*
+ * ToDo: ********************************
+ * If an event is accepted via the map, we have to check that the user does not have an invite pending
+ * in their inbox. If the event invite exists, we must remove it and update the InvitedUsers collection
+ * for the respective event as well.
+ *
  * ToDo:
  * Consider consolidating this Activity with the EventExplore_Fragment. Set the architecture such that
  * the Maps_Activity loads the map and requests permissions as required, but also overlay one of two
@@ -54,12 +59,22 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo:
  * Filter out events that the user is already in attendance or invited to.
  */
-public class EventExplore_Fragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class EventExplore_Fragment extends EventControl_Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final float DEFAULT_ZOOM = 17.0f; //This is already defined in Maps_Activity.
+
+    private TestInterface testInterface;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            testInterface = (TestInterface) context;
+        } catch (ClassCastException cce){}
+    }
 
     public static EventExplore_Fragment newInstance(User_Model userModel){
         EventExplore_Fragment fragment = new EventExplore_Fragment();
@@ -69,16 +84,14 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
         return fragment;
     }
 
-
     FusedLocationProviderClient mFusedLocationClient;
-    Repository_ViewModel mViewModel;
+    Core_ViewModel mViewModel;
     User_Model mUser;
-    List<Event_Model> eventList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-        mViewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
 
         if (ActivityCompat.checkSelfPermission(requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -93,7 +106,6 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
             Log.w(TAG, "Error.", npe);
         }
     }
-
 
     @Nullable
     @Override
@@ -126,12 +138,7 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 if(focusedEvent!=null){
-                    mViewModel.addUserToEvent(focusedEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-                        }
-                    });
+                    testInterface.newEventCallback(focusedEvent);
                 }
             }
         });
@@ -140,7 +147,6 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
     private GoogleMap mMap;
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.w(TAG,"Inside onMapReady");
         mMap = googleMap;
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -151,7 +157,6 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
             }
         });
         googleMap.setPadding(0,400,0,0);
-
         try{
             googleMap.setMyLocationEnabled(true);
         } catch (SecurityException e){
@@ -163,10 +168,15 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
     }
 
     Event_Model focusedEvent;
+    Marker focusedMarker;
     @Override
     public boolean onMarkerClick(Marker marker) {
+        //ToDo: Zoom in to the event!
+
         cardView.setVisibility(View.VISIBLE);
         focusedEvent = (Event_Model) marker.getTag();
+        focusedMarker = marker;
+
         textEventName.setText(focusedEvent.getName());
         textDesc.setText(focusedEvent.getDesc());
         textThoroughfare.setText(focusedEvent.getAddress());
@@ -180,6 +190,7 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
         textTime.setText(sdf.format(date));
 
+        marker.getPosition();
         return true;
     }
 
@@ -196,10 +207,6 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
         mMapView.onSaveInstanceState(mapViewBundle);
     }
 
-    private void initMap(GoogleMap googleMap){
-
-    }
-
     //Consolidate getDeviceLocations to a single class?
     Location mLastLocation;
     private void getDeviceLocation(){
@@ -213,12 +220,12 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
                                 if(task.getResult()!=null){
                                     Log.w(TAG,"MOVING TO LAST KNOWN LOCATION.");
                                     mLastLocation = task.getResult();
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    //ToDo: Uncomment this when done testing.
+                                    /*mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                             new LatLng(mLastLocation.getLatitude(),
                                                     mLastLocation.getLongitude()),
                                             DEFAULT_ZOOM
-                                    ));
-                                    Log.w(TAG,"Does this work?");
+                                    ));*/
                                 }
                             }
                             //ToDo: Set a default location and zoom when unable to retrieve current location.
@@ -234,26 +241,29 @@ public class EventExplore_Fragment extends Fragment implements OnMapReadyCallbac
      * nearby events to limit the reads from Firestore and to reduce load time.
      */
     private void getNearbyEventList(){
-        Observer<List<Event_Model>> mObserver = new Observer<List<Event_Model>>() {
+        mViewModel.getPublicEvents().observe(this, new Observer<List<Event_Model>>() {
             @Override
             public void onChanged(@Nullable List<Event_Model> event_models) {
-                for(Event_Model event:event_models){
-                    double lat = event.getLat();
-                    double lng = event.getLng();
-                    LatLng latLng = new LatLng(lat,lng);
-                    if(mMap !=null){
-                        //Todo: Custom marker to show the primes on top of the date.
-                        Marker marker =  mMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title(event.getName()));
-                        marker.setTag(event);
+                Log.w(TAG,"I don't think it changes!~");
+                if(event_models!=null && !event_models.isEmpty()){
+                    for(Event_Model event:event_models){
+                        double lat = event.getLat();
+                        double lng = event.getLng();
+                        LatLng latLng = new LatLng(lat,lng);
+                        if(mMap !=null){
+                            //Todo: Custom marker to show the primes on top of the date.
+                            Marker marker =  mMap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title(event.getName()));
+                            marker.setTag(event);
+                        }
+                        //ToDo:Remove this line once this fragment is complete.
+                        Log.w(TAG,"Does it move?");
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
                     }
-                    //ToDo:Remove this line once this fragment is complete.
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
                 }
             }
-        };
-        mViewModel.getPublicEvents().observe(this, mObserver);
+        });
     }
 
     @Override

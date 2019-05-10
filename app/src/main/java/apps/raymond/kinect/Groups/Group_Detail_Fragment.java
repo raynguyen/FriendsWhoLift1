@@ -45,9 +45,9 @@ import java.util.List;
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.Invite_Users_Fragment;
+import apps.raymond.kinect.InviteUsers_Fragment;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -71,7 +71,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         return _group_Detail_fragment;
     }
 
-    private Repository_ViewModel viewModel;
+    private Core_ViewModel viewModel;
     SearchView toolbarSearch;
     FragmentManager fm;
     @Override
@@ -83,7 +83,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
 
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         fetchUserList();
     }
 
@@ -205,7 +205,7 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
                 //Todo: Have to add the ability to modify the image.
                 return true;
             case R.id.action_invite:
-                Fragment usersInviteFragment = Invite_Users_Fragment.newInstance(userModelArrayList);
+                Fragment usersInviteFragment = InviteUsers_Fragment.newInstance(userModelArrayList);
                 getFragmentManager().beginTransaction()
                         .add(R.id.core_frame,usersInviteFragment,Core_Activity.INVITE_USERS_FRAG)
                         .addToBackStack(Core_Activity.INVITE_USERS_FRAG)

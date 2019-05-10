@@ -17,14 +17,14 @@ public class View_Profile_Activity extends AppCompatActivity implements View.OnC
     public static final String USER = "User_Model";
 
     User_Model user;
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_profile_activity);
         Bundle args = getIntent().getExtras();
 
-        viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(this);

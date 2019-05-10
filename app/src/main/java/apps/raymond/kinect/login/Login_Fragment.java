@@ -22,7 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class Login_Fragment extends Fragment implements View.OnClickListener{
@@ -44,13 +44,13 @@ public class Login_Fragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private Repository_ViewModel viewModel;
+    private Core_ViewModel viewModel;
     FirebaseAuth mAuth;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
     }
 
     @Nullable

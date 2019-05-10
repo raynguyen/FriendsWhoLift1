@@ -66,7 +66,7 @@ public class Messages_Fragment extends Fragment implements Messages_Adapter.Prof
         return fragment;
     }
 
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     Event_Model event;
     Group_Model group;
     User_Model currUser;
@@ -74,7 +74,7 @@ public class Messages_Fragment extends Fragment implements Messages_Adapter.Prof
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         try{
             event = getArguments().getParcelable(EVENT);
             group = getArguments().getParcelable(GROUP);

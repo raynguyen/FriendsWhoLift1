@@ -23,16 +23,16 @@ import java.util.List;
 
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 public class GroupInviteFragment extends Fragment implements Group_Invites_Fragment.InviteResponseListener {
     private static final String TAG = "Group_Invite_Fragment";
 
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
     }
 
     @Nullable

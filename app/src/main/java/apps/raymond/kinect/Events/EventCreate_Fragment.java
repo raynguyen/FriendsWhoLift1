@@ -63,10 +63,10 @@ import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.Maps_Activity;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventCreate_Fragment extends Fragment implements View.OnClickListener,
+public class EventCreate_Fragment extends EventControl_Fragment implements View.OnClickListener,
         Add_Users_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
@@ -81,31 +81,28 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     public static final int END_DATE_REQUEST = 24;
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
+    private TestInterface testInterface;
 
-    private EventCreatedListener eventCreatedListener;
-    public interface EventCreatedListener {
-        void notifyEventCreated(Event_Model groupEvent);
-    }
 
     FragmentManager fm;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            eventCreatedListener = (EventCreatedListener) context;
+            testInterface = (TestInterface) context;
         }catch (ClassCastException e){
             Log.i(TAG,"Unable to attach EventCreatedListener interface to activity.");
         }
         fm = requireActivity().getSupportFragmentManager();
     }
 
-    private Repository_ViewModel viewModel;
+    private Core_ViewModel viewModel;
     Event_Model event;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        viewModel = ViewModelProviders.of(getActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
@@ -346,7 +343,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
 
     /**
      * Populate a drop-down list for the auto complete text when user attempts to type in a location
-     * to set the event. The adapter will hold a list of the user's stored locations from FireStore.
+     * to set the event. The mAdapter will hold a list of the user's stored locations from FireStore.
      */
     private void initializeLocations(){
         ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
@@ -375,7 +372,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     }
 
     /**
-     * Calls upon the FireBase_Repository to return a query of all the user documents in FireStore.
+     * Calls upon the Core_FireBaseRepo to return a query of all the user documents in FireStore.
      * This needs to be changed so that we only query an appropriate set of users that are set and
      * eligible for event invitations.
      */
@@ -453,11 +450,12 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
                 progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     Toast.makeText(getContext(),"Created event " + event.getName(),Toast.LENGTH_SHORT).show();
+                    testInterface.newEventCallback(event);
+                    viewModel.addUserToEvent(event);
                     viewModel.sendEventInvites(event,inviteUsersList);
-                    eventCreatedListener.notifyEventCreated(event);
                     fm.popBackStack();
                 } else {
-                    Toast.makeText(getContext(),"Error creating event.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Could not create event at this time.",Toast.LENGTH_SHORT).show();
                 }
             }
         });

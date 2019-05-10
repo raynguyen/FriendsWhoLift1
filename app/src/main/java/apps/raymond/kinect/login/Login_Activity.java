@@ -22,18 +22,18 @@ import android.widget.EditText;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 public class Login_Activity extends AppCompatActivity implements Login_Fragment.SignIn, SignUpFrag.SignIn{
     private static final String TAG = "Login_Activity";
 
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceStance){
         super.onCreate(savedInstanceStance);
         setContentView(R.layout.login_activity);
 
-        viewModel = new Repository_ViewModel();
+        viewModel = new Core_ViewModel();
         LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
 
         ViewPager mViewPager = findViewById(R.id.login_container);

@@ -13,7 +13,7 @@ import java.util.List;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 
-public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.InviteMessagesViewHolder> {
+public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitations_Adapter.InviteMessagesViewHolder> {
     private List<Event_Model> eventInviteSet;
     private InviteResponseListener callback;
 
@@ -23,12 +23,7 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
         void onDetail();
     }
 
-    public EventInviteAdapter(InviteResponseListener callback){
-        this.callback = callback;
-    }
-
-    public EventInviteAdapter(List<Event_Model> eventInviteList, InviteResponseListener callback){
-        this.eventInviteSet = eventInviteList;
+    public EventInvitations_Adapter(InviteResponseListener callback){
         this.callback = callback;
     }
 
@@ -48,7 +43,7 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
 
     @NonNull
     @Override
-    public EventInviteAdapter.InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public EventInvitations_Adapter.InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_invite_item,viewGroup,false);
         return new InviteMessagesViewHolder(view);
     }
@@ -78,12 +73,12 @@ public class EventInviteAdapter extends RecyclerView.Adapter<EventInviteAdapter.
     public int getItemCount() {
         if(eventInviteSet != null){
             return eventInviteSet.size();
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     public void setData(List<Event_Model> eventsInviteList){
         this.eventInviteSet = eventsInviteList;
+        notifyDataSetChanged();
     }
 }

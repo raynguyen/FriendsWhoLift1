@@ -36,7 +36,7 @@ import java.util.List;
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
     private static final String TAG = "GroupsCore_Fragment";
@@ -49,11 +49,11 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         model = ViewModelProviders.of(requireActivity()).get(Groups_ViewModel.class);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         subscribeToModel();
     }
 
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     ArrayList<Group_Model> myGroups;
     @Nullable
     @Override

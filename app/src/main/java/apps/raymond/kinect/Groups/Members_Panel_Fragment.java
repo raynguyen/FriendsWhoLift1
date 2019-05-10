@@ -22,7 +22,7 @@ import java.util.List;
 
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
@@ -38,14 +38,14 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
         return membersPanel;
     }
 
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     Group_Model group;
     List<User_Model> membersList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         group = getArguments().getParcelable(GROUP_PARCEL);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         membersList = new ArrayList<>();
         fetchMembersList();
     }

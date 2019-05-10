@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,7 +48,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     }
 
     User_Model currUser;
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     Event_Model event;
     Toolbar toolbar;
     ViewGroup informationLayout, usersLayout;
@@ -70,7 +68,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(this);
 
-        viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
         informationLayout = findViewById(R.id.layout_information);
         textName = findViewById(R.id.text_name);

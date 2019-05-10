@@ -1,5 +1,6 @@
 package apps.raymond.kinect.Events;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -29,8 +30,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Repository_ViewModel;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.Core_ViewModel;
 
 //ToDo: Listen to changes in Store from the EventsExplore fragment - we don't currently update the recyclerview if we attend an event via Explore fragment.
 public class EventsCore_Fragment extends Fragment implements View.OnClickListener,
@@ -55,38 +55,34 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
 
     public EventsCore_Fragment(){}
 
-    private Repository_ViewModel viewModel;
-    private User_Model currUser;
+    private Core_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(requireActivity()).get(Repository_ViewModel.class); // Is there a better callback for this?
+        mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class); // Is there a better callback for this?
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.events_core_fragment, container,false);
     }
 
     private TextView nullText;
     int scrolledHeight = 0;
-    private List<Event_Model> eventList;
+    private List<Event_Model> mAcceptedEvents;
     private ProgressBar progressBar;
     private EventsCore_Adapter mAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        eventList = new ArrayList<>();
-
+        progressBar = view.findViewById(R.id.progress_bar);
         nullText = getView().findViewById(R.id.fragment_null_data_text);
 
-        progressBar = view.findViewById(R.id.progress_bar);
-
         final RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
-        mAdapter = new EventsCore_Adapter(eventList, this);
+        mAcceptedEvents = new ArrayList<>();
+        mAdapter = new EventsCore_Adapter(mAcceptedEvents, this);
         eventsRecycler.setAdapter(mAdapter);
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -109,9 +105,35 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             }
         });
 
+        //ToDo: create repo method that returns LiveData currentuser object?
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-            updateEvents();
+            loadEvents();
         }
+    }
+
+    /**
+     * Method call to observe a List<Event_Model> that is held by the Core_ViewModel. Changes to this
+     * list triggers this fragment to update the RecyclerView through mAdapter.
+     */
+    private void loadEvents(){
+        mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w(TAG,"There was a change in the list.");
+                if(event_models!=null){
+                    Log.w(TAG,"EventsList consists of: "+event_models.toString());
+                    mAcceptedEvents = new ArrayList<>(event_models);
+                    progressBar.setVisibility(View.GONE);
+                    if(!mAcceptedEvents.isEmpty()){
+                        nullText.setVisibility(View.GONE);
+                        mAdapter.setData(mAcceptedEvents);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        nullText.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -130,45 +152,20 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         interfaceCore.startDetailActivity(event);
     }
 
-    /*
-     * Repository calls should provide a clean API from the rest of the application from the underlying data.
-     * Clearly, requiring an onComplete listener here voids the previous statement so we will have to
-     * revisit this.
-     */
-    private void updateEvents(){
-        viewModel.getUsersEvents().addOnCompleteListener(new OnCompleteListener<List<Task<DocumentSnapshot>>>() {
+    public void newEventCallback(final Event_Model event) {
+        //ToDo: Add the new event into the correct position here.
+        mAcceptedEvents.add(event);
+        mViewModel.addUserToEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<List<Task<DocumentSnapshot>>> task) {
-                if(task.isSuccessful()){
-                    Tasks.whenAllSuccess(task.getResult()).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
-                        @Override
-                        public void onSuccess(List<Object> objects) {
-                            for(Object object:objects){
-                                eventList.add(((DocumentSnapshot) object).toObject(Event_Model.class)); //Do the toObject in the repo
-                            }
-                            progressBar.setVisibility(View.GONE);
-                            if(eventList.size() == 0){
-                                nullText.setVisibility(View.VISIBLE);
-                            } else {
-                                mAdapter.setData(eventList);
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    });
-                }
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(getContext(),"Attending event: "+event.getName(),Toast.LENGTH_LONG).show();
             }
         });
+        mAdapter.notifyDataAdded(event, mAcceptedEvents.size()-1);
     }
 
     public void filterRecycler(String constraint){
         mAdapter.getFilter().filter(constraint);
     }
 
-    public void updateEventRecycler(Event_Model event) {
-        eventList.add(event);
-        mAdapter.addData(event);
-        if(eventList.size()==0){
-            nullText.setVisibility(View.VISIBLE);
-        }
-    }
 }

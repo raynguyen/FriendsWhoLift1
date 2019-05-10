@@ -50,7 +50,6 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
         if(eventsListFull !=null){
             final Event_Model currEvent = eventsListFull.get(position);
-
             if(currEvent.getLong1()!=0){
                 long long1 = currEvent.getLong1();
                 Calendar c = Calendar.getInstance();
@@ -60,7 +59,6 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
                 SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
                 vh.timeTxt.setText(sdf.format(new Date(long1)));
             }
-
             vh.nameTxt.setText(currEvent.getName());
             vh.attendingTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
             vh.invitedTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
@@ -118,9 +116,9 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         notifyDataSetChanged();
     }
 
-    public void addData(Event_Model event){
+    public void notifyDataAdded(Event_Model event, int position){
         eventsListFull.add(event);
-        notifyItemInserted(eventsListFull.size() - 1);
+        notifyItemInserted(position);
     }
 
     @Override

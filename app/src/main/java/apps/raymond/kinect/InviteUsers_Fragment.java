@@ -15,26 +15,28 @@ import java.util.ArrayList;
 
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Invite_Users_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
+/**
+ * Currently only called in Group_Detail_Fragment to invite new users into the group.
+ */
+public class InviteUsers_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
     private final static String TAG = "InviteUsersFragment";
     private final static String USER_LIST = "UsersList";
 
-    public static Invite_Users_Fragment newInstance(ArrayList<User_Model> userModelList){
-        Invite_Users_Fragment fragment = new Invite_Users_Fragment();
+    public static InviteUsers_Fragment newInstance(ArrayList<User_Model> userModelList){
+        InviteUsers_Fragment fragment = new InviteUsers_Fragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(USER_LIST,userModelList);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public Invite_Users_Fragment(){
+    public InviteUsers_Fragment(){
     }
 
     ArrayList<User_Model> userModelList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         userModelList = getArguments().getParcelableArrayList(USER_LIST);
     }
 

@@ -46,11 +46,11 @@ public class EventUsers_Fragment extends Fragment implements
     }
 
     Event_Model event;
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         event = getArguments().getParcelable(EVENT);
     }
 

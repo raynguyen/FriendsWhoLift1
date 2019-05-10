@@ -43,13 +43,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     TextView nameTxt, connectionsTxt, interestsTxt;
     ImageButton socialEditLock;
     ImageView profilePic;
-    Repository_ViewModel viewModel;
+    Core_ViewModel viewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_);
 
-        viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
         ImageButton closeBtn = findViewById(R.id.return_btn);
         closeBtn.setOnClickListener(this);
@@ -136,7 +136,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             }
         });
         //ToDo This has not been implemented. Need to structure the data in FireStore
-        /*viewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+        /*mViewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
             public void onComplete(@NonNull Task<List<String>> task) {
                 if(task.isSuccessful()){

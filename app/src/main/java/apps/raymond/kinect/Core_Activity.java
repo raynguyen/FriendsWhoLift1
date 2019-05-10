@@ -66,8 +66,8 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.DialogFragments.Event_Invites_Fragment;
-import apps.raymond.kinect.DialogFragments.Invite_Messages_Fragment;
+import apps.raymond.kinect.Events.EventInvitations_Fragment;
+import apps.raymond.kinect.Events.EventControl_Fragment;
 import apps.raymond.kinect.Events.EventCreate_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
@@ -80,17 +80,16 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        EventCreate_Fragment.EventCreatedListener, Group_Create_Fragment.AddGroup,
-        Event_Invites_Fragment.EventResponseListener, EventsCore_Fragment.EventCore_Interface {
+        Group_Create_Fragment.AddGroup, EventInvitations_Fragment.EventResponseListener,
+        EventsCore_Fragment.EventCore_Interface, EventControl_Fragment.TestInterface {
 
     private static final String TAG = "Core_Activity";
     private static final int NUM_PAGES = 2;
-    private static final String INV_FRAG = "Invite_Messages_Fragment";
+    private static final String INV_FRAG = "Invitations_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
     private static final String SEARCH_EVENTS_FRAG = "EventCore_Interface";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
-
     public static final int YESNO_REQUEST = 21;
 
     public UpdateGroupRecycler updateGroupRecycler;
@@ -100,7 +99,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     Activity thisInstance;
     ViewPager viewPager;
-    Repository_ViewModel viewModel;
+    Core_ViewModel mViewModel;
     SearchView toolbarSearch;
     Core_Adapter pagerAdapter;
     Toolbar toolbar;
@@ -116,8 +115,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         thisInstance = this;
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        viewModel = ViewModelProviders.of(this).get(Repository_ViewModel.class);
-        viewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        mViewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
             @Override
             public void onComplete(@NonNull Task<User_Model> task) {
                 if(task.isSuccessful()){
@@ -182,7 +181,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         switch (item.getItemId()){
             case R.id.action_invites:
                 Log.i(TAG,"Clicked on invites button");
-                Invite_Messages_Fragment inviteDialog = new Invite_Messages_Fragment();
+                Invitations_Fragment inviteDialog = new Invitations_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,inviteDialog,INV_FRAG)
                         .addToBackStack(INV_FRAG)
@@ -276,12 +275,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void notifyEventCreated(Event_Model event) {
-        EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.updateEventRecycler(event);
-    }
-
-    @Override
     public void onBackPressed() {
         Log.i(TAG,"List of fragments: \n " + getSupportFragmentManager().getFragments().toString());
         int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -359,7 +352,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public void eventAccepted(Event_Model event) {
         Log.i(TAG,"Accepted invite to: "+event.getName());
         EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.updateEventRecycler(event);
+        fragment.newEventCallback(event);
     }
 
     @Override
@@ -438,4 +431,19 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void newEventCallback(Event_Model event) {
+        EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        fragment.newEventCallback(event);
+    }
+
+    @Override
+    public void acceptInviteCallback(Event_Model event) {
+        //mViewModel
+    }
+
+    @Override
+    public void declineInviteCallback(Event_Model event) {
+
+    }
 }

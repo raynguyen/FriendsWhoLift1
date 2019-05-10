@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+//ToDo: Consider implementing hashcode to individually identify event without comparing strings.
 public class Event_Model implements Parcelable{
     public static final String PRIVACY = "privacy";
     public static final int PUBLIC = 0; //Anyone may join the event without prior connections to guests.
