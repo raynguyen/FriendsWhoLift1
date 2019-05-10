@@ -145,6 +145,9 @@ public class Core_ViewModel extends ViewModel {
     public Task<Void> attendEvent(Event_Model event){
         return mRepository.attendEvent(event);
     }
+    public Task<Void> acceptEventInvitation(Event_Model event){
+        return mRepository.acceptEventInvitation(event);
+    }
 
     public Task<List<User_Model>> getEventResponses(Event_Model event, String status){
         return mRepository.getEventResponses(event, status);

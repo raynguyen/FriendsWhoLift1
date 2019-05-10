@@ -138,7 +138,7 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
             @Override
             public void onClick(View v) {
                 if(focusedEvent!=null){
-                    mEventManager.onAttendEvent(focusedEvent, EventControl_Fragment.EXPLORE);
+                    mEventManager.onAttendEvent(focusedEvent, 0);
                 }
             }
         });

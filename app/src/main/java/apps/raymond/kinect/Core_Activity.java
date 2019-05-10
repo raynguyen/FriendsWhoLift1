@@ -429,8 +429,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public void onAttendEvent(Event_Model event, int flag) {
         Log.w(TAG,"We are able to call CoreActivity method from the EventInvitations_Fragment!");
         mViewModel.attendEvent(event);
-
-
+        if(flag==EventControl_Fragment.INVITATION){
+            mViewModel.acceptEventInvitation(event); //ToDo: Check this.
+        }
 
         newEventCallback(event);
     }

@@ -284,8 +284,6 @@ public class Core_FireBaseRepo {
     public Task<Void> attendEvent(final Event_Model event) {
         CollectionReference usersEvents = userCollection.document(mUserEmail).collection(EVENTS);
         final CollectionReference acceptedUsers = eventCollection.document(event.getOriginalName()).collection(ACCEPTED);
-        final CollectionReference invitedUsers = eventCollection.document(event.getOriginalName()).collection(INVITED);
-
         return usersEvents.document(event.getOriginalName()).set(event)
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
@@ -326,7 +324,7 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<Void> removeEventInvite(Event_Model event){
+    public Task<Void> acceptEventInvitation(Event_Model event){
         CollectionReference userEventInvitesRef = mStore.collection(USERS)
                 .document(mUserEmail).collection(EVENT_INVITES);
         final CollectionReference eventInvitesRef = mStore.collection(EVENTS)
