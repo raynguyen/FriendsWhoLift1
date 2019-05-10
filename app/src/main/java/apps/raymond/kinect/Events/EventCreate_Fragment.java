@@ -22,7 +22,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -81,28 +80,27 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     public static final int END_DATE_REQUEST = 24;
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
-    private TestInterface testInterface;
+    private EventControlInterface testInterface;
 
-
-    FragmentManager fm;
+    private FragmentManager fm;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            testInterface = (TestInterface) context;
+            testInterface = (EventControlInterface) context;
         }catch (ClassCastException e){
             Log.i(TAG,"Unable to attach EventCreatedListener interface to activity.");
         }
         fm = requireActivity().getSupportFragmentManager();
     }
 
-    private Core_ViewModel viewModel;
+    private Core_ViewModel mViewModel;
     Event_Model event;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        viewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
@@ -377,7 +375,7 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
      * eligible for event invitations.
      */
     private void fetchUsersList(){
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        mViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
@@ -444,15 +442,15 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
                     privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
         }
 
-        viewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     Toast.makeText(getContext(),"Created event " + event.getName(),Toast.LENGTH_SHORT).show();
                     testInterface.newEventCallback(event);
-                    viewModel.addUserToEvent(event);
-                    viewModel.sendEventInvites(event,inviteUsersList);
+                    mViewModel.attendEvent(event);
+                    mViewModel.sendEventInvites(event,inviteUsersList);
                     fm.popBackStack();
                 } else {
                     Toast.makeText(getContext(),"Could not create event at this time.",Toast.LENGTH_SHORT).show();

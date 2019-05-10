@@ -59,20 +59,20 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo:
  * Filter out events that the user is already in attendance or invited to.
  */
-public class EventExplore_Fragment extends EventControl_Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class EventExplore_Fragment extends EventControl_Fragment implements
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
     private static final int LOCATION_REQUEST_CODE = 1;
-    private static final float DEFAULT_ZOOM = 17.0f; //This is already defined in Maps_Activity.
 
-    private TestInterface testInterface;
+    private EventControlInterface mEventManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            testInterface = (TestInterface) context;
+            mEventManager = (EventControlInterface) context;
         } catch (ClassCastException cce){}
     }
 
@@ -138,7 +138,7 @@ public class EventExplore_Fragment extends EventControl_Fragment implements OnMa
             @Override
             public void onClick(View v) {
                 if(focusedEvent!=null){
-                    testInterface.newEventCallback(focusedEvent);
+                    mEventManager.onAttendEvent(focusedEvent, EventControl_Fragment.EXPLORE);
                 }
             }
         });
@@ -180,7 +180,7 @@ public class EventExplore_Fragment extends EventControl_Fragment implements OnMa
         textEventName.setText(focusedEvent.getName());
         textDesc.setText(focusedEvent.getDesc());
         textThoroughfare.setText(focusedEvent.getAddress());
-        textThoroughfare.setText("Papa Johns");
+        textThoroughfare.setText("Papa Johns"); //ToDo: Should just be the address.
 
         Calendar c = Calendar.getInstance();
         Date date = new Date(focusedEvent.getLong1());

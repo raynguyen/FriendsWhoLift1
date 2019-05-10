@@ -58,7 +58,7 @@
         </activity>
 
 
-        <activity android:name=".View_Profile_Activity"
+        <activity android:name=".ViewProfile_Activity"
             android:theme="@style/AppTheme">
         </activity>
 

@@ -2,6 +2,7 @@ package apps.raymond.kinect.DialogFragments;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +19,9 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void onAccept(Event_Model event, int position);
-        void onDecline(Event_Model event);
-        void onDetail();
+        void acceptedFromAdapter(Event_Model event);
+        void declinedFromAdapter(Event_Model event);
+        void onEventDetail(Event_Model event);
     }
 
     public EventInvitations_Adapter(InviteResponseListener callback){
@@ -56,14 +57,15 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onAccept(event,viewHolder.getAdapterPosition());
+                    callback.acceptedFromAdapter(event);
+                    removeItem(viewHolder.getAdapterPosition());
                 }
             });
 
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onDecline(event);
+                    callback.declinedFromAdapter(event);
                 }
             });
         }
@@ -80,5 +82,11 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
     public void setData(List<Event_Model> eventsInviteList){
         this.eventInviteSet = eventsInviteList;
         notifyDataSetChanged();
+    }
+
+    public void removeItem(int position){
+        Log.w("EventInviteAdapter","Should now remove item in position: "+position);
+        eventInviteSet.remove(position);
+        notifyItemRemoved(position);
     }
 }

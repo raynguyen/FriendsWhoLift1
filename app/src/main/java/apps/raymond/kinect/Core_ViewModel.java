@@ -21,8 +21,8 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository;
-    private User_Model mActiveUser;
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
+    private MutableLiveData<List<Group_Model>> mGroupInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Message_Model>> mEventMessages = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> publicEvents = new MutableLiveData<>();
@@ -46,7 +46,7 @@ public class Core_ViewModel extends ViewModel {
             }
         });
         loadPublicEvents();
-        listenToEventInvitations();
+        listenForInvitations();
         /*
         When creating instance of ViewModel, retrieve the current user from FirebaseAuth by attaching
         a listener that updates everytime there is a change in the currentuser.
@@ -66,9 +66,6 @@ public class Core_ViewModel extends ViewModel {
     public Task<List<User_Model>> fetchUsers(){
         return mRepository.fetchUsers();
     }
-    public Task<List<String>> fetchInterests(){
-        return mRepository.getInterests();
-    }
     public Task<List<User_Model>> getConnections(){
         return mRepository.getConnections();
     }
@@ -77,7 +74,7 @@ public class Core_ViewModel extends ViewModel {
     }
 
     //Fetch event invitations (implement observer once I can figure out how to) and set as LiveData object here.
-    private void listenToEventInvitations(){
+    private void listenForInvitations(){
         mRepository.getEventInvitations()
                 .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
                     @Override
@@ -87,9 +84,22 @@ public class Core_ViewModel extends ViewModel {
                         }
                     }
                 });
+        mRepository.getGroupInvitations()
+                .addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Group_Model>> task) {
+                        if(task.isSuccessful()){
+                            mGroupInvitations.setValue(task.getResult());
+                        }
+                    }
+                });
     }
     public MutableLiveData<List<Event_Model>> getEventInvitations(){
         return mEventInvitations;
+    }
+
+    public MutableLiveData<List<Group_Model>> getGroupInvitations(){
+        return mGroupInvitations;
     }
     //*------------------------------------------EVENTS------------------------------------------*//
     public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
@@ -132,28 +142,22 @@ public class Core_ViewModel extends ViewModel {
     public void sendEventInvites(Event_Model groupEvent, List<User_Model> inviteList){
         mRepository.sendEventInvite(groupEvent,inviteList);
     }
-    public Task<Void> addUserToEvent(Event_Model event){
-        return mRepository.addUserToEvent(event);
+    public Task<Void> attendEvent(Event_Model event){
+        return mRepository.attendEvent(event);
     }
 
-    public Task<List<Event_Model>> fetchEventInvites(){
-        return mRepository.getEventInvitations();
-    }
     public Task<List<User_Model>> getEventResponses(Event_Model event, String status){
         return mRepository.getEventResponses(event, status);
     }
     public Task<List<User_Model>> getEventInvitees(Event_Model event){
         return mRepository.getEventInvitees(event);
     }
-    public Task<Void> removeEventInvite(Event_Model event){
-        return mRepository.removeEventInvite(event);
-    }
     //*------------------------------------------GROUPS------------------------------------------*//
     public void sendGroupInvites(Group_Model groupBase, List<User_Model> inviteList){
         mRepository.sendGroupInvites(groupBase,inviteList);
     }
     public Task<List<Group_Model>> fetchGroupInvites(){
-        return mRepository.getGroupInvites();
+        return mRepository.getGroupInvitations();
     }
     public Task<Void> createGroup(Group_Model groupBase, List<User_Model> inviteList){
         return mRepository.createGroup(groupBase, inviteList);

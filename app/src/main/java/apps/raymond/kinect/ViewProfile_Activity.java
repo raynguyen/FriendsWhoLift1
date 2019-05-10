@@ -12,7 +12,7 @@ import android.view.View;
 
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class View_Profile_Activity extends AppCompatActivity implements View.OnClickListener{
+public class ViewProfile_Activity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG ="ViewProfile";
     public static final String USER = "User_Model";
 

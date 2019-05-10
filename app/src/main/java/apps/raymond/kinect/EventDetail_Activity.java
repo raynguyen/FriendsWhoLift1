@@ -169,8 +169,8 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onProfileClick(User_Model userModel) {
-        Intent viewProfileIntent = new Intent(this, View_Profile_Activity.class);
-        viewProfileIntent.putExtra(View_Profile_Activity.USER,userModel);
+        Intent viewProfileIntent = new Intent(this, ViewProfile_Activity.class);
+        viewProfileIntent.putExtra(ViewProfile_Activity.USER,userModel);
         startActivity(viewProfileIntent);
     }
 

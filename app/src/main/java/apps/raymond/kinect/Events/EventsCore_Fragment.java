@@ -19,11 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,10 +149,10 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         interfaceCore.startDetailActivity(event);
     }
 
-    public void newEventCallback(final Event_Model event) {
-        //ToDo: Add the new event into the correct position here.
+    public void notifyNewEvent(final Event_Model event) {
+        //ToDo: We provided notifyDataAdded a positional argument because there are intentions to sort the list prior to passing to Adapter.
         mAcceptedEvents.add(event);
-        mViewModel.addUserToEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mViewModel.attendEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getContext(),"Attending event: "+event.getName(),Toast.LENGTH_LONG).show();

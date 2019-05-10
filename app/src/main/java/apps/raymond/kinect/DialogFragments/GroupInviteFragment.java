@@ -101,7 +101,7 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
 
     @Override
     public void onDecline(final Group_Model group, final int position) {
-        Log.i(TAG,"calling onDecline");
+        Log.i(TAG,"calling declinedFromAdapter");
         viewModel.declineGroupInvite(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

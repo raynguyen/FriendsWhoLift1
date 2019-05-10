@@ -36,6 +36,7 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,7 +67,6 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.EventInvitations_Fragment;
 import apps.raymond.kinect.Events.EventControl_Fragment;
 import apps.raymond.kinect.Events.EventCreate_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
@@ -80,12 +80,12 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        Group_Create_Fragment.AddGroup, EventInvitations_Fragment.EventResponseListener,
-        EventsCore_Fragment.EventCore_Interface, EventControl_Fragment.TestInterface {
+        Group_Create_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface,
+        EventControl_Fragment.EventControlInterface {
 
     private static final String TAG = "Core_Activity";
     private static final int NUM_PAGES = 2;
-    private static final String INV_FRAG = "Invitations_Fragment";
+    private static final String INV_FRAG = "ViewInvitations_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
     private static final String SEARCH_EVENTS_FRAG = "EventCore_Interface";
@@ -143,7 +143,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         viewPager.addOnPageChangeListener(this);
         tabLayout.setupWithViewPager(viewPager);
 
-        fmListener();
+        observeInvitations();
+        toolbarListener();
     }
 
     @Override
@@ -179,11 +180,14 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.action_invites:
+            case R.id.action_invitations:
                 Log.i(TAG,"Clicked on invites button");
-                Invitations_Fragment inviteDialog = new Invitations_Fragment();
+                ViewInvitations_Fragment fragment =
+                        ViewInvitations_Fragment.newInstance(mEventInvitations,mGroupInvitations);
+
+                //ViewInvitations_Fragment inviteDialog = new ViewInvitations_Fragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,inviteDialog,INV_FRAG)
+                        .replace(R.id.core_frame,fragment,INV_FRAG)
                         .addToBackStack(INV_FRAG)
                         .commit();
                 return true;
@@ -201,10 +205,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .addToBackStack(CREATE_GROUP_FRAG)
                         .commit();
                 return true;
-            case R.id.action_edit:
-                return false;
-            case R.id.action_save:
-                return false;
         }
         return false;
     }
@@ -313,52 +313,18 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         return super.dispatchTouchEvent(ev);
     }
 
-    private void fmListener(){
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                //Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
-                int i = getSupportFragmentManager().getBackStackEntryCount();
-                if(i > 0){
-                    toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
-                    String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
-                    final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-                    if(fragment instanceof Group_Create_Fragment || fragment instanceof EventCreate_Fragment){
-                        //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
-                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((BackPressListener) fragment).onBackPress();
-                            }
-                        });
-                    } else {
-                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                onBackPressed();
-                                Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
-                            }
-                        });
-                    }
-                } else {
-                    toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
-                    toolbar.setNavigationOnClickListener((Core_Activity) thisInstance);
-                }
-            }
-        });
-    }
-
-    @Override
+    //This is called to update the Core Recycler views when the user accepts an invitation.
+    /*@Override
     public void eventAccepted(Event_Model event) {
         Log.i(TAG,"Accepted invite to: "+event.getName());
         EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.newEventCallback(event);
+        fragment.notifyNewEvent(event);
     }
 
     @Override
     public void eventDeclined(Event_Model event) {
         Log.i(TAG,"Declined invite to: "+event.getName());
-    }
+    }*/
 
     @Override
     public void exploreEvents() {
@@ -431,19 +397,101 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    /**
+     * Interface method that is called when the current user opts to attending a new event. The
+     * event is trickled down stream to the presentation fragment in order to update necessary view.
+     *
+     * Future: Consider observing the User's Event collection and trigger UI updates on changes.
+     *
+     * @param event
+     */
     @Override
     public void newEventCallback(Event_Model event) {
-        EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.newEventCallback(event);
+        EventsCore_Fragment fragment =
+                (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        fragment.notifyNewEvent(event);
+    }
+
+    /**
+     * Interface method whenever a user opts to attending an event. Process flow:
+     * 1.   The Event is added to the User's event collection.
+     * 2a.  Add the user to the Event's attending collection.
+     * 2b.  If flag == 0, remove the invitation from the User's and Event's Invitation collections.
+     * 3.   Call newEventCallback to update the appropriate views.
+     *
+     * @param event The event of which the user opted to attend.
+     * @param flag Indication flag to determine whether the user was invited to the event or if the
+     *             user opted to attend the event via exploration.
+     *
+     * ToDo: Check both the ExploreEvent and EventInvitation to see if we update the Attending and Invited counts appropriately.
+     */
+    @Override
+    public void onAttendEvent(Event_Model event, int flag) {
+        Log.w(TAG,"We are able to call CoreActivity method from the EventInvitations_Fragment!");
+        mViewModel.attendEvent(event);
+
+
+
+        newEventCallback(event);
     }
 
     @Override
-    public void acceptInviteCallback(Event_Model event) {
-        //mViewModel
+    public void onDeclineEvent(Event_Model event) {
     }
 
-    @Override
-    public void declineInviteCallback(Event_Model event) {
+    List<Event_Model> mEventInvitations;
+    List<Group_Model> mGroupInvitations;
+    /**
+     * Method call that establishes the CoreActivity as an observer to any changes in the Invitation
+     * LiveData held by the ViewModel.
+     */
+    private void observeInvitations(){
+        mViewModel.getEventInvitations().observe(this, new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w(TAG,"There was a change in the event invitations!");
+                mEventInvitations = event_models;
+            }
+        });
+        mViewModel.getGroupInvitations().observe(this, new Observer<List<Group_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Group_Model> group_models) {
+                mGroupInvitations = group_models;
+            }
+        });
+    }
 
+    private void toolbarListener(){
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                int i = getSupportFragmentManager().getBackStackEntryCount();
+                if(i > 0){
+                    toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
+                    String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
+                    final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+                    if(fragment instanceof Group_Create_Fragment || fragment instanceof EventCreate_Fragment){
+                        //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
+                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((BackPressListener) fragment).onBackPress();
+                            }
+                        });
+                    } else {
+                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                onBackPressed();
+                                Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
+                            }
+                        });
+                    }
+                } else {
+                    toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
+                    toolbar.setNavigationOnClickListener((Core_Activity) thisInstance);
+                }
+            }
+        });
     }
 }

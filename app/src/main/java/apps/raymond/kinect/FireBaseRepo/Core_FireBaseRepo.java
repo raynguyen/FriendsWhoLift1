@@ -199,22 +199,20 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<List<Group_Model>> getGroupInvites() {
-        CollectionReference usersGroups = userCollection.document(mUserEmail).collection(GROUP_INVITES);
-        final List<Group_Model> groupInvites = new ArrayList<>();
+    public Task<List<Group_Model>> getGroupInvitations() {
+        CollectionReference usersGroups = userCollection.document(mUserEmail)
+                .collection(GROUP_INVITES);
 
         return usersGroups.get().continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
             @Override
             public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                if (task.isSuccessful()) {
-                    if (task.getResult() != null) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            groupInvites.add(document.toObject(Group_Model.class));
-                        }
-                        return groupInvites;
+                List<Group_Model> result = new ArrayList<>();
+                if (task.isSuccessful() && task.getResult()!=null) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        result.add(document.toObject(Group_Model.class));
                     }
                 }
-                return null;
+                return result;
             }
         });
     }
@@ -256,12 +254,6 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<List<String>> getInterests(){
-        CollectionReference userConnections = userCollection.document(mUserEmail).collection(INTERESTS);
-        final List<String> interests = new ArrayList<>();
-        return null;
-    }
-
     public Task<Void> addLocation(Address address, String addressName){
         CollectionReference locationCol = userCollection.document(mUserEmail).collection(LOCATIONS);
         GeoPoint geoPoint = new GeoPoint(address.getLatitude(),address.getLongitude());
@@ -281,8 +273,16 @@ public class Core_FireBaseRepo {
         return eventRef.set(event);
     }
 
-    public Task<Void> addUserToEvent(final Event_Model event) {
-        final CollectionReference usersEvents = userCollection.document(mUserEmail).collection(EVENTS);
+    /**
+     * Chained tasks that updates the database whenever a user opts to attend an event.
+     * 1. Add the Event_Model to the user's Event collection.
+     * 2. Add the User_Model to the Event's Users collection.
+     *
+     * @param event Event in which the user opted to attend.
+     * @return Task<Void> or null.
+     */
+    public Task<Void> attendEvent(final Event_Model event) {
+        CollectionReference usersEvents = userCollection.document(mUserEmail).collection(EVENTS);
         final CollectionReference acceptedUsers = eventCollection.document(event.getOriginalName()).collection(ACCEPTED);
         final CollectionReference invitedUsers = eventCollection.document(event.getOriginalName()).collection(INVITED);
 

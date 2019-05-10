@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_invites"
+        android:id="@+id/action_invitations"
         android:title="@string/messages"
         app:showAsAction="ifRoom"
         android:orderInCategory="0"
