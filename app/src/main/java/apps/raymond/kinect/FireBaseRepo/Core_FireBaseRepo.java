@@ -266,9 +266,7 @@ public class Core_FireBaseRepo {
         return locationCol.document(addressName).set(geoPoint);
     }
 
-    //*------------------------------------------EVENTS------------------------------------------*//
-
-    /**
+    /*------------------------------------------EVENTS---------------------------------------------*
      * When a user registers to or creates an event, the following is the task priority in order to
      * minimize errors in the corresponding Firestore collections.
      *
@@ -281,7 +279,6 @@ public class Core_FireBaseRepo {
      * 3a. Update the Event Document inside the Events Collection with the modified attendees count.
      * 3b. Remove event invitations if the User opts to attend via an Event Invitation.
      * 3c. Update the Event Document to reflect changes in invitation count is applicable.
-     *
      */
 
     /**
