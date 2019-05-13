@@ -19,8 +19,8 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
     private InviteResponseListener callback;
 
     public interface InviteResponseListener{
-        void acceptedFromAdapter(Event_Model event);
-        void declinedFromAdapter(Event_Model event);
+        void onAcceptEventInvitation(Event_Model event);
+        void onDeclineEventInvitation(Event_Model event);
         void onEventDetail(Event_Model event);
     }
 
@@ -57,7 +57,7 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.acceptedFromAdapter(event);
+                    callback.onAcceptEventInvitation(event);
                     removeItem(viewHolder.getAdapterPosition());
                 }
             });
@@ -65,7 +65,7 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.declinedFromAdapter(event);
+                    callback.onDeclineEventInvitation(event);
                 }
             });
         }

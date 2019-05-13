@@ -398,26 +398,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * Interface method that is called when the current user opts to attending a new event. The
-     * event is trickled down stream to the presentation fragment in order to update necessary view.
-     *
-     * Future: Consider observing the User's Event collection and trigger UI updates on changes.
-     *
-     * @param event
-     */
-    @Override
-    public void newEventCallback(Event_Model event) {
-        EventsCore_Fragment fragment =
-                (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.notifyNewEvent(event);
-    }
-
-    /**
      * Interface method whenever a user opts to attending an event. Process flow:
      * 1.   The Event is added to the User's event collection.
      * 2a.  Add the user to the Event's attending collection.
      * 2b.  If flag == 0, remove the invitation from the User's and Event's Invitation collections.
-     * 3.   Call newEventCallback to update the appropriate views.
+     * 3.   Call updateEventRecycler to update the appropriate views.
      *
      * @param event The event of which the user opted to attend.
      * @param flag Indication flag to determine whether the user was invited to the event or if the
@@ -427,11 +412,43 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
      */
     @Override
     public void onAttendEvent(Event_Model event, int flag) {
-        mViewModel.attendEvent(event);
+        final String eventName = event.getOriginalName();
+        //ToDo:
+        //The counts are not correct for the attending and invited count, we are pulling an Event POJO
+        //before the writes to the database are completed. Considering doin an onComplete to the increment/decrement calls.
+        mViewModel.incrementEventAttending(eventName);
         if(flag==EventControl_Fragment.INVITATION){
-            mViewModel.acceptEventInvitation(event); //ToDo: Check this.
+            //Todo: If the user attends an event via the explore map but they are also invited to the
+            //event, we need to determine a method to also remove the invitation from the user collection
+            //as well as the invited collection from the event.
+            mViewModel.decrementEventInvited(eventName);
+            mViewModel.removeEventInvitation(eventName);
         }
-        newEventCallback(event);
+
+        mViewModel.addEventToUser(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG).show();
+            }
+        });
+        mViewModel.addUserToEvent(eventName);
+
+        updateEventRecycler(event);
+    }
+
+    /**
+     * Interface method that is called when the current user opts to attending a new event. The
+     * event is trickled down stream to the presentation fragment in order to update necessary view.
+     *
+     * Future: Consider observing the User's Event collection and trigger UI updates on changes.
+     *
+     * @param event
+     */
+    @Override
+    public void updateEventRecycler(Event_Model event) {
+        EventsCore_Fragment fragment =
+                (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
+        fragment.notifyNewEvent(event);
     }
 
     @Override

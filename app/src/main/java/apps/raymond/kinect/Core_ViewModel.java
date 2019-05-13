@@ -105,7 +105,6 @@ public class Core_ViewModel extends ViewModel {
     public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
         return mAcceptedEvents;
     }
-
     public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
         mRepository.getMessages(event).addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
             @Override
@@ -117,6 +116,35 @@ public class Core_ViewModel extends ViewModel {
         });
         return mEventMessages;
     }
+
+    public Task<Void> createEvent(Event_Model event){
+        return mRepository.createEvent(event);
+    }
+
+    public Task<Void> addEventToUser(Event_Model event){
+        return mRepository.addEventToUser(event);
+    }
+
+    public Task<Void> addUserToEvent(String eventName){
+        return mRepository.addUserToEvent(eventName);
+    }
+
+    public void sendEventInvites(Event_Model event, List<User_Model> inviteList){
+        mRepository.sendEventInvites(event,inviteList);
+    }
+
+    public void incrementEventAttending(String eventName){
+        mRepository.incrementEventAttending(eventName);
+    }
+
+    public void decrementEventInvited(String eventName){
+        mRepository.decrementEventInvited(eventName);
+    }
+
+    public void removeEventInvitation(String eventName){
+        mRepository.removeEventInvitation(eventName);
+    }
+
     public Task<Void> postNewMessage(Event_Model event, Message_Model message){
         return mRepository.postMessage(event,message);
     }
@@ -134,22 +162,6 @@ public class Core_ViewModel extends ViewModel {
     }
     public MutableLiveData<List<Event_Model>> getPublicEvents(){
         return publicEvents;
-    }
-
-    public Task<Void> createEvent(Event_Model groupEvent){
-        return mRepository.createEvent(groupEvent);
-    }
-    public void sendEventInvites(Event_Model groupEvent, List<User_Model> inviteList){
-        mRepository.sendEventInvite(groupEvent,inviteList);
-    }
-
-    //ToDo: Currently checking the difference between addEventToUser and AccepteDeventInvitation
-    public Task<Void> attendEvent(Event_Model event){
-        return mRepository.addEventToUser(event);
-    }
-
-    public Task<Void> acceptEventInvitation(Event_Model event){
-        return mRepository.acceptEventInvitation(event);
     }
 
     public Task<List<User_Model>> getEventResponses(Event_Model event, String status){

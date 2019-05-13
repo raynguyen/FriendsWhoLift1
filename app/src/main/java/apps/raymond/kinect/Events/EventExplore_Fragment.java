@@ -114,8 +114,8 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
         return inflater.inflate(R.layout.fragment_explore_events,container,false);
     }
 
-    ViewGroup cardView;
-    TextView textEventName, textDesc, textThoroughfare, textMonth, textDate, textTime;
+    private ViewGroup detailsCardView;
+    private TextView textEventName, textDesc, textThoroughfare, textMonth, textDate, textTime;
     Button btnAttend;
     private MapView mMapView;
     @Override
@@ -125,7 +125,7 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        cardView = view.findViewById(R.id.cardview_event_search);
+        detailsCardView = view.findViewById(R.id.cardview_event_search);
         textEventName = view.findViewById(R.id.text_name);
         textDesc = view.findViewById(R.id.text_description);
         textThoroughfare = view.findViewById(R.id.text_thoroughfare);
@@ -139,6 +139,8 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
             public void onClick(View v) {
                 if(focusedEvent!=null){
                     mEventManager.onAttendEvent(focusedEvent, 0);
+                    focusedMarker.remove();
+                    detailsCardView.setVisibility(View.GONE);
                 }
             }
         });
@@ -151,8 +153,8 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(cardView.getVisibility()==View.VISIBLE){
-                    cardView.setVisibility(View.GONE);
+                if(detailsCardView.getVisibility()==View.VISIBLE){
+                    detailsCardView.setVisibility(View.GONE);
                 }
             }
         });
@@ -173,7 +175,7 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
     public boolean onMarkerClick(Marker marker) {
         //ToDo: Zoom in to the event!
 
-        cardView.setVisibility(View.VISIBLE);
+        detailsCardView.setVisibility(View.VISIBLE);
         focusedEvent = (Event_Model) marker.getTag();
         focusedMarker = marker;
 

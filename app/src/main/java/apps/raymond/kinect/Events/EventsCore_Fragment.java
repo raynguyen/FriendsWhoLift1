@@ -152,12 +152,12 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     public void notifyNewEvent(final Event_Model event) {
         //ToDo: We provided notifyDataAdded a positional argument because there are intentions to sort the list prior to passing to Adapter.
         mAcceptedEvents.add(event);
-        mViewModel.attendEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        /*mViewModel.attendEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getContext(),"Attending event: "+event.getName(),Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
         mAdapter.notifyDataAdded(event, mAcceptedEvents.size()-1);
     }
 

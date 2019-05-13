@@ -306,45 +306,43 @@ public class Core_FireBaseRepo {
 
     /**
      * Creates a user document in Events->Accepted.
-     * @param event The event the user is attending.
+     * @param eventName The event the user is attending.
      */
-    public Task<Void> addUserToEvent(Event_Model event){
-        CollectionReference eventsAccepted = eventCollection.document(mUserEmail).collection(ACCEPTED);
+    public Task<Void> addUserToEvent(String eventName){
+        CollectionReference eventsAccepted = eventCollection.document(eventName).collection(ACCEPTED);
         return eventsAccepted.document(mUserEmail).set(curUserModel);
     }
 
     /**
      * Update the value of Events->Event->attending.
-     * @param event The event being modified.
-     * @param i The value to increment/decrement the field.
+     * @param eventName The name of the event being modified.
      */
-    public Task<Void> incrementEventAttending(Event_Model event, int i){
-        DocumentReference eventsAccepted = eventCollection.document(event.getOriginalName());
-        return eventsAccepted.update("attending", FieldValue.increment(i));
+    public void incrementEventAttending(String eventName){
+        DocumentReference eventsAccepted = eventCollection.document(eventName);
+        eventsAccepted.update("attending", FieldValue.increment(1));
     }
 
     /**
      * Update the value of Events->Event->invited.
-     * @param event The event being modified.
-     * @param i The value to increment/decrement the field.
+     * @param eventName The name of the event being modified.
      */
-    public Task<Void> incrementEventInvited(Event_Model event, int i){
-        DocumentReference eventsAccepted = eventCollection.document(event.getOriginalName());
-        return eventsAccepted.update("attending", FieldValue.increment(i));
+    public void decrementEventInvited(String eventName){
+        DocumentReference eventsAccepted = eventCollection.document(eventName);
+        eventsAccepted.update("attending", FieldValue.increment(-1));
     }
 
     /**
-     * Delete the event invitation from User->EventInvites.
-     * @param event The event of which the user is invited.
+     * Delete the event invitation document from User->EventInvites.
+     * @param eventName The name of the event to which the user is invited.
      */
-    public Task<Void> removeEventInvite(Event_Model event){
+    public void removeEventInvitation(String eventName){
         DocumentReference docRef = userCollection.document(mUserEmail)
-                .collection(EVENT_INVITES).document(event.getOriginalName());
-        return docRef.delete();
+                .collection(EVENT_INVITES).document(eventName);
+        docRef.delete();
     }
 
     //Todo: Revisit this method to invite users to an event.
-    public void sendEventInvite(final Event_Model groupEvent, final List<User_Model> userList) {
+    public void sendEventInvites(final Event_Model groupEvent, final List<User_Model> userList) {
         final DocumentReference eventDoc = eventCollection.document(groupEvent.getOriginalName());
         final CollectionReference eventInvitedCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITED);
         final WriteBatch inviteBatch = mStore.batch();

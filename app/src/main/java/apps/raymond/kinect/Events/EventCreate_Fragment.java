@@ -47,7 +47,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -393,7 +392,6 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
 
     @Override
     public void addToCheckedList(User_Model clickedUser) {
-        Log.i(TAG,"Adding user to list to invite: "+clickedUser.getEmail());
         inviteUsersList.add(clickedUser);
     }
 
@@ -430,7 +428,7 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
         double addressLat = 0;
         double addressLng = 0;
         if(address !=null){
-            addressLine = address.getFeatureName() + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
+            addressLine = address.getFeatureName()+ " " + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
             addressLat = address.getLatitude();
             addressLng = address.getLongitude();
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
@@ -443,18 +441,20 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
                     privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
         }
 
+        //Todo: Consider moving all these ViewModel calls to the CoreActivity.
         mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                progressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
-                    Toast.makeText(getContext(),"Created event " + event.getName(),Toast.LENGTH_SHORT).show();
-                    testInterface.newEventCallback(event);
-                    mViewModel.attendEvent(event);
-                    mViewModel.sendEventInvites(event,inviteUsersList);
+                    Toast.makeText(getContext(),
+                            "Created event " + event.getName(),
+                            Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    testInterface.updateEventRecycler(event);
+                    mViewModel.addEventToUser(event);
+                    mViewModel.addUserToEvent(event.getOriginalName());
+                    mViewModel.sendEventInvites(event, inviteUsersList);
                     fm.popBackStack();
-                } else {
-                    Toast.makeText(getContext(),"Could not create event at this time.",Toast.LENGTH_SHORT).show();
                 }
             }
         });
