@@ -142,9 +142,12 @@ public class Core_ViewModel extends ViewModel {
     public void sendEventInvites(Event_Model groupEvent, List<User_Model> inviteList){
         mRepository.sendEventInvite(groupEvent,inviteList);
     }
+
+    //ToDo: Currently checking the difference between addEventToUser and AccepteDeventInvitation
     public Task<Void> attendEvent(Event_Model event){
-        return mRepository.attendEvent(event);
+        return mRepository.addEventToUser(event);
     }
+
     public Task<Void> acceptEventInvitation(Event_Model event){
         return mRepository.acceptEventInvitation(event);
     }

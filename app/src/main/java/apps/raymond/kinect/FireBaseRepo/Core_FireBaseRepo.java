@@ -1,19 +1,24 @@
-/*
- * In true MVVM fashion, it should go from ViewModel -> Repository -> DAO -> DataBackEnd.
+/**
+ * Commenting syntax:
+ * When referring to Firestore JSON type structures, comments will refer to paths typically as
+ * Collection->Document->field etc.
+ * --The first branch will always be the Collection and immediately followed by the Document. If
+ * --the succeeding text begins with a lower case, it will indicate that it is a field of the document.
  *
- * There appears to be an error where if there is no photo, the recycler view does not retrieve all the group objects.
- *
- * There appears to be an error where onSuccessListeners will trigger even if there is no collection or document of the requested name.
- * --NOTE: When we create a Task to retrieve documents from Firestore, if the document or the document path does not exist,
- * it will return a NULL document but will still SUCCEED. This is why the onSuccessListener is triggered.
- *
- * Repository modules handle data operations. They provide a clean API so that the rest of the app
- * can retrieve this data easily. They know where to get the data from and what API calls to make
- * when data is updated. You can consider repositories to be mediators between different data
- * sources, such as persistent models, web services, and caches
-*/
+ *  * In true MVVM fashion, it should go from ViewModel -> Repository -> DAO -> DataBackEnd.
+ *  *
+ *  * There appears to be an error where if there is no photo, the recycler view does not retrieve all the group objects.
+ *  *
+ *  * There appears to be an error where onSuccessListeners will trigger even if there is no collection or document of the requested name.
+ *  * --NOTE: When we create a Task to retrieve documents from Firestore, if the document or the document path does not exist,
+ *  * it will return a NULL document but will still SUCCEED. This is why the onSuccessListener is triggered.
+ *  *
+ *  * Repository modules handle data operations. They provide a clean API so that the rest of the app
+ *  * can retrieve this data easily. They know where to get the data from and what API calls to make
+ *  * when data is updated. You can consider repositories to be mediators between different data
+ *  * sources, such as persistent models, web services, and caches
+ */
 
-// LOCAL DATABASE CAHCE WITH REST API
 package apps.raymond.kinect.FireBaseRepo;
 
 import android.content.Context;
@@ -34,6 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -261,42 +267,83 @@ public class Core_FireBaseRepo {
     }
 
     //*------------------------------------------EVENTS------------------------------------------*//
-    /*
-     * Creates a new Document in the Events collection. The Document is created as a Event_Model
-     * object. Upon successful creation, we create a Document in the creator's Events collection via
-     * the event name. The associated tags for the event are stored as a sub-collection in the event
-     * document.
+
+    /**
+     * When a user registers to or creates an event, the following is the task priority in order to
+     * minimize errors in the corresponding Firestore collections.
+     *
+     * If the user is creating an Event:
+     * 0. Add the Event POJO to the Events collection, then
+     *
+     * If user opts to attending an event:
+     * 1. Add the Event POJO to the User->Events Collection.
+     * 2. Add the User POJO to the Events->User Collection
+     * 3a. Update the Event Document inside the Events Collection with the modified attendees count.
+     * 3b. Remove event invitations if the User opts to attend via an Event Invitation.
+     * 3c. Update the Event Document to reflect changes in invitation count is applicable.
+     *
+     */
+
+    /**
+     * Creates a document in Events using the event POJO.
+     * @param event The created Event POJO.
+     * @return Task
      */
     public Task<Void> createEvent(final Event_Model event) {
-        final DocumentReference eventRef = eventCollection.document(event.getOriginalName());
+        DocumentReference eventRef = eventCollection.document(event.getOriginalName());
         //ToDo: We currently overwrite any events with the same name. Need to determine an id method.
         return eventRef.set(event);
     }
 
     /**
-     * Chained tasks that updates the database whenever a user opts to attend an event.
-     * 1. Add the Event_Model to the user's Event collection.
-     * 2. Add the User_Model to the Event's Users collection.
-     *
-     * @param event Event in which the user opted to attend.
-     * @return Task<Void> or null.
+     * Create the event document in Users->Events.
+     * @param event The event to add to the current user.
      */
-    public Task<Void> attendEvent(final Event_Model event) {
+    public Task<Void> addEventToUser(Event_Model event) {
         CollectionReference usersEvents = userCollection.document(mUserEmail).collection(EVENTS);
-        final CollectionReference acceptedUsers = eventCollection.document(event.getOriginalName()).collection(ACCEPTED);
-        return usersEvents.document(event.getOriginalName()).set(event)
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if (task.isSuccessful()) {
-                            return acceptedUsers.document(mUserEmail).set(curUserModel);
-                        }
-                        return null;
-                    }
-                });
+        return usersEvents.document(event.getOriginalName()).set(event);
     }
 
-    //Todo: change to accept a document title so we can call this regardless of Event or Group. Consider changing way data is stored under the user's collection.
+    /**
+     * Creates a user document in Events->Accepted.
+     * @param event The event the user is attending.
+     */
+    public Task<Void> addUserToEvent(Event_Model event){
+        CollectionReference eventsAccepted = eventCollection.document(mUserEmail).collection(ACCEPTED);
+        return eventsAccepted.document(mUserEmail).set(curUserModel);
+    }
+
+    /**
+     * Update the value of Events->Event->attending.
+     * @param event The event being modified.
+     * @param i The value to increment/decrement the field.
+     */
+    public Task<Void> incrementEventAttending(Event_Model event, int i){
+        DocumentReference eventsAccepted = eventCollection.document(event.getOriginalName());
+        return eventsAccepted.update("attending", FieldValue.increment(i));
+    }
+
+    /**
+     * Update the value of Events->Event->invited.
+     * @param event The event being modified.
+     * @param i The value to increment/decrement the field.
+     */
+    public Task<Void> incrementEventInvited(Event_Model event, int i){
+        DocumentReference eventsAccepted = eventCollection.document(event.getOriginalName());
+        return eventsAccepted.update("attending", FieldValue.increment(i));
+    }
+
+    /**
+     * Delete the event invitation from User->EventInvites.
+     * @param event The event of which the user is invited.
+     */
+    public Task<Void> removeEventInvite(Event_Model event){
+        DocumentReference docRef = userCollection.document(mUserEmail)
+                .collection(EVENT_INVITES).document(event.getOriginalName());
+        return docRef.delete();
+    }
+
+    //Todo: Revisit this method to invite users to an event.
     public void sendEventInvite(final Event_Model groupEvent, final List<User_Model> userList) {
         final DocumentReference eventDoc = eventCollection.document(groupEvent.getOriginalName());
         final CollectionReference eventInvitedCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITED);
@@ -322,20 +369,6 @@ public class Core_FireBaseRepo {
                 eventDoc.update(EVENT_INVITED_FIELD,sendInvites.size());
             }
         });
-    }
-
-    public Task<Void> acceptEventInvitation(Event_Model event){
-        CollectionReference userEventInvitesRef = mStore.collection(USERS)
-                .document(mUserEmail).collection(EVENT_INVITES);
-        final CollectionReference eventInvitesRef = mStore.collection(EVENTS)
-                .document(event.getOriginalName()).collection(INVITED);
-        return userEventInvitesRef.document(event.getOriginalName()).delete()
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        return eventInvitesRef.document(mUserEmail).delete();
-                    }
-                });
     }
 
     public Task<List<Event_Model>> getAcceptedEvents(){

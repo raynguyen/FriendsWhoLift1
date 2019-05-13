@@ -76,13 +76,20 @@ public class EventInvitations_Fragment extends EventControl_Fragment
         }
     }
 
-    //Interface method called from the ViewHolder when user clicks the accept button.
+    /**
+     * Interface method called by the EventInvitation RecyclerView.Adapter. This method is called
+     * whenever the "Accept" button for each CardView is clicked.
+     *
+     * This method will cascade the call down to the host (Core_Activity) in order to update the
+     * appropriate views.
+     *
+     * @param event
+     */
     @Override
     public void acceptedFromAdapter(final Event_Model event) {
         mInterface.onAttendEvent(event, EventControl_Fragment.INVITATION);
     }
 
-    //Interface method called from the ViewHolder when user clicks the decline button.
     @Override
     public void declinedFromAdapter(Event_Model event) {
     }
