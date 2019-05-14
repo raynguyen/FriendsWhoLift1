@@ -61,6 +61,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -407,43 +408,39 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
      * @param event The event of which the user opted to attend.
      * @param flag Indication flag to determine whether the user was invited to the event or if the
      *             user opted to attend the event via exploration.
-     *
-     * ToDo: Check both the ExploreEvent and EventInvitation to see if we update the Attending and Invited counts appropriately.
      */
     @Override
     public void onAttendEvent(Event_Model event, int flag) {
         final String eventName = event.getOriginalName();
-        //ToDo:
-        //The counts are not correct for the attending and invited count, we are pulling an Event POJO
-        //before the writes to the database are completed. Considering doin an onComplete to the increment/decrement calls.
-        mViewModel.incrementEventAttending(eventName);
-        if(flag==EventControl_Fragment.INVITATION){
-            //Todo: If the user attends an event via the explore map but they are also invited to the
-            //event, we need to determine a method to also remove the invitation from the user collection
-            //as well as the invited collection from the event.
-            mViewModel.decrementEventInvited(eventName);
-            mViewModel.removeEventInvitation(eventName);
-        }
 
+        int oldAttendingCount = event.getAttending();
+        event.setAttending(oldAttendingCount + 1);
         mViewModel.addEventToUser(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG).show();
             }
         });
+
         mViewModel.addUserToEvent(eventName);
+        mViewModel.incrementEventAttending(eventName);
+
+        //ToDo: Determine a pattern that correctly detects if the user has been invited to a public
+        // event. If yes we have to decrement the invited count and remove the invitation.
+        if(flag==EventControl_Fragment.INVITATION){
+            mViewModel.decrementEventInvited(eventName);
+            mViewModel.removeEventInvitation(eventName);
+        }
 
         updateEventRecycler(event);
+
+        //LEFT OFF HERE
+        /*
+        * CONSIDER CHECKING WITH EACH EXPLORE EVENT MARKER CLICK TO SEE IF THE USER IS ALREADY INVITED TO THE EVENT, IF YES WE CAN SIMPLY PASS THE FLAG BACK
+        * IF THE USER CLICKS ACCEPT.
+        * */
     }
 
-    /**
-     * Interface method that is called when the current user opts to attending a new event. The
-     * event is trickled down stream to the presentation fragment in order to update necessary view.
-     *
-     * Future: Consider observing the User's Event collection and trigger UI updates on changes.
-     *
-     * @param event
-     */
     @Override
     public void updateEventRecycler(Event_Model event) {
         EventsCore_Fragment fragment =

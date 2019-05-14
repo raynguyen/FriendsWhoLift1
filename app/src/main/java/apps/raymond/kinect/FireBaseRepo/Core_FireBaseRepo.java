@@ -314,9 +314,9 @@ public class Core_FireBaseRepo {
      * Update the value of Events->Event->attending.
      * @param eventName The name of the event being modified.
      */
-    public void incrementEventAttending(String eventName){
+    public Task<Void> incrementEventAttending(String eventName){
         DocumentReference eventsAccepted = eventCollection.document(eventName);
-        eventsAccepted.update("attending", FieldValue.increment(1));
+        return eventsAccepted.update("attending", FieldValue.increment(1));
     }
 
     /**

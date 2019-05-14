@@ -133,8 +133,8 @@ public class Core_ViewModel extends ViewModel {
         mRepository.sendEventInvites(event,inviteList);
     }
 
-    public void incrementEventAttending(String eventName){
-        mRepository.incrementEventAttending(eventName);
+    public Task<Void> incrementEventAttending(String eventName){
+        return mRepository.incrementEventAttending(eventName);
     }
 
     public void decrementEventInvited(String eventName){
