@@ -260,7 +260,6 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
                             marker.setTag(event);
                         }
                         //ToDo:Remove this line once this fragment is complete.
-                        Log.w(TAG,"Does it move?");
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
                     }
                 }

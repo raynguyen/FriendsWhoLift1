@@ -137,8 +137,8 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.incrementEventAttending(eventName);
     }
 
-    public void decrementEventInvited(String eventName){
-        mRepository.decrementEventInvited(eventName);
+    public Task<Boolean> checkForEventInvitation(String eventName){
+        return mRepository.checkForEventInvitation(eventName);
     }
 
     public void removeEventInvitation(String eventName){
@@ -207,6 +207,11 @@ public class Core_ViewModel extends ViewModel {
     }
     public Task<Uri> uploadImage(Uri uri, String name){
         return mRepository.uploadImage(uri, name);
+    }
+
+
+    public Task<Void> testMethod(){
+        return mRepository.testMethod();
     }
 }
 

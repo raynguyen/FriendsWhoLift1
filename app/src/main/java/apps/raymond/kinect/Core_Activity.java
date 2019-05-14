@@ -61,7 +61,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -70,6 +69,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Events.EventControl_Fragment;
 import apps.raymond.kinect.Events.EventCreate_Fragment;
+import apps.raymond.kinect.Events.EventInvitations_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
@@ -418,27 +418,36 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         mViewModel.addEventToUser(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
+                        .show();
             }
         });
 
         mViewModel.addUserToEvent(eventName);
         mViewModel.incrementEventAttending(eventName);
 
-        //ToDo: Determine a pattern that correctly detects if the user has been invited to a public
-        // event. If yes we have to decrement the invited count and remove the invitation.
-        if(flag==EventControl_Fragment.INVITATION){
-            mViewModel.decrementEventInvited(eventName);
-            mViewModel.removeEventInvitation(eventName);
-        }
-
-        updateEventRecycler(event);
-
-        //LEFT OFF HERE
         /*
-        * CONSIDER CHECKING WITH EACH EXPLORE EVENT MARKER CLICK TO SEE IF THE USER IS ALREADY INVITED TO THE EVENT, IF YES WE CAN SIMPLY PASS THE FLAG BACK
-        * IF THE USER CLICKS ACCEPT.
-        * */
+         * If the flag is 0, the user is attending the event through the ExploreEvents fragment. We
+         * therefore need to determine if the user has an invitation from the newly attending event
+         * via the checkForEventInvitation call on the repository. It will return true if the event
+         * invitation document exists.
+         *
+         * THIS HAS YET TO BE TESTED!!!
+         */
+        if(flag!= EventInvitations_Fragment.INVITATION){
+            mViewModel.checkForEventInvitation(eventName)
+                    .addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Boolean> task) {
+                            if(task.getResult()!=null){
+                                if(task.getResult()){
+                                    mViewModel.removeEventInvitation(eventName);
+                                }
+                            }
+                        }
+                    });
+        }
+        updateEventRecycler(event);
     }
 
     @Override

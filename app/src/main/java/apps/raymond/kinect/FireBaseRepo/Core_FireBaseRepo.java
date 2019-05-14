@@ -320,22 +320,37 @@ public class Core_FireBaseRepo {
     }
 
     /**
-     * Update the value of Events->Event->invited.
-     * @param eventName The name of the event being modified.
+     * Determine if an invitation to an Event exists within Users->EventInvites.
+     * @param eventName The name of the event to which the user is invited.
+     * @return True if the event exists.
      */
-    public void decrementEventInvited(String eventName){
-        DocumentReference eventsAccepted = eventCollection.document(eventName);
-        eventsAccepted.update("attending", FieldValue.increment(-1));
+    public Task<Boolean> checkForEventInvitation(String eventName){
+        DocumentReference docRef = userCollection.document(mUserEmail)
+                .collection(EVENT_INVITES).document(eventName);
+
+        return docRef.get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
+            @Override
+            public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    return task.getResult().exists();
+                }
+                return null;
+            }
+        });
     }
 
     /**
-     * Delete the event invitation document from User->EventInvites.
-     * @param eventName The name of the event to which the user is invited.
+     * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
+     * invited.
+     * @param eventName The name of the event being modified.
      */
     public void removeEventInvitation(String eventName){
         DocumentReference docRef = userCollection.document(mUserEmail)
                 .collection(EVENT_INVITES).document(eventName);
+        DocumentReference eventsAccepted = eventCollection.document(eventName);
+
         docRef.delete();
+        eventsAccepted.update("attending", FieldValue.increment(-1));
     }
 
     //Todo: Revisit this method to invite users to an event.
@@ -739,6 +754,31 @@ public class Core_FireBaseRepo {
     }
 
     public Task<Group_Model> getGroup() {
+        return null;
+    }
+
+
+
+
+    public Task<Void> testMethod(){
+        eventCollection.document("HelloTesttesttest").get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        if(task.isSuccessful()){
+                            if(task.getResult().exists()) {
+                                Log.w(TAG, "Task sucessful but empty");
+                            } else if(!task.getResult().exists()){
+                                Log.w(TAG,"Task successful but result is empty!");
+                            }
+
+                        }
+                        else {
+                            Log.w(TAG,"Task failed.",task.getException());
+                        }
+                    }
+                });
         return null;
     }
 
