@@ -21,14 +21,12 @@ public class User_Model implements Parcelable {
 
     public User_Model(){}
 
-    public User_Model(String email, String visibility){
+    public User_Model(String email){
         this.email = email;
-        this.visibility = visibility;
     }
 
     public User_Model(Parcel in){
         this.email = in.readString();
-        this.visibility = in.readString();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
@@ -51,7 +49,6 @@ public class User_Model implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.email);
-        dest.writeString(this.visibility);
     }
 
     public void setName(String name){

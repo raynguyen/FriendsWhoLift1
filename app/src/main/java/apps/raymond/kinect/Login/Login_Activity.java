@@ -52,8 +52,8 @@ public class Login_Activity extends AppCompatActivity{
         mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
             @Override
             public void onChanged(@Nullable User_Model user_model) {
-                Log.w("LoginActivity","New user is: "+user_model.getEmail());
-                signInTest(mViewModel.getCurrentUser().getValue());
+                Log.w("LoginActivity","Current user is: "+user_model.getEmail());
+                launchCoreActivity(mViewModel.getCurrentUser().getValue());
             }
         });
 
@@ -66,18 +66,10 @@ public class Login_Activity extends AppCompatActivity{
      * the observed User_Model object to the Core_Activity and then finish this activity instance.
      * @param user The observed User_Model.
      */
-    private void signInTest(User_Model user) {
+    private void launchCoreActivity(User_Model user) {
         SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         mainIntent.putExtra(Core_Activity.USER,user);
-        startActivity(mainIntent);
-        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
-        finish();
-    }
-
-    public void signIn() {
-        final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
-        Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         startActivity(mainIntent);
         overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
         finish();

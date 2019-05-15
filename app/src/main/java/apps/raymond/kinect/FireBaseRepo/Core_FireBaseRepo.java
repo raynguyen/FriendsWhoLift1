@@ -34,8 +34,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -122,20 +120,10 @@ public class Core_FireBaseRepo {
         return AuthUI.getInstance().signOut(context);
     }
 
-    private Task<Void> createUserDoc(User_Model userModel) {
-        final String name = userModel.getEmail();
-        Log.i(TAG, "Creating new user Document " + name);
-        return userCollection.document(name).set(userModel)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.i(TAG, "Created document for user " + name);
-                        } else {
-                            Log.w(TAG, "Failed to create document for " + name);
-                        }
-                    }
-                });
+    //ToDo: this needs to check if the document already exists prior to attempting to create.
+    public Task<Void> createNewUserDocument(User_Model userModel) {
+        DocumentReference userDocumentRef = userCollection.document(userModel.getEmail());
+        return userDocumentRef.set(userModel);
     }
 
     public Task<List<Event_Model>> getEventInvitations(String userID) {

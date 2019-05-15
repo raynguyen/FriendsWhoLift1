@@ -51,6 +51,12 @@ public class Core_ViewModel extends ViewModel {
 
     //*-------------------------------------------USER-------------------------------------------*//
     public Task<Void> signOut(Context context){
+        /*
+         * Call on FirebaseAuth to sign the user out.
+         * Set the MutableLiveData<User_Model> to null in order to trigger the Profile_Activity listener
+         *  to finish the Profile & Core Activities and start the LoginActivity.
+         *
+         */
         return mRepository.signOut(context);
     }
 

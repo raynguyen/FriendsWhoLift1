@@ -246,6 +246,10 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         int i = v.getId();
+        /* ToDo:
+        When profile activity is started, we should keep a savedInstanceState of Core so that if
+        user finishes the Profile Activity, we don't have to reload all the data held by this ViewModel.
+         */
         if(v.getId()== -1){
             Intent profileIntent = new Intent(this,Profile_Activity.class);
             startActivity(profileIntent);
