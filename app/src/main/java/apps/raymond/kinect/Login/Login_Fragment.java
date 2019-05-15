@@ -24,7 +24,6 @@ public class Login_Fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Check to see if the ViewModel is the same instance for the host activity.
         mViewModel = ViewModelProviders.of(requireActivity()).get(Login_ViewModel.class);
     }
 
@@ -35,7 +34,7 @@ public class Login_Fragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
-    TextInputEditText txtUserName, txtPassword;
+    private TextInputEditText txtUserName, txtPassword;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

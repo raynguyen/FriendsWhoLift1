@@ -27,7 +27,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import apps.raymond.kinect.Core_Activity;
-import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -37,18 +36,26 @@ public class Login_Activity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceStance){
         super.onCreate(savedInstanceStance);
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.activity_login);
         LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
         ViewPager mViewPager = findViewById(R.id.viewpager_login);
         mViewPager.setAdapter(loginAdapter);
 
         final Login_ViewModel mViewModel = ViewModelProviders.of(this).get(Login_ViewModel.class);
+
+        /*
+        When the login activity is first started, we listen to the User_Model live data held by the
+        Login_ViewModel. This is because we expect User_Model to be null until a user successfully
+        signs into their account. When a change in the User_Model is observed, the user has succeeded
+        in logging into their account and the application has pulled the correct User_Model from the
+        db.
+         */
         mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
             @Override
             public void onChanged(@Nullable User_Model user_model) {
                 Log.w("LoginActivity","There was a noticed change in the login observer.");
                 Log.w("LoginActivity","New user is: "+user_model.getEmail());
-                signInTest(mViewModel.getCurrentUser().getValue());
+                //signInTest(mViewModel.getCurrentUser().getValue());
             }
         });
 
