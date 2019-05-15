@@ -3,9 +3,11 @@ package apps.raymond.kinect.Login;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
@@ -76,7 +78,27 @@ public class Login_ViewModel extends ViewModel {
      * @param email User email credential
      * @param password User account password
      */
-    void signInWithEmail(String email, String password){
+    public void signInWithEmail(String email, String password){
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password);
     }
+
+    /**
+     * Function that registers new users with the application's FirebaseAuth project. If registration
+     * is successful, we then call on FirebaseAuth to sign the user into the application which will
+     * update the
+     * @param userEmail
+     * @param password
+     */
+    public void registerWithEmail(String userEmail, String password){
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.w("ViewModel","Successfully registered new user.");
+                        }
+                    }
+                });
+    }
+
 }

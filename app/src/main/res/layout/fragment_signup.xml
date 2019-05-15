@@ -22,7 +22,7 @@
         android:layout_marginBottom="12dp">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/text_username"
+            android:id="@+id/text_userid"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:hint="@string/fui_email_hint"
@@ -41,7 +41,7 @@
         app:layout_constraintBottom_toTopOf="@id/layout_password2">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/text_login_password"
+            android:id="@+id/text_password1"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:hint="@string/password"

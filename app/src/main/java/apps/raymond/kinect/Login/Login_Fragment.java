@@ -1,21 +1,18 @@
 package apps.raymond.kinect.Login;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class Login_Fragment extends Fragment {
@@ -34,12 +31,12 @@ public class Login_Fragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
-    private TextInputEditText txtUserName, txtPassword;
+    private TextView txtUserName, txtPassword;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        txtUserName = view.findViewById(R.id.text_username);
-        txtPassword = view.findViewById(R.id.text_login_password);
+        txtUserName = view.findViewById(R.id.text_userid);
+        txtPassword = view.findViewById(R.id.text_password1);
 
         Button btnLogin = view.findViewById(R.id.button_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +60,15 @@ public class Login_Fragment extends Fragment {
         });
     }
 
+    /**
+     * ToDo: If the wrong credentials are entered, we need to grab the throwable and determine what
+     *  errors have to be set and for which fields.
+     *
+     * Check to see that the required fields have been completed.
+     * @param name User ID parameter converted to text
+     * @param password Password parameter converted to text
+     * @return True if the user form has been correctly completed.
+     */
     private boolean validateInput(String name,String password){
         boolean b = false;
         if(name.length()!=0 && password.length()!=0){

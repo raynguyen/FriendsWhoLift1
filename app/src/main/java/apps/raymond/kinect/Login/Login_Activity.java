@@ -30,8 +30,7 @@ import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Login_Activity extends AppCompatActivity implements
-        SignInCallback_Fragment.SignInCallback{
+public class Login_Activity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceStance){
@@ -53,16 +52,22 @@ public class Login_Activity extends AppCompatActivity implements
         mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
             @Override
             public void onChanged(@Nullable User_Model user_model) {
-                Log.w("LoginActivity","There was a noticed change in the login observer.");
                 Log.w("LoginActivity","New user is: "+user_model.getEmail());
-                //signInTest(mViewModel.getCurrentUser().getValue());
+                signInTest(mViewModel.getCurrentUser().getValue());
             }
         });
 
     }
 
-    public void signInTest(User_Model user) {
-        final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
+    /*Todo: Add checks to ensure that the User_Model!=null prior to starting the Core_Activity. Alternatively
+        we can move this into Core_Activity.
+    /**
+     * Function that is called when a change in the ViewModel's User_Model is observed. It will pass
+     * the observed User_Model object to the Core_Activity and then finish this activity instance.
+     * @param user The observed User_Model.
+     */
+    private void signInTest(User_Model user) {
+        SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         mainIntent.putExtra(Core_Activity.USER,user);
         startActivity(mainIntent);
@@ -70,7 +75,6 @@ public class Login_Activity extends AppCompatActivity implements
         finish();
     }
 
-    @Override
     public void signIn() {
         final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
