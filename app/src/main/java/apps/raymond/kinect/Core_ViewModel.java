@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -27,16 +28,10 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> publicEvents = new MutableLiveData<>();
     private MutableLiveData<List<Group_Model>> mUsersGroups = new MutableLiveData<>();
+
     public Core_ViewModel(){
+        Log.w("ViewModel","Is a new instance of the viewmodel created?");
         this.mRepository = new Core_FireBaseRepo();
-        mRepository.getAcceptedEvents().addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                if(task.isSuccessful()&& task.getResult()!=null){
-                    mAcceptedEvents.setValue(task.getResult());
-                }
-            }
-        });
         mRepository.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<Group_Model>>> task) {
@@ -45,24 +40,19 @@ public class Core_ViewModel extends ViewModel {
                 }
             }
         });
-        loadPublicEvents();
-        listenForInvitations();
-        /*
-        When creating instance of ViewModel, retrieve the current user from FirebaseAuth by attaching
-        a listener that updates everytime there is a change in the currentuser.
-        */
+
+
+        //We don't have to call this until we are in the CoreActivity and even then we might want to wait.
+        //loadPublicEvents();
+        //listenForInvitations();
+
     }
 
     //*-------------------------------------------USER-------------------------------------------*//
-    public Task<AuthResult> emailSignIn(String email, String password){
-        return mRepository.emailSignIn(email,password);
-    }
     public Task<Void> signOut(Context context){
         return mRepository.signOut(context);
     }
-    public Task<User_Model> getCurrentUser(){
-        return mRepository.getCurrentUser();
-    }
+
     public Task<List<User_Model>> fetchUsers(){
         return mRepository.fetchUsers();
     }
@@ -102,9 +92,21 @@ public class Core_ViewModel extends ViewModel {
         return mGroupInvitations;
     }
     //*------------------------------------------EVENTS------------------------------------------*//
+    public void loadAcceptedEvents(String userID){
+        mRepository.getAcceptedEvents(userID).addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Event_Model>> task) {
+                if(task.isSuccessful()&& task.getResult()!=null){
+                    mAcceptedEvents.setValue(task.getResult());
+                }
+            }
+        });
+    }
+
     public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
         return mAcceptedEvents;
     }
+
     public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
         mRepository.getMessages(event).addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
             @Override

@@ -83,94 +83,43 @@ public class Core_FireBaseRepo {
     private static final String EVENT_ATTEND_FIELD = "attenders";
     private static final String EVENT_INVITED_FIELD = "invited";
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
     private CollectionReference groupCollection = mStore.collection(GROUPS);
     private CollectionReference userCollection = mStore.collection(USERS);
     private CollectionReference eventCollection = mStore.collection(EVENTS);
 
-    private String mUserEmail;
-    private User_Model curUserModel;
-
     /*ToDo: There should be no Java code in the Repository class.
         This method should not hold the mUserEmail or curUserMode, these should be passed as required to repository calls.
     */
     public Core_FireBaseRepo() {
-        Log.w(TAG,"Creating new instance of Core_FireBaseRepo");
-        if(mAuth.getCurrentUser()!=null){
-            try {
-                this.mUserEmail = mAuth.getCurrentUser().getEmail();
-                getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
-                    @Override
-                    public void onComplete(@NonNull Task<User_Model> task) {
-                        curUserModel = task.getResult();
-                    }
-                });
-            } catch (NullPointerException npe) {
-                Log.w(TAG, "Error.",npe);
-            }
-        } else {
-            getCurrentUser();
-        }
-
     }
 
     //*------------------------------------------USER-------------------------------------------*//
 
+    /**
+     * Returns a task that will convert a Firestore document to a User_Model.class.
+     * @param userID Index field used to retrieve the correct document.
+     * @return User_Model POJO.
+     */
+    public Task<User_Model> getCurrentUser(String userID){
+        DocumentReference userDoc = userCollection.document(userID);
+        return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
+            @Override
+            public User_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                if(task.isSuccessful()){
+                    if(task.getResult()!=null){
+                        return task.getResult().toObject(User_Model.class);
+                    }
+                }
+                Log.w(TAG,"ERROR RETRIEVING CURRENT USER.", task.getException());
+                return null;
+            }
+        });
+    }
     public Task<Void> signOut(Context context){
         Log.i(TAG,"REPOSITORY LOG OUT METHOD.");
         return AuthUI.getInstance().signOut(context);
-    }
-
-    public Task<AuthResult> emailSignIn(final String name, String password) {
-        return mAuth.signInWithEmailAndPassword(name, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            mUserEmail = name;
-                        }
-                    }
-                });
-    }
-
-    public Task<User_Model> getCurrentUser(){
-        try{
-            DocumentReference userDoc = userCollection.document(mUserEmail);
-            return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
-                @Override
-                public User_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                    if(task.isSuccessful()){
-                        if(task.getResult()!=null){
-                            return task.getResult().toObject(User_Model.class);
-                        }
-                    }
-                    Log.w(TAG,"ERROR RETRIEVING CURRENT USER.", task.getException());
-                    return null;
-                }
-            });
-        } catch (Exception e){
-            Log.w(TAG,"Exception occured:",e);
-            return null;
-        }
-    }
-
-    public Task<Void> createUserByEmail(final User_Model userModel, final String password) {
-        final String name = userModel.getEmail();
-        Log.i(TAG, "Creating new user " + name);
-        return mAuth.createUserWithEmailAndPassword(name, password)
-                .continueWithTask(new Continuation<AuthResult, Task<AuthResult>>() {
-                    @Override
-                    public Task<AuthResult> then(@NonNull Task<AuthResult> task) throws Exception {
-                        return emailSignIn(name, password);
-                    }
-                }).continueWithTask(new Continuation<AuthResult, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<AuthResult> task) throws Exception {
-                        return createUserDoc(userModel);
-                    }
-                });
     }
 
     private Task<Void> createUserDoc(User_Model userModel) {
@@ -189,8 +138,8 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    public Task<List<Event_Model>> getEventInvitations() {
-        CollectionReference eventMessages = userCollection.document(mUserEmail).collection(EVENT_INVITES);
+    public Task<List<Event_Model>> getEventInvitations(String userID) {
+        CollectionReference eventMessages = userCollection.document(userID).collection(EVENT_INVITES);
         return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
             @Override
             public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
@@ -204,9 +153,8 @@ public class Core_FireBaseRepo {
             }
         });
     }
-
-    public Task<List<Group_Model>> getGroupInvitations() {
-        CollectionReference usersGroups = userCollection.document(mUserEmail)
+    public Task<List<Group_Model>> getGroupInvitations(String userID) {
+        CollectionReference usersGroups = userCollection.document(userID)
                 .collection(GROUP_INVITES);
 
         return usersGroups.get().continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
@@ -222,23 +170,13 @@ public class Core_FireBaseRepo {
             }
         });
     }
-
-    public Task<Void> addConnection(final User_Model user){
-        CollectionReference userConnections = userCollection.document(mUserEmail).collection(CONNECTIONS);
-        return userConnections.document(user.getEmail()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Log.i(TAG,"Successfully created a connection to user: " + user.getEmail());
-                } else {
-                    Log.w(TAG,"Error adding new connection to user.",task.getException());
-                }
-            }
-        });
+    public Task<Void> addConnection(String userID, final User_Model newUserConnection){
+        CollectionReference userConnections = userCollection.document(userID).collection(CONNECTIONS);
+        return userConnections.document(newUserConnection.getEmail()).set(newUserConnection);
     }
 
-    public Task<List<User_Model>> getConnections(){
-        CollectionReference userConnections = userCollection.document(mUserEmail).collection(CONNECTIONS);
+    public Task<List<User_Model>> getConnections(String userID){
+        CollectionReference userConnections = userCollection.document(userID).collection(CONNECTIONS);
         final List<User_Model> connections = new ArrayList<>();
         return userConnections.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
@@ -260,12 +198,11 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<Void> addLocation(Address address, String addressName){
-        CollectionReference locationCol = userCollection.document(mUserEmail).collection(LOCATIONS);
+    public Task<Void> addLocation(String userID, Address address, String addressName){
+        CollectionReference locationCol = userCollection.document(userID).collection(LOCATIONS);
         GeoPoint geoPoint = new GeoPoint(address.getLatitude(),address.getLongitude());
         return locationCol.document(addressName).set(geoPoint);
     }
-
     /*------------------------------------------EVENTS---------------------------------------------*
      * When a user registers to or creates an event, the following is the task priority in order to
      * minimize errors in the corresponding Firestore collections.
@@ -296,8 +233,8 @@ public class Core_FireBaseRepo {
      * Create the event document in Users->Events.
      * @param event The event to add to the current user.
      */
-    public Task<Void> addEventToUser(Event_Model event) {
-        CollectionReference usersEvents = userCollection.document(mUserEmail).collection(EVENTS);
+    public Task<Void> addEventToUser(String userID, Event_Model event) {
+        CollectionReference usersEvents = userCollection.document(userID).collection(EVENTS);
         return usersEvents.document(event.getOriginalName()).set(event);
     }
 
@@ -305,9 +242,9 @@ public class Core_FireBaseRepo {
      * Creates a user document in Events->Accepted.
      * @param eventName The event the user is attending.
      */
-    public Task<Void> addUserToEvent(String eventName){
+    public Task<Void> addUserToEvent(String userID, User_Model userModel,String eventName){
         CollectionReference eventsAccepted = eventCollection.document(eventName).collection(ACCEPTED);
-        return eventsAccepted.document(mUserEmail).set(curUserModel);
+        return eventsAccepted.document(userID).set(userModel);
     }
 
     /**
@@ -324,8 +261,8 @@ public class Core_FireBaseRepo {
      * @param eventName The name of the event to which the user is invited.
      * @return True if the event exists.
      */
-    public Task<Boolean> checkForEventInvitation(String eventName){
-        DocumentReference docRef = userCollection.document(mUserEmail)
+    public Task<Boolean> checkForEventInvitation(String userID, String eventName){
+        DocumentReference docRef = userCollection.document(userID)
                 .collection(EVENT_INVITES).document(eventName);
 
         return docRef.get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
@@ -344,8 +281,8 @@ public class Core_FireBaseRepo {
      * invited.
      * @param eventName The name of the event being modified.
      */
-    public void removeEventInvitation(String eventName){
-        DocumentReference docRef = userCollection.document(mUserEmail)
+    public void removeEventInvitation(String userID, String eventName){
+        DocumentReference docRef = userCollection.document(userID)
                 .collection(EVENT_INVITES).document(eventName);
         DocumentReference eventsAccepted = eventCollection.document(eventName);
 
@@ -381,10 +318,12 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<List<Event_Model>> getAcceptedEvents(){
-        CollectionReference eventsRef = mStore.collection(USERS)
-                .document(mUserEmail).collection(EVENTS);
+    public Task<List<Event_Model>> getAcceptedEvents(String userID){
+        if(userID==null){
+            return null;
+        }
 
+        CollectionReference eventsRef = mStore.collection(USERS).document(userID).collection(EVENTS);
         return eventsRef.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
             @Override
             public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
@@ -496,11 +435,11 @@ public class Core_FireBaseRepo {
     // Then we want to retrieve the Document snapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the document snapshot and the retrieved byte[] to create a group base object.
-    public Task<List<Task<Group_Model>>> getUsersGroups() {
+    public Task<List<Task<Group_Model>>> getUsersGroups(String userID) {
         final List<String> groupList = new ArrayList<>();
         //First thing to do is retrieve the Group tags from current user.
 
-        return userCollection.document(mUserEmail).collection("Groups").get()
+        return userCollection.document(userID).collection("Groups").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -534,7 +473,7 @@ public class Core_FireBaseRepo {
      * Logic:
      * Create the Group Document first and if successful, move to adding the tag to the User.
      */
-    public Task<Void> createGroup(final Group_Model groupBase, final List<User_Model> inviteList) {
+    public Task<Void> createGroup(final String userID, final User_Model userModel, final Group_Model groupBase, final List<User_Model> inviteList) {
         final DocumentReference groupDoc = groupCollection.document(groupBase.getOriginalName());
         final Map<String, String> holderMap = new HashMap<>();
         holderMap.put("Access", "Owner");
@@ -543,7 +482,7 @@ public class Core_FireBaseRepo {
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        return groupDoc.collection(MEMBERS).document(mUserEmail).set(curUserModel);
+                        return groupDoc.collection(MEMBERS).document(userID).set(userModel);
                     }
                 })
                 .continueWith(new Continuation<Void, Void>() {
@@ -563,7 +502,7 @@ public class Core_FireBaseRepo {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if (task.isSuccessful()) {
-                            return userCollection.document(mUserEmail).collection(GROUPS)
+                            return userCollection.document(userID).collection(GROUPS)
                                     .document(groupBase.getName()).set(holderMap);
                         } else {
                             Log.i(TAG, "Unable to create the Group.");
@@ -574,7 +513,7 @@ public class Core_FireBaseRepo {
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        return userCollection.document(mUserEmail).collection("Groups")
+                        return userCollection.document(userID).collection("Groups")
                                 .document(groupBase.getOriginalName()).set(holderMap);//Change the .set of this line to the POJO if we want to store the POJO here instead of using tag reference.
                     }
                 });
@@ -642,19 +581,19 @@ public class Core_FireBaseRepo {
     }
 
 
-    public Task<Void> addUserToGroup(final Group_Model group) {
+    public Task<Void> addUserToGroup(final String userID, final User_Model userModel, final Group_Model group) {
         String groupName = group.getOriginalName();
         final CollectionReference groupsMembers = groupCollection.document(groupName).collection(MEMBERS);
-        final CollectionReference groupInvites = userCollection.document(mUserEmail).collection(GROUP_INVITES);
+        final CollectionReference groupInvites = userCollection.document(userID).collection(GROUP_INVITES);
         final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
 
-        CollectionReference myGroups = userCollection.document(mUserEmail).collection(GROUPS);
+        CollectionReference myGroups = userCollection.document(userID).collection(GROUPS);
         return myGroups.document(group.getOriginalName()).set(group).continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                 if (task.isSuccessful()) {
                     Log.i(TAG,"Successfully added Group to user's GroupCollection");
-                    return groupsMembers.document(mUserEmail).set(curUserModel);
+                    return groupsMembers.document(userID).set(userModel);
                 } else {
                     Log.i(TAG,"Error adding user to Group Members collection.", task.getException());
                     return null;
@@ -674,22 +613,22 @@ public class Core_FireBaseRepo {
         }).continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                return invitedMembers.document(mUserEmail).delete();
+                return invitedMembers.document(userID).delete();
             }
         });
     }
 
-    public Task<Void> declineGroupInvite(final Group_Model group){
+    public Task<Void> declineGroupInvite(final String userID, final User_Model userModel, final Group_Model group){
         final String groupName = group.getOriginalName();
         final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
         final CollectionReference declinedMembers = groupCollection.document(groupName).collection(DECLINED);
-        final CollectionReference groupInvites = userCollection.document(mUserEmail).collection(GROUP_INVITES);
+        final CollectionReference groupInvites = userCollection.document(userID).collection(GROUP_INVITES);
 
-        return invitedMembers.document(mUserEmail).delete().continueWithTask(new Continuation<Void, Task<Void>>() {
+        return invitedMembers.document(userID).delete().continueWithTask(new Continuation<Void, Task<Void>>() {
             @Override
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                 if(task.isSuccessful()){
-                    return declinedMembers.document(mUserEmail).set(curUserModel);
+                    return declinedMembers.document(userID).set(userModel);
                 } else {
                     Log.w(TAG,"Error removing user from invited collection for "+groupName);
                     return null;
@@ -717,7 +656,7 @@ public class Core_FireBaseRepo {
 
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
     // Todo: Filter our users that have Privacy:private.
-    public Task<List<User_Model>> fetchUsers() {
+    public Task<List<User_Model>> fetchUsers(final String userID) {
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
             public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
@@ -725,7 +664,7 @@ public class Core_FireBaseRepo {
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         User_Model model = document.toObject(User_Model.class);
-                        if(!model.getEmail().equals(mUserEmail)){
+                        if(!model.getEmail().equals(userID)){
                             userList.add(model);
                         }
                     }

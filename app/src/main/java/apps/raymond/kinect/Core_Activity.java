@@ -84,8 +84,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         Group_Create_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface,
         EventControl_Fragment.EventControlInterface {
 
+    public static final String USER = "User";
     private static final String TAG = "Core_Activity";
-    private static final int NUM_PAGES = 2;
     private static final String INV_FRAG = "ViewInvitations_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
@@ -105,7 +105,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     Core_Adapter pagerAdapter;
     Toolbar toolbar;
     Bundle instanceBundle;
-    private User_Model mCurrUser;
+    private User_Model mUser;
+    String mUserEmail;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,19 +116,20 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         }
         thisInstance = this;
 
+        if(getIntent().getExtras()!=null){
+            mUser = getIntent().getExtras().getParcelable(USER);
+            mUserEmail = mUser.getEmail();
+            Log.w(TAG,"Started activity with user: "+mUser.getEmail());
+        }
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
-        mViewModel.getCurrentUser().addOnCompleteListener(new OnCompleteListener<User_Model>() {
-            @Override
-            public void onComplete(@NonNull Task<User_Model> task) {
-                if(task.isSuccessful()){
-                    mCurrUser = task.getResult();
-                    Toast.makeText(getBaseContext(),"Welcome "+ mCurrUser.getEmail(),Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.w(TAG,"Unable to fetch user doc to POJO");
-                }
-            }
-        });
+        mViewModel.loadAcceptedEvents(mUserEmail);
+        //Observe the events here.
+
+
+
+
 
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
@@ -329,7 +331,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void exploreEvents() {
-        EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mCurrUser);
+        EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUser);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
                 .addToBackStack(SEARCH_EVENTS_FRAG)
@@ -338,64 +340,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void startDetailActivity(Event_Model event) {
-        EventDetail_Activity.init(event, mCurrUser, this);
-    }
-
-    public class Core_Adapter extends FragmentStatePagerAdapter {
-        private static final int EVENTS_FRAGMENT = 0;
-
-        private List<Fragment> fragments;
-        private Core_Adapter(FragmentManager fm) {
-            super(fm);
-            fragments = new ArrayList<>();
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            fragments.add(position, fragment);
-            return fragment;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                    return new EventsCore_Fragment();
-                case 1:
-                    return new GroupsCore_Fragment();
-                default:
-                    return null;
-            }
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Events";
-                case 1:
-                    return "Groups";
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            fragments.remove(position);
-            super.destroyItem(container, position, object);
-        }
-
-        private Fragment getFragment(int position) {
-            return fragments.get(position);
-        }
+        EventDetail_Activity.init(event, mUser, this);
     }
 
     /**
@@ -515,5 +460,62 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+    }
+
+    public class Core_Adapter extends FragmentStatePagerAdapter {
+        private static final int EVENTS_FRAGMENT = 0;
+
+        private List<Fragment> fragments;
+        private Core_Adapter(FragmentManager fm) {
+            super(fm);
+            fragments = new ArrayList<>();
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            fragments.add(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    return new EventsCore_Fragment();
+                case 1:
+                    return new GroupsCore_Fragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Events";
+                case 1:
+                    return "Groups";
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            fragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        private Fragment getFragment(int position) {
+            return fragments.get(position);
+        }
     }
 }

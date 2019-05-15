@@ -10,7 +10,7 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import apps.raymond.kinect.login.Login_Activity;
+import apps.raymond.kinect.Login.Login_Activity;
 
 public class Launch_Activity extends AppCompatActivity {
     private static final String TAG = "Launch_Activity";
@@ -19,32 +19,26 @@ public class Launch_Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //ToDo: We want to observe the ViewModel for changes in the current user.
-        FirebaseAuth.getInstance().addAuthStateListener( new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
-                FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
-                if(currUser == null){
-                    Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    Log.i(TAG,"Starting login activity.");
-                    startActivity(loginIntent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    finish();
-                } else {
-                    Log.d(TAG,"Current user:" + currUser.getEmail());
-                    Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    Log.i(TAG,"Starting core activity.");
-                    startActivity(coreIntent);
-                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-                    finish();
-                }
-                Log.i(TAG,"Removing auth listener");
-                FirebaseAuth.getInstance().removeAuthStateListener(this);
-            }
-        });
+        //ToDo: Determine the pattern required to remove FirebaseAuth from the application context.
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        /*
+        On app launch, check to see if there is a signed in user. If a user exists, the app will
+        go straight into the Core_Activity or will otherwise start the Login_Activity.
+         */
+        if(user==null){
+            Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        } else {
+            Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(coreIntent);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        }
+        finish();
     }
 }

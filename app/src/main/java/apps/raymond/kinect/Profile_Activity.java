@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.UserProfile.User_Model;
-import apps.raymond.kinect.login.Login_Activity;
+import apps.raymond.kinect.Login.Login_Activity;
 
 public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
         Connections_Fragment.LoadConnections {
