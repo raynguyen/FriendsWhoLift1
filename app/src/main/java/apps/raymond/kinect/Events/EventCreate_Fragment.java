@@ -81,8 +81,16 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
     private EventControlInterface testInterface;
-
     private FragmentManager fm;
+
+    public static EventCreate_Fragment newInstance(User_Model mUser){
+        EventCreate_Fragment fragment = new EventCreate_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user",mUser);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -95,12 +103,24 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     }
 
     private Core_ViewModel mViewModel;
+    private User_Model mUser;
+    private String userID;
     Event_Model event;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mViewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
+
+        try{
+            mUser = getArguments().getParcelable("user");
+            userID = mUser.getEmail();
+        } catch (Exception e){
+            Log.w(TAG,"Exception.",e);
+        }
+
+
+
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
@@ -375,7 +395,7 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
      * eligible for event invitations.
      */
     private void fetchUsersList(){
-        mViewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        mViewModel.fetchUsers(userID).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
@@ -451,8 +471,8 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
                             Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.INVISIBLE);
                     testInterface.updateEventRecycler(event);
-                    mViewModel.addEventToUser(event);
-                    mViewModel.addUserToEvent(event.getOriginalName());
+                    mViewModel.addEventToUser(userID,event);
+                    mViewModel.addUserToEvent(userID,mUser,event.getOriginalName());
                     mViewModel.sendEventInvites(event, inviteUsersList);
                     fm.popBackStack();
                 }

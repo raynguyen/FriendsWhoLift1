@@ -94,15 +94,6 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
         groupsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         groupsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Button testBtn3 = view.findViewById(R.id.testButton3);
-        testBtn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG,"There are this many fragments: "+getFragmentManager().getBackStackEntryCount());
-            }
-        });
-
-        Button testBtn4 = view.findViewById(R.id.testButton4);
     }
 
     private void subscribeToModel(){
@@ -126,7 +117,9 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
      */
     //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
     private void updateCardViews(){
-        viewModel.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
+        viewModel.getUsersGroups();
+                /*
+                .addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<Group_Model>>> task) {
                 if(task.getResult()!=null){
@@ -152,13 +145,13 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
                     Log.i(TAG,"Fetching Groups for the user returned null.");
                 }
             }
-        });
+        });*/
     }
 
     @Override
     public void onGroupClick(int position, Group_Model groupBase, View sharedView) {
-        Fragment detailedGroup = Group_Detail_Fragment.newInstance(groupBase,
-                sharedView.getTransitionName());
+        /*Fragment detailedGroup = GroupDetail_Fragment
+                .newInstance(mUser, groupBase, sharedView.getTransitionName());
 
         //detailedGroup.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.move));
         detailedGroup.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
@@ -166,9 +159,9 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
         getFragmentManager()
                 .beginTransaction()
                 .addSharedElement(sharedView,sharedView.getTransitionName())
-                .replace(R.id.core_frame,detailedGroup,Group_Detail_Fragment.TAG)
-                .addToBackStack(Group_Detail_Fragment.TAG)
-                .commit();
+                .replace(R.id.core_frame,detailedGroup, GroupDetail_Fragment.TAG)
+                .addToBackStack(GroupDetail_Fragment.TAG)
+                .commit();*/
     }
 
     @Override

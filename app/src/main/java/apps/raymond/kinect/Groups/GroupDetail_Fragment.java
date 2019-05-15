@@ -51,33 +51,41 @@ import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Group_Detail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
-    public static final String TAG = "Group_Detail_Fragment";
+public class GroupDetail_Fragment extends Fragment implements View.OnClickListener, BackPressListener {
+    public static final String TAG = "GroupDetail_Fragment";
     private static final String TRANSITION_NAME = "transition_name";
     private static final String GROUP_BASE = "group_base";
     private static final String MEMBERS_FRAG = "Members_Fragment";
     private static final int DETAIL_READ = 0;
     private static final int DETAIL_WRITE = 1;
 
-    public Group_Detail_Fragment(){
+    public GroupDetail_Fragment(){
     }
 
-    public static Group_Detail_Fragment newInstance(Group_Model groupBase, String transitionName){
-        Group_Detail_Fragment _group_Detail_fragment = new Group_Detail_Fragment();
+    public static GroupDetail_Fragment newInstance(User_Model user, Group_Model groupBase, String transitionName){
+        GroupDetail_Fragment _group_Detail_fragment = new GroupDetail_Fragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(GROUP_BASE, groupBase);
         bundle.putString(TRANSITION_NAME,transitionName);
+        bundle.putParcelable("user",user);
         _group_Detail_fragment.setArguments(bundle);
         return _group_Detail_fragment;
     }
 
     private Core_ViewModel viewModel;
+    private User_Model mUser;
+    private String userID;
     SearchView toolbarSearch;
     FragmentManager fm;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        groupBase = getArguments().getParcelable(GROUP_BASE);
+        mUser = getArguments().getParcelable("user");
+        userID = mUser.getEmail();
+        owner = groupBase.getOwner();
 
         fm = requireActivity().getSupportFragmentManager();
         toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
@@ -106,8 +114,6 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-        groupBase = getArguments().getParcelable(GROUP_BASE);
-        owner = groupBase.getOwner();
 
         //ToDo: This should be a call to a repository method and not to FirebaseAuth itself.
         currUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -263,9 +269,9 @@ public class Group_Detail_Fragment extends Fragment implements View.OnClickListe
         super.onDestroy();
     }
 
-    ArrayList<User_Model> userModelArrayList;
+    private ArrayList<User_Model> userModelArrayList;
     private void fetchUserList(){
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        viewModel.fetchUsers(userID).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){

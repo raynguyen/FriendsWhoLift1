@@ -41,7 +41,6 @@ public class Login_Activity extends AppCompatActivity implements
         LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
         ViewPager mViewPager = findViewById(R.id.viewpager_login);
         mViewPager.setAdapter(loginAdapter);
-        mViewPager.setCurrentItem(0);
 
         final Login_ViewModel mViewModel = ViewModelProviders.of(this).get(Login_ViewModel.class);
         mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
@@ -54,7 +53,6 @@ public class Login_Activity extends AppCompatActivity implements
         });
 
     }
-
 
     public void signInTest(User_Model user) {
         final SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);

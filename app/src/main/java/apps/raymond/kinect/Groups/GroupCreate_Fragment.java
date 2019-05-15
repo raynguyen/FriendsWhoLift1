@@ -58,15 +58,23 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Group_Create_Fragment extends Fragment implements
+public class GroupCreate_Fragment extends Fragment implements
         View.OnClickListener, BackPressListener, Add_Users_Adapter.CheckProfileInterface {
-    public static final String TAG = "Group_Create_Fragment";
+    public static final String TAG = "GroupCreate_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
 
     private AddGroup addGroupInterface;
     public interface AddGroup{
         void addToGroupRecycler(Group_Model groupBase);
+    }
+
+    public static GroupCreate_Fragment newInstance(User_Model user){
+        GroupCreate_Fragment fragment = new GroupCreate_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user",user);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -82,29 +90,31 @@ public class Group_Create_Fragment extends Fragment implements
 
     private FragmentManager fm;
     List<User_Model> usersList;
+    private User_Model mUser;
     private Core_ViewModel viewModel;
+    private String userID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
+
         try{
             fm = getActivity().getSupportFragmentManager();
+            mUser = getArguments().getParcelable("user");
+            userID = mUser.getEmail();
         } catch (NullPointerException npe){
             Log.e(TAG,"Unable to get fragment manager for fragment.",npe);
         }
-        viewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
+
         usersList = new ArrayList<>();
         fetchUsersList();
     }
-
-    private FirebaseUser currentUser;
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.group_create_frag,container,false);
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         return view;
     }
 
@@ -239,7 +249,7 @@ public class Group_Create_Fragment extends Fragment implements
     List<User_Model> inviteUsersList;
     private void fetchUsersList(){
         Log.i(TAG,"Fetching all users from store.");
-        viewModel.fetchUsers().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        viewModel.fetchUsers(userID).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
@@ -308,7 +318,7 @@ public class Group_Create_Fragment extends Fragment implements
         privacyBtn = privacyGroup.findViewById(privacyGroup.getCheckedRadioButtonId());
         String privacy = privacyBtn.getText().toString();
         String inviteText = invite_Spinner.getSelectedItem().toString();
-        final Group_Model newGroup = new Group_Model(groupName, descText, currentUser.getEmail(),privacy,inviteText, null);
+        final Group_Model newGroup = new Group_Model(groupName, descText, userID,privacy,inviteText, null);
 
         if(imageUri!=null){
             viewModel.uploadImage(imageUri, groupName)
@@ -317,7 +327,7 @@ public class Group_Create_Fragment extends Fragment implements
                         public void onComplete(@NonNull Task<Uri> task) {
                             if(task.isSuccessful()){
                                 Log.i(TAG,"Successfully uploaded image to storage.");
-                                viewModel.createGroup(newGroup,inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                viewModel.createGroup(userID,mUser,newGroup,inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
@@ -333,7 +343,7 @@ public class Group_Create_Fragment extends Fragment implements
                         @Override
                         public void onSuccess(Uri uri) {
                             newGroup.setImageURI(uri.toString());
-                            viewModel.createGroup(newGroup, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            viewModel.createGroup(userID,mUser,newGroup, inviteUsersList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     progressBar.setVisibility(View.INVISIBLE);
@@ -358,7 +368,7 @@ public class Group_Create_Fragment extends Fragment implements
                         }
                     });
         } else {
-            viewModel.createGroup(newGroup, inviteUsersList)
+            viewModel.createGroup(userID,mUser,newGroup, inviteUsersList)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

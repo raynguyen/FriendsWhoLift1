@@ -16,7 +16,8 @@ public class ViewProfile_Activity extends AppCompatActivity implements View.OnCl
     private static final String TAG ="ViewProfile";
     public static final String USER = "User_Model";
 
-    User_Model user;
+    private User_Model mNewContact;
+    private String userID;
     Core_ViewModel viewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,9 +30,8 @@ public class ViewProfile_Activity extends AppCompatActivity implements View.OnCl
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(this);
 
-        user = args.getParcelable(USER);
-
-        Log.i(TAG,"Starting view profile activity for user: " + user.getEmail());
+        mNewContact = args.getParcelable(USER);
+        userID = mNewContact.getEmail();
     }
 
     MenuItem addUserAction, msgUserAction;
@@ -47,11 +47,11 @@ public class ViewProfile_Activity extends AppCompatActivity implements View.OnCl
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_connect:
-                Log.i(TAG,"Connect with user.");
-                viewModel.addUserConnection(user);
+                Log.i(TAG,"Connect with mNewContact.");
+                viewModel.addUserConnection(userID, mNewContact);
                 return true;
             case R.id.action_message:
-                Log.i(TAG,"Message user.");
+                Log.i(TAG,"Message mNewContact.");
                 return true;
             default:
                 return false;

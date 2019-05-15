@@ -435,35 +435,20 @@ public class Core_FireBaseRepo {
     // Then we want to retrieve the Document snapshots of the groups named in the KeySet.
     // Then we read the imageURI field to get the photo storage reference and download the photo
     // Finally we want to use the document snapshot and the retrieved byte[] to create a group base object.
-    public Task<List<Task<Group_Model>>> getUsersGroups(String userID) {
-        final List<String> groupList = new ArrayList<>();
-        //First thing to do is retrieve the Group tags from current user.
-
-        return userCollection.document(userID).collection("Groups").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                groupList.add(document.getId());
-                            }
-                        }
+    public Task<List<Group_Model>> getUsersGroups(String userID) {
+        CollectionReference groupsRef = mStore.collection(USERS).document(userID).collection(GROUPS);
+        return groupsRef.get().continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
+            @Override
+            public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                List<Group_Model> result = new ArrayList<>();
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document: task.getResult()){
+                        result.add(document.toObject(Group_Model.class));
                     }
-                }).continueWith(new Continuation<QuerySnapshot, List<Task<Group_Model>>>() {
-                    @Override
-                    public List<Task<Group_Model>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Task<Group_Model>> taskList = new ArrayList<>();
-                        for (final String group : groupList) {
-                            taskList.add(groupCollection.document(group).get().continueWith(new Continuation<DocumentSnapshot, Group_Model>() {
-                                @Override
-                                public Group_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    return task.getResult().toObject(Group_Model.class);
-                                }
-                            }));
-                        }
-                        return taskList;
-                    }
-                });
+                }
+                return result;
+            }
+        });
     }
 
     /*
@@ -618,8 +603,7 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<Void> declineGroupInvite(final String userID, final User_Model userModel, final Group_Model group){
-        final String groupName = group.getOriginalName();
+    public Task<Void> declineGroupInvite(final String userID,final User_Model userModel,final String groupName){
         final CollectionReference invitedMembers = groupCollection.document(groupName).collection(INVITED);
         final CollectionReference declinedMembers = groupCollection.document(groupName).collection(DECLINED);
         final CollectionReference groupInvites = userCollection.document(userID).collection(GROUP_INVITES);
@@ -639,10 +623,8 @@ public class Core_FireBaseRepo {
             public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                 if(task.isSuccessful()){
                     return groupInvites.document(groupName).delete();
-                } else {
-                    Log.w(TAG,"Error adding user to declined collection in group "+groupName);
-                    return null;
                 }
+                return null;
             }
         });
     }

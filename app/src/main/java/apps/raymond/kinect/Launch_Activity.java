@@ -23,16 +23,19 @@ public class Launch_Activity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         /*
-        On app launch, check to see if there is a signed in user. If a user exists, the app will
+        On app launch, check to see if there is a signed in mUser. If a mUser exists, the app will
         go straight into the Core_Activity or will otherwise start the Login_Activity.
          */
+        //ToDo: The animation from launch to the login activity takes long. Figure out why, may have to do with the fade_in transition.
         if(user==null){
+            Log.w(TAG,"There is no active mUser so we are launching LoginActivity.");
             Intent loginIntent = new Intent(Launch_Activity.this, Login_Activity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(loginIntent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else {
+            Log.w(TAG,"Active mUser detected so we are launching Core");
             Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

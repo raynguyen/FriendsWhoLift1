@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /**
- * Currently only called in Group_Detail_Fragment to invite new users into the group.
+ * Currently only called in GroupDetail_Fragment to invite new users into the group.
  */
 public class InviteUsers_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
     private final static String TAG = "InviteUsersFragment";

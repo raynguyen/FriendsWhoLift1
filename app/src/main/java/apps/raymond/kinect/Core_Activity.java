@@ -1,23 +1,23 @@
 /*
  * ToDo:
- * 1. Get the user permission for camera and document access on start up and store as a SharedPreference.
+ * 1. Get the mUser permission for camera and document access on start up and store as a SharedPreference.
  * 3. Move all the currentUser stuff to repository return methods.
- * 4. Allow user to remove/delete events and or Groups if they are owner for deletes.
+ * 4. Allow mUser to remove/delete events and or Groups if they are owner for deletes.
  * 6. Recycler View for events does not properly display information.
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
  * 10.Redefine the layout for the edit group/event
  *
  * APP LAUNCH
  * -On first launch, fetch the User object, associated events and groups, and connections?
- * -Connections: Only needed when user clicks on their profile to view their friends.
- * --Will have to query connections events to see if user is attending any open events that they are
+ * -Connections: Only needed when mUser clicks on their profile to view their friends.
+ * --Will have to query connections events to see if mUser is attending any open events that they are
  * --attending.
  *
  * INVITING USERS TO EVENT
  * -When creating an event, you should be only allowed in invite users you have connected with
  * (potentially for users who have connections with users you connected with) otherwise there may
  * be too much spam invites to events.
- * -Each user has control whether they can be invited to events. Open to suggestions via locations
+ * -Each mUser has control whether they can be invited to events. Open to suggestions via locations
  * of previous events.
  *
  * MESSAGING FOR INVITES:
@@ -73,15 +73,15 @@ import apps.raymond.kinect.Events.EventInvitations_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
+import apps.raymond.kinect.Groups.GroupCreate_Fragment;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Groups.GroupsCore_Fragment;
-import apps.raymond.kinect.Groups.Group_Create_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        Group_Create_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface,
+        GroupCreate_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface,
         EventControl_Fragment.EventControlInterface {
 
     public static final String USER = "User";
@@ -106,7 +106,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     Toolbar toolbar;
     Bundle instanceBundle;
     private User_Model mUser;
-    String mUserEmail;
+    private String mUserEmail;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,14 +119,18 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         if(getIntent().getExtras()!=null){
             mUser = getIntent().getExtras().getParcelable(USER);
             mUserEmail = mUser.getEmail();
-            Log.w(TAG,"Started activity with user: "+mUser.getEmail());
+            Log.w(TAG,"Started activity with mUser: "+mUser.getEmail());
         }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         mViewModel.loadAcceptedEvents(mUserEmail);
-        //Observe the events here.
-
+        mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w(TAG,"Detected a change in the accepted events from the core.");
+            }
+        });
 
 
 
@@ -202,7 +206,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .commit();
                 return true;
             case R.id.action_create_group:
-                Group_Create_Fragment groupFragment = new Group_Create_Fragment();
+                GroupCreate_Fragment groupFragment = GroupCreate_Fragment.newInstance(mUser);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,groupFragment,CREATE_GROUP_FRAG)
                         .addToBackStack(CREATE_GROUP_FRAG)
@@ -316,7 +320,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         return super.dispatchTouchEvent(ev);
     }
 
-    //This is called to update the Core Recycler views when the user accepts an invitation.
+    //This is called to update the Core Recycler views when the mUser accepts an invitation.
     /*@Override
     public void eventAccepted(Event_Model event) {
         Log.i(TAG,"Accepted invite to: "+event.getName());
@@ -344,15 +348,15 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * Interface method whenever a user opts to attending an event. Process flow:
+     * Interface method whenever a mUser opts to attending an event. Process flow:
      * 1.   The Event is added to the User's event collection.
-     * 2a.  Add the user to the Event's attending collection.
+     * 2a.  Add the mUser to the Event's attending collection.
      * 2b.  If flag == 0, remove the invitation from the User's and Event's Invitation collections.
      * 3.   Call updateEventRecycler to update the appropriate views.
      *
-     * @param event The event of which the user opted to attend.
-     * @param flag Indication flag to determine whether the user was invited to the event or if the
-     *             user opted to attend the event via exploration.
+     * @param event The event of which the mUser opted to attend.
+     * @param flag Indication flag to determine whether the mUser was invited to the event or if the
+     *             mUser opted to attend the event via exploration.
      */
     @Override
     public void onAttendEvent(Event_Model event, int flag) {
@@ -360,7 +364,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         int oldAttendingCount = event.getAttending();
         event.setAttending(oldAttendingCount + 1);
-        mViewModel.addEventToUser(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mViewModel.addEventToUser(mUserEmail,event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
@@ -368,25 +372,25 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        mViewModel.addUserToEvent(eventName);
+        mViewModel.addUserToEvent(mUserEmail,mUser,eventName);
         mViewModel.incrementEventAttending(eventName);
 
         /*
-         * If the flag is 0, the user is attending the event through the ExploreEvents fragment. We
-         * therefore need to determine if the user has an invitation from the newly attending event
+         * If the flag is 0, the mUser is attending the event through the ExploreEvents fragment. We
+         * therefore need to determine if the mUser has an invitation from the newly attending event
          * via the checkForEventInvitation call on the repository. It will return true if the event
          * invitation document exists.
          *
          * THIS HAS YET TO BE TESTED!!!
          */
         if(flag!= EventInvitations_Fragment.INVITATION){
-            mViewModel.checkForEventInvitation(eventName)
+            mViewModel.checkForEventInvitation(mUserEmail,eventName)
                     .addOnCompleteListener(new OnCompleteListener<Boolean>() {
                         @Override
                         public void onComplete(@NonNull Task<Boolean> task) {
                             if(task.getResult()!=null){
                                 if(task.getResult()){
-                                    mViewModel.removeEventInvitation(eventName);
+                                    mViewModel.removeEventInvitation(mUserEmail,eventName);
                                 }
                             }
                         }
@@ -437,7 +441,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                     toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
                     String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
                     final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-                    if(fragment instanceof Group_Create_Fragment || fragment instanceof EventCreate_Fragment){
+                    if(fragment instanceof GroupCreate_Fragment || fragment instanceof EventCreate_Fragment){
                         //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
                         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                             @Override

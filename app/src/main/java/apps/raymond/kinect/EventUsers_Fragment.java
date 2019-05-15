@@ -106,7 +106,7 @@ public class EventUsers_Fragment extends Fragment implements
     private void setMemberRecyclers(){
         /*
          * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
-         * When user clicks on a user, load the full Profile using the name in the list as our query field.
+         * When mUser clicks on a mUser, load the full Profile using the name in the list as our query field.
          */
         getAcceptedList(event);
         getInviteList(event);

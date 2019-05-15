@@ -25,7 +25,7 @@ import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Core_ViewModel;
 
-public class GroupInviteFragment extends Fragment implements Group_Invites_Fragment.InviteResponseListener {
+public class GroupInvite_Fragment extends Fragment implements Group_Invites_Fragment.InviteResponseListener {
     private static final String TAG = "Group_Invite_Fragment";
 
     Core_ViewModel viewModel;
@@ -61,6 +61,7 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
     }
 
     private void fetchInvites(){
+        /*
         viewModel.fetchGroupInvites().addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<Group_Model>> task) {
@@ -77,13 +78,13 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
                     Log.w(TAG,"There was an error fetching the group invites.");
                 }
             }
-        });
+        });*/
     }
 
     @Override
     public void onAccept(final Group_Model group, final int position) {
         progressBar.setVisibility(View.VISIBLE);
-        viewModel.addUserToGroup(group).addOnCompleteListener(new OnCompleteListener<Void>() {
+        /*viewModel.addUserToGroup(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.GONE);
@@ -95,14 +96,14 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
                     Log.w(TAG,"ERROR: "+task.getException());
                 }
             }
-        });
+        });*/
         //groupInvSet.remove(group);
     }
 
     @Override
     public void onDecline(final Group_Model group, final int position) {
         Log.i(TAG,"calling onDeclineEventInvitation");
-        viewModel.declineGroupInvite(group).addOnCompleteListener(new OnCompleteListener<Void>() {
+        /*viewModel.declineGroupInvite(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
@@ -113,7 +114,7 @@ public class GroupInviteFragment extends Fragment implements Group_Invites_Fragm
                     Toast.makeText(requireContext(),"Error declining invite to "+group.getOriginalName(),Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        });*/
     }
 
     @Override

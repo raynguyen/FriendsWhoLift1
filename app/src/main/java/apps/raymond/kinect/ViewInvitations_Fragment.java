@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.EventInvitations_Fragment;
-import apps.raymond.kinect.DialogFragments.GroupInviteFragment;
+import apps.raymond.kinect.DialogFragments.GroupInvite_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
 
@@ -90,7 +90,7 @@ public class ViewInvitations_Fragment extends Fragment{
                 case 0:
                     return EventInvitations_Fragment.newInstance(mEventInvitations);
                 case 1:
-                    return new GroupInviteFragment();
+                    return new GroupInvite_Fragment();
                 default:
                     return null;
             }

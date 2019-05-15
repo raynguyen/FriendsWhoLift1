@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//ToDo: Load the user's existing location storage from FireStore. Add markers to each location.
+//ToDo: Load the mUser's existing location storage from FireStore. Add markers to each location.
 public class Maps_Activity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
     private static final String TAG = "MapsActivity";
     public static final String ADDRESS = "Address";
@@ -110,8 +110,8 @@ public class Maps_Activity extends FragmentActivity implements OnMapReadyCallbac
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
      * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * If Google Play services is not installed on the device, the mUser will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the mUser has
      * installed Google Play services and returned to the app.
      */
     @Override

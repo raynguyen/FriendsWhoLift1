@@ -32,14 +32,15 @@ public class Core_ViewModel extends ViewModel {
     public Core_ViewModel(){
         Log.w("ViewModel","Is a new instance of the viewmodel created?");
         this.mRepository = new Core_FireBaseRepo();
-        mRepository.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
+
+        /*mRepository.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
             @Override
             public void onComplete(@NonNull Task<List<Task<Group_Model>>> task) {
                 if(task.isSuccessful()&& task.getResult()!=null){
                     //Have to change the repository method to return a List<Group_Model>;
                 }
             }
-        });
+        });*/
 
 
         //We don't have to call this until we are in the CoreActivity and even then we might want to wait.
@@ -53,18 +54,20 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.signOut(context);
     }
 
-    public Task<List<User_Model>> fetchUsers(){
-        return mRepository.fetchUsers();
+    public Task<List<User_Model>> fetchUsers(String userID){
+        return mRepository.fetchUsers(userID);
     }
-    public Task<List<User_Model>> getConnections(){
-        return mRepository.getConnections();
+
+    public Task<List<User_Model>> getConnections(String userID){
+        return mRepository.getConnections(userID);
     }
-    public Task<Void> addUserConnection(User_Model user){
-        return mRepository.addConnection(user);
+    public Task<Void> addUserConnection(String userID,User_Model user){
+        return mRepository.addConnection(userID,user);
     }
 
     //Fetch event invitations (implement observer once I can figure out how to) and set as LiveData object here.
     private void listenForInvitations(){
+        /*
         mRepository.getEventInvitations()
                 .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
                     @Override
@@ -83,7 +86,9 @@ public class Core_ViewModel extends ViewModel {
                         }
                     }
                 });
+               */
     }
+
     public MutableLiveData<List<Event_Model>> getEventInvitations(){
         return mEventInvitations;
     }
@@ -123,12 +128,12 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.createEvent(event);
     }
 
-    public Task<Void> addEventToUser(Event_Model event){
-        return mRepository.addEventToUser(event);
+    public Task<Void> addEventToUser(String userID, Event_Model event){
+        return mRepository.addEventToUser(userID, event);
     }
 
-    public Task<Void> addUserToEvent(String eventName){
-        return mRepository.addUserToEvent(eventName);
+    public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
+        return mRepository.addUserToEvent(userID,user,eventName);
     }
 
     public void sendEventInvites(Event_Model event, List<User_Model> inviteList){
@@ -139,12 +144,12 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.incrementEventAttending(eventName);
     }
 
-    public Task<Boolean> checkForEventInvitation(String eventName){
-        return mRepository.checkForEventInvitation(eventName);
+    public Task<Boolean> checkForEventInvitation(String userID, String eventName){
+        return mRepository.checkForEventInvitation(userID,eventName);
     }
 
-    public void removeEventInvitation(String eventName){
-        mRepository.removeEventInvitation(eventName);
+    public void removeEventInvitation(String userID, String eventName){
+        mRepository.removeEventInvitation(userID, eventName);
     }
 
     public Task<Void> postNewMessage(Event_Model event, Message_Model message){
@@ -173,23 +178,33 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.getEventInvitees(event);
     }
     //*------------------------------------------GROUPS------------------------------------------*//
+
+
+    public void loadAcceptedGroups(String userID){
+        mRepository.getUsersGroups(userID);
+    }
+    public MutableLiveData<List<Group_Model>> getUsersGroups(){
+        return mUsersGroups;
+    }
+
     public void sendGroupInvites(Group_Model groupBase, List<User_Model> inviteList){
         mRepository.sendGroupInvites(groupBase,inviteList);
     }
-    public Task<List<Group_Model>> fetchGroupInvites(){
-        return mRepository.getGroupInvitations();
+    public Task<List<Group_Model>> fetchGroupInvites(String userID){
+        return mRepository.getGroupInvitations(userID);
     }
-    public Task<Void> createGroup(Group_Model groupBase, List<User_Model> inviteList){
-        return mRepository.createGroup(groupBase, inviteList);
+    public Task<Void> createGroup(String userID, User_Model user, Group_Model groupBase, List<User_Model> inviteList){
+        return mRepository.createGroup(userID,user, groupBase, inviteList);
     }
     public Task<Group_Model> getGroup(){
         return mRepository.getGroup();
     }
-    public Task<List<Task<Group_Model>>> getUsersGroups(){
-        return mRepository.getUsersGroups();
+    public Task<List<Group_Model>> getUsersGroups(String userID){
+        return mRepository.getUsersGroups(userID);
     }
-    public Task<Void> addUserToGroup(Group_Model group){
-        return mRepository.addUserToGroup(group);
+
+    public Task<Void> addUserToGroup(String userID,User_Model userModel, Group_Model group){
+        return mRepository.addUserToGroup(userID,userModel,group);
     }
     public Task<List<User_Model>> fetchGroupMembers(Group_Model group){
         return mRepository.fetchGroupMembers(group);
@@ -197,12 +212,12 @@ public class Core_ViewModel extends ViewModel {
     public void updateGroup(Group_Model groupBase){
         mRepository.editGroup(groupBase);
     }
-    public Task<Void> declineGroupInvite(Group_Model group){
-        return mRepository.declineGroupInvite(group);
+    public Task<Void> declineGroupInvite(String userID, User_Model userModel, String groupName){
+        return mRepository.declineGroupInvite(userID,userModel,groupName);
     }
     //*-------------------------------------------ETC--------------------------------------------*//
-    public Task<Void> addLocation(Address address,String addressName){
-        return mRepository.addLocation(address,addressName);
+    public Task<Void> addLocation(String userID,Address address,String addressName){
+        return mRepository.addLocation(userID,address,addressName);
     }
     public Task<byte[]> getImage(String uri){
         return mRepository.getImage(uri);

@@ -122,7 +122,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     List<String> interestsList = new ArrayList<>();
     private void fetchUserInfo(){
         //READ FROM THE SHARED PREFERENCES HERE!
-        viewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        /*viewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
@@ -134,7 +134,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(getBaseContext(),"hello",Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        });*/
         //ToDo This has not been implemented. Need to structure the data in FireStore
         /*mViewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
             @Override
@@ -145,17 +145,17 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                     }
                     interestsTxt.setText(String.valueOf(interestsList.size()));
                 } else {
-                    Toast.makeText(getContext(),"Error retrieving user interests.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Error retrieving mUser interests.",Toast.LENGTH_SHORT).show();
                 }
             }
         });*/
     }
 
     /*
-    When creating the chooserIntent, we want to create a file to save the photo if the user selects
-    the camera option. How do we create a file only if the user selects the camera option.
+    When creating the chooserIntent, we want to create a file to save the photo if the mUser selects
+    the camera option. How do we create a file only if the mUser selects the camera option.
     -Potential solution is to simply create file regardless of the choice but then we have to delete
-    the file if the user does not take a photo > how do we determine if user selects the gallery option?
+    the file if the mUser does not take a photo > how do we determine if mUser selects the gallery option?
      */
     Uri photoUri;
     private void updateProfilePicture(){
