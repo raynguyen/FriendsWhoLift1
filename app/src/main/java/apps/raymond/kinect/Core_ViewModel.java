@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -20,8 +21,19 @@ import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+/**
+ * ViewModel class for the core application. When an instance of this ViewModel is first created, we
+ * call on the Repository to fetch the active user's accepted events, groups, and event/group
+ * invitations and set them respectively to their LiveData counterparts.
+ *
+ * This ViewModel will also be responsible for cascading data updates to the Repository.
+ *
+ * ToDo: Observe the required FireStore collections in the repository. On change detections,
+ *  we want to emit updates upstream to the ViewModel's LiveData via Transformations (not sure how
+ *  to yet).
+ */
 public class Core_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepository;
+    private Core_FireBaseRepo mRepository = new Core_FireBaseRepo();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Group_Model>> mGroupInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Message_Model>> mEventMessages = new MutableLiveData<>();
@@ -30,88 +42,43 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Group_Model>> mUsersGroups = new MutableLiveData<>();
 
     public Core_ViewModel(){
-        Log.w("ViewModel","Is a new instance of the viewmodel created?");
-        this.mRepository = new Core_FireBaseRepo();
-
-        /*mRepository.getUsersGroups().addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Task<Group_Model>>> task) {
-                if(task.isSuccessful()&& task.getResult()!=null){
-                    //Have to change the repository method to return a List<Group_Model>;
-                }
-            }
-        });*/
-
-
-        //We don't have to call this until we are in the CoreActivity and even then we might want to wait.
-        //loadPublicEvents();
-        //listenForInvitations();
+        Log.w("CoreViewModel","New instance of CoreViewModel");
 
     }
 
-    //*-------------------------------------------USER-------------------------------------------*//
-    public Task<Void> signOut(Context context){
-        /*
-         * Call on FirebaseAuth to sign the user out.
-         * Set the MutableLiveData<User_Model> to null in order to trigger the Profile_Activity listener
-         *  to finish the Profile & Core Activities and start the LoginActivity.
-         *
-         */
-        return mRepository.signOut(context);
-    }
-
-    public Task<List<User_Model>> fetchUsers(String userID){
-        return mRepository.fetchUsers(userID);
-    }
-
-    public Task<List<User_Model>> getConnections(String userID){
-        return mRepository.getConnections(userID);
-    }
-    public Task<Void> addUserConnection(String userID,User_Model user){
-        return mRepository.addConnection(userID,user);
-    }
-
-    //Fetch event invitations (implement observer once I can figure out how to) and set as LiveData object here.
-    private void listenForInvitations(){
-        /*
-        mRepository.getEventInvitations()
+    //*------------------------------------------EVENTS------------------------------------------*//
+    /**
+     * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
+     * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
+     * @param userID Document parameter to query to correct collection.
+     */
+    public void loadUserEvents(String userID){
+        mRepository.getAcceptedEvents(userID)
                 .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
                     @Override
                     public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                        if(task.isSuccessful() && task.getResult()!=null){
-                            mEventInvitations.setValue(task.getResult());
+                        if(task.isSuccessful()&& task.getResult()!=null){
+                            mAcceptedEvents.setValue(task.getResult());
                         }
                     }
                 });
-        mRepository.getGroupInvitations()
+    }
+
+    /**
+     * Fetch the user's Group collection from the database and set the result to mUsersGroups.
+     * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
+     * @param userID Document parameter to query to correct collection.
+     */
+    public void loadUserGroups(String userID){
+        mRepository.getUsersGroups(userID)
                 .addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
                     @Override
                     public void onComplete(@NonNull Task<List<Group_Model>> task) {
                         if(task.isSuccessful()){
-                            mGroupInvitations.setValue(task.getResult());
+                            mUsersGroups.setValue(task.getResult());
                         }
                     }
                 });
-               */
-    }
-
-    public MutableLiveData<List<Event_Model>> getEventInvitations(){
-        return mEventInvitations;
-    }
-
-    public MutableLiveData<List<Group_Model>> getGroupInvitations(){
-        return mGroupInvitations;
-    }
-    //*------------------------------------------EVENTS------------------------------------------*//
-    public void loadAcceptedEvents(String userID){
-        mRepository.getAcceptedEvents(userID).addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                if(task.isSuccessful()&& task.getResult()!=null){
-                    mAcceptedEvents.setValue(task.getResult());
-                }
-            }
-        });
     }
 
     public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
@@ -236,5 +203,55 @@ public class Core_ViewModel extends ViewModel {
     public Task<Void> testMethod(){
         return mRepository.testMethod();
     }
+
+
+    //*-------------------------------------------USER-------------------------------------------*//
+    public Task<Void> signOut(Context context){
+        /*
+         * Call on FirebaseAuth to sign the user out.
+         * Set the MutableLiveData<User_Model> to null in order to trigger the Profile_Activity listener
+         *  to finish the Profile & Core Activities and start the LoginActivity.
+         */
+        return mRepository.signOut(context);
+    }
+    public Task<List<User_Model>> fetchUsers(String userID){
+        return mRepository.fetchUsers(userID);
+    }
+    public Task<List<User_Model>> getConnections(String userID){
+        return mRepository.getConnections(userID);
+    }
+    public Task<Void> addUserConnection(String userID,User_Model user){
+        return mRepository.addConnection(userID,user);
+    }
+    //Fetch event invitations (implement observer once I can figure out how to) and set as LiveData object here.
+    private void listenForInvitations(){
+        /*
+        mRepository.getEventInvitations()
+                .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Event_Model>> task) {
+                        if(task.isSuccessful() && task.getResult()!=null){
+                            mEventInvitations.setValue(task.getResult());
+                        }
+                    }
+                });
+        mRepository.getGroupInvitations()
+                .addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Group_Model>> task) {
+                        if(task.isSuccessful()){
+                            mGroupInvitations.setValue(task.getResult());
+                        }
+                    }
+                });
+               */
+    }
+    public MutableLiveData<List<Event_Model>> getEventInvitations(){
+        return mEventInvitations;
+    }
+    public MutableLiveData<List<Group_Model>> getGroupInvitations(){
+        return mGroupInvitations;
+    }
 }
+
 

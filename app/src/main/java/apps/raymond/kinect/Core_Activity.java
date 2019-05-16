@@ -56,7 +56,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -100,21 +99,16 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     Activity thisInstance;
     ViewPager viewPager;
-    Core_ViewModel mViewModel;
     SearchView toolbarSearch;
-    Core_Adapter pagerAdapter;
     Toolbar toolbar;
-    Bundle instanceBundle;
+    private Core_Adapter pagerAdapter;
     private User_Model mUser;
     private String mUserEmail;
+    private Core_ViewModel mViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.core_activity);
-        if(savedInstanceState!=null){
-            instanceBundle = savedInstanceState;
-        }
-        thisInstance = this;
 
         if(getIntent().getExtras()!=null){
             mUser = getIntent().getExtras().getParcelable(USER);
@@ -122,18 +116,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             Log.w(TAG,"Started activity with mUser: "+mUser.getEmail());
         }
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
-        mViewModel.loadAcceptedEvents(mUserEmail);
-        mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Event_Model> event_models) {
-                Log.w(TAG,"Detected a change in the accepted events from the core.");
-            }
-        });
-
-
-
+        thisInstance = this;
 
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
@@ -144,15 +127,22 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         viewPager = findViewById(R.id.core_ViewPager);
         pagerAdapter = new Core_Adapter(getSupportFragmentManager());
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(this);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
+
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+
+        mViewModel.loadUserGroups(mUserEmail);
 
         observeInvitations();
         toolbarListener();
     }
+
+
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -339,6 +329,13 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void exploreEvents() {
+
+        /*
+         * ToDo: When we go to query for a list of public events, check the result against the
+         *  ViewModel's AcceptedEvents list and remove from the new result objects that appear in
+         *  both lists.
+         */
+
         EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUser);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
@@ -403,6 +400,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         updateEventRecycler(event);
     }
 
+    //ToDo: this should be removed, we are listening to the EventsList inside the EventsFrag now!
     @Override
     public void updateEventRecycler(Event_Model event) {
         EventsCore_Fragment fragment =
@@ -491,7 +489,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new EventsCore_Fragment();
+                    return EventsCore_Fragment.newInstance(mUser);
                 case 1:
                     return new GroupsCore_Fragment();
                 default:

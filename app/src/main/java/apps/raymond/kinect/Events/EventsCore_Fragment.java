@@ -28,6 +28,7 @@ import java.util.List;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 //ToDo: Listen to changes in Store from the EventsExplore fragment - we don't currently update the recyclerview if we attend an event via Explore fragment.
 public class EventsCore_Fragment extends Fragment implements View.OnClickListener,
@@ -38,6 +39,14 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     public interface EventCore_Interface {
         void exploreEvents();
         void startDetailActivity(Event_Model event);
+    }
+
+    public static EventsCore_Fragment newInstance(User_Model userModel){
+        EventsCore_Fragment fragment = new EventsCore_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user",userModel);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -53,10 +62,17 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     public EventsCore_Fragment(){}
 
     private Core_ViewModel mViewModel;
+    private User_Model mUserModel;
+    private String mUserID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class); // Is there a better callback for this?
+        mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
+
+        if(getArguments()!=null){
+            mUserModel = getArguments().getParcelable("user");
+            mUserID = mUserModel.getEmail();
+        }
     }
 
     @Nullable
@@ -76,7 +92,8 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.progress_bar);
         nullText = getView().findViewById(R.id.fragment_null_data_text);
-
+        final Button exploreEventsBtn = view.findViewById(R.id.search_events_btn);
+        exploreEventsBtn.setOnClickListener(this);
         final RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAcceptedEvents = new ArrayList<>();
         mAdapter = new EventsCore_Adapter(mAcceptedEvents, this);
@@ -84,8 +101,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        final Button exploreEventsBtn = view.findViewById(R.id.search_events_btn);
-        exploreEventsBtn.setOnClickListener(this);
+
 
         eventsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -102,10 +118,39 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             }
         });
 
-        //ToDo: create repo method that returns LiveData currentuser object?
         if(FirebaseAuth.getInstance().getCurrentUser()!=null){
             loadEvents();
         }
+
+        /*
+         * Observe the ViewModel's LiveData fields. When a change is detected, we want to **********
+         */
+        mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w(TAG,"Detected a change in the accepted events from the core.");
+                if(event_models!=null){
+                    mAdapter.setData(event_models);
+
+                    //The listener is currently only for when the fragment is first instantiated.
+                    //We hold a copy of the initial list in this Fragment instance and add/delete
+                    //from it and call the appropriate methods to the ViewModel to update the DB while
+                    //synchronously updating the list here.
+                    Log.w(TAG,"EventsList consists of: "+event_models.toString());
+                    mAcceptedEvents = new ArrayList<>(event_models);
+                    progressBar.setVisibility(View.GONE);
+                    if(!mAcceptedEvents.isEmpty()){
+                        nullText.setVisibility(View.GONE);
+                        mAdapter.setData(mAcceptedEvents);
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        nullText.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+        mViewModel.loadUserEvents(mUserID);
     }
 
     /**
@@ -118,16 +163,7 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             public void onChanged(@Nullable List<Event_Model> event_models) {
                 Log.w(TAG,"There was a change in the list.");
                 if(event_models!=null){
-                    Log.w(TAG,"EventsList consists of: "+event_models.toString());
-                    mAcceptedEvents = new ArrayList<>(event_models);
-                    progressBar.setVisibility(View.GONE);
-                    if(!mAcceptedEvents.isEmpty()){
-                        nullText.setVisibility(View.GONE);
-                        mAdapter.setData(mAcceptedEvents);
-                        mAdapter.notifyDataSetChanged();
-                    } else {
-                        nullText.setVisibility(View.VISIBLE);
-                    }
+
                 }
             }
         });
