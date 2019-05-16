@@ -38,6 +38,15 @@ public class Login_Fragment extends Fragment {
         txtUserName = view.findViewById(R.id.text_userid);
         txtPassword = view.findViewById(R.id.text_password1);
 
+        VerticalTextView txtSignUp = view.findViewById(R.id.vtext_signup);
+        txtSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager viewPager = requireActivity().findViewById(R.id.viewpager_login);
+                viewPager.setCurrentItem(1);
+            }
+        });
+
         Button btnLogin = view.findViewById(R.id.button_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,14 +59,7 @@ public class Login_Fragment extends Fragment {
             }
         });
 
-        VerticalTextView txtSignUp = view.findViewById(R.id.vtext_signup);
-        txtSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewPager viewPager = requireActivity().findViewById(R.id.viewpager_login);
-                viewPager.setCurrentItem(1);
-            }
-        });
+
     }
 
     /**

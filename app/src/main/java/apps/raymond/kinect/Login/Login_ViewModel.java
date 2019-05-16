@@ -58,11 +58,12 @@ public class Login_ViewModel extends ViewModel {
     }
 
     /**
-     * Fetch a User_Model object from the Repository and set mUserModel to the result.
+     * On successful user authentication, this method is called to fetch a User_Model object from
+     * the Repository and set mUserModel to the result.
      * @param userID ID of the user to retrieve from the database.
      */
     private void loadExistingUser(String userID){
-        mRepository.getCurrentUser(userID)
+        mRepository.getUserDocument(userID)
                 .addOnCompleteListener(new OnCompleteListener<User_Model>() {
                     @Override
                     public void onComplete(@NonNull Task<User_Model> task) {

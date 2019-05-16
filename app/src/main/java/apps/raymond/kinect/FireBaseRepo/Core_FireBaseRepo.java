@@ -100,7 +100,7 @@ public class Core_FireBaseRepo {
      * @param userID Index field used to retrieve the correct document.
      * @return User_Model POJO.
      */
-    public Task<User_Model> getCurrentUser(String userID){
+    public Task<User_Model> getUserDocument(String userID){
         DocumentReference userDoc = userCollection.document(userID);
         return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
             @Override
@@ -115,6 +115,7 @@ public class Core_FireBaseRepo {
             }
         });
     }
+
     public Task<Void> signOut(Context context){
         Log.i(TAG,"REPOSITORY LOG OUT METHOD.");
         return AuthUI.getInstance().signOut(context);
@@ -308,6 +309,7 @@ public class Core_FireBaseRepo {
 
     public Task<List<Event_Model>> getAcceptedEvents(String userID){
         if(userID==null){
+            Log.w(TAG,"The userId is null");
             return null;
         }
 

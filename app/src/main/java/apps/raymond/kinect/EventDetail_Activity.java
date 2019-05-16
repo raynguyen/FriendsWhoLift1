@@ -68,6 +68,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(this);
 
+        //ToDo: Consider refactoring this back to a fragment.
         viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
         informationLayout = findViewById(R.id.layout_information);

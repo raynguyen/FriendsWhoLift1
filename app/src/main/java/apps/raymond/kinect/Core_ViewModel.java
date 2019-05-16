@@ -38,6 +38,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  */
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository = new Core_FireBaseRepo();
+    private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Group_Model>> mGroupInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Message_Model>> mEventMessages = new MutableLiveData<>();
@@ -50,18 +51,40 @@ public class Core_ViewModel extends ViewModel {
 
     }
 
+    public void loadUserDocument(String userID){
+        mRepository.getUserDocument(userID)
+                .addOnCompleteListener(new OnCompleteListener<User_Model>() {
+                    @Override
+                    public void onComplete(@NonNull Task<User_Model> task) {
+                        if(task.isSuccessful()){
+                            mUserModel.setValue(task.getResult());
+                        }
+                    }
+                }
+        );
+    }
+
+    public void setUserDocument(User_Model user_model){
+        mUserModel.setValue(user_model);
+    }
+
+    public MutableLiveData<User_Model> getUserModel(){
+        return mUserModel;
+    }
+
     //*------------------------------------------EVENTS------------------------------------------*//
     /**
      * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
      * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
      * @param userID Document parameter to query to correct collection.
      */
-    public void loadUserEvents(String userID){
+    public void loadAcceptedEvents(String userID){
         mRepository.getAcceptedEvents(userID)
                 .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
                     @Override
                     public void onComplete(@NonNull Task<List<Event_Model>> task) {
                         if(task.isSuccessful()&& task.getResult()!=null){
+                            Log.w("CoreViewModel","Successfully retrieved events and will now set the result.");
                             mAcceptedEvents.setValue(task.getResult());
                         }
                     }

@@ -43,11 +43,10 @@ public class Login_Activity extends AppCompatActivity{
         final Login_ViewModel mViewModel = ViewModelProviders.of(this).get(Login_ViewModel.class);
 
         /*
-        When the login activity is first started, we listen to the User_Model live data held by the
-        Login_ViewModel. This is because we expect User_Model to be null until a user successfully
-        signs into their account. When a change in the User_Model is observed, the user has succeeded
-        in logging into their account and the application has pulled the correct User_Model from the
-        db.
+         *  When the login activity is first started, we listen to the User_Model live data held by
+         *  the Login_ViewModel. This is because we expect User_Model to be null until a user
+         *  successfully signs into their account. When a change in the User_Model is observed, the
+         *  user has logged into the app and the User's document has been fetched from the DB.
          */
         mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
             @Override
@@ -69,7 +68,7 @@ public class Login_Activity extends AppCompatActivity{
     private void launchCoreActivity(User_Model user) {
         SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
-        mainIntent.putExtra(Core_Activity.USER,user);
+        mainIntent.putExtra("user",user);
         startActivity(mainIntent);
         overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
         finish();

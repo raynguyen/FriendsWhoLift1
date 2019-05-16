@@ -1,4 +1,12 @@
 /*
+ * * Core_Activity Controls:
+ * 1. Observe the User_Model held by the Core_ViewModel. On changes, we need to finish all processes
+ *  that is a child of the Core_Activity or parallel in the application hierarchy (i.e. EventDetail,
+ *  Profile, and Map activities).
+ * 2. Handle intents to start activities as requested by it's child fragments.
+ * 3.
+ *
+ *
  * ToDo:
  * 1. Get the mUser permission for camera and document access on start up and store as a SharedPreference.
  * 3. Move all the currentUser stuff to repository return methods.
@@ -103,7 +111,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     Toolbar toolbar;
     private Core_Adapter pagerAdapter;
     private User_Model mUser;
-    private String mUserEmail;
+    private String userID;
     private Core_ViewModel mViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,24 +119,16 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.core_activity);
 
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
-
-        /*
-         * When the Core_Activity is created, we will require an instance of the user's User_Model.
-         * If this instance is started via the Login_Activity, this start intent should have been
-         * set with an argument containing the required User_Model. If this instance is started
-         * directly from the Launch_Activity we must query for the User_Model ourselves and save
-         * a reference here.
-         */
-        if(getIntent().getExtras()!=null){
+        if(getIntent().hasExtra("user")){
+            // User has logged in via the Login_Activity and we are passed their User_Model.
             mUser = getIntent().getExtras().getParcelable(USER);
-            mUserEmail = mUser.getEmail();
+            userID = mUser.getEmail();
+            mViewModel.setUserDocument(mUser);
             Log.w(TAG,"Started activity with mUser: "+mUser.getEmail());
-        } else {
-            Log.w(TAG,"Starting activity with prelogged in user. Have to retrieve doc.");
-            //QUERY REPO FOR USER_MODEL HERE
-            //COULD ATTACH LISTENER TO THE livedata in viewmodel
-
-            //The error on launch is because we are passing mUser to the EventsCore frag but mUser is null since we never set it!
+        } else if(getIntent().hasExtra("userID")){
+            // User was logged in previously and we are passed the UserID to retrieve the UseR_Model.
+            userID = getIntent().getExtras().getString("userID");
+            mViewModel.loadUserDocument(userID);
         }
 
         thisInstance = this;
@@ -149,7 +149,18 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
 
-        //mViewModel.loadUserGroups(mUserEmail);
+        mViewModel.getUserModel().observe(this, new Observer<User_Model>() {
+            @Override
+            public void onChanged(@Nullable User_Model user_model) {
+                if(user_model==null){
+                    Log.w(TAG,"The usermodel held by the view model is null. Should be logged out.");
+                } else {
+                    Log.w(TAG,"UserModel successfully retrieved.");
+                    mUser = user_model;
+                    userID = mUser.getEmail();
+                }
+            }
+        });
 
         observeInvitations();
         toolbarListener();
@@ -340,13 +351,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void exploreEvents() {
-
         /*
          * ToDo: When we go to query for a list of public events, check the result against the
          *  ViewModel's AcceptedEvents list and remove from the new result objects that appear in
          *  both lists.
          */
-
         EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUser);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
@@ -376,7 +385,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         int oldAttendingCount = event.getAttending();
         event.setAttending(oldAttendingCount + 1);
-        mViewModel.addEventToUser(mUserEmail,event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mViewModel.addEventToUser(userID,event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
@@ -384,7 +393,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        mViewModel.addUserToEvent(mUserEmail,mUser,eventName);
+        mViewModel.addUserToEvent(userID,mUser,eventName);
         mViewModel.incrementEventAttending(eventName);
 
         /*
@@ -396,19 +405,23 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
          * THIS HAS YET TO BE TESTED!!!
          */
         if(flag!= EventInvitations_Fragment.INVITATION){
-            mViewModel.checkForEventInvitation(mUserEmail,eventName)
+            mViewModel.checkForEventInvitation(userID,eventName)
                     .addOnCompleteListener(new OnCompleteListener<Boolean>() {
                         @Override
                         public void onComplete(@NonNull Task<Boolean> task) {
                             if(task.getResult()!=null){
                                 if(task.getResult()){
-                                    mViewModel.removeEventInvitation(mUserEmail,eventName);
+                                    mViewModel.removeEventInvitation(userID,eventName);
                                 }
                             }
                         }
                     });
         }
         updateEventRecycler(event);
+    }
+
+    @Override
+    public void onDeclineEvent(Event_Model event) {
     }
 
     //ToDo: this should be removed, we are listening to the EventsList inside the EventsFrag now!
@@ -419,12 +432,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         fragment.notifyNewEvent(event);
     }
 
-    @Override
-    public void onDeclineEvent(Event_Model event) {
-    }
-
-    List<Event_Model> mEventInvitations;
-    List<Group_Model> mGroupInvitations;
+    private List<Event_Model> mEventInvitations;
+    private List<Group_Model> mGroupInvitations;
     /**
      * Method call that establishes the CoreActivity as an observer to any changes in the Invitation
      * LiveData held by the ViewModel.
@@ -445,6 +454,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    /**
+     * Method that determines what the Toolbar should display depending on the visible Fragment in
+     * the ViewPager.
+     *
+     * ToDo: This should be checked to determine a more efficient pattern.
+     */
     private void toolbarListener(){
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -504,7 +519,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return EventsCore_Fragment.newInstance(mUser);
+                    return new EventsCore_Fragment();
                 case 1:
                     return new GroupsCore_Fragment();
                 default:
