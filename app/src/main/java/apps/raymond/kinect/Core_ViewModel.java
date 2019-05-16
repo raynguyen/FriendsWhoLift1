@@ -31,6 +31,10 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo: Observe the required FireStore collections in the repository. On change detections,
  *  we want to emit updates upstream to the ViewModel's LiveData via Transformations (not sure how
  *  to yet).
+ *
+ * ToDo: When we want to add/delete a single item from a list, we want to determine the difference
+ *  between the old list and the new and update the views accordingly. This way we reduce the number
+ *  of recycler view items that have to be recreated.
  */
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository = new Core_FireBaseRepo();

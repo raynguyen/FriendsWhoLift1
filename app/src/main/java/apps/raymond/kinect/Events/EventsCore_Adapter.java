@@ -1,6 +1,7 @@
 package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,13 +30,15 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         void onEventClick(int position, Event_Model groupEvent);
     }
 
-    private List<Event_Model> eventsListFull;
-    private List<Event_Model> eventsListClone;
+    private List<Event_Model> mListFull;
+    private List<Event_Model> mListClone;
 
-    public EventsCore_Adapter(List<Event_Model> eventsList, EventClickListener eventClickListener){
+    public EventsCore_Adapter(EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
-        this.eventsListFull = new ArrayList<>(eventsList);
-        eventsListClone = eventsList;
+
+        //List<Event_Model> eventsList as argument
+        //this.mListFull = new ArrayList<>(eventsList);
+        //mListClone = eventsList;
     }
 
     @NonNull
@@ -48,8 +51,8 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     @Override
     public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
-        if(eventsListFull !=null){
-            final Event_Model currEvent = eventsListFull.get(position);
+        if(mListFull !=null){
+            final Event_Model currEvent = mListFull.get(position);
             if(currEvent.getLong1()!=0){
                 long long1 = currEvent.getLong1();
                 Calendar c = Calendar.getInstance();
@@ -103,21 +106,84 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     @Override
     public int getItemCount() {
-        if(eventsListFull !=null){
-            return eventsListFull.size();
+        if(mListFull !=null){
+            return mListFull.size();
         } else {
             return 0;
         }
     }
 
-    public void setData(List<Event_Model> eventsList){
-        this.eventsListFull = new ArrayList<>(eventsList);
-        eventsListClone = eventsList;
-        notifyDataSetChanged();
+    /**
+     * Method to set the data for the RecyclerView. If mListFull is null, this adapter has not been
+     * passed data to populate the recycler view.
+     *
+     * DiffUtil is used to determine the changes between the existing mListFull and eventsList.
+     * Using the change determined by DiffUtil, we can simply request the Adapter to create/delete
+     * views as required by the change in data.
+     *
+     * Note that notifyItemRangeChanged is preferred over notifyDataSetChanged.
+     *
+     * @param newList New data set to populate the RecyclerView
+     */
+    public void setData(final List<Event_Model> newList){
+        if(mListFull ==null){
+
+            //mListFull = new ArrayList<>(eventsList);Checking to see if below works.
+            mListFull = newList;
+            mListClone = newList;
+            notifyItemRangeChanged(0,newList.size());
+        } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return mListFull.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return newList.size();
+                }
+
+                /**
+                 * Checks to see if the Events in both lists are the same. We use the originalName
+                 * field as the unique identifier to determine unique Event objects.
+                 * @return True if the items being compared are the same.
+                 */
+                @Override
+                public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                    Log.w("CoreAdapterDiff","The items at position: "+oldPosition + " and " + newPosition +" = " +
+                            mListFull.get(oldPosition).getOriginalName().equals(newList.get(newPosition).getOriginalName()));
+
+                    return mListFull.get(oldPosition).getOriginalName()
+                            .equals(newList.get(newPosition).getOriginalName());
+                }
+
+                /**
+                 * Compares Event objects that share the same OriginalName to see if their fields
+                 * have changed. Currently written to only be considered for fields that are shown
+                 * in the ViewHolder.
+                 *
+                 * Fields that may have changed: Name, long1 (start date),
+                 * @return False if any fields between the objects have changed.
+                 */
+                @Override
+                public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                    Event_Model oldEvent = mListFull.get(oldPosition);
+                    Event_Model newEvent = newList.get(newPosition);
+                    return oldEvent.getLong1() == newEvent.getLong1()
+                            && oldEvent.getAddress().equals(newEvent.getAddress())
+                            && oldEvent.getAttending() == newEvent.getAttending();
+                }
+            });
+            mListFull = newList;
+            mListClone = newList;
+            Log.w("EventCoreAdapterDiff","Completed calculating diff. Result = "+result.toString());
+            //result.dispatchUpdatesTo(this);
+        }
     }
 
     public void notifyDataAdded(Event_Model event, int position){
-        eventsListFull.add(event);
+        mListFull.add(event);
         notifyItemInserted(position);
     }
 
@@ -133,10 +199,10 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             List<Event_Model> filteredList = new ArrayList<>();
 
             if(constraint == null || constraint.length() == 0){
-                filteredList.addAll(eventsListClone);
+                filteredList.addAll(mListClone);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                for(Event_Model event : eventsListClone){
+                for(Event_Model event : mListClone){
                     if(event.getName().toLowerCase().contains(filterPattern)){
                         filteredList.add(event);
                     }
@@ -150,8 +216,8 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            eventsListFull.clear();
-            eventsListFull.addAll((List) results.values);
+            mListFull.clear();
+            mListFull.addAll((List) results.values);
             notifyDataSetChanged();
         }
     };

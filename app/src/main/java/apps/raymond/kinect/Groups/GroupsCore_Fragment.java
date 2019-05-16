@@ -117,7 +117,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
      */
     //This guy reads from the fields of the document. App crashes at this point because it is returning an object that is not a groupbase so groupbase.getname blows up!
     private void updateCardViews(){
-        viewModel.getUsersGroups();
+        //viewModel.getUsersGroups();
                 /*
                 .addOnCompleteListener(new OnCompleteListener<List<Task<Group_Model>>>() {
             @Override

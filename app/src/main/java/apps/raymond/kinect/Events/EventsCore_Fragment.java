@@ -42,8 +42,13 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
     }
 
     public static EventsCore_Fragment newInstance(User_Model userModel){
+        Log.w(TAG,"Is newinstance for event core frag ever called?");
         EventsCore_Fragment fragment = new EventsCore_Fragment();
         Bundle args = new Bundle();
+
+        Log.w(TAG,"Starting new fragment with user: "+userModel.getEmail());
+
+
         args.putParcelable("user",userModel);
         fragment.setArguments(args);
         return fragment;
@@ -70,8 +75,12 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
 
         if(getArguments()!=null){
+            Log.w(TAG,"Are we getting the arguments for this fragment?");
             mUserModel = getArguments().getParcelable("user");
-            mUserID = mUserModel.getEmail();
+            if(mUserModel!=null){
+                Log.w(TAG,"Core Events Fragment has user email: "+mUserModel.getEmail());
+            }
+            //mUserID = mUserModel.getEmail();
         }
     }
 
@@ -84,25 +93,25 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
 
     private TextView nullText;
     int scrolledHeight = 0;
-    private List<Event_Model> mAcceptedEvents;
+    private List<Event_Model> mAcceptedEvents; //We don't really want to have a reference to a list here, it is useless data if only the adapter is concerned.
     private ProgressBar progressBar;
     private EventsCore_Adapter mAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         progressBar = view.findViewById(R.id.progress_bar);
-        nullText = getView().findViewById(R.id.fragment_null_data_text);
+        nullText = view.findViewById(R.id.fragment_null_data_text);
+
         final Button exploreEventsBtn = view.findViewById(R.id.search_events_btn);
         exploreEventsBtn.setOnClickListener(this);
+
         final RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAcceptedEvents = new ArrayList<>();
-        mAdapter = new EventsCore_Adapter(mAcceptedEvents, this);
+        mAdapter = new EventsCore_Adapter(this);
         eventsRecycler.setAdapter(mAdapter);
         eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
-
         eventsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -118,10 +127,6 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             }
         });
 
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-            loadEvents();
-        }
-
         /*
          * Observe the ViewModel's LiveData fields. When a change is detected, we want to **********
          */
@@ -130,19 +135,17 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             public void onChanged(@Nullable List<Event_Model> event_models) {
                 Log.w(TAG,"Detected a change in the accepted events from the core.");
                 if(event_models!=null){
-                    mAdapter.setData(event_models);
-
-                    //The listener is currently only for when the fragment is first instantiated.
-                    //We hold a copy of the initial list in this Fragment instance and add/delete
-                    //from it and call the appropriate methods to the ViewModel to update the DB while
-                    //synchronously updating the list here.
+                    /*The listener is currently only for when the fragment is first instantiated.
+                    We hold a copy of the initial list in this Fragment instance and add/delete
+                    from it and call the appropriate methods to the ViewModel to update the DB while
+                    synchronously updating the list here.*/
                     Log.w(TAG,"EventsList consists of: "+event_models.toString());
                     mAcceptedEvents = new ArrayList<>(event_models);
                     progressBar.setVisibility(View.GONE);
                     if(!mAcceptedEvents.isEmpty()){
                         nullText.setVisibility(View.GONE);
                         mAdapter.setData(mAcceptedEvents);
-                        mAdapter.notifyDataSetChanged();
+                        //mAdapter.notifyDataSetChanged();
                     } else {
                         nullText.setVisibility(View.VISIBLE);
                     }
@@ -150,23 +153,9 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
             }
         });
 
-        mViewModel.loadUserEvents(mUserID);
-    }
-
-    /**
-     * Method call to observe a List<Event_Model> that is held by the Core_ViewModel. Changes to this
-     * list triggers this fragment to update the RecyclerView through mAdapter.
-     */
-    private void loadEvents(){
-        mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Event_Model> event_models) {
-                Log.w(TAG,"There was a change in the list.");
-                if(event_models!=null){
-
-                }
-            }
-        });
+        //Tell the ViewModel to query the data base for the User's Events collection.
+        //This method returns an error because it is returning null and not a Task. Check how to properly load the Events.
+        //mViewModel.loadUserEvents(mUserID);
     }
 
     @Override
@@ -197,6 +186,11 @@ public class EventsCore_Fragment extends Fragment implements View.OnClickListene
         mAdapter.notifyDataAdded(event, mAcceptedEvents.size()-1);
     }
 
+    /**
+     * Call from the Core_Activity whenever text is written to the Toolbar's Searchview. We cascade
+     * this text to the Adapter to filter the RecyclerView's ViewHolders corresponding to the search.
+     * @param constraint The filtering parameters
+     */
     public void filterRecycler(String constraint){
         mAdapter.getFilter().filter(constraint);
     }

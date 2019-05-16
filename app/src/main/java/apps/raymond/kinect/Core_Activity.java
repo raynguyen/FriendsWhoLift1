@@ -110,10 +110,25 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.core_activity);
 
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+
+        /*
+         * When the Core_Activity is created, we will require an instance of the user's User_Model.
+         * If this instance is started via the Login_Activity, this start intent should have been
+         * set with an argument containing the required User_Model. If this instance is started
+         * directly from the Launch_Activity we must query for the User_Model ourselves and save
+         * a reference here.
+         */
         if(getIntent().getExtras()!=null){
             mUser = getIntent().getExtras().getParcelable(USER);
             mUserEmail = mUser.getEmail();
             Log.w(TAG,"Started activity with mUser: "+mUser.getEmail());
+        } else {
+            Log.w(TAG,"Starting activity with prelogged in user. Have to retrieve doc.");
+            //QUERY REPO FOR USER_MODEL HERE
+            //COULD ATTACH LISTENER TO THE livedata in viewmodel
+
+            //The error on launch is because we are passing mUser to the EventsCore frag but mUser is null since we never set it!
         }
 
         thisInstance = this;
@@ -134,15 +149,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
 
-        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
-
-        mViewModel.loadUserGroups(mUserEmail);
+        //mViewModel.loadUserGroups(mUserEmail);
 
         observeInvitations();
         toolbarListener();
     }
-
-
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -468,6 +479,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    /**
+     * Adapter class that is designated to create Fragments for a ViewPager.
+     */
     public class Core_Adapter extends FragmentStatePagerAdapter {
         private static final int EVENTS_FRAGMENT = 0;
 
@@ -480,6 +494,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            Log.w(TAG,"Is this instiateItem ever called?");
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
             fragments.add(position, fragment);
             return fragment;
