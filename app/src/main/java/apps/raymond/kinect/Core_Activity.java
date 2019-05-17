@@ -91,7 +91,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         GroupCreate_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface,
         EventControl_Fragment.EventControlInterface {
 
-    public static final String USER = "User";
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
     private static final String CREATE_EVENT_FRAG = "CreateEvent";
@@ -113,6 +112,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     private User_Model mUser;
     private String userID;
     private Core_ViewModel mViewModel;
+    private List<Event_Model> mEventInvitations;
+    private List<Group_Model> mGroupInvitations;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,13 +121,10 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         if(getIntent().hasExtra("user")){
-            // User has logged in via the Login_Activity and we are passed their User_Model.
-            mUser = getIntent().getExtras().getParcelable(USER);
+            mUser = getIntent().getExtras().getParcelable("user");
             userID = mUser.getEmail();
             mViewModel.setUserDocument(mUser);
-            Log.w(TAG,"Started activity with mUser: "+mUser.getEmail());
         } else if(getIntent().hasExtra("userID")){
-            // User was logged in previously and we are passed the UserID to retrieve the UseR_Model.
             userID = getIntent().getExtras().getString("userID");
             mViewModel.loadUserDocument(userID);
         }
@@ -158,11 +156,25 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                     Log.w(TAG,"UserModel successfully retrieved.");
                     mUser = user_model;
                     userID = mUser.getEmail();
+                    mViewModel.loadUserMessages(userID);
                 }
             }
         });
 
-        observeInvitations();
+        mViewModel.getEventInvitations().observe(this, new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                mEventInvitations = event_models;
+            }
+        });
+
+        mViewModel.getGroupInvitations().observe(this, new Observer<List<Group_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Group_Model> group_models) {
+                mGroupInvitations = group_models;
+            }
+        });
+
         toolbarListener();
     }
 
@@ -183,28 +195,25 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public boolean onCreateOptionsMenu(Menu menu){
        if(getSupportFragmentManager().getBackStackEntryCount()>0){
             return false;
-        } else {
-           if(menu.size()==0){
+       } else {
+            if(menu.size()==0){
                getMenuInflater().inflate(R.menu.core_menu,menu);
                toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
                toolbar.setNavigationOnClickListener(this);
                eventCreate = menu.findItem(R.id.action_create_event);
                groupCreate = menu.findItem(R.id.action_create_group);
                return true;
-           }
-           return false;
-        }
+            }
+            return false;
+       }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_invitations:
-                Log.i(TAG,"Clicked on invites button");
                 ViewInvitations_Fragment fragment =
                         ViewInvitations_Fragment.newInstance(mEventInvitations,mGroupInvitations);
-
-                //ViewInvitations_Fragment inviteDialog = new ViewInvitations_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,fragment,INV_FRAG)
                         .addToBackStack(INV_FRAG)
@@ -336,19 +345,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         return super.dispatchTouchEvent(ev);
     }
 
-    //This is called to update the Core Recycler views when the mUser accepts an invitation.
-    /*@Override
-    public void eventAccepted(Event_Model event) {
-        Log.i(TAG,"Accepted invite to: "+event.getName());
-        EventsCore_Fragment fragment = (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.notifyNewEvent(event);
-    }
-
-    @Override
-    public void eventDeclined(Event_Model event) {
-        Log.i(TAG,"Declined invite to: "+event.getName());
-    }*/
-
     @Override
     public void exploreEvents() {
         /*
@@ -380,16 +376,18 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
      *             mUser opted to attend the event via exploration.
      */
     @Override
-    public void onAttendEvent(Event_Model event, int flag) {
+    public void onAttendEvent(final Event_Model event, int flag) {
         final String eventName = event.getOriginalName();
-
         int oldAttendingCount = event.getAttending();
+
         event.setAttending(oldAttendingCount + 1);
         mViewModel.addEventToUser(userID,event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
                         .show();
+                mViewModel.addEventToListTest(event); //Checking here to see if we can properly add event to the list in the viewmodel.
+                //mViewModel.removeEventInvitation();
             }
         });
 
@@ -401,8 +399,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
          * therefore need to determine if the mUser has an invitation from the newly attending event
          * via the checkForEventInvitation call on the repository. It will return true if the event
          * invitation document exists.
-         *
-         * THIS HAS YET TO BE TESTED!!!
          */
         if(flag!= EventInvitations_Fragment.INVITATION){
             mViewModel.checkForEventInvitation(userID,eventName)
@@ -417,41 +413,10 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         }
                     });
         }
-        updateEventRecycler(event);
     }
 
     @Override
     public void onDeclineEvent(Event_Model event) {
-    }
-
-    //ToDo: this should be removed, we are listening to the EventsList inside the EventsFrag now!
-    @Override
-    public void updateEventRecycler(Event_Model event) {
-        EventsCore_Fragment fragment =
-                (EventsCore_Fragment) pagerAdapter.getFragment(Core_Adapter.EVENTS_FRAGMENT);
-        fragment.notifyNewEvent(event);
-    }
-
-    private List<Event_Model> mEventInvitations;
-    private List<Group_Model> mGroupInvitations;
-    /**
-     * Method call that establishes the CoreActivity as an observer to any changes in the Invitation
-     * LiveData held by the ViewModel.
-     */
-    private void observeInvitations(){
-        mViewModel.getEventInvitations().observe(this, new Observer<List<Event_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Event_Model> event_models) {
-                Log.w(TAG,"There was a change in the event invitations!");
-                mEventInvitations = event_models;
-            }
-        });
-        mViewModel.getGroupInvitations().observe(this, new Observer<List<Group_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Group_Model> group_models) {
-                mGroupInvitations = group_models;
-            }
-        });
     }
 
     /**

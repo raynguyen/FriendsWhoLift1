@@ -14,19 +14,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import apps.raymond.kinect.DialogFragments.EventInvitations_Adapter;
 import apps.raymond.kinect.R;
 
 public class EventInvitations_Fragment extends EventControl_Fragment
-        implements EventInvitations_Adapter.InviteResponseListener {
-    private static final String TAG = "Event_Invite_Fragment";
+        implements EventInvitations_Adapter.EventInvitationInterface {
     private static final String DATASET = "DataSet";
     private EventControlInterface mInterface;
 
     public static EventInvitations_Fragment newInstance(ArrayList<Event_Model> eventInvitations){
         EventInvitations_Fragment fragment = new EventInvitations_Fragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(DATASET,eventInvitations);
+        args.putParcelableArrayList(DATASET, eventInvitations);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,6 +74,11 @@ public class EventInvitations_Fragment extends EventControl_Fragment
         }
     }
 
+    /**
+     * Interface implementation that informs the host activity whenever the user accepts an event
+     * invitation.
+     * @param event The event accepted from the RecyclerView.
+     */
     @Override
     public void onAcceptEventInvitation(final Event_Model event) {
         mInterface.onAttendEvent(event, EventControl_Fragment.INVITATION);

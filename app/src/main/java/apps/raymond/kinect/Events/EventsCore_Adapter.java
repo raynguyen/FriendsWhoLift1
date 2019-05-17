@@ -1,7 +1,9 @@
 package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
+import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +29,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     private EventClickListener eventClickListener;
     public interface EventClickListener {
-        void onEventClick(int position, Event_Model groupEvent);
+        void onEventClick(Event_Model groupEvent);
     }
 
     private List<Event_Model> mListFull;
@@ -35,10 +37,6 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     public EventsCore_Adapter(EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
-
-        //List<Event_Model> eventsList as argument
-        //this.mListFull = new ArrayList<>(eventsList);
-        //mListClone = eventsList;
     }
 
     @NonNull
@@ -98,7 +96,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             vh.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    eventClickListener.onEventClick(vh.getAdapterPosition(),currEvent);
+                    eventClickListener.onEventClick(currEvent);
                 }
             });
         }
@@ -127,10 +125,8 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
      */
     public void setData(final List<Event_Model> newList){
         if(mListFull ==null){
-
-            //mListFull = new ArrayList<>(eventsList);Checking to see if below works.
-            mListFull = newList;
-            mListClone = newList;
+            mListFull = new ArrayList<>(newList);
+            mListClone = mListFull;
             notifyItemRangeChanged(0,newList.size());
         } else {
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
@@ -151,9 +147,6 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
                  */
                 @Override
                 public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                    Log.w("CoreAdapterDiff","The items at position: "+oldPosition + " and " + newPosition +" = " +
-                            mListFull.get(oldPosition).getOriginalName().equals(newList.get(newPosition).getOriginalName()));
-
                     return mListFull.get(oldPosition).getOriginalName()
                             .equals(newList.get(newPosition).getOriginalName());
                 }
@@ -177,14 +170,9 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             });
             mListFull = newList;
             mListClone = newList;
-            Log.w("EventCoreAdapterDiff","Completed calculating diff. Result = "+result.toString());
-            //result.dispatchUpdatesTo(this);
+            result.dispatchUpdatesTo(this);
+            //ToDo: dispatchUpdates doesn't seem to create a view for the item if we are at the bottom of the recycler. Determine why.
         }
-    }
-
-    public void notifyDataAdded(Event_Model event, int position){
-        mListFull.add(event);
-        notifyItemInserted(position);
     }
 
     @Override
@@ -195,9 +183,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     private Filter eventFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            Log.i("Adapter","Filtering recycler view.");
             List<Event_Model> filteredList = new ArrayList<>();
-
             if(constraint == null || constraint.length() == 0){
                 filteredList.addAll(mListClone);
             } else {
@@ -214,6 +200,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             return results;
         }
 
+        //ToDo: The search functionality no longer works, we are unable to clear the filtered list after search.
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mListFull.clear();

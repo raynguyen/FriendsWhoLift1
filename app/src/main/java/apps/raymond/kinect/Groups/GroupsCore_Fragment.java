@@ -40,7 +40,6 @@ import apps.raymond.kinect.Core_ViewModel;
 
 public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
     private static final String TAG = "GroupsCore_Fragment";
-    private Groups_ViewModel model;
 
     //Required empty fragment. Not sure why it is needed.
     public GroupsCore_Fragment(){}
@@ -48,9 +47,7 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        model = ViewModelProviders.of(requireActivity()).get(Groups_ViewModel.class);
         viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
-        subscribeToModel();
     }
 
     Core_ViewModel viewModel;
@@ -94,16 +91,6 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
         groupsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
         groupsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
-    }
-
-    private void subscribeToModel(){
-        model.getGroups().observe(this, new Observer<List<Group_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Group_Model> groupBases) {
-                Log.i(TAG,"DOES THIS EVER GET CALLED");
-                mAdapter.setData(myGroups);
-            }
-        });
     }
 
     /*

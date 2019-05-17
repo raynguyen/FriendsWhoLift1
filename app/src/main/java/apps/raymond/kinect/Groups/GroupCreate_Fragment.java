@@ -42,14 +42,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Add_Users_Adapter;
+import apps.raymond.kinect.AddUsers_Adapter;
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.SearchUsersDialog;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
@@ -59,7 +57,7 @@ import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class GroupCreate_Fragment extends Fragment implements
-        View.OnClickListener, BackPressListener, Add_Users_Adapter.CheckProfileInterface {
+        View.OnClickListener, BackPressListener, AddUsers_Adapter.CheckProfileInterface {
     public static final String TAG = "GroupCreate_Fragment";
     private static final int IMAGE_REQUEST_CODE = 11;
     private static final int CAMERA_REQUEST_CODE = 12;
@@ -127,7 +125,7 @@ public class GroupCreate_Fragment extends Fragment implements
     Spinner invite_Spinner;
     ProgressBar progressBar;
     TextView progressText;
-    Add_Users_Adapter userAdapter;
+    AddUsers_Adapter userAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -161,7 +159,7 @@ public class GroupCreate_Fragment extends Fragment implements
 
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        userAdapter = new Add_Users_Adapter(usersList, this);
+        userAdapter = new AddUsers_Adapter(usersList, this);
         usersRecycler.setAdapter(userAdapter);
     }
 

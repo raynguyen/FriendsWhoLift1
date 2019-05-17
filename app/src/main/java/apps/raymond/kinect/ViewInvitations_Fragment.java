@@ -79,6 +79,9 @@ public class ViewInvitations_Fragment extends Fragment{
         });
     }
 
+    /**
+     * Adapter class responsible for building the fragments for our ViewPager.
+     */
     public class InvitePagerAdapter extends FragmentPagerAdapter {
         private InvitePagerAdapter(FragmentManager fm){
             super(fm);

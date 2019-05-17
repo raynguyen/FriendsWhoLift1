@@ -12,7 +12,7 @@ import java.util.List;
 
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.UserViewHolder> {
+public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.UserViewHolder> {
 
     public interface CheckProfileInterface{
         void addToCheckedList(User_Model clickedUser);
@@ -21,7 +21,7 @@ public class Add_Users_Adapter extends RecyclerView.Adapter<Add_Users_Adapter.Us
 
     private List<User_Model> users;
     private CheckProfileInterface checkedInterface;
-    public Add_Users_Adapter(List<User_Model> users, CheckProfileInterface checkedInterface){
+    public AddUsers_Adapter(List<User_Model> users, CheckProfileInterface checkedInterface){
         this.users = users;
         this.checkedInterface = checkedInterface;
     }

@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import apps.raymond.kinect.Add_Users_Adapter;
+import apps.raymond.kinect.AddUsers_Adapter;
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
@@ -66,7 +66,7 @@ import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Fragment extends EventControl_Fragment implements View.OnClickListener,
-        Add_Users_Adapter.CheckProfileInterface, BackPressListener,
+        AddUsers_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     public static final String TAG = "EventCreate_Fragment";
@@ -80,25 +80,11 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     public static final int END_DATE_REQUEST = 24;
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
-    private EventControlInterface testInterface;
     private FragmentManager fm;
-
-    public static EventCreate_Fragment newInstance(User_Model mUser){
-        EventCreate_Fragment fragment = new EventCreate_Fragment();
-        Bundle args = new Bundle();
-        args.putParcelable("user",mUser);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try{
-            testInterface = (EventControlInterface) context;
-        }catch (ClassCastException e){
-            Log.i(TAG,"Unable to attach EventCreatedListener interface to activity.");
-        }
         fm = requireActivity().getSupportFragmentManager();
     }
 
@@ -111,16 +97,8 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mViewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
-
-        try{
-            mUser = getArguments().getParcelable("user");
-            userID = mUser.getEmail();
-        } catch (Exception e){
-            Log.w(TAG,"Exception.",e);
-        }
-
-
-
+        mUser = mViewModel.getUserModel().getValue();
+        userID = mUser.getEmail();
         fetchUsersList();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
@@ -144,7 +122,7 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     TextView startDateTxt, endDateTxt, startTimeTxt, endTimeTxt,tagsContainer;
     Spinner visibilitySpinner;
     ProgressBar progressBar;
-    Add_Users_Adapter userAdapter;
+    AddUsers_Adapter userAdapter;
     List<User_Model> usersList, inviteUsersList;
     ArrayList<String> tagsList, primesList;
     LinearLayout inviteUsersLayout;
@@ -225,7 +203,7 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
         inviteUsersList = new ArrayList<>();
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        userAdapter = new Add_Users_Adapter(usersList, this);
+        userAdapter = new AddUsers_Adapter(usersList, this);
         usersRecycler.setAdapter(userAdapter);
 
         ImageButton expandRecycler = view.findViewById(R.id.expand_users_list);
@@ -330,7 +308,6 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     }
 
     private void datePickerDialog(String s){
-
         switch (s){
             case SEQUENCE_START:
                 DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
@@ -390,24 +367,19 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
     }
 
     /**
-     * Calls upon the Core_FireBaseRepo to return a query of all the user documents in FireStore.
-     * This needs to be changed so that we only query an appropriate set of users that are set and
-     * eligible for event invitations.
+     * Function to retrieve a list of users that are eligible to be invited to this new event.
      */
     private void fetchUsersList(){
-        mViewModel.fetchUsers(userID).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                if(task.isSuccessful()){
-                    usersList.addAll(task.getResult());
-                    userAdapter.notifyDataSetChanged();
-                    //inviteUsersLayout.setVisibility(View.VISIBLE);
-                } else {
-                    Log.i(TAG,"Error retrieving suggested inviteUsersList list. " + task.getException());
-                    Toast.makeText(getContext(),"Error retrieving suggested invitees.",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        mViewModel.fetchUsers(userID)
+                .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<User_Model>> task) {
+                        if(task.isSuccessful()){
+                            usersList.addAll(task.getResult());
+                            userAdapter.notifyItemRangeChanged(0, usersList.size());
+                        }
+                    }
+                });
     }
 
     @Override
@@ -466,15 +438,15 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(getContext(),
-                            "Created event " + event.getName(),
+                    Toast.makeText(getContext(),"Created event " + event.getName(),
                             Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.INVISIBLE);
-                    testInterface.updateEventRecycler(event);
                     mViewModel.addEventToUser(userID,event);
                     mViewModel.addUserToEvent(userID,mUser,event.getOriginalName());
                     mViewModel.sendEventInvites(event, inviteUsersList);
                     fm.popBackStack();
+
+                    //ToDo: Add the event to the LiveData list as well.
                 }
             }
         });

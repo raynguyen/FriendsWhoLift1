@@ -51,8 +51,8 @@ public class Login_Activity extends AppCompatActivity{
         mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
             @Override
             public void onChanged(@Nullable User_Model user_model) {
-                Log.w("LoginActivity","Current user is: "+user_model.getEmail());
-                launchCoreActivity(mViewModel.getCurrentUser().getValue());
+                Log.w("LoginActivity","Current user: "+user_model.getEmail());
+                launchCoreActivity(user_model);
             }
         });
 
@@ -66,7 +66,7 @@ public class Login_Activity extends AppCompatActivity{
      * @param user The observed User_Model.
      */
     private void launchCoreActivity(User_Model user) {
-        SharedPreferences userPreferences = getPreferences(MODE_PRIVATE);
+
         Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
         mainIntent.putExtra("user",user);
         startActivity(mainIntent);
@@ -86,7 +86,6 @@ public class Login_Activity extends AppCompatActivity{
         }
         return super.dispatchTouchEvent(ev);
     }
-
 
     public class LoginPagerAdapter extends FragmentPagerAdapter {
 

@@ -1,8 +1,7 @@
-package apps.raymond.kinect.DialogFragments;
+package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,20 +10,23 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 
-public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitations_Adapter.InviteMessagesViewHolder> {
+/**
+ * Adapter class responsible for inflating the views for the event invitations recycler view.
+ */
+public class EventInvitations_Adapter extends
+        RecyclerView.Adapter<EventInvitations_Adapter.InviteMessagesViewHolder> {
     private List<Event_Model> eventInviteSet;
-    private InviteResponseListener callback;
+    private EventInvitationInterface callback;
 
-    public interface InviteResponseListener{
+    public interface EventInvitationInterface {
         void onAcceptEventInvitation(Event_Model event);
         void onDeclineEventInvitation(Event_Model event);
         void onEventDetail(Event_Model event);
     }
 
-    public EventInvitations_Adapter(InviteResponseListener callback){
+    public EventInvitations_Adapter(EventInvitationInterface callback){
         this.callback = callback;
     }
 
@@ -85,7 +87,6 @@ public class EventInvitations_Adapter extends RecyclerView.Adapter<EventInvitati
     }
 
     public void removeItem(int position){
-        Log.w("EventInviteAdapter","Should now remove item in position: "+position);
         eventInviteSet.remove(position);
         notifyItemRemoved(position);
     }

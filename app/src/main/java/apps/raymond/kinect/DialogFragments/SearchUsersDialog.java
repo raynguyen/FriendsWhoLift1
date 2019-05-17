@@ -42,7 +42,7 @@ public class SearchUsersDialog extends DialogFragment {
         List<String> testList = new ArrayList<>();
         usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        //Add_Users_Adapter adapter = new Add_Users_Adapter(SOME_LIST_OF_USERMODELS);
+        //AddUsers_Adapter adapter = new AddUsers_Adapter(SOME_LIST_OF_USERMODELS);
         //usersRecycler.setAdapter(adapter);
 
         //When an item inside the usersRecycler is clicked, we need to check it and add to arraylist.

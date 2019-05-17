@@ -35,6 +35,8 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo: When we want to add/delete a single item from a list, we want to determine the difference
  *  between the old list and the new and update the views accordingly. This way we reduce the number
  *  of recycler view items that have to be recreated.
+ *
+ * ToDo: The ViewModel should expose LiveData objects to it's observers, not the Mutable form.
  */
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository = new Core_FireBaseRepo();
@@ -46,10 +48,7 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> publicEvents = new MutableLiveData<>();
     private MutableLiveData<List<Group_Model>> mUsersGroups = new MutableLiveData<>();
 
-    public Core_ViewModel(){
-        Log.w("CoreViewModel","New instance of CoreViewModel");
-
-    }
+    public Core_ViewModel(){}
 
     public void loadUserDocument(String userID){
         mRepository.getUserDocument(userID)
@@ -71,7 +70,6 @@ public class Core_ViewModel extends ViewModel {
     public MutableLiveData<User_Model> getUserModel(){
         return mUserModel;
     }
-
     //*------------------------------------------EVENTS------------------------------------------*//
     /**
      * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
@@ -92,6 +90,56 @@ public class Core_ViewModel extends ViewModel {
     }
 
     /**
+     * Pass a reference to mAcceptedEvents to the caller.
+     * @return Observable list mAcceptedEvents.
+     */
+    public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
+        return mAcceptedEvents;
+    }
+
+    //Currently testing this one to see if the EventsCoreFragment notices when we update the live data list via this method.
+    public void addEventToListTest(Event_Model event){
+        Log.w("CoreViewModel","Attempting to add to event list: "+event.getOriginalName());
+        List<Event_Model> eventList = mAcceptedEvents.getValue();
+        eventList.add(event);
+        mAcceptedEvents.setValue(eventList);
+    }
+
+    /**
+     * Query the data base to retrieve a list of the user's invitations.
+     * @param userID User for whom we are retrieving the invitation sets
+     */
+    public void loadUserMessages(String userID){
+        mRepository.getEventInvitations(userID)
+                .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Event_Model>> task) {
+                        if(task.isSuccessful()){
+                            mEventInvitations.setValue(task.getResult());
+                        }
+                    }
+                });
+
+        mRepository.getGroupInvitations(userID)
+                .addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Group_Model>> task) {
+                        if(task.isSuccessful()){
+                            mGroupInvitations.setValue(task.getResult());
+                        }
+                    }
+                });
+    }
+
+    public MutableLiveData<List<Event_Model>> getEventInvitations(){
+        return mEventInvitations;
+    }
+
+    public MutableLiveData<List<Group_Model>> getGroupInvitations(){
+        return mGroupInvitations;
+    }
+
+    /**
      * Fetch the user's Group collection from the database and set the result to mUsersGroups.
      * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
      * @param userID Document parameter to query to correct collection.
@@ -106,10 +154,6 @@ public class Core_ViewModel extends ViewModel {
                         }
                     }
                 });
-    }
-
-    public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
-        return mAcceptedEvents;
     }
 
     public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
@@ -273,12 +317,8 @@ public class Core_ViewModel extends ViewModel {
                 });
                */
     }
-    public MutableLiveData<List<Event_Model>> getEventInvitations(){
-        return mEventInvitations;
-    }
-    public MutableLiveData<List<Group_Model>> getGroupInvitations(){
-        return mGroupInvitations;
-    }
+
+
 }
 
 
