@@ -142,16 +142,11 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
                 @Override
                 public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                    Log.w("EventsCoreAdapter",
-                            mListFull.get(oldPosition).getOriginalName() + ", "
-                            + newList.get(newPosition).getOriginalName() + " = "
-                            + mListFull.get(oldPosition).getOriginalName()
-                            .equals(newList.get(newPosition).getOriginalName()));
                     return mListFull.get(oldPosition).getOriginalName()
                             .equals(newList.get(newPosition).getOriginalName());
                 }
 
-                //Disabled currently/
+                //Disabled currently
                 @Override
                 public boolean areContentsTheSame(int oldPosition, int newPosition) {
                     return true;

@@ -156,7 +156,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                     Log.w(TAG,"UserModel successfully retrieved.");
                     mUser = user_model;
                     userID = mUser.getEmail();
-                    mViewModel.loadUserMessages(userID);
+                    mViewModel.loadUserInvitations(userID);
                 }
             }
         });
@@ -396,14 +396,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         mViewModel.setAcceptedEvents(updatedEventList);
                     }
                 });
-        mViewModel.addUserToEvent(userID,mUser,eventName);
-        mViewModel.incrementEventAttending(eventName);
 
-        //THIS ONLY NEEDS TO BE CALLED IF THE USER ACCEPTS VIA EVENT INVITATION.
-        List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
-        updatedInvitationList.remove(event);
-        mViewModel.setEventInvitations(updatedInvitationList);
-        mViewModel.removeEventInvitation(userID,eventName);
         /*
          * If the flag is 0, the mUser is attending the event through the ExploreEvents fragment. We
          * therefore need to determine if the mUser has an invitation from the newly attending event
@@ -411,18 +404,24 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
          * invitation document exists.
          */
         if(flag!=EventInvitations_Fragment.INVITATION){
-            mViewModel.checkForEventInvitation(userID,eventName)
-                    .addOnCompleteListener(new OnCompleteListener<Boolean>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Boolean> task) {
-                            if(task.getResult()!=null){
-                                if(task.getResult()){
-                                    mViewModel.removeEventInvitation(userID,eventName);
-                                }
-                            }
-                        }
-                    });
+            List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
+            if(updatedInvitationList.contains(event)){
+                updatedInvitationList.remove(event);
+                mViewModel.setEventInvitations(updatedInvitationList);
+                mViewModel.removeEventInvitation(userID,eventName);
+                //todo: REMOVE USER FROM THE EVENT INVITED COLLECTION AS WELL
+
+                /*
+                 * We just accepted an event from the Explore map but the invitation was not removed
+                 * when accepted the event via the map.
+                 *
+                 * User still has the event invite in their EventInvites collection
+                 * Event Invited collection still has the user in the collection
+                 * Invited count has to be decremented when the user joins and has an invite.
+                 */
+            }
         }
+        mViewModel.addUserToEvent(userID,mUser,eventName);
     }
 
     @Override
@@ -445,7 +444,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                     String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
                     final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
                     if(fragment instanceof GroupCreate_Fragment || fragment instanceof EventCreate_Fragment){
-                        //More efficient to create an onclicklistener once and reuse the same isntead of calling new everytime backstack is changed.
                         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -473,8 +471,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
      * Adapter class that is designated to create Fragments for a ViewPager.
      */
     public class Core_Adapter extends FragmentStatePagerAdapter {
-        private static final int EVENTS_FRAGMENT = 0;
-
         private List<Fragment> fragments;
         private Core_Adapter(FragmentManager fm) {
             super(fm);

@@ -41,11 +41,6 @@ import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /*
- * ToDo: ********************************
- * If an event is accepted via the map, we have to check that the user does not have an invite pending
- * in their inbox. If the event invite exists, we must remove it and update the InvitedUsers collection
- * for the respective event as well.
- *
  * ToDo:
  * Consider consolidating this Activity with the EventExplore_Fragment. Set the architecture such that
  * the Maps_Activity loads the map and requests permissions as required, but also overlay one of two
@@ -212,25 +207,17 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
     //Consolidate getDeviceLocations to a single class?
     Location mLastLocation;
     private void getDeviceLocation(){
-        Log.w(TAG,"In getDeviceLocation.");
         try{
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(requireActivity(), new OnCompleteListener<Location>() {
                         @Override
                         public void onComplete(@NonNull Task<Location> task) {
-                            if(task.isSuccessful()){
-                                if(task.getResult()!=null){
-                                    Log.w(TAG,"MOVING TO LAST KNOWN LOCATION.");
-                                    mLastLocation = task.getResult();
-                                    //ToDo: Uncomment this when done testing.
-                                    /*mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                            new LatLng(mLastLocation.getLatitude(),
-                                                    mLastLocation.getLongitude()),
-                                            DEFAULT_ZOOM
-                                    ));*/
-                                }
+                            if(task.isSuccessful() && task.getResult()!=null){
+                                mLastLocation = task.getResult();
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(mLastLocation.getLatitude(),
+                                                mLastLocation.getLongitude()),17.0f));
                             }
-                            //ToDo: Set a default location and zoom when unable to retrieve current location.
                         }
                     });
         } catch (SecurityException e){
@@ -238,21 +225,15 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
         }
     }
 
-    /**
-     * ToDo: We are currently retrieving the full list of public events. This has to refined to only
-     * nearby events to limit the reads from Firestore and to reduce load time.
-     */
+    //ToDo: We are currently retrieving the full list of public events.
     private void getNearbyEventList(){
         mViewModel.getPublicEvents().observe(this, new Observer<List<Event_Model>>() {
             @Override
             public void onChanged(@Nullable List<Event_Model> event_models) {
-                Log.w(TAG,"I don't think it changes!~");
                 if(event_models!=null && !event_models.isEmpty()){
                     for(Event_Model event:event_models){
-                        double lat = event.getLat();
-                        double lng = event.getLng();
-                        LatLng latLng = new LatLng(lat,lng);
-                        if(mMap !=null){
+                        LatLng latLng = new LatLng(event.getLat(),event.getLng());
+                        if(mMap!=null){
                             //Todo: Custom marker to show the primes on top of the date.
                             Marker marker =  mMap.addMarker(new MarkerOptions()
                                     .position(latLng)
@@ -265,10 +246,12 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
                 }
             }
         });
+        mViewModel.loadPublicEvents();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

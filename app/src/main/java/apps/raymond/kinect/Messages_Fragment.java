@@ -162,7 +162,7 @@ public class Messages_Fragment extends Fragment implements Messages_Adapter.Prof
                 progressBar.setVisibility(View.GONE);
             }
         };
-        viewModel.getMessages(event).observe(this,mObserver);
+        viewModel.getEventMessages(event).observe(this,mObserver);
     }
 
     private void createMessage(String messageBody){

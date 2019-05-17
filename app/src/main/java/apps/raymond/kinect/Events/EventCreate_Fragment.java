@@ -433,7 +433,6 @@ public class EventCreate_Fragment extends EventControl_Fragment implements View.
                     privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
         }
 
-        //Todo: Consider moving all these ViewModel calls to the CoreActivity.
         mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

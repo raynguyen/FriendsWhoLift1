@@ -164,6 +164,7 @@ public class Core_FireBaseRepo {
         return userConnections.document(newUserConnection.getEmail()).set(newUserConnection);
     }
 
+    //***
     public Task<List<User_Model>> getConnections(String userID){
         CollectionReference userConnections = userCollection.document(userID).collection(CONNECTIONS);
         final List<User_Model> connections = new ArrayList<>();
@@ -231,18 +232,22 @@ public class Core_FireBaseRepo {
      * Creates a user document in Events->Accepted.
      * @param eventName The event the user is attending.
      */
-    public Task<Void> addUserToEvent(String userID, User_Model userModel,String eventName){
-        CollectionReference eventsAccepted = eventCollection.document(eventName).collection(ACCEPTED);
-        return eventsAccepted.document(userID).set(userModel);
-    }
+    public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
+                                     final String eventName){
+        DocumentReference eventsAcceptedCount = eventCollection.document(eventName);
+        return eventsAcceptedCount.update("attending", FieldValue.increment(1))
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            CollectionReference eventsAccepted = eventCollection.document(eventName)
+                                    .collection(ACCEPTED);
+                            return eventsAccepted.document(userID).set(userModel);
+                        }
 
-    /**
-     * Update the value of Events->Event->attending.
-     * @param eventName The name of the event being modified.
-     */
-    public Task<Void> incrementEventAttending(String eventName){
-        DocumentReference eventsAccepted = eventCollection.document(eventName);
-        return eventsAccepted.update("attending", FieldValue.increment(1));
+                        return null;
+                    }
+                });
     }
 
     /**
@@ -400,7 +405,6 @@ public class Core_FireBaseRepo {
     //ToDo: this has to be refactored to accept a location object input and return a list of events within some radius of the latlng.
     public Task<List<Event_Model>> getPublicEvents(){
         CollectionReference eventsRef = mStore.collection(EVENTS);
-
         return eventsRef.whereEqualTo("privacy",0).get()
                 .continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
                     @Override
@@ -408,7 +412,6 @@ public class Core_FireBaseRepo {
                         if(task.isSuccessful()){
                             List<Event_Model> publicEvents = new ArrayList<>();
                             for(QueryDocumentSnapshot document : task.getResult()){
-                                Event_Model event = document.toObject(Event_Model.class);
                                 publicEvents.add(document.toObject(Event_Model.class));
                             }
                             return publicEvents;
@@ -418,8 +421,6 @@ public class Core_FireBaseRepo {
                 });
     }
     //*------------------------------------------GROUPS------------------------------------------*//
-
-
     // Info below may be outdated.
     // Steps are to get the keySet corresponding to what groups the user is registered with
     // Then we want to retrieve the Document snapshots of the groups named in the KeySet.

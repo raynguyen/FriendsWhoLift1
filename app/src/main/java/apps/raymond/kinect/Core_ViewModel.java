@@ -70,44 +70,12 @@ public class Core_ViewModel extends ViewModel {
     public MutableLiveData<User_Model> getUserModel(){
         return mUserModel;
     }
-    //*------------------------------------------EVENTS------------------------------------------*//
-    /**
-     * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
-     * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
-     * @param userID Document parameter to query to correct collection.
-     */
-    public void loadAcceptedEvents(String userID){
-        mRepository.getAcceptedEvents(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                        if(task.isSuccessful()&& task.getResult()!=null){
-                            mAcceptedEvents.setValue(task.getResult());
-                        }
-                    }
-                });
-    }
 
-    public void setAcceptedEvents(List<Event_Model> newList){
-        mAcceptedEvents.setValue(newList);
-    }
-
-    /**
-     * Pass a reference to mAcceptedEvents to the caller.
-     * @return Observable list mAcceptedEvents.
-     */
-    public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
-        return mAcceptedEvents;
-    }
-
-    public void setEventInvitations(List<Event_Model> newEventInvitations){
-        mEventInvitations.setValue(newEventInvitations);
-    }
     /**
      * Query the data base to retrieve a list of the user's invitations.
      * @param userID User for whom we are retrieving the invitation sets
      */
-    public void loadUserMessages(String userID){
+    public void loadUserInvitations(String userID){
         mRepository.getEventInvitations(userID)
                 .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
                     @Override
@@ -136,6 +104,35 @@ public class Core_ViewModel extends ViewModel {
     public MutableLiveData<List<Group_Model>> getGroupInvitations(){
         return mGroupInvitations;
     }
+    //*------------------------------------------EVENTS------------------------------------------*//
+    /**
+     * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
+     * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
+     * @param userID Document parameter to query to correct collection.
+     */
+    public void loadAcceptedEvents(String userID){
+        mRepository.getAcceptedEvents(userID)
+                .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Event_Model>> task) {
+                        if(task.isSuccessful()&& task.getResult()!=null){
+                            mAcceptedEvents.setValue(task.getResult());
+                        }
+                    }
+                });
+    }
+
+    public void setAcceptedEvents(List<Event_Model> newList){
+        mAcceptedEvents.setValue(newList);
+    }
+
+    public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
+        return mAcceptedEvents;
+    }
+
+    public void setEventInvitations(List<Event_Model> newEventInvitations){
+        mEventInvitations.setValue(newEventInvitations);
+    }
 
     /**
      * Fetch the user's Group collection from the database and set the result to mUsersGroups.
@@ -154,7 +151,7 @@ public class Core_ViewModel extends ViewModel {
                 });
     }
 
-    public MutableLiveData<List<Message_Model>> getMessages(Event_Model event){
+    public MutableLiveData<List<Message_Model>> getEventMessages(Event_Model event){
         mRepository.getMessages(event).addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<Message_Model>> task) {
@@ -182,10 +179,6 @@ public class Core_ViewModel extends ViewModel {
         mRepository.sendEventInvites(event,inviteList);
     }
 
-    public Task<Void> incrementEventAttending(String eventName){
-        return mRepository.incrementEventAttending(eventName);
-    }
-
     public Task<Boolean> checkForEventInvitation(String userID, String eventName){
         return mRepository.checkForEventInvitation(userID,eventName);
     }
@@ -197,7 +190,8 @@ public class Core_ViewModel extends ViewModel {
     public Task<Void> postNewMessage(Event_Model event, Message_Model message){
         return mRepository.postMessage(event,message);
     }
-    private void loadPublicEvents(){
+
+    public void loadPublicEvents(){
         mRepository.getPublicEvents().addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<Event_Model>> task) {
@@ -209,6 +203,7 @@ public class Core_ViewModel extends ViewModel {
             }
         });
     }
+
     public MutableLiveData<List<Event_Model>> getPublicEvents(){
         return publicEvents;
     }
