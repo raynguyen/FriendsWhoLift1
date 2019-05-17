@@ -233,7 +233,7 @@ public class Core_FireBaseRepo {
      * @param eventName The event the user is attending.
      */
     public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
-                                     final String eventName){
+                                     final String eventName) {
         final DocumentReference eventsAcceptedCount = eventCollection.document(eventName);
         CollectionReference eventsAccepted = eventCollection.document(eventName)
                 .collection(ACCEPTED);
@@ -242,11 +242,13 @@ public class Core_FireBaseRepo {
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if(task.isSuccessful()){
-                            return eventsAcceptedCount.update("accepted",FieldValue.increment(1));
+                        if (task.isSuccessful()) {
+                            return eventsAcceptedCount.update("accepted", FieldValue.increment(1));
                         }
+                        return null;
                     }
-                })
+                });
+    }
 
     /**
      * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
