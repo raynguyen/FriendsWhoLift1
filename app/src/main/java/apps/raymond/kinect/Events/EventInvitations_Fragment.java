@@ -1,5 +1,6 @@
 package apps.raymond.kinect.Events;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,8 +14,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventInvitations_Fragment extends EventControl_Fragment
         implements EventInvitations_Adapter.EventInvitationInterface {
@@ -38,12 +42,16 @@ public class EventInvitations_Fragment extends EventControl_Fragment
     }
 
     private ArrayList<Event_Model> mEventInvitationSet;
+    private Core_ViewModel mViewModel;
+    private User_Model mUserModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments()!=null){
             mEventInvitationSet = getArguments().getParcelableArrayList(DATASET);
         }
+        mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
+        mUserModel = mViewModel.getUserModel().getValue();
     }
 
     @Nullable
@@ -81,6 +89,12 @@ public class EventInvitations_Fragment extends EventControl_Fragment
      */
     @Override
     public void onAcceptEventInvitation(final Event_Model event) {
+        String userID = mUserModel.getEmail();
+        List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
+        updatedInvitationList.remove(event);
+        mViewModel.setEventInvitations(updatedInvitationList);
+        mViewModel.removeEventInvitation(userID,event.getOriginalName());
+
         mInterface.onAttendEvent(event, EventControl_Fragment.INVITATION);
     }
 

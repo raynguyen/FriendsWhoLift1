@@ -140,46 +140,32 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
                     return newList.size();
                 }
 
-                /**
-                 * Checks to see if the Events in both lists are the same. We use the originalName
-                 * field as the unique identifier to determine unique Event objects.
-                 * @return True if the items being compared are the same.
-                 */
                 @Override
                 public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                    Log.w("EventsCoreAdapter",
+                            mListFull.get(oldPosition).getOriginalName() + ", "
+                            + newList.get(newPosition).getOriginalName() + " = "
+                            + mListFull.get(oldPosition).getOriginalName()
+                            .equals(newList.get(newPosition).getOriginalName()));
                     return mListFull.get(oldPosition).getOriginalName()
                             .equals(newList.get(newPosition).getOriginalName());
                 }
 
-                /**
-                 * Compares Event objects that share the same OriginalName to see if their fields
-                 * have changed. Currently written to only be considered for fields that are shown
-                 * in the ViewHolder.
-                 *
-                 * Fields that may have changed: Name, long1 (start date),
-                 * @return False if any fields between the objects have changed.
-                 */
+                //Disabled currently/
                 @Override
                 public boolean areContentsTheSame(int oldPosition, int newPosition) {
-                    Event_Model oldEvent = mListFull.get(oldPosition);
-                    Event_Model newEvent = newList.get(newPosition);
-                    return oldEvent.getLong1() == newEvent.getLong1()
-                            && oldEvent.getAddress().equals(newEvent.getAddress())
-                            && oldEvent.getAttending() == newEvent.getAttending();
+                    return true;
                 }
             });
-            mListFull = newList;
-            mListClone = newList;
+            mListFull.clear();
+            mListFull.addAll(newList);
+            mListClone.clear();
+            mListClone.addAll(newList);
             result.dispatchUpdatesTo(this);
-            //ToDo: dispatchUpdates doesn't seem to create a view for the item if we are at the bottom of the recycler. Determine why.
         }
     }
 
-    @Override
-    public Filter getFilter() {
-        return eventFilter;
-    }
-
+    //ToDo: The search functionality no longer works, we are unable to clear the filtered list after search.
     private Filter eventFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -200,14 +186,17 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             return results;
         }
 
-        //ToDo: The search functionality no longer works, we are unable to clear the filtered list after search.
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mListFull.clear();
             mListFull.addAll((List) results.values);
-            notifyDataSetChanged();
         }
     };
+
+    @Override
+    public Filter getFilter() {
+        return eventFilter;
+    }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
         private TextView nameTxt, dayTxt, monthTxt, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;

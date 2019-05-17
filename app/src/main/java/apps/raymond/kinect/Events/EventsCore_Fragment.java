@@ -119,6 +119,7 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                     mUserModel = user_model;
                     mUserID = mUserModel.getEmail();
                     mViewModel.loadAcceptedEvents(mUserID);
+
                 }
             }
         });

@@ -366,7 +366,11 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     /**
      * Interface method whenever a mUser opts to attending an event. Process flow:
-     * 1.   The Event is added to the User's event collection.
+     * 1.   The Event is added to the User's event collection. On complete:
+     *  1a. Update the LiveData list held by the ViewModel which will then trigger observers in
+     *      the EventsCore_Fragment.
+     *  1b. Remove the accepted invitation
+     * 1b.
      * 2a.  Add the mUser to the Event's attending collection.
      * 2b.  If flag == 0, remove the invitation from the User's and Event's Invitation collections.
      * 3.   Call updateEventRecycler to update the appropriate views.
@@ -390,18 +394,16 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         List<Event_Model> updatedEventList = mViewModel.getAcceptedEvents().getValue();
                         updatedEventList.add(event);
                         mViewModel.setAcceptedEvents(updatedEventList);
-
-                        List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
-                        updatedInvitationList.remove(event);
-                        mViewModel.setEventInvitations(updatedInvitationList);
-                        mViewModel.removeEventInvitation(userID,eventName);
                     }
                 });
-
         mViewModel.addUserToEvent(userID,mUser,eventName);
         mViewModel.incrementEventAttending(eventName);
 
-
+        //THIS ONLY NEEDS TO BE CALLED IF THE USER ACCEPTS VIA EVENT INVITATION.
+        List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
+        updatedInvitationList.remove(event);
+        mViewModel.setEventInvitations(updatedInvitationList);
+        mViewModel.removeEventInvitation(userID,eventName);
         /*
          * If the flag is 0, the mUser is attending the event through the ExploreEvents fragment. We
          * therefore need to determine if the mUser has an invitation from the newly attending event
