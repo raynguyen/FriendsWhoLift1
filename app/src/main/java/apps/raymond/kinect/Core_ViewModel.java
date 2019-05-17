@@ -127,6 +127,23 @@ public class Core_ViewModel extends ViewModel {
         return mAcceptedEvents;
     }
 
+    public Task<Void> addEventToUser(String userID, Event_Model event){
+        return mRepository.addEventToUser(userID, event);
+    }
+
+    public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
+        return mRepository.addUserToEvent(userID,user,eventName);
+    }
+
+    public void updateEventAttending(String eventName, int i){
+        mRepository.updateEventAcceptedCount(eventName, i);
+    }
+
+    public void updateEventInvited(String eventName, int i){
+        mRepository.updateEventInvitedCount(eventName, i);
+    }
+
+
     public void setEventInvitations(List<Event_Model> newEventInvitations){
         mEventInvitations.setValue(newEventInvitations);
     }
@@ -164,13 +181,7 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.createEvent(event);
     }
 
-    public Task<Void> addEventToUser(String userID, Event_Model event){
-        return mRepository.addEventToUser(userID, event);
-    }
 
-    public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
-        return mRepository.addUserToEvent(userID,user,eventName);
-    }
 
     public void sendEventInvites(Event_Model event, List<User_Model> inviteList){
         mRepository.sendEventInvites(event,inviteList);

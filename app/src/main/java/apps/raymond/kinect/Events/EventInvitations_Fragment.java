@@ -96,7 +96,7 @@ public class EventInvitations_Fragment extends EventControl_Fragment
             newList.remove(event);
             mViewModel.setEventInvitations(newList);
         }
-        mInterface.onAttendEvent(event, EventControl_Fragment.INVITATION);
+        mInterface.onAttendEvent(event, 1);
         mViewModel.deleteEventInvitation(userID,event.getOriginalName());
     }
 

@@ -364,6 +364,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         EventDetail_Activity.init(event, mUser, this);
     }
 
+
+    /*
+     * Todo: Create the Event document inside the Event Collection. On complete, we should grab the
+     *  URL of the event and add that as a field in a document (along with other important event information)
+     *  under the User's Event collection.
+     */
     /**
      * Interface method whenever a mUser opts to attending an event. Process flow:
      * 1.   The Event is added to the User's event collection. On complete:
@@ -383,11 +389,12 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public void onAttendEvent(final Event_Model event, int flag) {
         final String eventName = event.getOriginalName();
         int oldAttendingCount = event.getAttending();
-        event.setAttending(oldAttendingCount + 1);
+        event.setAttending(oldAttendingCount + 1); //This won't be necessary once we resolve the local attending/invited count.
         mViewModel.addEventToUser(userID,event)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        //This is to trigger the observer in EventsFragment to update the RecyclerView
                         Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
                                 .show();
                         List<Event_Model> updatedEventList = mViewModel.getAcceptedEvents().getValue();
@@ -395,14 +402,19 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         mViewModel.setAcceptedEvents(updatedEventList);
                     }
                 });
+        mViewModel.addUserToEvent(userID,mUser,eventName)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        mViewModel.updateEventAttending(eventName,1);
+                    }
+                });
 
         /*
-         * If the flag is 0, the mUser is attending the event through the ExploreEvents fragment. We
-         * therefore need to determine if the mUser has an invitation from the newly attending event
-         * via the checkForEventInvitation call on the repository. It will return true if the event
-         * invitation document exists.
+         * This is a check to see if the user has an invitation to the event they just accepted to
+         * attend (typically from the ExploreEvents fragment).
          */
-        if(flag!=EventInvitations_Fragment.INVITATION){
+        if(flag==EventExplore_Fragment.ACCEPTED){
             List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
             if(updatedInvitationList.contains(event)){
                 updatedInvitationList.remove(event);
@@ -411,15 +423,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 //todo: REMOVE USER FROM THE EVENT INVITED COLLECTION AS WELL
 
                 /*
-                 * We just accepted an event from the Explore map but the invitation was not removed
-                 * when accepted the event via the map.
-                 *
-                 * User still has the event invite in their EventInvites collection
-                 * Event Invited collection still has the user in the collection
-                 * Invited count has to be decremented when the user joins and has an invite.
-                 *
-                 * Checking to see if the Invitations Fragment deletes and updates the DB correctly
-                 * when the user accepts an event invitation.
                  * ToDo:
                  *  1. Check to see if when we create an event and invite users that the invited
                  *  users have the event invitation in their EventInvite collection.
@@ -436,7 +439,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                  */
             }
         }
-        mViewModel.addUserToEvent(userID,mUser,eventName);
+
     }
 
     @Override

@@ -59,6 +59,7 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
+    public static final int ACCEPTED = 0;
     private static final int LOCATION_REQUEST_CODE = 1;
 
     private EventControlInterface mEventManager;

@@ -234,21 +234,21 @@ public class Core_FireBaseRepo {
      */
     public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
                                      final String eventName) {
-        final DocumentReference eventsAcceptedCount = eventCollection.document(eventName);
-        CollectionReference eventsAccepted = eventCollection.document(eventName)
-                .collection(ACCEPTED);
-
-        return eventsAccepted.document(userID).set(userModel)
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if (task.isSuccessful()) {
-                            return eventsAcceptedCount.update("accepted", FieldValue.increment(1));
-                        }
-                        return null;
-                    }
-                });
+        CollectionReference eventsAccepted = eventCollection.document(eventName).collection(ACCEPTED);
+        return eventsAccepted.document(userID).set(userModel);
     }
+
+    public void updateEventInvitedCount(String eventName, int i){
+        DocumentReference docRef = eventCollection.document(eventName);
+        docRef.update("invited",FieldValue.increment(i));
+    }
+
+    public void updateEventAcceptedCount(String eventName, int i){
+        DocumentReference docRef = eventCollection.document(eventName);
+        docRef.update("accepted",FieldValue.increment(i));
+    }
+
+
 
     /**
      * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
