@@ -383,7 +383,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public void onAttendEvent(final Event_Model event, int flag) {
         final String eventName = event.getOriginalName();
         int oldAttendingCount = event.getAttending();
-
         event.setAttending(oldAttendingCount + 1);
         mViewModel.addEventToUser(userID,event)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -408,7 +407,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             if(updatedInvitationList.contains(event)){
                 updatedInvitationList.remove(event);
                 mViewModel.setEventInvitations(updatedInvitationList);
-                mViewModel.removeEventInvitation(userID,eventName);
+                mViewModel.deleteEventInvitation(userID,eventName);
                 //todo: REMOVE USER FROM THE EVENT INVITED COLLECTION AS WELL
 
                 /*
@@ -418,6 +417,22 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                  * User still has the event invite in their EventInvites collection
                  * Event Invited collection still has the user in the collection
                  * Invited count has to be decremented when the user joins and has an invite.
+                 *
+                 * Checking to see if the Invitations Fragment deletes and updates the DB correctly
+                 * when the user accepts an event invitation.
+                 * ToDo:
+                 *  1. Check to see if when we create an event and invite users that the invited
+                 *  users have the event invitation in their EventInvite collection.
+                 *  2. If an invited user accepts an EventInvitation, confirm in the DB that:
+                 *      a. the event is added to the user's Event Collection THIS NEEDS TO BE CHANGED, WE SHOULD ONLY HAVE ONE SET
+                 *      b. the user is added to the event's User collection,
+                 *      c. the invitation is removed from the user
+                 *      d. invitation count is decremented
+                 *      e. attending count is incremented
+                 *      f. set the LiveData list of EventInvitations in the viewmodel with the updated list.
+                 *
+                 * INCREMENTING AND DECREMENTING COUNTS IN LOCAL EVENT COLLECTIONS DOES NOT WORK AS
+                 * EVERYONE WILL HAVE DIFFERENT VALUES.
                  */
             }
         }

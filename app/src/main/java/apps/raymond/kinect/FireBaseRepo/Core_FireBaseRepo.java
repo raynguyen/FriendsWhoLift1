@@ -234,48 +234,26 @@ public class Core_FireBaseRepo {
      */
     public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
                                      final String eventName){
-        DocumentReference eventsAcceptedCount = eventCollection.document(eventName);
-        return eventsAcceptedCount.update("attending", FieldValue.increment(1))
+        final DocumentReference eventsAcceptedCount = eventCollection.document(eventName);
+        CollectionReference eventsAccepted = eventCollection.document(eventName)
+                .collection(ACCEPTED);
+
+        return eventsAccepted.document(userID).set(userModel)
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
                         if(task.isSuccessful()){
-                            CollectionReference eventsAccepted = eventCollection.document(eventName)
-                                    .collection(ACCEPTED);
-                            return eventsAccepted.document(userID).set(userModel);
+                            return eventsAcceptedCount.update("accepted",FieldValue.increment(1));
                         }
-
-                        return null;
                     }
-                });
-    }
-
-    /**
-     * Determine if an invitation to an Event exists within Users->EventInvites.
-     * @param eventName The name of the event to which the user is invited.
-     * @return True if the event exists.
-     */
-    public Task<Boolean> checkForEventInvitation(String userID, String eventName){
-        DocumentReference docRef = userCollection.document(userID)
-                .collection(EVENT_INVITES).document(eventName);
-
-        return docRef.get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
-            @Override
-            public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                if(task.isSuccessful()){
-                    return task.getResult().exists();
-                }
-                return null;
-            }
-        });
-    }
+                })
 
     /**
      * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
      * invited.
      * @param eventName The name of the event being modified.
      */
-    public void removeEventInvitation(String userID, String eventName){
+    public void deleteEventInvitation(String userID, String eventName){
         DocumentReference docRef = userCollection.document(userID)
                 .collection(EVENT_INVITES).document(eventName);
         DocumentReference eventsAccepted = eventCollection.document(eventName);

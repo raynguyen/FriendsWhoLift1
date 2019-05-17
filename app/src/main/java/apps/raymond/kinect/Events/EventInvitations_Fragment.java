@@ -44,6 +44,7 @@ public class EventInvitations_Fragment extends EventControl_Fragment
     private ArrayList<Event_Model> mEventInvitationSet;
     private Core_ViewModel mViewModel;
     private User_Model mUserModel;
+    private String userID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,7 @@ public class EventInvitations_Fragment extends EventControl_Fragment
         }
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         mUserModel = mViewModel.getUserModel().getValue();
+        userID = mUserModel.getEmail();
     }
 
     @Nullable
@@ -89,13 +91,13 @@ public class EventInvitations_Fragment extends EventControl_Fragment
      */
     @Override
     public void onAcceptEventInvitation(final Event_Model event) {
-        String userID = mUserModel.getEmail();
-        List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
-        updatedInvitationList.remove(event);
-        mViewModel.setEventInvitations(updatedInvitationList);
-        mViewModel.removeEventInvitation(userID,event.getOriginalName());
-
+        List<Event_Model> newList = mViewModel.getEventInvitations().getValue();
+        if(newList.contains(event)){
+            newList.remove(event);
+            mViewModel.setEventInvitations(newList);
+        }
         mInterface.onAttendEvent(event, EventControl_Fragment.INVITATION);
+        mViewModel.deleteEventInvitation(userID,event.getOriginalName());
     }
 
     @Override

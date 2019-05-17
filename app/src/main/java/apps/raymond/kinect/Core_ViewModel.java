@@ -10,9 +10,6 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -179,12 +176,8 @@ public class Core_ViewModel extends ViewModel {
         mRepository.sendEventInvites(event,inviteList);
     }
 
-    public Task<Boolean> checkForEventInvitation(String userID, String eventName){
-        return mRepository.checkForEventInvitation(userID,eventName);
-    }
-
-    public void removeEventInvitation(String userID, String eventName){
-        mRepository.removeEventInvitation(userID, eventName);
+    public void deleteEventInvitation(String userID, String eventName){
+        mRepository.deleteEventInvitation(userID, eventName);
     }
 
     public Task<Void> postNewMessage(Event_Model event, Message_Model message){
