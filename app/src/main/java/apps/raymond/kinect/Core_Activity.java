@@ -381,18 +381,26 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         int oldAttendingCount = event.getAttending();
 
         event.setAttending(oldAttendingCount + 1);
-        mViewModel.addEventToUser(userID,event).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
-                        .show();
-                mViewModel.addEventToListTest(event); //Checking here to see if we can properly add event to the list in the viewmodel.
-                //mViewModel.removeEventInvitation();
-            }
-        });
+        mViewModel.addEventToUser(userID,event)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
+                                .show();
+                        List<Event_Model> updatedEventList = mViewModel.getAcceptedEvents().getValue();
+                        updatedEventList.add(event);
+                        mViewModel.setAcceptedEvents(updatedEventList);
+
+                        List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
+                        updatedInvitationList.remove(event);
+                        mViewModel.setEventInvitations(updatedInvitationList);
+                        mViewModel.removeEventInvitation(userID,eventName);
+                    }
+                });
 
         mViewModel.addUserToEvent(userID,mUser,eventName);
         mViewModel.incrementEventAttending(eventName);
+
 
         /*
          * If the flag is 0, the mUser is attending the event through the ExploreEvents fragment. We
@@ -400,7 +408,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
          * via the checkForEventInvitation call on the repository. It will return true if the event
          * invitation document exists.
          */
-        if(flag!= EventInvitations_Fragment.INVITATION){
+        if(flag!=EventInvitations_Fragment.INVITATION){
             mViewModel.checkForEventInvitation(userID,eventName)
                     .addOnCompleteListener(new OnCompleteListener<Boolean>() {
                         @Override

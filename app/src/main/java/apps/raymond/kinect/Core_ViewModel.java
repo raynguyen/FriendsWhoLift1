@@ -82,11 +82,14 @@ public class Core_ViewModel extends ViewModel {
                     @Override
                     public void onComplete(@NonNull Task<List<Event_Model>> task) {
                         if(task.isSuccessful()&& task.getResult()!=null){
-                            Log.w("CoreViewModel","Successfully retrieved events and will now set the result.");
                             mAcceptedEvents.setValue(task.getResult());
                         }
                     }
                 });
+    }
+
+    public void setAcceptedEvents(List<Event_Model> newList){
+        mAcceptedEvents.setValue(newList);
     }
 
     /**
@@ -97,14 +100,9 @@ public class Core_ViewModel extends ViewModel {
         return mAcceptedEvents;
     }
 
-    //Currently testing this one to see if the EventsCoreFragment notices when we update the live data list via this method.
-    public void addEventToListTest(Event_Model event){
-        Log.w("CoreViewModel","Attempting to add to event list: "+event.getOriginalName());
-        List<Event_Model> eventList = mAcceptedEvents.getValue();
-        eventList.add(event);
-        mAcceptedEvents.setValue(eventList);
+    public void setEventInvitations(List<Event_Model> newEventInvitations){
+        mEventInvitations.setValue(newEventInvitations);
     }
-
     /**
      * Query the data base to retrieve a list of the user's invitations.
      * @param userID User for whom we are retrieving the invitation sets
