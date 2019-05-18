@@ -80,6 +80,23 @@ import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+/**
+ * Todo:
+ *  Test to see invitation accept does the following:
+ *  1a. Add UserModel to the Event's Accepted collection.
+ *  1b.Event is added to User's Event collection.
+ *  2. Increments accepted count.
+ *  3. Remove Event invitation from User's EventInvitations collection.
+ *  4. Decrements invited count.
+ *  5. Make sure that the Event Invitation RecyclerView and set are updated.
+ *
+ * Todo:
+ *  Test to see if Accepting a public event from explore does the following:
+ *  1a. See above.
+ *  1b. See above.
+ *  2. See above.
+ *  3. Properly update the Events RecyclerView in the Core Events Fragment.
+ */
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
         GroupCreate_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface{
