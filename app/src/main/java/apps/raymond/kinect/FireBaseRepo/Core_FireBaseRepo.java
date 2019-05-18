@@ -224,8 +224,8 @@ public class Core_FireBaseRepo {
      * @param event The event to add to the current user.
      */
     public Task<Void> addEventToUser(String userID, Event_Model event) {
-        CollectionReference usersEvents = userCollection.document(userID).collection(EVENTS);
-        return usersEvents.document(event.getOriginalName()).set(event);
+        return userCollection.document(userID).collection(EVENTS)
+                .document(event.getOriginalName()).set(event);
     }
 
     /**
@@ -234,21 +234,14 @@ public class Core_FireBaseRepo {
      */
     public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
                                      final String eventName) {
-        CollectionReference eventsAccepted = eventCollection.document(eventName).collection(ACCEPTED);
-        return eventsAccepted.document(userID).set(userModel);
+        eventCollection.document(eventName).update("accepted",FieldValue.increment(1));
+        return eventCollection.document(eventName)
+                .collection(ACCEPTED).document(userID).set(userModel);
     }
 
-    public void updateEventInvitedCount(String eventName, int i){
-        DocumentReference docRef = eventCollection.document(eventName);
-        docRef.update("invited",FieldValue.increment(i));
+    public void declineEventInvitation(String eventName, String userID,User_Model user){
+        eventCollection.document(eventName).collection(DECLINED).document(userID).set(user);
     }
-
-    public void updateEventAcceptedCount(String eventName, int i){
-        DocumentReference docRef = eventCollection.document(eventName);
-        docRef.update("accepted",FieldValue.increment(i));
-    }
-
-
 
     /**
      * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
@@ -256,12 +249,8 @@ public class Core_FireBaseRepo {
      * @param eventName The name of the event being modified.
      */
     public void deleteEventInvitation(String userID, String eventName){
-        DocumentReference docRef = userCollection.document(userID)
-                .collection(EVENT_INVITES).document(eventName);
-        DocumentReference eventsAccepted = eventCollection.document(eventName);
-
-        docRef.delete();
-        eventsAccepted.update("attending", FieldValue.increment(-1));
+        userCollection.document(userID).collection(EVENT_INVITES).document(eventName).delete();
+        eventCollection.document(eventName).update("invited", FieldValue.increment(-1));
     }
 
     //Todo: Revisit this method to invite users to an event.

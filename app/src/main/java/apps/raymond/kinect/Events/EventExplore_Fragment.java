@@ -3,13 +3,13 @@ package apps.raymond.kinect.Events;
 import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,23 +54,12 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo:
  * Filter out events that the user is already in attendance or invited to.
  */
-public class EventExplore_Fragment extends EventControl_Fragment implements
+public class EventExplore_Fragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
-    public static final int ACCEPTED = 0;
     private static final int LOCATION_REQUEST_CODE = 1;
-
-    private EventControlInterface mEventManager;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            mEventManager = (EventControlInterface) context;
-        } catch (ClassCastException cce){}
-    }
 
     public static EventExplore_Fragment newInstance(User_Model userModel){
         EventExplore_Fragment fragment = new EventExplore_Fragment();
@@ -82,7 +71,8 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
 
     FusedLocationProviderClient mFusedLocationClient;
     Core_ViewModel mViewModel;
-    User_Model mUser;
+    private User_Model mUserModel;
+    private String mUserID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +87,8 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
         }
 
         try{
-            mUser = getArguments().getParcelable(USER);
+            mUserModel = getArguments().getParcelable(USER);
+            mUserID = mUserModel.getEmail();
         } catch (NullPointerException npe) {
             Log.w(TAG, "Error.", npe);
         }
@@ -134,9 +125,15 @@ public class EventExplore_Fragment extends EventControl_Fragment implements
             @Override
             public void onClick(View v) {
                 if(focusedEvent!=null){
-                    mEventManager.onAttendEvent(focusedEvent, 0);
-                    focusedMarker.remove();
-                    detailsCardView.setVisibility(View.GONE);
+                    List<Event_Model> newList = mViewModel.getEventInvitations().getValue();
+                    //Delete the event invitation from DB and ViewModel set if it exists.
+                    if(newList.contains(focusedEvent)){
+                        newList.remove(focusedEvent);
+                        mViewModel.setEventInvitations(newList); //Remove the invitation from the ViewModel set and increment attending count.
+                        mViewModel.deleteEventInvitation(mUserID,focusedEvent.getOriginalName()); //Delete the invitation doc and decrement invited count.
+                    }
+                    mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getOriginalName());//Add user to event's Accepted collection and increment attending.
+                    mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
                 }
             }
         });

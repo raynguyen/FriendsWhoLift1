@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -65,7 +66,7 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventCreate_Fragment extends EventControl_Fragment implements View.OnClickListener,
+public class EventCreate_Fragment extends Fragment implements View.OnClickListener,
         AddUsers_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 

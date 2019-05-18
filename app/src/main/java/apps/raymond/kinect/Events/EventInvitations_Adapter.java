@@ -17,13 +17,14 @@ import apps.raymond.kinect.R;
  */
 public class EventInvitations_Adapter extends
         RecyclerView.Adapter<EventInvitations_Adapter.InviteMessagesViewHolder> {
+    public static final int DECLINE = 0;
+    public static final int ACCEPT = 1;
     private List<Event_Model> eventInviteSet;
     private EventInvitationInterface callback;
 
     public interface EventInvitationInterface {
-        void onAcceptEventInvitation(Event_Model event);
-        void onDeclineEventInvitation(Event_Model event);
         void onEventDetail(Event_Model event);
+        void onRespond(Event_Model event, int response);
     }
 
     public EventInvitations_Adapter(EventInvitationInterface callback){
@@ -59,7 +60,7 @@ public class EventInvitations_Adapter extends
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onAcceptEventInvitation(event);
+                    callback.onRespond(event, ACCEPT);
                     removeItem(viewHolder.getAdapterPosition());
                 }
             });
@@ -67,7 +68,7 @@ public class EventInvitations_Adapter extends
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onDeclineEventInvitation(event);
+                    callback.onRespond(event,DECLINE);
                 }
             });
         }

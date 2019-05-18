@@ -1,10 +1,10 @@
 package apps.raymond.kinect.Events;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,47 +13,26 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventInvitations_Fragment extends EventControl_Fragment
+public class EventInvitations_Fragment extends Fragment
         implements EventInvitations_Adapter.EventInvitationInterface {
-    private static final String DATASET = "DataSet";
-    private EventControlInterface mInterface;
 
-    public static EventInvitations_Fragment newInstance(ArrayList<Event_Model> eventInvitations){
-        EventInvitations_Fragment fragment = new EventInvitations_Fragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(DATASET, eventInvitations);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mInterface = (EventControlInterface) context;
-        } catch (ClassCastException e){}
-    }
-
-    private ArrayList<Event_Model> mEventInvitationSet;
+    private List<Event_Model> mEventInvitations;
     private Core_ViewModel mViewModel;
     private User_Model mUserModel;
-    private String userID;
+    private String mUserID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments()!=null){
-            mEventInvitationSet = getArguments().getParcelableArrayList(DATASET);
-        }
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         mUserModel = mViewModel.getUserModel().getValue();
-        userID = mUserModel.getEmail();
+        mUserID = mUserModel.getEmail();
+        mEventInvitations = mViewModel.getEventInvitations().getValue();
     }
 
     @Nullable
@@ -76,32 +55,29 @@ public class EventInvitations_Fragment extends EventControl_Fragment
         eventInviteRecycler = view.findViewById(R.id.fragment_recycler);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new EventInvitations_Adapter(this);
-        mAdapter.setData(mEventInvitationSet);
+        mAdapter.setData(mEventInvitations);
         eventInviteRecycler.setAdapter(mAdapter);
 
-        if(mEventInvitationSet.isEmpty()){
+        if(mEventInvitations.isEmpty()){
             nullDataTxt.setVisibility(View.VISIBLE);
         }
     }
 
-    /**
-     * Interface implementation that informs the host activity whenever the user accepts an event
-     * invitation.
-     * @param event The event accepted from the RecyclerView.
-     */
     @Override
-    public void onAcceptEventInvitation(final Event_Model event) {
+    public void onRespond(Event_Model event, int response) {
         List<Event_Model> newList = mViewModel.getEventInvitations().getValue();
+        //Delete the event invitation from DB and ViewModel set.
         if(newList.contains(event)){
             newList.remove(event);
-            mViewModel.setEventInvitations(newList);
+            mViewModel.setEventInvitations(newList); //Remove the invitation from the ViewModel set and increment attending count.
+            mViewModel.deleteEventInvitation(mUserID,event.getOriginalName()); //Delete the invitation doc and decrement invited count.
         }
-        mInterface.onAttendEvent(event, 1);
-        mViewModel.deleteEventInvitation(userID,event.getOriginalName());
-    }
-
-    @Override
-    public void onDeclineEventInvitation(Event_Model event) {
+        if (response == EventInvitations_Adapter.ACCEPT) {
+            mViewModel.addUserToEvent(mUserID,mUserModel,event.getOriginalName());//Add user to event's Accepted collection and increment attending count.
+            mViewModel.addEventToUser(mUserID,event);//Add the event to User's Event collection.
+        } else if (response == EventInvitations_Adapter.DECLINE) {
+            mViewModel.declineEventInvitation(event.getOriginalName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
+        }
     }
 
     @Override

@@ -66,17 +66,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.EventControl_Fragment;
 import apps.raymond.kinect.Events.EventCreate_Fragment;
-import apps.raymond.kinect.Events.EventInvitations_Fragment;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
@@ -88,8 +82,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        GroupCreate_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface,
-        EventControl_Fragment.EventControlInterface {
+        GroupCreate_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
@@ -212,8 +205,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_invitations:
-                ViewInvitations_Fragment fragment =
-                        ViewInvitations_Fragment.newInstance(mEventInvitations,mGroupInvitations);
+                ViewInvitations_Fragment fragment = new ViewInvitations_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,fragment,INV_FRAG)
                         .addToBackStack(INV_FRAG)
@@ -362,88 +354,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void startDetailActivity(Event_Model event) {
         EventDetail_Activity.init(event, mUser, this);
-    }
-
-
-    /*
-     * Todo: Create the Event document inside the Event Collection. On complete, we should grab the
-     *  URL of the event and add that as a field in a document (along with other important event information)
-     *  under the User's Event collection.
-     */
-    /**
-     * Interface method whenever a mUser opts to attending an event. Process flow:
-     * 1.   The Event is added to the User's event collection. On complete:
-     *  1a. Update the LiveData list held by the ViewModel which will then trigger observers in
-     *      the EventsCore_Fragment.
-     *  1b. Remove the accepted invitation
-     * 1b.
-     * 2a.  Add the mUser to the Event's attending collection.
-     * 2b.  If flag == 0, remove the invitation from the User's and Event's Invitation collections.
-     * 3.   Call updateEventRecycler to update the appropriate views.
-     *
-     * @param event The event of which the mUser opted to attend.
-     * @param flag Indication flag to determine whether the mUser was invited to the event or if the
-     *             mUser opted to attend the event via exploration.
-     */
-    @Override
-    public void onAttendEvent(final Event_Model event, int flag) {
-        final String eventName = event.getOriginalName();
-        int oldAttendingCount = event.getAttending();
-        event.setAttending(oldAttendingCount + 1); //This won't be necessary once we resolve the local attending/invited count.
-        mViewModel.addEventToUser(userID,event)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        //This is to trigger the observer in EventsFragment to update the RecyclerView
-                        Toast.makeText(getApplicationContext(),"Attending "+eventName,Toast.LENGTH_LONG)
-                                .show();
-                        List<Event_Model> updatedEventList = mViewModel.getAcceptedEvents().getValue();
-                        updatedEventList.add(event);
-                        mViewModel.setAcceptedEvents(updatedEventList);
-                    }
-                });
-        mViewModel.addUserToEvent(userID,mUser,eventName)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mViewModel.updateEventAttending(eventName,1);
-                    }
-                });
-
-        /*
-         * This is a check to see if the user has an invitation to the event they just accepted to
-         * attend (typically from the ExploreEvents fragment).
-         */
-        if(flag==EventExplore_Fragment.ACCEPTED){
-            List<Event_Model> updatedInvitationList = mViewModel.getEventInvitations().getValue();
-            if(updatedInvitationList.contains(event)){
-                updatedInvitationList.remove(event);
-                mViewModel.setEventInvitations(updatedInvitationList);
-                mViewModel.deleteEventInvitation(userID,eventName);
-                //todo: REMOVE USER FROM THE EVENT INVITED COLLECTION AS WELL
-
-                /*
-                 * ToDo:
-                 *  1. Check to see if when we create an event and invite users that the invited
-                 *  users have the event invitation in their EventInvite collection.
-                 *  2. If an invited user accepts an EventInvitation, confirm in the DB that:
-                 *      a. the event is added to the user's Event Collection THIS NEEDS TO BE CHANGED, WE SHOULD ONLY HAVE ONE SET
-                 *      b. the user is added to the event's User collection,
-                 *      c. the invitation is removed from the user
-                 *      d. invitation count is decremented
-                 *      e. attending count is incremented
-                 *      f. set the LiveData list of EventInvitations in the viewmodel with the updated list.
-                 *
-                 * INCREMENTING AND DECREMENTING COUNTS IN LOCAL EVENT COLLECTIONS DOES NOT WORK AS
-                 * EVERYONE WILL HAVE DIFFERENT VALUES.
-                 */
-            }
-        }
-
-    }
-
-    @Override
-    public void onDeclineEvent(Event_Model event) {
     }
 
     /**

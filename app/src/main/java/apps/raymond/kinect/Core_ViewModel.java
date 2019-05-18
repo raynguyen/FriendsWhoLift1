@@ -98,6 +98,10 @@ public class Core_ViewModel extends ViewModel {
         return mEventInvitations;
     }
 
+    public void setEventInvitations(List<Event_Model> newEventInvitations){
+        mEventInvitations.setValue(newEventInvitations);
+    }
+
     public MutableLiveData<List<Group_Model>> getGroupInvitations(){
         return mGroupInvitations;
     }
@@ -135,17 +139,8 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.addUserToEvent(userID,user,eventName);
     }
 
-    public void updateEventAttending(String eventName, int i){
-        mRepository.updateEventAcceptedCount(eventName, i);
-    }
-
-    public void updateEventInvited(String eventName, int i){
-        mRepository.updateEventInvitedCount(eventName, i);
-    }
-
-
-    public void setEventInvitations(List<Event_Model> newEventInvitations){
-        mEventInvitations.setValue(newEventInvitations);
+    public void declineEventInvitation(String eventName, String userID, User_Model user){
+        mRepository.declineEventInvitation(eventName,userID,user);
     }
 
     /**
