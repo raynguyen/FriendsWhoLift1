@@ -135,9 +135,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             mUserID = mUser.getEmail();
             mViewModel.setUserDocument(mUser);
         } else if(getIntent().hasExtra("userID")){
+            mUserID = getIntent().getExtras().getString("userID");
             Log.w(TAG,"Starting core activity with mUserID: "+ mUserID);
             Log.w(TAG,"Have to fetch the UserModel document from database.");
-            mUserID = getIntent().getExtras().getString("mUserID");
             mViewModel.loadUserDocument(mUserID);
         }
 
@@ -250,7 +250,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onPageScrolled(int i, float v, int i1) {
-
     }
 
     @Override
@@ -429,7 +428,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Log.w(TAG,"Is this instiateItem ever called?");
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
             fragments.add(position, fragment);
             return fragment;

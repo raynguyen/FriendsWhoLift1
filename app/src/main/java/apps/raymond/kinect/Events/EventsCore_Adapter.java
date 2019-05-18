@@ -164,27 +164,34 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     private Filter eventFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
+            Log.w("EventsCoreAdapter","Attempting to search the recycler for: "+ constraint);
+
             List<Event_Model> filteredList = new ArrayList<>();
             if(constraint == null || constraint.length() == 0){
-                filteredList.addAll(mListClone);
+                filteredList.addAll(mListFull);
+                Log.w("EventCoreAdapter","Empty constraint, show full content SIZE = "+filteredList.size());
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 for(Event_Model event : mListClone){
                     if(event.getName().toLowerCase().contains(filterPattern)){
+                        Log.w("EventCoreAdapter","adding event to filter results: "+event.getOriginalName());
                         filteredList.add(event);
+                        Log.w("EventCoreAdapter","filtered list size: "+filteredList.size());
                     }
                 }
             }
 
             FilterResults results = new FilterResults();
             results.values = filteredList;
+            Log.w("EventCoreAdapter","Result values: "+results.values.toString());
             return results;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mListFull.clear();
-            mListFull.addAll((List) results.values);
+            Log.w("EventAdapter",""+results);
+            //mListFull.clear();
+            //mListFull.addAll(results.values);
         }
     };
 
