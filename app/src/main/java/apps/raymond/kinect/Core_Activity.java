@@ -289,27 +289,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
-    }
 
-    @Override
-    public boolean onQueryTextChange(String s) {
-        int i = viewPager.getCurrentItem();
-        Fragment fragment = pagerAdapter.getFragment(i);
-        switch (i){
-            case 0:
-                ((EventsCore_Fragment) fragment).filterRecycler(s);
-                break;
-            case 1:
-                ((GroupsCore_Fragment) fragment).filterRecycler(s);
-                break;
-            default:
-                return false;
-        }
-        return false;
-    }
 
     @Override
     public void addToGroupRecycler(Group_Model groupBase) {
@@ -412,6 +392,28 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        int i = viewPager.getCurrentItem();
+        Fragment fragment = pagerAdapter.getFragment(i);
+        switch (i){
+            case 0:
+                ((EventsCore_Fragment) fragment).filterRecycler(s);
+                break;
+            case 1:
+                ((GroupsCore_Fragment) fragment).filterRecycler(s);
+                break;
+            default:
+                return false;
+        }
+        return false;
     }
 
     /**
