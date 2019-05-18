@@ -103,7 +103,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     Toolbar toolbar;
     private Core_Adapter pagerAdapter;
     private User_Model mUser;
-    private String userID;
+    private String mUserID;
     private Core_ViewModel mViewModel;
     private List<Event_Model> mEventInvitations;
     private List<Group_Model> mGroupInvitations;
@@ -115,11 +115,13 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         if(getIntent().hasExtra("user")){
             mUser = getIntent().getExtras().getParcelable("user");
-            userID = mUser.getEmail();
+            mUserID = mUser.getEmail();
             mViewModel.setUserDocument(mUser);
         } else if(getIntent().hasExtra("userID")){
-            userID = getIntent().getExtras().getString("userID");
-            mViewModel.loadUserDocument(userID);
+            Log.w(TAG,"Starting core activity with mUserID: "+ mUserID);
+            Log.w(TAG,"Have to fetch the UserModel document from database.");
+            mUserID = getIntent().getExtras().getString("mUserID");
+            mViewModel.loadUserDocument(mUserID);
         }
 
         thisInstance = this;
@@ -148,8 +150,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 } else {
                     Log.w(TAG,"UserModel successfully retrieved.");
                     mUser = user_model;
-                    userID = mUser.getEmail();
-                    mViewModel.loadUserInvitations(userID);
+                    mUserID = mUser.getEmail();
+                    mViewModel.loadUserInvitations(mUserID);
                 }
             }
         });

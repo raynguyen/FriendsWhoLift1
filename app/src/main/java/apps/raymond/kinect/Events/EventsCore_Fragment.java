@@ -59,6 +59,9 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
+        if(mViewModel.getUserModel().getValue()==null){
+
+        }
     }
 
     @Nullable
@@ -75,6 +78,19 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //Observe the ViewModel for a UserModel.
+        mViewModel.getUserModel().observe(this, new Observer<User_Model>() {
+            @Override
+            public void onChanged(@Nullable User_Model user_model) {
+                if(user_model!=null){
+                    Log.w(TAG,"There was a change in the userModel: "+user_model.getEmail());
+                    mUserModel = user_model;
+                    mUserID = mUserModel.getEmail();
+                    mViewModel.loadAcceptedEvents(mUserID);
+                }
+            }
+        });
 
         progressBar = view.findViewById(R.id.progress_bar);
         nullText = view.findViewById(R.id.fragment_null_data_text);
@@ -111,18 +127,7 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
             }
         });
 
-        mViewModel.getUserModel().observe(this, new Observer<User_Model>() {
-            @Override
-            public void onChanged(@Nullable User_Model user_model) {
-                if(user_model!=null){
-                    Log.w(TAG,"There was a change in the userModel: "+user_model.getEmail());
-                    mUserModel = user_model;
-                    mUserID = mUserModel.getEmail();
-                    mViewModel.loadAcceptedEvents(mUserID);
 
-                }
-            }
-        });
 
         mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
             @Override
@@ -142,6 +147,8 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                 }
             }
         });
+
+
     }
 
     /**
