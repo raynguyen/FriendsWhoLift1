@@ -283,6 +283,7 @@ public class Core_ViewModel extends ViewModel {
     public Task<List<User_Model>> getConnections(String userID){
         return mRepository.getConnections(userID);
     }
+
     public Task<Void> addUserConnection(String userID,User_Model user){
         return mRepository.addConnection(userID,user);
     }

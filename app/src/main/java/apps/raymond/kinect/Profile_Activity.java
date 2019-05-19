@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,10 +16,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +28,15 @@ import java.util.Locale;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
 
+/**
+ * Activity class that is loaded when we want to view a User's profile. If the activity is loaded
+ * with a User_Model belonging to someone other than the currently logged in user, we have to disable
+ * the editing function.
+ *
+ * ToDo:
+ *  Add ability to create/delete a connection with the current profile.
+ *  Edit the profile picture if the current profile is the currently logged in user.
+ */
 public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
         Connections_Fragment.LoadConnections {
     private static final String TAG = "ProfileActivity";
@@ -44,10 +48,23 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     ImageButton socialEditLock;
     ImageView profilePic;
     Core_ViewModel viewModel;
+    private User_Model mUserModel;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_);
+
+        if(getIntent().hasExtra("personal")){
+            Log.w(TAG,"Layout should be user settings layout.");
+            setContentView(R.layout.activity_profile_);
+            mUserModel = getIntent().getExtras().getParcelable("currentuser");
+        } else if(getIntent().hasExtra("user")){
+            Log.w(TAG,"Layout should be view public user layout.");
+            setContentView(R.layout.activity_view_profile);
+            mUserModel = getIntent().getExtras().getParcelable("user");
+        }
+
+
 
         viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
@@ -60,7 +77,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         profilePic.setOnClickListener(this);
 
         nameTxt = findViewById(R.id.name_txt);
-        nameTxt.setText("ooker dooker");
+        nameTxt.setText(mUserModel.getEmail());
 
         Button connectionsBtn = findViewById(R.id.connections_btn);
         connectionsBtn.setOnClickListener(this);
@@ -122,7 +139,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     List<String> interestsList = new ArrayList<>();
     private void fetchUserInfo(){
         //READ FROM THE SHARED PREFERENCES HERE!
-        /*viewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        /*mViewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){

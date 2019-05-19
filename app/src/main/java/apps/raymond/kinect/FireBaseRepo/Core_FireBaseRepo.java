@@ -160,8 +160,18 @@ public class Core_FireBaseRepo {
         });
     }
     public Task<Void> addConnection(String userID, final User_Model newUserConnection){
-        CollectionReference userConnections = userCollection.document(userID).collection(CONNECTIONS);
-        return userConnections.document(newUserConnection.getEmail()).set(newUserConnection);
+        final DocumentReference userDoc = userCollection.document(userID);
+        return userDoc.collection(CONNECTIONS).document(newUserConnection.getEmail())
+                .set(newUserConnection)
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            return userDoc.update("numconnections",FieldValue.increment(1));
+                        }
+                        return null;
+                    }
+                });
     }
 
     //***

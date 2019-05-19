@@ -282,13 +282,26 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         user finishes the Profile Activity, we don't have to reload all the data held by this ViewModel.
          */
         if(v.getId()== -1){
-            Intent profileIntent = new Intent(this,Profile_Activity.class);
-            startActivity(profileIntent);
-            overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
+            if(mUser!=null){
+                Intent profileIntent = new Intent(this,Profile_Activity.class);
+                profileIntent.putExtra("personal",mUser);
+                startActivity(profileIntent);
+                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
+            }
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.w(TAG,"RESUMING CORE");
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.w(TAG,"Destroying core.");
+    }
 
     @Override
     public void addToGroupRecycler(Group_Model groupBase) {

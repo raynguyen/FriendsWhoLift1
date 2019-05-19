@@ -18,14 +18,14 @@ public class ViewProfile_Activity extends AppCompatActivity implements View.OnCl
 
     private User_Model mNewContact;
     private String userID;
-    Core_ViewModel viewModel;
+    Core_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_profile_activity);
+        setContentView(R.layout.activity_view_profile);
         Bundle args = getIntent().getExtras();
 
-        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(this);
@@ -48,7 +48,7 @@ public class ViewProfile_Activity extends AppCompatActivity implements View.OnCl
         switch (item.getItemId()){
             case R.id.action_connect:
                 Log.i(TAG,"Connect with mNewContact.");
-                viewModel.addUserConnection(userID, mNewContact);
+                mViewModel.addUserConnection(userID, mNewContact);
                 return true;
             case R.id.action_message:
                 Log.i(TAG,"Message mNewContact.");
