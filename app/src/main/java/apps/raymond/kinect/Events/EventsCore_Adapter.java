@@ -1,9 +1,7 @@
 package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
-import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,7 +31,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     }
 
     private List<Event_Model> mListFull;
-    private List<Event_Model> mListClone;
+    private List<Event_Model> mListFiltered;
 
     public EventsCore_Adapter(EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
@@ -49,63 +47,61 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     @Override
     public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
-        if(mListFull !=null){
-            final Event_Model currEvent = mListFull.get(position);
-            if(currEvent.getLong1()!=0){
-                long long1 = currEvent.getLong1();
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(long1);
-                vh.monthTxt.setText(new DateFormatSymbols().getMonths()[c.get(Calendar.MONTH)]);
-                vh.dayTxt.setText(String.valueOf(c.get(Calendar.DATE)));
-                SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
-                vh.timeTxt.setText(sdf.format(new Date(long1)));
-            }
-            vh.nameTxt.setText(currEvent.getName());
-            vh.attendingTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
-            vh.invitedTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
-            vh.hostTxt.setText(currEvent.getCreator());
-            if(currEvent.getAddress()!=null){
-                vh.locationTxt.setText(currEvent.getAddress());
-            } else {
-                vh.locationTxt.setText(R.string.location_tbd);
-            }
-
-            List<String> primes = currEvent.getPrimes();
-            if(primes!=null){
-                for(String prime : primes){
-                    switch (prime){
-                        case Event_Model.SPORTS:
-                            vh.sportsTag.setVisibility(View.VISIBLE);
-                            break;
-                        case Event_Model.FOOD:
-                            vh.foodTag.setVisibility(View.VISIBLE);
-                            break;
-                        case Event_Model.DRINKS:
-                            vh.drinksTag.setVisibility(View.VISIBLE);
-                            break;
-                        case Event_Model.MOVIES:
-                            vh.moviesTag.setVisibility(View.VISIBLE);
-                            break;
-                        case Event_Model.CHILL:
-                            vh.chillTag.setVisibility(View.VISIBLE);
-                            break;
-                    }
-                }
-            }
-
-            vh.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    eventClickListener.onEventClick(currEvent);
-                }
-            });
+        final Event_Model currEvent = mListFiltered.get(position);
+        if(currEvent.getLong1()!=0){
+            long long1 = currEvent.getLong1();
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(long1);
+            vh.monthTxt.setText(new DateFormatSymbols().getMonths()[c.get(Calendar.MONTH)]);
+            vh.dayTxt.setText(String.valueOf(c.get(Calendar.DATE)));
+            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
+            vh.timeTxt.setText(sdf.format(new Date(long1)));
         }
+        vh.nameTxt.setText(currEvent.getName());
+        vh.attendingTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
+        vh.invitedTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
+        vh.hostTxt.setText(currEvent.getCreator());
+        if(currEvent.getAddress()!=null){
+            vh.locationTxt.setText(currEvent.getAddress());
+        } else {
+            vh.locationTxt.setText(R.string.location_tbd);
+        }
+
+        List<String> primes = currEvent.getPrimes();
+        if(primes!=null){
+            for(String prime : primes){
+                switch (prime){
+                    case Event_Model.SPORTS:
+                        vh.sportsTag.setVisibility(View.VISIBLE);
+                        break;
+                    case Event_Model.FOOD:
+                        vh.foodTag.setVisibility(View.VISIBLE);
+                        break;
+                    case Event_Model.DRINKS:
+                        vh.drinksTag.setVisibility(View.VISIBLE);
+                        break;
+                    case Event_Model.MOVIES:
+                        vh.moviesTag.setVisibility(View.VISIBLE);
+                        break;
+                    case Event_Model.CHILL:
+                        vh.chillTag.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        }
+
+        vh.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventClickListener.onEventClick(currEvent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         if(mListFull !=null){
-            return mListFull.size();
+            return mListFiltered.size();
         } else {
             return 0;
         }
@@ -124,10 +120,10 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
      * @param newList New data set to populate the RecyclerView
      */
     public void setData(final List<Event_Model> newList){
-        if(mListFull ==null){
+        if(mListFull==null){
             mListFull = new ArrayList<>(newList);
-            mListClone = mListFull;
-            notifyItemRangeChanged(0,newList.size());
+            mListFiltered = new ArrayList<>(newList);
+            notifyItemRangeChanged(0,mListFiltered.size());
         } else {
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                 @Override
@@ -154,50 +150,41 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             });
             mListFull.clear();
             mListFull.addAll(newList);
-            mListClone.clear();
-            mListClone.addAll(newList);
+            mListFiltered.clear();
+            mListFiltered.addAll(newList);
             result.dispatchUpdatesTo(this);
         }
     }
 
-    //ToDo: The search functionality no longer works, we are unable to clear the filtered list after search.
-    private Filter eventFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            Log.w("EventsCoreAdapter","Attempting to search the recycler for: "+ constraint);
-
-            List<Event_Model> filteredList = new ArrayList<>();
-            if(constraint == null || constraint.length() == 0){
-                filteredList.addAll(mListFull);
-                Log.w("EventCoreAdapter","Empty constraint, show full content SIZE = "+filteredList.size());
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                for(Event_Model event : mListClone){
-                    if(event.getName().toLowerCase().contains(filterPattern)){
-                        Log.w("EventCoreAdapter","adding event to filter results: "+event.getOriginalName());
-                        filteredList.add(event);
-                        Log.w("EventCoreAdapter","filtered list size: "+filteredList.size());
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-            Log.w("EventCoreAdapter","Result values: "+results.values.toString());
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            Log.w("EventAdapter",""+results);
-            //mListFull.clear();
-            //mListFull.addAll(results.values);
-        }
-    };
-
     @Override
     public Filter getFilter() {
-        return eventFilter;
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                if(constraint==null || constraint.length()==0){
+                    mListFiltered = mListFull;
+                } else {
+                    List<Event_Model> filteredList = new ArrayList<>();
+                    String string = constraint.toString().toLowerCase().trim();
+                    for(Event_Model event : mListFull){
+                        if(event.getOriginalName().toLowerCase().trim().contains(string)){
+                            filteredList.add(event);
+                        }
+                    }
+                    mListFiltered = filteredList;
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = mListFiltered;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mListFiltered = (ArrayList<Event_Model>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{

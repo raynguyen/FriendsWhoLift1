@@ -18,11 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
@@ -68,7 +63,7 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.events_core_fragment, container,false);
+        return inflater.inflate(R.layout.fragment_events_core, container,false);
     }
 
     private TextView nullText;
@@ -126,8 +121,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                 }
             }
         });
-
-
 
         mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
             @Override

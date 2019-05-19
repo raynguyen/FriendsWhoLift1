@@ -127,7 +127,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.core_activity);
+        setContentView(R.layout.activity_core);
 
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         if(getIntent().hasExtra("user")){
