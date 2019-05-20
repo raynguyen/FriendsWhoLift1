@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import apps.raymond.kinect.UserProfile.ProfileSettings_Fragment;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
 
@@ -57,14 +58,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         if(getIntent().hasExtra("personal")){
             Log.w(TAG,"Layout should be user settings layout.");
             setContentView(R.layout.activity_profile_);
-            mUserModel = getIntent().getExtras().getParcelable("currentuser");
+            mUserModel = getIntent().getExtras().getParcelable("personal");
+            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
         } else if(getIntent().hasExtra("user")){
             Log.w(TAG,"Layout should be view public user layout.");
             setContentView(R.layout.activity_view_profile);
             mUserModel = getIntent().getExtras().getParcelable("user");
         }
-
-
 
         viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
