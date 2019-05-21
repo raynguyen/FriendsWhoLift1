@@ -35,7 +35,7 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventDetail_Activity extends AppCompatActivity implements View.OnClickListener,
-        ProfileRecyclerAdapter.ProfileClickListener, Messages_Fragment.MessagesFragment_Interface{
+        ProfileRecyclerAdapter.ProfileClickListener, EventMessages_Fragment.MessagesFragment_Interface{
     public static final String EVENT = "Event";
     public static final String USER = "User";
     private static final int NUM_PAGES = 2;
@@ -233,7 +233,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return Messages_Fragment.newInstance(event);
+                    return EventMessages_Fragment.newInstance(event);
                 case 1:
                     return EventUsers_Fragment.newInstance(event);
                 default:

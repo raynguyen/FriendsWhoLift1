@@ -29,7 +29,7 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Messages_Fragment extends Fragment implements Messages_Adapter.ProfileClickListener {
+public class EventMessages_Fragment extends Fragment implements Messages_Adapter.ProfileClickListener {
     private static final String TAG = "MessagesFragment";
     private static final String EVENT = "Event";
     private static final String GROUP = "Group";
@@ -50,16 +50,16 @@ public class Messages_Fragment extends Fragment implements Messages_Adapter.Prof
         }
     }
 
-    public static Messages_Fragment newInstance(Event_Model event){
-        Messages_Fragment fragment = new Messages_Fragment();
+    public static EventMessages_Fragment newInstance(Event_Model event){
+        EventMessages_Fragment fragment = new EventMessages_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(EVENT, event);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static Messages_Fragment newInstance(Group_Model groupBase){
-        Messages_Fragment fragment = new Messages_Fragment();
+    public static EventMessages_Fragment newInstance(Group_Model groupBase){
+        EventMessages_Fragment fragment = new EventMessages_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(GROUP,groupBase);
         fragment.setArguments(args);

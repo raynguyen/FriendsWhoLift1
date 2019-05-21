@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,7 +46,9 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     private final static int REQUEST_PROFILE_PICTURE = 0;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
-    private TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
+    TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
+    ImageButton btnReturn, btnLogout;
+    Button btnConnections, btnLocations, btnInterests;
     ImageView profilePic;
     Core_ViewModel mViewModel;
     private User_Model mUserModel;
@@ -82,6 +85,19 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         txtLocationsNum = findViewById(R.id.text_locations_count);
         txtLocationsNum.setText(String.valueOf(mUserModel.getNumlocations()));
 
+        btnReturn = findViewById(R.id.button_return);
+        btnReturn.setOnClickListener(this);
+        btnLogout = findViewById(R.id.button_logout);
+        btnLogout.setOnClickListener(this);
+
+        btnConnections = findViewById(R.id.button_connections);
+        btnConnections.setOnClickListener(this);
+        btnLocations = findViewById(R.id.button_locations);
+        btnLocations.setOnClickListener(this);
+        btnInterests = findViewById(R.id.button_interests);
+        btnInterests.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -94,11 +110,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.return_btn:
+            case R.id.button_return:
                 onBackPressed();
-                overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);//Might not need this?
                 break;
-            case R.id.logout_btn:
+            case R.id.button_logout:
                 mViewModel.signOut(this);
                 Intent loginIntent = new Intent(this, Login_Activity.class);
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -108,17 +123,17 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             case R.id.profile_pic:
                 updateProfilePicture();
                 break;
-            case R.id.connections_btn:
+            case R.id.button_connections:
                 Connections_Fragment fragment = new Connections_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
                         .addToBackStack(CONNECTIONS_FRAG)
                         .commit();
                 break;
-            case R.id.locations_btn:
+            case R.id.button_locations:
                 Log.i(TAG," " + getSupportFragmentManager().getFragments().toString());
                 break;
-            case R.id.interests_btn:
+            case R.id.button_interests:
                 break;
         }
     }

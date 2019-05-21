@@ -9,8 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
+
     <ImageButton
-        android:id="@+id/return_btn"
+        android:id="@+id/button_return"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/cancel"
@@ -20,7 +21,7 @@
         android:layout_margin="12dp"/>
 
     <ImageButton
-        android:id="@+id/logout_btn"
+        android:id="@+id/button_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/logout"
@@ -69,7 +70,7 @@
             android:weightSum="3">
 
             <Button
-                android:id="@+id/connections_btn"
+                android:id="@+id/button_connections"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_weight="1"
@@ -78,7 +79,7 @@
                 android:gravity="bottom|center"/>
 
             <Button
-                android:id="@+id/locations_btn"
+                android:id="@+id/button_locations"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_weight="1"
@@ -87,7 +88,7 @@
                 android:gravity="bottom|center"/>
 
             <Button
-                android:id="@+id/interests_btn"
+                android:id="@+id/button_interests"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_weight="1"

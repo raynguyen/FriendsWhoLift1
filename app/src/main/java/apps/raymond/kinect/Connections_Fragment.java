@@ -59,22 +59,6 @@ public class Connections_Fragment extends Fragment implements ProfileRecyclerAda
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = view.findViewById(R.id.fragment_toolbar);
-        toolbar.setVisibility(View.VISIBLE);
-        toolbar.setTitle(R.string.connections);
-        toolbar.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.colorAccent));
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try{
-                    getFragmentManager().popBackStack();
-                } catch (NullPointerException npe){
-                    Log.w(TAG,"Error on navigation icon click.",npe);
-                    requireActivity().onBackPressed();
-                }
-            }
-        });
-
         nullDataText = view.findViewById(R.id.fragment_null_data_text);
         if(connectionsList.size() == 0){
             nullDataText.setVisibility(View.VISIBLE);

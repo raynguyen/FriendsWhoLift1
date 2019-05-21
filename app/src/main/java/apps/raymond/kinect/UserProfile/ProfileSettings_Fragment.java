@@ -16,13 +16,14 @@ public class ProfileSettings_Fragment extends Fragment {
         ProfileSettings_Fragment fragment = new ProfileSettings_Fragment();
         Bundle args = new Bundle();
         args.putParcelable("user",user);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mUserModel = getArguments().getParcelable("user");
+        mUserModel = getArguments().getParcelable("user");
     }
 
     @Nullable

@@ -17,13 +17,14 @@ public class ViewProfile_Fragment extends Fragment {
         ViewProfile_Fragment fragment = new ViewProfile_Fragment();
         Bundle args = new Bundle();
         args.putParcelable("user",user);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mUserModel = getArguments().getParcelable("user");
+        mUserModel = getArguments().getParcelable("user");
     }
 
     @Nullable

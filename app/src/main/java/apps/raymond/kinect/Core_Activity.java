@@ -165,7 +165,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 if(user_model==null){
                     Log.w(TAG,"The usermodel held by the view model is null. Should be logged out.");
                 } else {
-                    Log.w(TAG,"UserModel successfully retrieved.");
                     mUser = user_model;
                     mUserID = mUser.getEmail();
                     mViewModel.loadUserInvitations(mUserID);

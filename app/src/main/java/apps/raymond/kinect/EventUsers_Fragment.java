@@ -1,6 +1,7 @@
 package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -201,7 +202,9 @@ public class EventUsers_Fragment extends Fragment implements
 
     @Override
     public void onProfileClick(User_Model userModel) {
-
+        Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
+        viewProfileIntent.putExtra("user",userModel).putExtra("notuser",true);
+        startActivity(viewProfileIntent);
     }
 
     @Override
