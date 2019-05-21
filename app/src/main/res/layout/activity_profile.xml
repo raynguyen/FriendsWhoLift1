@@ -43,7 +43,7 @@
         android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:id="@+id/name_txt"
+        android:id="@+id/text_profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/profile_display_name"
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_below="@id/name_txt">
+        android:layout_below="@id/text_profile_name">
 
         <LinearLayout
             android:id="@+id/invite_flipper_tabs"
@@ -107,7 +107,7 @@
             android:focusable="false">
 
             <TextView
-                android:id="@+id/connections_txt"
+                android:id="@+id/text_connections_count"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -117,7 +117,7 @@
                 android:textColor="@color/colorAccent"/>
 
             <TextView
-                android:id="@+id/locations_txt"
+                android:id="@+id/text_locations_count"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -127,7 +127,7 @@
                 android:textColor="@color/colorAccent"/>
 
             <TextView
-                android:id="@+id/interests_txt"
+                android:id="@+id/text_interests_count"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -45,16 +45,15 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     private final static int REQUEST_PROFILE_PICTURE = 0;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
-    TextView nameTxt, connectionsTxt, interestsTxt;
-    ImageButton socialEditLock;
+    private TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
     ImageView profilePic;
-    Core_ViewModel viewModel;
+    Core_ViewModel mViewModel;
     private User_Model mUserModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         mUserModel = getIntent().getExtras().getParcelable("user");
 
         if(getIntent().hasExtra("personal")){
@@ -73,6 +72,16 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                     .replace(R.id.frame_profilefragment,viewFragment,"notuser")
                     .commit();
         }
+
+        txtName = findViewById(R.id.text_profile_name);
+        txtName.setText(mUserModel.getEmail());
+        txtConnectionsNum = findViewById(R.id.text_connections_count);
+        txtConnectionsNum.setText(String.valueOf(mUserModel.getNumconnections()));
+        txtInterestsNum = findViewById(R.id.text_interests_count);
+        txtInterestsNum.setText(String.valueOf(mUserModel.getNuminterests()));
+        txtLocationsNum = findViewById(R.id.text_locations_count);
+        txtLocationsNum.setText(String.valueOf(mUserModel.getNumlocations()));
+
     }
 
     @Override
@@ -87,9 +96,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         switch (i){
             case R.id.return_btn:
                 onBackPressed();
+                overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);//Might not need this?
                 break;
             case R.id.logout_btn:
-                viewModel.signOut(this);
+                mViewModel.signOut(this);
                 Intent loginIntent = new Intent(this, Login_Activity.class);
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(loginIntent);
