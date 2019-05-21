@@ -28,6 +28,7 @@ import java.util.Locale;
 import apps.raymond.kinect.UserProfile.ProfileSettings_Fragment;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
+import apps.raymond.kinect.UserProfile.ViewProfile_Fragment;
 
 /**
  * Activity class that is loaded when we want to view a User's profile. If the activity is loaded
@@ -54,19 +55,27 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        mUserModel = getIntent().getExtras().getParcelable("user");
 
         if(getIntent().hasExtra("personal")){
             Log.w(TAG,"Layout should be user settings layout.");
-            setContentView(R.layout.activity_profile_);
-            mUserModel = getIntent().getExtras().getParcelable("personal");
+            setContentView(R.layout.activity_profiletemp);
             ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
-        } else if(getIntent().hasExtra("user")){
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.profile_frame,profileFragment,"personal")
+                    .commit();
+
+        } else if(getIntent().hasExtra("notuser")){
             Log.w(TAG,"Layout should be view public user layout.");
             setContentView(R.layout.activity_view_profile);
-            mUserModel = getIntent().getExtras().getParcelable("user");
+            ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.profile_frame,viewFragment,"notuser")
+                    .commit();
         }
 
-        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        /*
 
         ImageButton closeBtn = findViewById(R.id.return_btn);
         closeBtn.setOnClickListener(this);
@@ -93,6 +102,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
 
         socialEditLock = findViewById(R.id.social_edit_lock);
         socialEditLock.setOnClickListener(this);
+        */
     }
 
     @Override

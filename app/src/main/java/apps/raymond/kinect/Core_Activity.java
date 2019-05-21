@@ -283,7 +283,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         if(v.getId()== -1){
             if(mUser!=null){
                 Intent profileIntent = new Intent(this,Profile_Activity.class);
-                profileIntent.putExtra("personal",mUser);
+                profileIntent.putExtra("user",mUser).putExtra("personal",true);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }

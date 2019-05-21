@@ -23,7 +23,7 @@ public class ViewProfile_Fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUserModel = getArguments().getParcelable("user");
+        //mUserModel = getArguments().getParcelable("user");
     }
 
     @Nullable
