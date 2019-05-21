@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,10 +59,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
 
         if(getIntent().hasExtra("personal")){
             Log.w(TAG,"Layout should be user settings layout.");
-            setContentView(R.layout.activity_profiletemp);
+            setContentView(R.layout.activity_profile);
             ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.profile_frame,profileFragment,"personal")
+                    .replace(R.id.frame_profilefragment,profileFragment,"personal")
                     .commit();
 
         } else if(getIntent().hasExtra("notuser")){
@@ -71,38 +70,9 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             setContentView(R.layout.activity_view_profile);
             ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.profile_frame,viewFragment,"notuser")
+                    .replace(R.id.frame_profilefragment,viewFragment,"notuser")
                     .commit();
         }
-
-        /*
-
-        ImageButton closeBtn = findViewById(R.id.return_btn);
-        closeBtn.setOnClickListener(this);
-        ImageButton logoutBtn = findViewById(R.id.logout_btn);
-        logoutBtn.setOnClickListener(this);
-
-        profilePic = findViewById(R.id.profile_pic);
-        profilePic.setOnClickListener(this);
-
-        nameTxt = findViewById(R.id.name_txt);
-        nameTxt.setText(mUserModel.getEmail());
-
-        Button connectionsBtn = findViewById(R.id.connections_btn);
-        connectionsBtn.setOnClickListener(this);
-        Button locationsBtn = findViewById(R.id.locations_btn);
-        locationsBtn.setOnClickListener(this);
-        Button interestsBtn = findViewById(R.id.interests_btn);
-        interestsBtn.setOnClickListener(this);
-
-        connectionsTxt = findViewById(R.id.connections_txt);
-        interestsTxt = findViewById(R.id.interests_txt);
-
-        fetchUserInfo();
-
-        socialEditLock = findViewById(R.id.social_edit_lock);
-        socialEditLock.setOnClickListener(this);
-        */
     }
 
     @Override
@@ -131,7 +101,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             case R.id.connections_btn:
                 Connections_Fragment fragment = new Connections_Fragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.profile_frame,fragment,CONNECTIONS_FRAG)
+                        .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
                         .addToBackStack(CONNECTIONS_FRAG)
                         .commit();
                 break;
@@ -140,43 +110,11 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.interests_btn:
                 break;
-            case R.id.social_edit_lock:
-                break;
         }
     }
 
     List<User_Model> connectionsList = new ArrayList<>();
     List<String> interestsList = new ArrayList<>();
-    private void fetchUserInfo(){
-        //READ FROM THE SHARED PREFERENCES HERE!
-        /*mViewModel.getConnections().addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult()!=null){
-                        connectionsList.addAll(task.getResult());
-                    }
-                    connectionsTxt.setText(String.valueOf(connectionsList.size()));
-                } else {
-                    Toast.makeText(getBaseContext(),"hello",Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
-        //ToDo This has not been implemented. Need to structure the data in FireStore
-        /*mViewModel.fetchInterests().addOnCompleteListener(new OnCompleteListener<List<String>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<String>> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult()!=null){
-                        interestsList.addAll(task.getResult());
-                    }
-                    interestsTxt.setText(String.valueOf(interestsList.size()));
-                } else {
-                    Toast.makeText(getContext(),"Error retrieving mUser interests.",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
-    }
 
     /*
     When creating the chooserIntent, we want to create a file to save the photo if the mUser selects
