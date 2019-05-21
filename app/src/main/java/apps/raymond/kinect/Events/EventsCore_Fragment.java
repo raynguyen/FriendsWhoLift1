@@ -54,9 +54,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
-        if(mViewModel.getUserModel().getValue()==null){
-
-        }
     }
 
     @Nullable
@@ -122,9 +119,10 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
             }
         });
 
-        mViewModel.getAcceptedEvents().observe(this, new Observer<List<Event_Model>>() {
+        mViewModel.getAcceptedEvents().observe(requireActivity(), new Observer<List<Event_Model>>() {
             @Override
             public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w(TAG,"Change in accepted events of viewmodel held by: "+requireActivity().getClass());
                 if(event_models!=null){
                     progressBar.setVisibility(View.GONE);
                     if(!event_models.isEmpty()){
@@ -133,7 +131,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                             nullText.setVisibility(View.GONE);
                         }
                         mAdapter.setData(event_models);
-                        //ToDo: have to test the DiffUtil does indeed provide a list of the changes.
                     } else {
                         nullText.setVisibility(View.VISIBLE);
                     }

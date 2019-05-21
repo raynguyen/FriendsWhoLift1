@@ -35,7 +35,7 @@ public class EventInvitations_Adapter extends
     static class InviteMessagesViewHolder extends RecyclerView.ViewHolder{
         TextView titleTxt, monthTxt, dayTxt;
         Button acceptBtn, declineBtn;
-
+        View viewGroup;
         private InviteMessagesViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTxt = itemView.findViewById(R.id.event_name);
@@ -43,6 +43,7 @@ public class EventInvitations_Adapter extends
             dayTxt = itemView.findViewById(R.id.text_day);
             acceptBtn = itemView.findViewById(R.id.accept_event_btn);
             declineBtn = itemView.findViewById(R.id.decline_event_btn);
+            viewGroup = itemView;
         }
     }
 
@@ -58,18 +59,27 @@ public class EventInvitations_Adapter extends
         if(mEventSet !=null){
             final Event_Model event = mEventSet.get(i);
             viewHolder.titleTxt.setText(event.getName());
+            viewHolder.viewGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.w("eventInvite","blow up detail event activity");
+                }
+            });
+
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //callback.onRespond(event, ACCEPT);
-                    Log.w("EventInvitationsAdapter", "Accepting event at "+viewHolder.getAdapterPosition());
+                    Log.w("InviteAdapter","clicked accept for event: "+event.getOriginalName());
                     removeItem(viewHolder.getAdapterPosition());
+                    callback.onRespond(event, ACCEPT);
                 }
             });
 
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.w("InviteAdapter","clicked decline for event: "+event.getOriginalName());
+                    removeItem(viewHolder.getAdapterPosition());
                     callback.onRespond(event,DECLINE);
                 }
             });
@@ -89,7 +99,7 @@ public class EventInvitations_Adapter extends
         notifyDataSetChanged();
     }
 
-    public void removeItem(int position){
+    private void removeItem(int position){
         mEventSet.remove(position);
         notifyItemRemoved(position);
     }

@@ -446,7 +446,10 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
                     mViewModel.sendEventInvites(event, inviteUsersList);
                     fm.popBackStack();
 
-                    //ToDo: Add the event to the LiveData list as well.
+
+                    List<Event_Model> eventsList = mViewModel.getAcceptedEvents().getValue();
+                    eventsList.add(event);
+                    mViewModel.setAcceptedEvents(eventsList);
                 }
             }
         });

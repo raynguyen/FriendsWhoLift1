@@ -1,5 +1,6 @@
 package apps.raymond.kinect.Events;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,21 +63,33 @@ public class EventInvitations_Fragment extends Fragment
         if(mEventInvitations.isEmpty()){
             nullDataTxt.setVisibility(View.VISIBLE);
         }
+
+        mViewModel.getAcceptedEvents().observe(requireActivity(), new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                Log.w("EventInviteFrag","Observed change in accepted events....");
+            }
+        });
     }
 
     @Override
     public void onRespond(Event_Model event, int response) {
+        Log.w("EventInviteFrag","Bruh we are in respond so we should be updating the recycler!!");
         List<Event_Model> newList = mViewModel.getEventInvitations().getValue();
-        //Delete the event invitation from DB and ViewModel set.
         if(newList.contains(event)){
             newList.remove(event);
             mViewModel.setEventInvitations(newList); //Remove the invitation from the ViewModel set and increment attending count.
             mViewModel.deleteEventInvitation(mUserID,event.getOriginalName()); //Delete the invitation doc and decrement invited count.
         }
         if (response == EventInvitations_Adapter.ACCEPT) {
+            Log.w("EventInviteFrag","Accepted event. Should notify observers of activity: "+getActivity().getClass());
             mViewModel.addUserToEvent(mUserID,mUserModel,event.getOriginalName());//Add user to event's Accepted collection and increment attending count.
             mViewModel.addEventToUser(mUserID,event);//Add the event to User's Event collection.
+            List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+            acceptedEvents.add(event);
+            mViewModel.setAcceptedEvents(acceptedEvents);
         } else if (response == EventInvitations_Adapter.DECLINE) {
+            Log.w("EventInviteFrag","Declined event.");
             mViewModel.declineEventInvitation(event.getOriginalName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
         }
     }
