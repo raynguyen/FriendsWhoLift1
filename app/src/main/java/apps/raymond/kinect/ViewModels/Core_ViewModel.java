@@ -254,9 +254,6 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.fetchUsers(userID);
     }
 
-    public Task<Void> addUserConnection(String userID,User_Model user){
-        return mRepository.addConnection(userID,user);
-    }
     //Fetch mEventModel invitations (implement observer once I can figure out how to) and set as LiveData object here.
     private void listenForInvitations(){
         /*

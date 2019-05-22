@@ -37,6 +37,14 @@ public class Profile_ViewModel extends ViewModel {
         return mConnectionsList;
     }
 
+    public Task<Void> addUserConnection(String userID,User_Model user){
+        return mRepo.addConnection(userID,user);
+    }
+
+    public Task<Boolean> checkForConnection(String userID, String checkID){
+        return mRepo.checkForConnection(userID,checkID);
+    }
+
     public void signOut(){
         FirebaseAuth.getInstance().signOut();
     }

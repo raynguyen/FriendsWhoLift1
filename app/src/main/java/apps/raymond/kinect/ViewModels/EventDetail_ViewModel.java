@@ -53,4 +53,8 @@ public class EventDetail_ViewModel extends ViewModel {
         return mEventInvitedList;
     }
 
+    public Task<Void> addUserConnection(String userID,User_Model user){
+        return mRepository.addConnection(userID,user);
+    }
+
 }

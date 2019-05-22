@@ -168,6 +168,21 @@ public class Core_FireBaseRepo {
                     }
                 });
     }
+    public Task<Boolean> checkForConnection(String userID, String checkID){
+        return userCollection.document(userID).collection("Connections")
+                .document(checkID).get()
+                .continueWith(new Continuation<DocumentSnapshot, Boolean>() {
+                    @Override
+                    public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                        if(task.isSuccessful()){
+                            if(task.getResult().exists()){
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
+    }
 
     /**
      * Queries the database for a list of a user's connections.

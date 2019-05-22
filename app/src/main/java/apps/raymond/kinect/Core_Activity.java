@@ -123,8 +123,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     private User_Model mUser;
     private String mUserID;
     private Core_ViewModel mViewModel;
-    private List<Event_Model> mEventInvitations;
-    private List<Group_Model> mGroupInvitations;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,21 +170,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
-
-        mViewModel.getEventInvitations().observe(this, new Observer<List<Event_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Event_Model> event_models) {
-                mEventInvitations = event_models;
-            }
-        });
-
-        mViewModel.getGroupInvitations().observe(this, new Observer<List<Group_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Group_Model> group_models) {
-                mGroupInvitations = group_models;
-            }
-        });
-
         toolbarListener();
     }
 
@@ -283,7 +266,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         if(v.getId()== -1){
             if(mUser!=null){
                 Intent profileIntent = new Intent(this,Profile_Activity.class);
-                profileIntent.putExtra("user",mUser).putExtra("personal",true);
+                profileIntent.putExtra("user",mUser);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }

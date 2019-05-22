@@ -2,6 +2,7 @@ package apps.raymond.kinect;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,21 +26,23 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 public class Connections_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener{
 
-    public static Connections_Fragment newInstance(String userID){
+    public static Connections_Fragment newInstance(User_Model userID){
         Connections_Fragment fragment = new Connections_Fragment();
         Bundle args = new Bundle();
-        args.putString("user",userID);
+        args.putParcelable("user",userID);
         fragment.setArguments(args);
         return fragment;
     }
 
     private Profile_ViewModel mViewModel;
+    private User_Model mUserModel;
     private String mUserID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
-        mUserID = getArguments().getString("user");
+        mUserModel = getArguments().getParcelable("user");
+        mUserID =mUserModel.getEmail();
     }
 
     @Nullable
@@ -52,9 +56,18 @@ public class Connections_Fragment extends Fragment implements
     ProfileRecyclerAdapter mAdapter;
     TextView nullDataText;
     ProgressBar progressBar;
+    ImageButton btnReturn;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        btnReturn = view.findViewById(R.id.button_return);
+        btnReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
 
         nullDataText = view.findViewById(R.id.fragment_null_data_text);
         progressBar = view.findViewById(R.id.progress_bar);
@@ -67,7 +80,9 @@ public class Connections_Fragment extends Fragment implements
         mViewModel.getUserConnections().observe(this, new Observer<List<User_Model>>() {
             @Override
             public void onChanged(@Nullable List<User_Model> user_models) {
-                Log.i("ConnectionsFragment","GOT A LLIST OF USERS!");
+                if(progressBar.getVisibility()==View.VISIBLE){
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
                 if(user_models.size()==0 && nullDataText.getVisibility()==View.INVISIBLE){
                     nullDataText.setVisibility(View.VISIBLE);
                 } else if(user_models.size()!=0 && nullDataText.getVisibility()==View.VISIBLE){
@@ -82,7 +97,10 @@ public class Connections_Fragment extends Fragment implements
     }
 
     @Override
-    public void onProfileClick(User_Model userModel) {
-        Toast.makeText(getContext(),"Clicked on profile: "+userModel.getEmail(),Toast.LENGTH_LONG).show();
+    public void onProfileClick(User_Model profileModel) {
+        Toast.makeText(getContext(),"Clicked on profile: "+profileModel.getEmail(),Toast.LENGTH_LONG).show();
+        Intent viewProfileIntent = new Intent(getContext(),Profile_Activity.class);
+        viewProfileIntent.putExtra("profilemodel",profileModel).putExtra("user",mUserModel);
+        startActivity(viewProfileIntent);
     }
 }

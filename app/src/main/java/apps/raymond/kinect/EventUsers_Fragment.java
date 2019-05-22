@@ -150,13 +150,12 @@ public class EventUsers_Fragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onProfileClick(User_Model userModel) {
-        if(userModel.getEmail().equals(mUserModel.getEmail())){
-            //THIS MEANS THAT WE CLICKED ON OUR OWN PROFILE!
+    public void onProfileClick(User_Model profileModel) {
+        if(profileModel.getEmail().equals(mUserModel.getEmail())){
             return;
         }
         Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
-        viewProfileIntent.putExtra("user",userModel).putExtra("notuser",true);
+        viewProfileIntent.putExtra("user",mUserModel).putExtra("profilemodel",profileModel);
         startActivity(viewProfileIntent);
     }
 

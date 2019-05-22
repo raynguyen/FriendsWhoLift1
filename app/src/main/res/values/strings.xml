@@ -59,6 +59,7 @@
     <string name="creator">Created by:</string>
     <string name="empty">Nothing to show</string>
     <string name="attend">Attend</string>
+    <string name="return_button">Return</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

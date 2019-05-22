@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,19 +18,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.UserProfile.ProfileSettings_Fragment;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
 import apps.raymond.kinect.UserProfile.ViewProfile_Fragment;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /**
@@ -48,10 +49,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
-    ImageButton btnReturn, btnLogout, btnDeleteConnection;
     Button btnConnections, btnLocations, btnInterests;
     ImageView profilePic;
-    User_Model mUserModel;
+    User_Model mUserModel,mProfileModel;
+    String mUserID, mProfileID;
     private Profile_ViewModel mViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,42 +60,58 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_profile);
         mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class);
         mUserModel = getIntent().getExtras().getParcelable("user");
+        mUserID = mUserModel.getEmail();
+        Log.w(TAG,"mUserID "+mUserID);
 
         txtName = findViewById(R.id.text_profile_name);
-        txtName.setText(mUserModel.getEmail());
         txtConnectionsNum = findViewById(R.id.text_connections_count);
-        txtConnectionsNum.setText(String.valueOf(mUserModel.getNumconnections()));
         txtInterestsNum = findViewById(R.id.text_interests_count);
-        txtInterestsNum.setText(String.valueOf(mUserModel.getNuminterests()));
         txtLocationsNum = findViewById(R.id.text_locations_count);
-        txtLocationsNum.setText(String.valueOf(mUserModel.getNumlocations()));
 
+        if(getIntent().hasExtra("profilemodel")){
+            Log.w(TAG,"We are passed a profile model as well as user.");
+            mProfileModel = getIntent().getExtras().getParcelable("profilemodel");
+            mProfileID = mProfileModel.getEmail();
+            mViewModel.checkForConnection(mUserID,mProfileID)
+                    .addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Boolean> task) {
+                            if(task.getResult()){
+                                //DELETE BUTTON
+                            } else {
+                                //ADD BUTTON
+                            }
+                        }
+                    });
+            txtName.setText(mProfileModel.getEmail());
+            txtConnectionsNum.setText(String.valueOf(mProfileModel.getNumconnections()));
+            txtInterestsNum.setText(String.valueOf(mProfileModel.getNuminterests()));
+            txtLocationsNum.setText(String.valueOf(mProfileModel.getNumlocations()));
 
-        /*
-         * The condition check below determines which fragment we want to load in the Profile_Activity.
-         * If the starting Intent has the "personal" extra, we want to load the activity for the
-         * current application user. Otherwise, we want to load the activity to view another user's
-         * profile.
-         */
-        if(getIntent().hasExtra("personal")){
-            btnLogout = findViewById(R.id.button_logout);
-            btnLogout.setOnClickListener(this);
-            btnLogout.setVisibility(View.VISIBLE);
-            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_profilefragment,profileFragment,"personal")
-                    .commit();
-        } else if(getIntent().hasExtra("notuser")){
-            btnDeleteConnection = findViewById(R.id.button_remove_connection);
+            ImageButton btnDeleteConnection = findViewById(R.id.button_remove_connection);
             btnDeleteConnection.setOnClickListener(this);
             btnDeleteConnection.setVisibility(View.VISIBLE);
             ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_profilefragment,viewFragment,"notuser")
+                    .replace(R.id.frame_profilefragment,viewFragment)
+                    .commit();
+        } else {
+            Log.w(TAG,"We are NOT passed a profile model as well as user.");
+            txtName.setText(mUserID);
+            txtConnectionsNum.setText(String.valueOf(mUserModel.getNumconnections()));
+            txtInterestsNum.setText(String.valueOf(mUserModel.getNuminterests()));
+            txtLocationsNum.setText(String.valueOf(mUserModel.getNumlocations()));
+
+            ImageButton btnLogout = findViewById(R.id.button_logout);
+            btnLogout.setOnClickListener(this);
+            btnLogout.setVisibility(View.VISIBLE);
+            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_profilefragment,profileFragment)
                     .commit();
         }
 
-        btnReturn = findViewById(R.id.button_return);
+        ImageButton btnReturn = findViewById(R.id.button_return);
         btnReturn.setOnClickListener(this);
 
         btnConnections = findViewById(R.id.button_connections);
@@ -129,11 +146,12 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 Log.w(TAG,"REMOVE THE CONNECTION WITH THIS USER!");
                 break;
             case R.id.profile_pic:
-                updateProfilePicture();
+                //updateProfilePicture();
                 break;
             case R.id.button_connections:
-                Connections_Fragment fragment = Connections_Fragment.newInstance(mUserModel.getEmail());
+                Connections_Fragment fragment = Connections_Fragment.newInstance(mUserModel);
                 getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
                         .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
                         .addToBackStack(CONNECTIONS_FRAG)
                         .commit();

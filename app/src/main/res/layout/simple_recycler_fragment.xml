@@ -6,14 +6,46 @@
     android:clickable="true"
     android:background="@color/white">
 
+    <LinearLayout
+        android:id="@+id/layout_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/button_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
+            android:background="@color/transparent"
+            android:contentDescription="@string/return_button"
+            android:paddingTop="6dp"/>
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </android.support.v7.widget.SearchView>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:layout_below="@id/layout_actions"
+        android:layout_alignParentBottom="true">
+    </android.support.v7.widget.RecyclerView>
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:layout_centerInParent="true"
-        android:visibility="invisible"/>
+        android:layout_centerInParent="true"/>
 
     <TextView
         android:id="@+id/fragment_null_data_text"
@@ -26,12 +58,5 @@
         android:elevation="4dp"
         android:background="@color/transparent"
         android:visibility="invisible"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
-    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>
