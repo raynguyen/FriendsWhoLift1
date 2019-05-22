@@ -58,10 +58,6 @@
         </activity>
 
 
-        <activity android:name=".ViewProfile_Activity"
-            android:theme="@style/AppTheme">
-        </activity>
-
         <activity android:name=".EventDetail_Activity"
             android:theme="@style/AppTheme">
         </activity>

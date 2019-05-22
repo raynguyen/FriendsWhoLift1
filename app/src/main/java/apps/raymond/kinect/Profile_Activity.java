@@ -47,34 +47,18 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
-    ImageButton btnReturn, btnLogout;
+    ImageButton btnReturn, btnLogout, btnDeleteConnection;
     Button btnConnections, btnLocations, btnInterests;
     ImageView profilePic;
     Core_ViewModel mViewModel;
-    private User_Model mUserModel;
-
+    User_Model mUserModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         mUserModel = getIntent().getExtras().getParcelable("user");
-
-        if(getIntent().hasExtra("personal")){
-            Log.w(TAG,"Layout should be user settings layout.");
-            setContentView(R.layout.activity_profile);
-            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_profilefragment,profileFragment,"personal")
-                    .commit();
-
-        } else if(getIntent().hasExtra("notuser")){
-            Log.w(TAG,"Layout should be view public user layout.");
-            setContentView(R.layout.activity_view_profile);
-            ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_profilefragment,viewFragment,"notuser")
-                    .commit();
-        }
+        Log.w(TAG,"we want to load the activity for "+ mUserModel.getEmail());
 
         txtName = findViewById(R.id.text_profile_name);
         txtName.setText(mUserModel.getEmail());
@@ -85,10 +69,33 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         txtLocationsNum = findViewById(R.id.text_locations_count);
         txtLocationsNum.setText(String.valueOf(mUserModel.getNumlocations()));
 
+
+        /*
+         * The condition check below determines which fragment we want to load in the Profile_Activity.
+         * If the starting Intent has the "personal" extra, we want to load the activity for the
+         * current application user. Otherwise, we want to load the activity to view another user's
+         * profile.
+         */
+        if(getIntent().hasExtra("personal")){
+            btnLogout = findViewById(R.id.button_logout);
+            btnLogout.setOnClickListener(this);
+            btnLogout.setVisibility(View.VISIBLE);
+            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_profilefragment,profileFragment,"personal")
+                    .commit();
+        } else if(getIntent().hasExtra("notuser")){
+            btnDeleteConnection = findViewById(R.id.button_remove_connection);
+            btnDeleteConnection.setOnClickListener(this);
+            btnDeleteConnection.setVisibility(View.VISIBLE);
+            ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_profilefragment,viewFragment,"notuser")
+                    .commit();
+        }
+
         btnReturn = findViewById(R.id.button_return);
         btnReturn.setOnClickListener(this);
-        btnLogout = findViewById(R.id.button_logout);
-        btnLogout.setOnClickListener(this);
 
         btnConnections = findViewById(R.id.button_connections);
         btnConnections.setOnClickListener(this);
@@ -96,8 +103,6 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         btnLocations.setOnClickListener(this);
         btnInterests = findViewById(R.id.button_interests);
         btnInterests.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -119,6 +124,9 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(loginIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
+                break;
+            case R.id.button_remove_connection:
+                Log.w(TAG,"REMOVE THE CONNECTION WITH THIS USER!");
                 break;
             case R.id.profile_pic:
                 updateProfilePicture();

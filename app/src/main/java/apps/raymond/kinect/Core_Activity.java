@@ -13,7 +13,7 @@
  * 4. Allow mUser to remove/delete events and or Groups if they are owner for deletes.
  * 6. Recycler View for events does not properly display information.
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
- * 10.Redefine the layout for the edit group/event
+ * 10.Redefine the layout for the edit group/mEventModel
  *
  * APP LAUNCH
  * -On first launch, fetch the User object, associated events and groups, and connections?
@@ -22,7 +22,7 @@
  * --attending.
  *
  * INVITING USERS TO EVENT
- * -When creating an event, you should be only allowed in invite users you have connected with
+ * -When creating an mEventModel, you should be only allowed in invite users you have connected with
  * (potentially for users who have connections with users you connected with) otherwise there may
  * be too much spam invites to events.
  * -Each mUser has control whether they can be invited to events. Open to suggestions via locations
@@ -91,7 +91,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  *  5. Make sure that the Event Invitation RecyclerView and set are updated.
  *
  * Todo:
- *  Test to see if Accepting a public event from explore does the following:
+ *  Test to see if Accepting a public mEventModel from explore does the following:
  *  1a. See above.
  *  1b. See above.
  *  2. See above.
@@ -358,11 +358,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
                 .addToBackStack(SEARCH_EVENTS_FRAG)
                 .commit();
-    }
-
-    @Override
-    public void startDetailActivity(Event_Model event) {
-        EventDetail_Activity.init(event, mUser, this);
     }
 
     /**

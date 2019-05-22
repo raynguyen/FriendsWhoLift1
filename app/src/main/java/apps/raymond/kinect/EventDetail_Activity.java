@@ -1,7 +1,6 @@
 package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,33 +34,24 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventDetail_Activity extends AppCompatActivity implements View.OnClickListener,
-        ProfileRecyclerAdapter.ProfileClickListener, EventMessages_Fragment.MessagesFragment_Interface{
-    public static final String EVENT = "Event";
-    public static final String USER = "User";
-    private static final int NUM_PAGES = 2;
+        EventMessages_Fragment.MessagesFragment_Interface{
 
-    public static void init(Event_Model event,User_Model user, Context context){
-        Intent intent = new Intent(context, EventDetail_Activity.class);
-        intent.putExtra(EVENT, event);
-        intent.putExtra(USER, user);
-        context.startActivity(intent);
-    }
-
-    User_Model currUser;
-    Core_ViewModel viewModel;
-    Event_Model event;
+    User_Model mUserModel;
+    Core_ViewModel mViewModel;
+    Event_Model mEventModel;
     Toolbar toolbar;
     ViewGroup informationLayout, usersLayout;
     ViewFlipper profilesFlipper;
     TextView textName, textHost, textDesc, textMonth, textDate, textTime;
     ViewPager mViewPager;
+    Button btnFlipPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail_);
-        Intent initIntent = getIntent();
-        event = initIntent.getParcelableExtra(EVENT);
-        currUser = initIntent.getParcelableExtra(USER);
+
+        mEventModel = getIntent().getExtras().getParcelable("event");
+        mUserModel = getIntent().getExtras().getParcelable("user");
 
         toolbar = findViewById(R.id.toolbar_event);
         setSupportActionBar(toolbar);
@@ -69,16 +59,16 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         toolbar.setNavigationOnClickListener(this);
 
         //ToDo: Consider refactoring this back to a fragment.
-        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
         informationLayout = findViewById(R.id.layout_information);
         textName = findViewById(R.id.text_name);
-        textName.setText(event.getName());
+        textName.setText(mEventModel.getName());
         textHost = findViewById(R.id.text_host);
-        String hostString = getString(R.string.host) + " " + event.getCreator();
+        String hostString = getString(R.string.host) + " " + mEventModel.getCreator();
         textHost.setText(hostString);
         textDesc = findViewById(R.id.text_description);
-        textDesc.setText(event.getDesc());
+        textDesc.setText(mEventModel.getDesc());
 
         textMonth = findViewById(R.id.text_month);
         textDate = findViewById(R.id.text_date);
@@ -91,17 +81,17 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
 
         usersLayout = findViewById(R.id.layout_users);
-        Button btnViewUsers = findViewById(R.id.button_view_users);
-        btnViewUsers.setOnClickListener(this);
+        btnFlipPager = findViewById(R.id.button_flippager);
+        btnFlipPager.setOnClickListener(this);
 
         profilesFlipper = findViewById(R.id.viewflipper_profiles);
     }
 
     /**
-     * Converts event long field to a date field and populates the appropriate views.
+     * Converts mEventModel long field to a date field and populates the appropriate views.
      */
     private void convertLongToDate(){
-        long long1 = event.getLong1();
+        long long1 = mEventModel.getLong1();
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(long1);
         textMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(c.getTime()));
@@ -131,10 +121,12 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
             case R.id.button_invited_users:
                 profilesFlipper.setDisplayedChild(2);
                 break;
-            case R.id.button_view_users:
+            case R.id.button_flippager:
                 if(mViewPager.getCurrentItem()==0){
+                    btnFlipPager.setText(R.string.view_event_users);
                     mViewPager.setCurrentItem(1);
                 } else if(mViewPager.getCurrentItem()==1){
+                    btnFlipPager.setText(R.string.view_event_messages);
                     mViewPager.setCurrentItem(0);
                 }
                 break;
@@ -143,7 +135,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
     @Override
     public User_Model getCurrentUser() {
-        return currUser;
+        return mUserModel;
     }
 
     //ToDo:Need to test this on a device, it is too difficult to test via emulator.
@@ -169,13 +161,6 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void onProfileClick(User_Model userModel) {
-        Intent viewProfileIntent = new Intent(this, ViewProfile_Activity.class);
-        viewProfileIntent.putExtra(ViewProfile_Activity.USER,userModel);
-        startActivity(viewProfileIntent);
-    }
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if(menu.size()==0){
             MenuInflater inflater = getMenuInflater();
@@ -195,7 +180,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
                         .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getBaseContext(),"Leaving event",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getBaseContext(),"Leaving mEventModel",Toast.LENGTH_LONG).show();
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -233,9 +218,9 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return EventMessages_Fragment.newInstance(event);
+                    return EventMessages_Fragment.newInstance(mEventModel);
                 case 1:
-                    return EventUsers_Fragment.newInstance(event);
+                    return EventUsers_Fragment.newInstance(mEventModel,mUserModel);
                 default:
                     return null;
             }
@@ -243,7 +228,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
         @Override
         public int getCount() {
-            return NUM_PAGES;
+            return 2;
         }
     }
 }

@@ -20,10 +20,9 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         void onProfileClick(User_Model userModel);
     }
 
-    private List<User_Model> userModels;
-
+    private List<User_Model> mDataSet;
     public ProfileRecyclerAdapter(List<User_Model> userModels, ProfileClickListener profileClickListener){
-        this.userModels = userModels;
+        this.mDataSet = userModels;
         this.listener = profileClickListener;
     }
 
@@ -44,8 +43,8 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     @Override
     public void onBindViewHolder(@NonNull final ProfileViewHolder profileViewHolder, int i) {
-        if(userModels!=null){
-            final User_Model currUser = userModels.get(i);
+        if(mDataSet !=null){
+            final User_Model currUser = mDataSet.get(i);
             profileViewHolder.name.setText(currUser.getEmail());
             profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -60,14 +59,15 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     @Override
     public int getItemCount() {
-        if(userModels !=null){
-            return userModels.size();
+        if(mDataSet !=null){
+            return mDataSet.size();
         } else {
             return 0;
         }
     }
 
-    public void setData(List<User_Model> profiles){
-        this.userModels = profiles;
+    public void setData(List<User_Model> newData){
+        this.mDataSet = newData;
+        notifyItemRangeChanged(0,newData.size());
     }
 }

@@ -8,11 +8,6 @@
     android:clickable="true"
     android:background="#ffffff">
 
-    <FrameLayout
-        android:id="@+id/frame_detail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_event"
             android:layout_width="match_parent"
@@ -101,7 +96,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/button_view_users"
+                android:id="@+id/button_flippager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_details"
@@ -117,5 +112,4 @@
             android:layout_alignParentBottom="true">
 
         </android.support.v4.view.ViewPager>
-    </FrameLayout>
 </RelativeLayout>

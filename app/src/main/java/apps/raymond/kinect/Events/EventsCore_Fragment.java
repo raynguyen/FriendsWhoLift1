@@ -3,6 +3,7 @@ package apps.raymond.kinect.Events;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import apps.raymond.kinect.EventDetail_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Core_ViewModel;
@@ -32,7 +34,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     private EventCore_Interface interfaceCore;
     public interface EventCore_Interface {
         void exploreEvents();
-        void startDetailActivity(Event_Model event);
     }
 
     @Override
@@ -148,7 +149,10 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
      */
     @Override
     public void onEventClick(Event_Model event) {
-        interfaceCore.startDetailActivity(event);
+        Intent detailActivity = new Intent(requireActivity(),EventDetail_Activity.class);
+        detailActivity.putExtra("user",mUserModel)
+                .putExtra("event",event);
+        startActivity(detailActivity);
     }
 
     /**

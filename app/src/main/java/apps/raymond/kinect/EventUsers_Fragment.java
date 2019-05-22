@@ -1,5 +1,6 @@
 package apps.raymond.kinect;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,11 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
@@ -31,33 +27,33 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 //ToDo: Currently three separate views that are navigated via ViewFlipper. This should be converted to a
 // ViewPager if there are no plans to implement animations when clicking on users.
-public class EventUsers_Fragment extends Fragment implements
-        ProfileRecyclerAdapter.ProfileClickListener, View.OnClickListener{
-    private static final String TAG = "EventUsers_Fragment";
-    private static final String EVENT = "Event";
-    private static final String EVENT_ACCEPTED = "Accepted";
-    private static final String EVENT_DECLINED = "Declined";
+public class EventUsers_Fragment extends Fragment implements View.OnClickListener,
+        ProfileRecyclerAdapter.ProfileClickListener{
 
-    public static EventUsers_Fragment newInstance(Event_Model event){
+    public static EventUsers_Fragment newInstance(Event_Model event, User_Model user){
         EventUsers_Fragment fragments = new EventUsers_Fragment();
         Bundle args = new Bundle();
-        args.putParcelable(EVENT, event);
+        args.putParcelable("event", event);
+        args.putParcelable("user",user);
         fragments.setArguments(args);
         return fragments;
     }
 
-    Event_Model event;
-    Core_ViewModel viewModel;
+    private Event_Model mEventModel;
+    private EventDetail_ViewModel mViewModel;
+    private User_Model mUserModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
-        event = getArguments().getParcelable(EVENT);
+        mViewModel = ViewModelProviders.of(requireActivity()).get(EventDetail_ViewModel.class);
+        mEventModel = getArguments().getParcelable("event");
+        mUserModel = getArguments().getParcelable("user");
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_eventusers_,container,false);
     }
 
@@ -65,8 +61,8 @@ public class EventUsers_Fragment extends Fragment implements
     Button mAcceptedButton, mInvitedButton, mDeclinedButton;
     List<User_Model> invitedProfiles,declinedProfiles,acceptedProfiles;
     RecyclerView mAcceptedRecycler, mInvitedRecycler, mDeclinedRecycler;
-    ProgressBar mAcceptedBar, mInvitedBar, mDeclinedBar;
-    TextView acceptedCount, declinedCount, invitedCount, acceptedNullText, invitedNullText, declinedNullText;
+    ProgressBar mAcceptedPB, mInvitedPB, mDeclinedPB;
+    TextView txtAccepted, txtDeclined, txtInvited, txtAcceptedNull, txtInvitedNull, txtDeclinedNull;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -84,35 +80,32 @@ public class EventUsers_Fragment extends Fragment implements
         mInvitedRecycler = view.findViewById(R.id.recycler_invited);
         mDeclinedRecycler = view.findViewById(R.id.recycler_declined);
 
-        mAcceptedBar = view.findViewById(R.id.progress_accepted);
-        mInvitedBar = view.findViewById(R.id.progress_invited);
-        mDeclinedBar = view.findViewById(R.id.progress_declined);
+        mAcceptedPB = view.findViewById(R.id.progress_accepted);
+        mInvitedPB = view.findViewById(R.id.progress_invited);
+        mDeclinedPB = view.findViewById(R.id.progress_declined);
 
-        acceptedNullText = view.findViewById(R.id.text_accepted_null);
-        invitedNullText = view.findViewById(R.id.text_invited_null);
-        declinedNullText = view.findViewById(R.id.text_declined_null);
+        txtAcceptedNull = view.findViewById(R.id.text_accepted_null);
+        txtInvitedNull = view.findViewById(R.id.text_invited_null);
+        txtDeclinedNull = view.findViewById(R.id.text_declined_null);
 
-        acceptedCount = view.findViewById(R.id.text_accepted_count);
-        invitedCount = view.findViewById(R.id.text_invited_count);
-        declinedCount = view.findViewById(R.id.text_declined_count);
+        txtAccepted = view.findViewById(R.id.text_accepted_count);
+        txtInvited = view.findViewById(R.id.text_invited_count);
+        txtDeclined = view.findViewById(R.id.text_declined_count);
 
-        mAcceptedBar = view.findViewById(R.id.progress_accepted);
-        mInvitedBar = view.findViewById(R.id.progress_invited);
-        mDeclinedBar = view.findViewById(R.id.progress_declined);
+        mAcceptedPB = view.findViewById(R.id.progress_accepted);
+        mInvitedPB = view.findViewById(R.id.progress_invited);
+        mDeclinedPB = view.findViewById(R.id.progress_declined);
 
         setMemberRecyclers();
     }
 
-    ProfileRecyclerAdapter acceptedAdapter, invitedAdapter, declinedAdapter;
-    private void setMemberRecyclers(){
-        /*
-         * For each recycler, simply populate the Recycler with a list of the profile names for each respective category.
-         * When mUser clicks on a mUser, load the full Profile using the name in the list as our query field.
-         */
-        getAcceptedList(event);
-        getInviteList(event);
-        getDeclinedList(event);
+    private ProfileRecyclerAdapter acceptedAdapter, invitedAdapter, declinedAdapter;
 
+    /**
+     * Fetch from the database a List of all the user's that have accepted, been invited, and
+     * declined the Event invitation. Load the data into the RecyclerViews.
+     */
+    private void setMemberRecyclers(){
         acceptedAdapter = new ProfileRecyclerAdapter(acceptedProfiles,this);
         mAcceptedRecycler.setAdapter(acceptedAdapter);
         mAcceptedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
@@ -127,81 +120,42 @@ public class EventUsers_Fragment extends Fragment implements
         mDeclinedRecycler.setAdapter(declinedAdapter);
         mDeclinedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
         mDeclinedRecycler.setLayoutManager(new LinearLayoutManager(requireActivity()));
-    }
 
-    private void getInviteList(final Event_Model event){
-        viewModel.getEventInvitees(event).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        mViewModel.getEventAccepted().observe(requireActivity(), new Observer<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                mInvitedBar.setVisibility(View.INVISIBLE);
-                if(task.isSuccessful()){
-                    if(task.getResult().isEmpty()){
-                        invitedNullText.setVisibility(View.VISIBLE);
-                    }
-                    invitedProfiles = new ArrayList<>();
-                    invitedProfiles.addAll(task.getResult());
-                    invitedCount.setText(String.valueOf(invitedProfiles.size()));
-                    invitedAdapter.setData(invitedProfiles);
-                    invitedAdapter.notifyDataSetChanged();
+            public void onChanged(@Nullable List<User_Model> user_models) {
+                if(mAcceptedPB.getVisibility()==View.VISIBLE){
+                    mAcceptedPB.setVisibility(View.GONE);
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error fetching invited list.",e);
+                if(user_models.size()==0 && txtAcceptedNull.getVisibility()!=View.GONE){
+                    txtAcceptedNull.setVisibility(View.VISIBLE);
+                }
+                txtAccepted.setText(String.valueOf(user_models.size()));
+                acceptedAdapter.setData(user_models);
             }
         });
-    }
-
-    //Todo: called twice??
-    private void getAcceptedList(Event_Model groupEvent){
-        viewModel.getEventResponses(groupEvent, EVENT_ACCEPTED).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        mViewModel.getEventInvited().observe(requireActivity(), new Observer<List<User_Model>>() {
             @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                if(task.getResult().isEmpty()){
-                    acceptedNullText.setVisibility(View.VISIBLE);
+            public void onChanged(@Nullable List<User_Model> user_models) {
+                if(mInvitedPB.getVisibility()==View.VISIBLE){
+                    mInvitedPB.setVisibility(View.GONE);
                 }
-                mAcceptedBar.setVisibility(View.INVISIBLE);
-                acceptedProfiles = new ArrayList<>();
-                acceptedProfiles.addAll(task.getResult());
-                acceptedCount.setText(String.valueOf(acceptedProfiles.size()));
-                acceptedAdapter.setData(acceptedProfiles);
-                acceptedAdapter.notifyDataSetChanged();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG,"Error fetching accepted list.",e);
+                if(user_models.size()==0 && mInvitedPB.getVisibility()==View.GONE){
+                    mInvitedPB.setVisibility(View.VISIBLE);
+                }
+                txtInvited.setText(String.valueOf(user_models.size()));
+                invitedAdapter.setData(user_models);
             }
         });
-    }
-
-    private void getDeclinedList(Event_Model groupEvent){
-        viewModel.getEventResponses(groupEvent, EVENT_DECLINED)
-                .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<User_Model>> task) {
-                if(task.getResult().isEmpty()){
-                    declinedNullText.setVisibility(View.VISIBLE);
-                }
-                mDeclinedBar.setVisibility(View.INVISIBLE);
-                declinedProfiles = new ArrayList<>();
-                declinedProfiles.addAll(task.getResult());
-                declinedCount.setText(String.valueOf(declinedProfiles.size()));
-                declinedAdapter.setData(declinedProfiles);
-                declinedAdapter.notifyDataSetChanged();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                declinedCount.setText("--");
-                Log.w(TAG,"Error fetching declined list.",e);
-            }
-        });
+        mViewModel.loadEventUsers(mEventModel.getOriginalName());
     }
 
     @Override
     public void onProfileClick(User_Model userModel) {
+        if(userModel.getEmail().equals(mUserModel.getEmail())){
+            //THIS MEANS THAT WE CLICKED ON OUR OWN PROFILE!
+            return;
+        }
         Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
         viewProfileIntent.putExtra("user",userModel).putExtra("notuser",true);
         startActivity(viewProfileIntent);

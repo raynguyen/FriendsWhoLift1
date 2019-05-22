@@ -74,6 +74,7 @@ public class EventMessages_Fragment extends Fragment implements Messages_Adapter
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.w(TAG,"Creating EventMessages Fragment");
         viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         try{
             event = getArguments().getParcelable(EVENT);
