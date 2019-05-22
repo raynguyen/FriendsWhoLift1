@@ -96,7 +96,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/button_flippager"
+                android:id="@+id/button_flip_pager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_details"

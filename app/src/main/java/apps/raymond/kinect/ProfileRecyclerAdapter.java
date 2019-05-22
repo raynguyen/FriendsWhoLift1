@@ -21,8 +21,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     }
 
     private List<User_Model> mDataSet;
-    public ProfileRecyclerAdapter(List<User_Model> userModels, ProfileClickListener profileClickListener){
-        this.mDataSet = userModels;
+    public ProfileRecyclerAdapter(ProfileClickListener profileClickListener){
         this.listener = profileClickListener;
     }
 

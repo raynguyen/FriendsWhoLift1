@@ -47,7 +47,7 @@ import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.InviteUsers_Fragment;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
 

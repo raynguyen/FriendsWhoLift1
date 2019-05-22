@@ -21,16 +21,13 @@
 
 package apps.raymond.kinect.FireBaseRepo;
 
-import android.content.Context;
 import android.location.Address;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -49,9 +46,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
@@ -69,7 +64,6 @@ public class Core_FireBaseRepo {
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
     private static final String MESSAGES = "Messages";
-    private static final String CONNECTIONS = "Connections";
     private static final String LOCATIONS = "Locations";
     private static final String INVITED = "Invited";
     private static final String ACCEPTED = "Accepted";
@@ -112,10 +106,6 @@ public class Core_FireBaseRepo {
         });
     }
 
-    public Task<Void> signOut(Context context){
-        return AuthUI.getInstance().signOut(context);
-    }
-
     //ToDo: this needs to check if the document already exists prior to attempting to create.
     public Task<Void> createNewUserDocument(User_Model userModel) {
         return userCollection.document(userModel.getEmail()).set(userModel);
@@ -153,7 +143,8 @@ public class Core_FireBaseRepo {
     }
 
     public Task<Void> addConnection(final String userID, final User_Model newUserConnection){
-        return userCollection.document(userID).collection(CONNECTIONS).document(newUserConnection.getEmail())
+        return userCollection.document(userID).collection("Connections")
+                .document(newUserConnection.getEmail())
                 .set(newUserConnection)
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
@@ -166,9 +157,9 @@ public class Core_FireBaseRepo {
                     }
                 });
     }
-
     public void deleteConnection(final String userID, String  connectionName){
-        userCollection.document(userID).collection(CONNECTIONS).document(connectionName).delete()
+        userCollection.document(userID).collection("Connections")
+                .document(connectionName).delete()
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {
@@ -178,20 +169,25 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    public Task<List<User_Model>> getConnections(String userID){
-        return userCollection.document(userID).collection(CONNECTIONS).get()
+    /**
+     * Queries the database for a list of a user's connections.
+     * @param userID The user of which we want to query a list of user connections for.
+     * @return A task that returns a list of user models representing the userID's connections.
+     */
+    public Task<List<User_Model>> getUserConnections(String userID){
+        return userCollection.document(userID).collection("Connections").get()
                 .continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
                     @Override
                     public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<User_Model> connections = new ArrayList<>();
+                        List<User_Model> results = new ArrayList<>();
                         if(task.isSuccessful()){
                             if(task.getResult() !=null){
                                 for(QueryDocumentSnapshot document : task.getResult()){
-                                    connections.add(document.toObject(User_Model.class));
+                                    results.add(document.toObject(User_Model.class));
                                 }
                             }
                         }
-                        return connections;
+                        return results;
                     }
                 });
     }

@@ -52,7 +52,7 @@ public class InviteUsers_Fragment extends Fragment implements ProfileRecyclerAda
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.simple_users_recycler);
-        pAdapter = new ProfileRecyclerAdapter(userModelList,this);
+        pAdapter = new ProfileRecyclerAdapter(this);
         recyclerView.setAdapter(pAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }

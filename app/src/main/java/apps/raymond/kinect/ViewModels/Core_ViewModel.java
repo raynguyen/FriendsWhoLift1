@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.ViewModels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -15,6 +15,7 @@ import java.util.List;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.Groups.Group_Model;
+import apps.raymond.kinect.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /**
@@ -35,7 +36,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo: The ViewModel should expose LiveData objects to it's observers, not the Mutable form.
  */
 public class Core_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepository = new Core_FireBaseRepo();
+    private Core_FireBaseRepo mRepository;
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Group_Model>> mGroupInvitations = new MutableLiveData<>();
@@ -44,7 +45,9 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>();
     private MutableLiveData<List<Group_Model>> mUsersGroups = new MutableLiveData<>();
 
-    public Core_ViewModel(){}
+    public Core_ViewModel(){
+        mRepository = new Core_FireBaseRepo();
+    }
 
     public void loadUserDocument(String userID){
         mRepository.getUserDocument(userID)
@@ -247,19 +250,8 @@ public class Core_ViewModel extends ViewModel {
     }
 
     //*-------------------------------------------USER-------------------------------------------*//
-    public Task<Void> signOut(Context context){
-        /*
-         * Call on FirebaseAuth to sign the user out.
-         * Set the MutableLiveData<User_Model> to null in order to trigger the Profile_Activity listener
-         *  to finish the Profile & Core Activities and start the LoginActivity.
-         */
-        return mRepository.signOut(context);
-    }
     public Task<List<User_Model>> fetchUsers(String userID){
         return mRepository.fetchUsers(userID);
-    }
-    public Task<List<User_Model>> getConnections(String userID){
-        return mRepository.getConnections(userID);
     }
 
     public Task<Void> addUserConnection(String userID,User_Model user){

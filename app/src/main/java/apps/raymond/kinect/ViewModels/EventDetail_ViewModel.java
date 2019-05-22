@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.ViewModels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;

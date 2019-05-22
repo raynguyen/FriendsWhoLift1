@@ -63,7 +63,7 @@ import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.Maps_Activity;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Fragment extends Fragment implements View.OnClickListener,

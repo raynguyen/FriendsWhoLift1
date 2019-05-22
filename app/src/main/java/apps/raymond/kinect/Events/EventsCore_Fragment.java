@@ -24,7 +24,7 @@ import java.util.List;
 import apps.raymond.kinect.EventDetail_Activity;
 import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 //ToDo: Listen to changes in Store from the EventsExplore fragment - we don't currently update the recyclerview if we attend an event via Explore fragment.

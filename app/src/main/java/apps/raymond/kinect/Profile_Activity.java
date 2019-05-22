@@ -29,6 +29,8 @@ import apps.raymond.kinect.UserProfile.ProfileSettings_Fragment;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
 import apps.raymond.kinect.UserProfile.ViewProfile_Fragment;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /**
  * Activity class that is loaded when we want to view a User's profile. If the activity is loaded
@@ -39,8 +41,7 @@ import apps.raymond.kinect.UserProfile.ViewProfile_Fragment;
  *  Add ability to create/delete a connection with the current profile.
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
-public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
-        Connections_Fragment.LoadConnections {
+public class Profile_Activity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "ProfileActivity";
     private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
     private final static int REQUEST_PROFILE_PICTURE = 0;
@@ -50,15 +51,14 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     ImageButton btnReturn, btnLogout, btnDeleteConnection;
     Button btnConnections, btnLocations, btnInterests;
     ImageView profilePic;
-    Core_ViewModel mViewModel;
     User_Model mUserModel;
+    private Profile_ViewModel mViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class);
         mUserModel = getIntent().getExtras().getParcelable("user");
-        Log.w(TAG,"we want to load the activity for "+ mUserModel.getEmail());
 
         txtName = findViewById(R.id.text_profile_name);
         txtName.setText(mUserModel.getEmail());
@@ -119,7 +119,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 onBackPressed();
                 break;
             case R.id.button_logout:
-                mViewModel.signOut(this);
+                mViewModel.signOut();
                 Intent loginIntent = new Intent(this, Login_Activity.class);
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(loginIntent);
@@ -132,7 +132,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 updateProfilePicture();
                 break;
             case R.id.button_connections:
-                Connections_Fragment fragment = new Connections_Fragment();
+                Connections_Fragment fragment = Connections_Fragment.newInstance(mUserModel.getEmail());
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
                         .addToBackStack(CONNECTIONS_FRAG)
@@ -145,10 +145,6 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
-
-    List<User_Model> connectionsList = new ArrayList<>();
-    List<String> interestsList = new ArrayList<>();
-
     /*
     When creating the chooserIntent, we want to create a file to save the photo if the mUser selects
     the camera option. How do we create a file only if the mUser selects the camera option.
@@ -238,8 +234,4 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    @Override
-    public List<User_Model> loadConnections() {
-        return connectionsList;
-    }
 }

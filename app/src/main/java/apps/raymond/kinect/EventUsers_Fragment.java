@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ViewModels.EventDetail_ViewModel;
 
 
 //ToDo: Currently three separate views that are navigated via ViewFlipper. This should be converted to a
@@ -59,7 +59,6 @@ public class EventUsers_Fragment extends Fragment implements View.OnClickListene
 
     ViewFlipper viewFlipper;
     Button mAcceptedButton, mInvitedButton, mDeclinedButton;
-    List<User_Model> invitedProfiles,declinedProfiles,acceptedProfiles;
     RecyclerView mAcceptedRecycler, mInvitedRecycler, mDeclinedRecycler;
     ProgressBar mAcceptedPB, mInvitedPB, mDeclinedPB;
     TextView txtAccepted, txtDeclined, txtInvited, txtAcceptedNull, txtInvitedNull, txtDeclinedNull;
@@ -106,17 +105,17 @@ public class EventUsers_Fragment extends Fragment implements View.OnClickListene
      * declined the Event invitation. Load the data into the RecyclerViews.
      */
     private void setMemberRecyclers(){
-        acceptedAdapter = new ProfileRecyclerAdapter(acceptedProfiles,this);
+        acceptedAdapter = new ProfileRecyclerAdapter(this);
         mAcceptedRecycler.setAdapter(acceptedAdapter);
         mAcceptedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
         mAcceptedRecycler.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
-        invitedAdapter = new ProfileRecyclerAdapter(invitedProfiles, this);
+        invitedAdapter = new ProfileRecyclerAdapter(this);
         mInvitedRecycler.setAdapter(invitedAdapter);
         mInvitedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
         mInvitedRecycler.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
-        declinedAdapter = new ProfileRecyclerAdapter(declinedProfiles,this);
+        declinedAdapter = new ProfileRecyclerAdapter(this);
         mDeclinedRecycler.setAdapter(declinedAdapter);
         mDeclinedRecycler.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL));
         mDeclinedRecycler.setLayoutManager(new LinearLayoutManager(requireActivity()));

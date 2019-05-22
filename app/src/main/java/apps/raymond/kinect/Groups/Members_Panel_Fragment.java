@@ -22,9 +22,10 @@ import java.util.List;
 
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+//ToDo: The data for the recyclerview is never set!
 public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
     private static final String TAG = "Custom_Members_Panel";
     private static final String GROUP_PARCEL = "GroupParcel";
@@ -66,7 +67,7 @@ public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerA
         membersCountTxt = view.findViewById(R.id.members_txt);
 
         membersRecycler = view.findViewById(R.id.members_recycler);
-        pAdapter = new ProfileRecyclerAdapter(membersList, this);
+        pAdapter = new ProfileRecyclerAdapter(this);
         membersRecycler.setAdapter(pAdapter);
         membersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 

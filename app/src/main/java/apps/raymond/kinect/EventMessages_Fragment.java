@@ -28,6 +28,7 @@ import java.util.List;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class EventMessages_Fragment extends Fragment implements Messages_Adapter.ProfileClickListener {
     private static final String TAG = "MessagesFragment";

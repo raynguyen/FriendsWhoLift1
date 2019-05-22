@@ -79,6 +79,7 @@ import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 /**
  * Todo:

@@ -2,7 +2,6 @@ package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +31,7 @@ import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class EventDetail_Activity extends AppCompatActivity implements View.OnClickListener,
         EventMessages_Fragment.MessagesFragment_Interface{
@@ -81,7 +81,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
 
 
         usersLayout = findViewById(R.id.layout_users);
-        btnFlipPager = findViewById(R.id.button_flippager);
+        btnFlipPager = findViewById(R.id.button_flip_pager);
         btnFlipPager.setOnClickListener(this);
 
         profilesFlipper = findViewById(R.id.viewflipper_profiles);
@@ -121,7 +121,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
             case R.id.button_invited_users:
                 profilesFlipper.setDisplayedChild(2);
                 break;
-            case R.id.button_flippager:
+            case R.id.button_flip_pager:
                 if(mViewPager.getCurrentItem()==0){
                     btnFlipPager.setText(R.string.view_event_users);
                     mViewPager.setCurrentItem(1);
