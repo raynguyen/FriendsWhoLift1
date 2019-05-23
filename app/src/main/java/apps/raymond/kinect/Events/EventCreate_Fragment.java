@@ -104,10 +104,6 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
-    public static EventCreate_Fragment newInstance(){
-        return new EventCreate_Fragment();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -47,14 +47,8 @@ public class Login_ViewModel extends ViewModel {
      * @param email User email credential
      * @param password User account password
      */
-    public void signInWithEmail(final String email, String password){
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        loadExistingUser(email);
-                    }
-                });
+    public Task<AuthResult> signInWithEmail(final String email, String password){
+        return FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password);
     }
 
     /**
@@ -62,7 +56,7 @@ public class Login_ViewModel extends ViewModel {
      * the Repository and set mUserModel to the result.
      * @param userID ID of the user to retrieve from the database.
      */
-    private void loadExistingUser(String userID){
+    public void loadExistingUser(String userID){
         mRepository.getUserDocument(userID)
                 .addOnCompleteListener(new OnCompleteListener<User_Model>() {
                     @Override
@@ -81,7 +75,7 @@ public class Login_ViewModel extends ViewModel {
      * @param userEmail Registration email
      * @param password Registration password
      */
-    public void registerWithEmail(final String userEmail, final String password, final User_Model newUser){
+    void registerWithEmail(final String userEmail, final String password, final User_Model newUser){
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

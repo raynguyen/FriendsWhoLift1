@@ -1,3 +1,10 @@
+/*
+ * ToDo:
+ *  1. Ideally, we would want to remove imports requiring FirebaseAuth from this class. Not yet
+ *  sure the pattern required in order to accomplish this
+ *  2. Determine the error type if log-in was unsuccessful and set the appropriate error messages
+ *  to the fields that must be corrected if applicable.
+ */
 package apps.raymond.kinect.Login;
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -6,16 +13,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 
-public class Login_Fragment extends Fragment {
+public class Login_Fragment extends Fragment implements View.OnClickListener {
 
     private Login_ViewModel mViewModel;
     @Override
@@ -32,34 +46,53 @@ public class Login_Fragment extends Fragment {
     }
 
     private TextView txtUserName, txtPassword;
+    private ProgressBar progressBar;
+    private Button btnLogin;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         txtUserName = view.findViewById(R.id.text_userid);
         txtPassword = view.findViewById(R.id.text_password1);
+        progressBar = view.findViewById(R.id.progress_login);
+        btnLogin = view.findViewById(R.id.button_login);
+        btnLogin.setOnClickListener(this);
 
         VerticalTextView txtSignUp = view.findViewById(R.id.vtext_signup);
-        txtSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewPager viewPager = requireActivity().findViewById(R.id.viewpager_login);
-                viewPager.setCurrentItem(1);
-            }
-        });
+        txtSignUp.setOnClickListener(this);
+    }
 
-        Button btnLogin = view.findViewById(R.id.button_login);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userName = txtUserName.getText().toString();
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i){
+            case R.id.button_login:
+                progressBar.setVisibility(View.VISIBLE);
+                btnLogin.setVisibility(View.GONE);
+                final String userName = txtUserName.getText().toString();
                 String password = txtPassword.getText().toString();
                 if(validateInput(userName,password)) {
-                    mViewModel.signInWithEmail(userName, password);
+                    mViewModel.signInWithEmail(userName, password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()){
+                                        mViewModel.loadExistingUser(userName);
+                                    } else {
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        btnLogin.setVisibility(View.VISIBLE);
+                                        Log.w("LoginFragment", "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(requireActivity(), "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                 }
-            }
-        });
-
-
+                break;
+            case R.id.vtext_signup:
+                ViewPager viewPager = requireActivity().findViewById(R.id.viewpager_login);
+                viewPager.setCurrentItem(1);
+                break;
+        }
     }
 
     /**

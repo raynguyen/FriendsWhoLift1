@@ -1,3 +1,10 @@
+/*
+ * Splash screen activity for the application. As FirebaseAuth is the user backend for this project,
+ * we listen to the FirebaseAuth state on launch.
+ *
+ * If a user is detected, we want to finish this activity and start the Core_Activity.
+ * Otherwise, start the Login_Activity.
+ */
 package apps.raymond.kinect;
 
 import android.content.Intent;
@@ -16,11 +23,8 @@ public class Launch_Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //ToDo: Determine the pattern required to remove FirebaseAuth from the application context WITHOUT having a black screen.
-        /*
-        On app launch, check to see if there is a signed in mUser. If a mUser exists, the app will
-        go straight into the Core_Activity or will otherwise start the Login_Activity.
-         */
+        //ToDo: Determine the pattern required to remove FirebaseAuth from the application context
+        // WITHOUT having a black screen.
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

@@ -87,7 +87,6 @@
         android:layout_width="wrap_content"
         android:orientation="horizontal"/>
 
-    <!--For some reason, giving this button an id of "button_register" makes it unreachable-->
     <Button
         android:id="@+id/button_signup"
         android:layout_width="wrap_content"
@@ -98,6 +97,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/register"
         android:textColor="@color/white"/>
+
+    <ProgressBar
+        android:id="@+id/progress_signup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible"/>
 
     <apps.raymond.kinect.UIResources.VerticalTextView
         android:id="@+id/vtext_login"

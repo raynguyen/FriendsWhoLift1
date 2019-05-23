@@ -56,8 +56,12 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
+        <activity
+            android:name=".Events.EventCreate_Activity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
 
-
+        </activity>
         <activity android:name=".EventDetail_Activity"
             android:theme="@style/AppTheme">
         </activity>
