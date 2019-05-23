@@ -157,9 +157,9 @@ public class Core_FireBaseRepo {
                     }
                 });
     }
-    public void deleteConnection(final String userID, String  connectionName){
-        userCollection.document(userID).collection("Connections")
-                .document(connectionName).delete()
+    public Task<Void> deleteUserConnection(final String userID, String  connectionID){
+        return userCollection.document(userID).collection("Connections")
+                .document(connectionID).delete()
                 .continueWithTask(new Continuation<Void, Task<Void>>() {
                     @Override
                     public Task<Void> then(@NonNull Task<Void> task) throws Exception {

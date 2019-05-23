@@ -37,8 +37,12 @@ public class Profile_ViewModel extends ViewModel {
         return mConnectionsList;
     }
 
-    public Task<Void> addUserConnection(String userID,User_Model user){
-        return mRepo.addConnection(userID,user);
+    public Task<Void> createUserConnection(String userID, User_Model profileModel){
+        return mRepo.addConnection(userID,profileModel);
+    }
+
+    public Task<Void> deleteUserConnection(String userID, String connectionID){
+        return mRepo.deleteUserConnection(userID, connectionID);
     }
 
     public Task<Boolean> checkForConnection(String userID, String checkID){

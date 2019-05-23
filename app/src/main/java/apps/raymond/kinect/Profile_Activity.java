@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.UserProfile.ProfileSettings_Fragment;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
@@ -42,7 +43,8 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
  *  Add ability to create/delete a connection with the current profile.
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
-public class Profile_Activity extends AppCompatActivity implements View.OnClickListener{
+public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
+        YesNoDialog.YesNoCallback {
     private static final String TAG = "ProfileActivity";
     private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
     private final static int REQUEST_PROFILE_PICTURE = 0;
@@ -50,6 +52,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
 
     TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
     Button btnConnections, btnLocations, btnInterests;
+    private ImageButton btnAddConnection,btnDeleteConnection;
     ImageView profilePic;
     User_Model mUserModel,mProfileModel;
     String mUserID, mProfileID;
@@ -68,8 +71,12 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         txtInterestsNum = findViewById(R.id.text_interests_count);
         txtLocationsNum = findViewById(R.id.text_locations_count);
 
+        btnAddConnection = findViewById(R.id.button_add_connection);
+        btnAddConnection.setOnClickListener(this);
+        btnDeleteConnection = findViewById(R.id.button_remove_connection);
+        btnDeleteConnection.setOnClickListener(this);
+
         if(getIntent().hasExtra("profilemodel")){
-            Log.w(TAG,"We are passed a profile model as well as user.");
             mProfileModel = getIntent().getExtras().getParcelable("profilemodel");
             mProfileID = mProfileModel.getEmail();
             mViewModel.checkForConnection(mUserID,mProfileID)
@@ -77,9 +84,9 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onComplete(@NonNull Task<Boolean> task) {
                             if(task.getResult()){
-                                //DELETE BUTTON
+                                btnDeleteConnection.setVisibility(View.VISIBLE);
                             } else {
-                                //ADD BUTTON
+                                btnAddConnection.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -88,15 +95,11 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             txtInterestsNum.setText(String.valueOf(mProfileModel.getNuminterests()));
             txtLocationsNum.setText(String.valueOf(mProfileModel.getNumlocations()));
 
-            ImageButton btnDeleteConnection = findViewById(R.id.button_remove_connection);
-            btnDeleteConnection.setOnClickListener(this);
-            btnDeleteConnection.setVisibility(View.VISIBLE);
             ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profilefragment,viewFragment)
                     .commit();
         } else {
-            Log.w(TAG,"We are NOT passed a profile model as well as user.");
             txtName.setText(mUserID);
             txtConnectionsNum.setText(String.valueOf(mUserModel.getNumconnections()));
             txtInterestsNum.setText(String.valueOf(mUserModel.getNuminterests()));
@@ -123,6 +126,11 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
@@ -142,9 +150,6 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 startActivity(loginIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
                 break;
-            case R.id.button_remove_connection:
-                Log.w(TAG,"REMOVE THE CONNECTION WITH THIS USER!");
-                break;
             case R.id.profile_pic:
                 //updateProfilePicture();
                 break;
@@ -161,14 +166,44 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.button_interests:
                 break;
+            case R.id.button_remove_connection:
+                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,
+                        YesNoDialog.DELETE_CONNECTION + " " + mProfileID + "?");
+                yesNoDialog.setCancelable(false);
+                yesNoDialog.show(getSupportFragmentManager(),null);
+                break;
+            case R.id.button_add_connection:
+                mViewModel.createUserConnection(mUserID,mProfileModel)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                btnAddConnection.setVisibility(View.GONE);
+                                btnDeleteConnection.setVisibility(View.VISIBLE);
+                            }
+                        });
+                break;
         }
     }
+
+    @Override
+    public void onPositiveClick() {
+        mViewModel.deleteUserConnection(mUserID, mProfileID)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        btnDeleteConnection.setVisibility(View.GONE);
+                        btnAddConnection.setVisibility(View.VISIBLE);
+                    }
+                });
+
+    }
+
     /*
-    When creating the chooserIntent, we want to create a file to save the photo if the mUser selects
-    the camera option. How do we create a file only if the mUser selects the camera option.
-    -Potential solution is to simply create file regardless of the choice but then we have to delete
-    the file if the mUser does not take a photo > how do we determine if mUser selects the gallery option?
-     */
+        When creating the chooserIntent, we want to create a file to save the photo if the mUser selects
+        the camera option. How do we create a file only if the mUser selects the camera option.
+        -Potential solution is to simply create file regardless of the choice but then we have to delete
+        the file if the mUser does not take a photo > how do we determine if mUser selects the gallery option?
+         */
     Uri photoUri;
     private void updateProfilePicture(){
         Intent receiver = new Intent(this, ImageBroadcastReceiver.class);
