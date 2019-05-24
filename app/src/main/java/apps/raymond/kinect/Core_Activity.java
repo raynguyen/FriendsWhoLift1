@@ -8,24 +8,24 @@
  *
  *
  * ToDo:
- * 1. Get the mUser permission for camera and document access on start up and store as a SharedPreference.
+ * 1. Get the mUserModel permission for camera and document access on start up and store as a SharedPreference.
  * 3. Move all the currentUser stuff to repository return methods.
- * 4. Allow mUser to remove/delete events and or Groups if they are owner for deletes.
+ * 4. Allow mUserModel to remove/delete events and or Groups if they are owner for deletes.
  * 6. Recycler View for events does not properly display information.
  * 8. When inflating detail and clicking edit, the edit text should be filled with the current data instead of blank.
  * 10.Redefine the layout for the edit group/mEventModel
  *
  * APP LAUNCH
  * -On first launch, fetch the User object, associated events and groups, and connections?
- * -Connections: Only needed when mUser clicks on their profile to view their friends.
- * --Will have to query connections events to see if mUser is attending any open events that they are
+ * -Connections: Only needed when mUserModel clicks on their profile to view their friends.
+ * --Will have to query connections events to see if mUserModel is attending any open events that they are
  * --attending.
  *
  * INVITING USERS TO EVENT
  * -When creating an mEventModel, you should be only allowed in invite users you have connected with
  * (potentially for users who have connections with users you connected with) otherwise there may
  * be too much spam invites to events.
- * -Each mUser has control whether they can be invited to events. Open to suggestions via locations
+ * -Each mUserModel has control whether they can be invited to events. Open to suggestions via locations
  * of previous events.
  *
  * MESSAGING FOR INVITES:
@@ -70,10 +70,10 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Events.EventCreate_Activity;
 import apps.raymond.kinect.Events.EventCreate_Fragment;
-import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Events.EventExplore_Fragment;
+import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Groups.GroupCreate_Fragment;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Groups.GroupsCore_Fragment;
@@ -100,7 +100,7 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  */
 public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        GroupCreate_Fragment.AddGroup, EventsCore_Fragment.EventCore_Interface{
+        GroupCreate_Fragment.AddGroup{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
@@ -109,6 +109,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     private static final String SEARCH_EVENTS_FRAG = "EventCore_Interface";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
     public static final int YESNO_REQUEST = 21;
+    public static final int EVENTCREATE = 22;
 
     public UpdateGroupRecycler updateGroupRecycler;
     public interface UpdateGroupRecycler{
@@ -120,7 +121,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
     SearchView toolbarSearch;
     Toolbar toolbar;
     private Core_Adapter pagerAdapter;
-    private User_Model mUser;
+    private User_Model mUserModel;
     private String mUserID;
     private Core_ViewModel mViewModel;
     @Override
@@ -130,9 +131,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         if(getIntent().hasExtra("user")){
-            mUser = getIntent().getExtras().getParcelable("user");
-            mUserID = mUser.getEmail();
-            mViewModel.setUserDocument(mUser);
+            mUserModel = getIntent().getExtras().getParcelable("user");
+            mUserID = mUserModel.getEmail();
+            mViewModel.setUserDocument(mUserModel);
         } else if(getIntent().hasExtra("userID")){
             mUserID = getIntent().getExtras().getString("userID");
             Log.w(TAG,"Starting core activity with mUserID: "+ mUserID);
@@ -164,8 +165,8 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 if(user_model==null){
                     Log.w(TAG,"The usermodel held by the view model is null. Should be logged out.");
                 } else {
-                    mUser = user_model;
-                    mUserID = mUser.getEmail();
+                    mUserModel = user_model;
+                    mUserID = mUserModel.getEmail();
                     mViewModel.loadUserInvitations(mUserID);
                 }
             }
@@ -214,14 +215,25 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .commit();
                 return true;
             case R.id.action_create_event:
+                ArrayList<Event_Model> mEventList = new ArrayList<>();
+                Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
+                eventCreateIntent.putExtra("user",mUserModel);
+                if(mViewModel.getAcceptedEvents().getValue()!=null){
+                    mEventList.addAll(mViewModel.getAcceptedEvents().getValue());
+                    eventCreateIntent.putExtra("events",mEventList);
+                }
+                startActivityForResult(eventCreateIntent,EVENTCREATE);
+
+                /*
                 EventCreate_Fragment eventFragment = new EventCreate_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,eventFragment,CREATE_EVENT_FRAG)
                         .addToBackStack(CREATE_EVENT_FRAG)
                         .commit();
+                        */
                 return true;
             case R.id.action_create_group:
-                GroupCreate_Fragment groupFragment = GroupCreate_Fragment.newInstance(mUser);
+                GroupCreate_Fragment groupFragment = GroupCreate_Fragment.newInstance(mUserModel);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,groupFragment,CREATE_GROUP_FRAG)
                         .addToBackStack(CREATE_GROUP_FRAG)
@@ -264,9 +276,9 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         user finishes the Profile Activity, we don't have to reload all the data held by this ViewModel.
          */
         if(v.getId()== -1){
-            if(mUser!=null){
+            if(mUserModel !=null){
                 Intent profileIntent = new Intent(this,Profile_Activity.class);
-                profileIntent.putExtra("user",mUser);
+                profileIntent.putExtra("user", mUserModel);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }
@@ -328,20 +340,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             }
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public void exploreEvents() {
-        /*
-         * ToDo: When we go to query for a list of public events, check the result against the
-         *  ViewModel's AcceptedEvents list and remove from the new result objects that appear in
-         *  both lists.
-         */
-        EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUser);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.full_core_frame,searchFragment,SEARCH_EVENTS_FRAG)
-                .addToBackStack(SEARCH_EVENTS_FRAG)
-                .commit();
     }
 
     /**

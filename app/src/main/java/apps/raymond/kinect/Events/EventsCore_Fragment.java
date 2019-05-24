@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.EventDetail_Activity;
@@ -30,21 +31,6 @@ import apps.raymond.kinect.UserProfile.User_Model;
 //ToDo: Listen to changes in Store from the EventsExplore fragment - we don't currently update the recyclerview if we attend an event via Explore fragment.
 public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.EventClickListener {
     private static final String TAG = "EventsCore_Fragment";
-
-    private EventCore_Interface interfaceCore;
-    public interface EventCore_Interface {
-        void exploreEvents();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            interfaceCore = (EventCore_Interface) context;
-        } catch (ClassCastException e){
-            Log.w(TAG,"Host activity does not implement required interface.",e);
-        }
-    }
 
     public EventsCore_Fragment(){}
 
@@ -64,6 +50,7 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
         return inflater.inflate(R.layout.fragment_events_core, container,false);
     }
 
+    Button btnExploreEvents;
     private TextView nullText;
     int scrolledHeight = 0;
     private ProgressBar progressBar;
@@ -71,8 +58,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        //Observe the ViewModel for a UserModel.
         mViewModel.getUserModel().observe(this, new Observer<User_Model>() {
             @Override
             public void onChanged(@Nullable User_Model user_model) {
@@ -88,15 +73,16 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
         progressBar = view.findViewById(R.id.progress_bar);
         nullText = view.findViewById(R.id.fragment_null_data_text);
 
-        final Button exploreEventsBtn = view.findViewById(R.id.search_events_btn);
-        exploreEventsBtn.setOnClickListener(new View.OnClickListener() {
+        btnExploreEvents = view.findViewById(R.id.search_events_btn);
+        btnExploreEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(interfaceCore !=null){
-                    interfaceCore.exploreEvents();
-                } else {
-                    Toast.makeText(requireContext(),"Unable to search local events at this time!",Toast.LENGTH_LONG).show();
-                }
+                EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.full_core_frame,searchFragment,"exploreevents")
+                        .addToBackStack("exploreevents")
+                        .commit();
+
             }
         });
 
@@ -109,14 +95,15 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                scrolledHeight = scrolledHeight + dy;
+                //ToDo: This whole thing is wonky!
+                /*scrolledHeight = scrolledHeight + dy;
                 if(scrolledHeight >= exploreEventsBtn.getHeight() && exploreEventsBtn.getVisibility()==View.VISIBLE){
                     exploreEventsBtn.setVisibility(View.GONE);
                     eventsRecycler.scrollTo(0, scrolledHeight);
                 }
                 if(scrolledHeight < exploreEventsBtn.getHeight()){
                     exploreEventsBtn.setVisibility(View.VISIBLE);
-                }
+                }*/
             }
         });
 
@@ -127,7 +114,7 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                 if(event_models!=null){
                     progressBar.setVisibility(View.GONE);
                     if(!event_models.isEmpty()){
-                        Log.w(TAG,"There was a change in the accepted events list"); //If we add an event, we should see this trigger.
+                        Log.w(TAG,"There was a change in the accepted events list");
                         if(nullText.getVisibility()==View.VISIBLE){
                             nullText.setVisibility(View.GONE);
                         }
@@ -138,8 +125,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                 }
             }
         });
-
-
     }
 
     /**
@@ -150,8 +135,7 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
     @Override
     public void onEventClick(Event_Model event) {
         Intent detailActivity = new Intent(requireActivity(),EventDetail_Activity.class);
-        detailActivity.putExtra("user",mUserModel)
-                .putExtra("event",event);
+        detailActivity.putExtra("user",mUserModel).putExtra("event",event);
         startActivity(detailActivity);
     }
 
