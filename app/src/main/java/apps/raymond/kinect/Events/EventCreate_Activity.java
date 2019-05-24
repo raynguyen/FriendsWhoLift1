@@ -23,9 +23,7 @@ public class EventCreate_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.event_create_activity);
-
-
+        setContentView(R.layout.activity_event_create);
 
         if(getIntent().getExtras()!=null){
             mUserModel = getIntent().getExtras().getParcelable("user");
@@ -53,13 +51,9 @@ public class EventCreate_Activity extends AppCompatActivity {
         public Fragment getItem(int i) {
             switch (i){
                 case 0:
-                    //DETAIL FRAGMENT
-                    break;
+                    return new EventCreate_Details_Fragment();
                 case 1:
-                    //MAP FRAGMENT
-                    //Pass the list of events to this fragment.
-                    break;
-
+                    return EventCreate_Map_Fragment.newInstance(mUserID,mEventList); //TEST THIS.
             }
             return null;
         }

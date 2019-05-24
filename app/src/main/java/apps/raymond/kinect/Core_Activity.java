@@ -71,7 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.EventCreate_Activity;
-import apps.raymond.kinect.Events.EventCreate_Fragment;
+import apps.raymond.kinect.Events.EventCreate_Details_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Groups.GroupCreate_Fragment;
@@ -225,7 +225,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 startActivityForResult(eventCreateIntent,EVENTCREATE);
 
                 /*
-                EventCreate_Fragment eventFragment = new EventCreate_Fragment();
+                EventCreate_Details_Fragment eventFragment = new EventCreate_Details_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.core_frame,eventFragment,CREATE_EVENT_FRAG)
                         .addToBackStack(CREATE_EVENT_FRAG)
@@ -357,7 +357,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                     toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
                     String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
                     final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-                    if(fragment instanceof GroupCreate_Fragment || fragment instanceof EventCreate_Fragment){
+                    if(fragment instanceof GroupCreate_Fragment || fragment instanceof EventCreate_Details_Fragment){
                         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

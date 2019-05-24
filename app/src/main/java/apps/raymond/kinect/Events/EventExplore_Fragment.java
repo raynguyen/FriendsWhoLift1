@@ -238,8 +238,6 @@ public class EventExplore_Fragment extends Fragment implements
                                     .title(event.getName()));
                             marker.setTag(event);
                         }
-                        //ToDo:Remove this line once this fragment is complete.
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
                     }
                 }
             }

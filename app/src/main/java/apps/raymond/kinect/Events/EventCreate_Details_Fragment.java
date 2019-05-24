@@ -66,11 +66,10 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventCreate_Fragment extends Fragment implements View.OnClickListener,
+public class EventCreate_Details_Fragment extends Fragment implements View.OnClickListener,
         AddUsers_Adapter.CheckProfileInterface, BackPressListener,
         Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
-
-    public static final String TAG = "EventCreate_Fragment";
+    public static final String TAG = "EventCreate_Details_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
     private static final String TIME_PICKER_FRAG = "TimePicker";
     private static final String SEQUENCE_START = "StartDate";
@@ -81,27 +80,14 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     public static final int END_DATE_REQUEST = 24;
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
-    private FragmentManager fm;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        fm = requireActivity().getSupportFragmentManager();
-    }
-
-    private Core_ViewModel mViewModel;
     private User_Model mUser;
     private String userID;
     Event_Model event;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        mViewModel = ViewModelProviders.of(getActivity()).get(Core_ViewModel.class);
-        mUser = mViewModel.getUserModel().getValue();
-        userID = mUser.getEmail();
-        fetchUsersList();
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        //userID = mUser.getEmail();
     }
 
     @Nullable
@@ -112,8 +98,6 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
     }
 
     int privacy;
-    AutoCompleteTextView locationTxt; //ToDo: Bind the user's locations to this autocomplete.
-    ImageButton locationOptionsBtn;
     SearchView toolbarSearch;
     EditText nameTxt, descTxt, tagsTxt;
     TextView startDateTxt, endDateTxt, startTimeTxt, endTimeTxt,tagsContainer;
@@ -130,7 +114,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         ConstraintLayout layout = view.findViewById(R.id.constraint_layout);
         animateLayoutChanges(layout);
 
-        toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
+        /*toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
 
         nameTxt = view.findViewById(R.id.event_name_txt);
@@ -168,11 +152,6 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
 
         inviteUsersLayout = view.findViewById(R.id.invite_users_layout);
 
-        locationTxt = view.findViewById(R.id.text_location);
-        locationOptionsBtn = view.findViewById(R.id.expand_locations_btn);
-        locationOptionsBtn.setOnClickListener(this);
-        initializeLocations();
-
         primesList = new ArrayList<>();
         ToggleButton sportsTag = view.findViewById(R.id.sports_primary);
         ToggleButton foodTag = view.findViewById(R.id.food_primary);
@@ -209,7 +188,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         Button saveBtn = view.findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
-        cancelBtn.setOnClickListener(this);
+        cancelBtn.setOnClickListener(this);*/
     }
 
     @Override
@@ -230,10 +209,6 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
                 checkTagSyntax();
                 break;
             case R.id.expand_users_list:
-                break;
-            case R.id.expand_locations_btn:
-                Intent mapIntent = new Intent(getActivity(), Maps_Activity.class);
-                startActivityForResult(mapIntent,MAP_REQUEST_CODE);
                 break;
             case R.id.start_date:
                 datePickerDialog(SEQUENCE_START);
@@ -308,13 +283,13 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         switch (s){
             case SEQUENCE_START:
                 DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
-                datePickerFragment.setTargetFragment(EventCreate_Fragment.this,START_DATE_REQUEST);
-                datePickerFragment.show(fm,DATE_PICKER_FRAG);
+                datePickerFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_DATE_REQUEST);
+                datePickerFragment.show(getFragmentManager(),DATE_PICKER_FRAG);
                 break;
             case SEQUENCE_END:
                 DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
-                datePicker.setTargetFragment(EventCreate_Fragment.this, END_DATE_REQUEST);
-                datePicker.show(fm, DATE_PICKER_FRAG);
+                datePicker.setTargetFragment(EventCreate_Details_Fragment.this, END_DATE_REQUEST);
+                datePicker.show(getFragmentManager(), DATE_PICKER_FRAG);
                 break;
         }
 
@@ -324,22 +299,13 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         DialogFragment timeFragment = new TimePicker_Fragment();
         switch(s){
             case SEQUENCE_START:
-                timeFragment.setTargetFragment(EventCreate_Fragment.this,START_TIME_REQUEST);
+                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_TIME_REQUEST);
                 break;
             case SEQUENCE_END:
-                timeFragment.setTargetFragment(EventCreate_Fragment.this,END_TIME_REQUEST);
+                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,END_TIME_REQUEST);
                 break;
         }
-        timeFragment.show(fm,TIME_PICKER_FRAG);
-    }
-
-    /**
-     * Populate a drop-down list for the auto complete text when user attempts to type in a location
-     * to set the event. The mAdapter will hold a list of the user's stored locations from FireStore.
-     */
-    private void initializeLocations(){
-        ArrayAdapter<String> locationsAdapter = new ArrayAdapter<>(requireContext(),android.R.layout.simple_dropdown_item_1line);
-        locationTxt.setAdapter(locationsAdapter);
+        timeFragment.show(getFragmentManager(),TIME_PICKER_FRAG);
     }
 
     /**
@@ -363,22 +329,6 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         }
     }
 
-    /**
-     * Function to retrieve a list of users that are eligible to be invited to this new event.
-     */
-    private void fetchUsersList(){
-        mViewModel.fetchUsers(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<User_Model>> task) {
-                        if(task.isSuccessful()){
-                            usersList.addAll(task.getResult());
-                            userAdapter.notifyItemRangeChanged(0, usersList.size());
-                        }
-                    }
-                });
-    }
-
     @Override
     public void addToCheckedList(User_Model clickedUser) {
         inviteUsersList.add(clickedUser);
@@ -393,75 +343,12 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
         }
     }
 
-    /**
-     * This method is called before creating an Event instance.
-     * Checks that all fields are filled and are valid inputs.
-     * True if fields require attention.
-     */
-    private boolean checkFields(){
-        //Highlight the necessary fields that are empty.
-        //Display a toast.
-        boolean check = false;
-        if(nameTxt.getText().toString().isEmpty()){
-            Log.i(TAG,"Name EditText is empty.");
-            Toast.makeText(getContext(),"Finish filling out the crap wtf.",Toast.LENGTH_SHORT).show();
-            check = true;
-        }
-        return check;
-    }
-
-    private void createEvent(){
-        String addressLine = null;
-        initDates();
-        int invitedSize = inviteUsersList.size();
-        double addressLat = 0;
-        double addressLng = 0;
-        if(address !=null){
-            addressLine = address.getFeatureName()+ " " + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
-            addressLat = address.getLatitude();
-            addressLng = address.getLongitude();
-            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                    nameTxt.getText().toString(),descTxt.getText().toString(),privacy, tagsList,
-                    primesList, invitedSize, addressLine, addressLat, addressLng, startDateTimeLong,
-                    endDateTimeLong);
-        } else {
-            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                    nameTxt.getText().toString(),descTxt.getText().toString(),
-                    privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
-        }
-
-        mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(getContext(),"Created event " + event.getName(),
-                            Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    mViewModel.addEventToUser(userID,event);
-                    mViewModel.addUserToEvent(userID,mUser,event.getOriginalName());
-                    mViewModel.sendEventInvites(event, inviteUsersList);
-                    fm.popBackStack();
-
-
-                    List<Event_Model> eventsList = mViewModel.getAcceptedEvents().getValue();
-                    eventsList.add(event);
-                    mViewModel.setAcceptedEvents(eventsList);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-    }
-
     @Override
     public void onBackPress() {
         YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
         yesNoDialog.setCancelable(false);
         yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
-        yesNoDialog.show(fm,null);
+        yesNoDialog.show(getFragmentManager(),null);
     }
 
     int startDay, startMonth, startYear, endDay, endMonth, endYear;
@@ -481,11 +368,7 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
 
             switch (requestCode){
                 case CANCEL_REQUEST_CODE:
-                    fm.popBackStack();
-                    break;
-                case MAP_REQUEST_CODE:
-                    address = data.getParcelableExtra(Maps_Activity.ADDRESS);
-                    locationTxt.setText(address.getAddressLine(0));
+                    getFragmentManager().popBackStack();
                     break;
                 case START_DATE_REQUEST:
                     initializeDates(args, requestCode);
@@ -570,5 +453,64 @@ public class EventCreate_Fragment extends Fragment implements View.OnClickListen
             transition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
         }
         container.setLayoutTransition(transition);
+    }
+
+    /**
+     * This method is called before creating an Event instance.
+     * Checks that all fields are filled and are valid inputs.
+     * True if fields require attention.
+     */
+    private boolean checkFields(){
+        //Highlight the necessary fields that are empty.
+        //Display a toast.
+        boolean check = false;
+        if(nameTxt.getText().toString().isEmpty()){
+            Log.i(TAG,"Name EditText is empty.");
+            Toast.makeText(getContext(),"Finish filling out the crap wtf.",Toast.LENGTH_SHORT).show();
+            check = true;
+        }
+        return check;
+    }
+
+    private void createEvent(){
+        String addressLine = null;
+        initDates();
+        int invitedSize = inviteUsersList.size();
+        double addressLat = 0;
+        double addressLng = 0;
+        if(address !=null){
+            addressLine = address.getFeatureName()+ " " + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
+            addressLat = address.getLatitude();
+            addressLng = address.getLongitude();
+            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                    nameTxt.getText().toString(),descTxt.getText().toString(),privacy, tagsList,
+                    primesList, invitedSize, addressLine, addressLat, addressLng, startDateTimeLong,
+                    endDateTimeLong);
+        } else {
+            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                    nameTxt.getText().toString(),descTxt.getText().toString(),
+                    privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
+        }
+
+
+        /*mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(getContext(),"Created event " + event.getName(),
+                            Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    mViewModel.addEventToUser(userID,event);
+                    mViewModel.addUserToEvent(userID,mUser,event.getOriginalName());
+                    mViewModel.sendEventInvites(event, inviteUsersList);
+                    fm.popBackStack();
+
+
+                    List<Event_Model> eventsList = mViewModel.getAcceptedEvents().getValue();
+                    eventsList.add(event);
+                    mViewModel.setAcceptedEvents(eventsList);
+                }
+            }
+        });*/
     }
 }

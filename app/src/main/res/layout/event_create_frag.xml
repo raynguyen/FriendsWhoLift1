@@ -150,7 +150,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/primary_tags"
-            android:paddingTop="4dp">
+            android:paddingTop="4dp"
+            android:layout_marginTop="12dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -169,38 +170,6 @@
                 android:padding="2dp"
                 android:layout_weight="1">
             </Spinner>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/address_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/privacy_layout"
-            android:paddingTop="12dp">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/baseline_location_on_black_18dp"
-                android:contentDescription="@string/location"/>
-            <AutoCompleteTextView
-                android:id="@+id/text_location"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_address"
-                android:textSize="20sp"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"/>
-            <ImageButton
-                android:id="@+id/expand_locations_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
-                android:background="@color/transparent"
-                android:contentDescription="@string/Temp"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"/>
         </LinearLayout>
 
         <LinearLayout
@@ -253,7 +222,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/address_layout"
+            app:layout_constraintTop_toBottomOf="@id/privacy_layout"
             android:paddingTop="12dp">
 
             <ImageView
