@@ -11,10 +11,15 @@ import java.util.List;
 
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
     private MutableLiveData<List<Location_Model>> mLocationsSet = new MutableLiveData<>();
+
+    public Task<List<User_Model>> getInvitableUsers(String userID){
+        return mRepo.getAllUsers(userID);
+    }
 
     public void loadUserLocations(String userID){
         mRepo.getUsersLocations(userID)

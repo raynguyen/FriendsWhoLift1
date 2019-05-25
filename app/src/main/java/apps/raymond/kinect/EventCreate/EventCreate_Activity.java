@@ -1,5 +1,7 @@
 package apps.raymond.kinect.EventCreate;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -19,6 +21,7 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity{
+    private static final int CANCEL_REQUEST_CODE = 21;
     private String mUserID;
     private ArrayList<Event_Model> mEventList;
 
@@ -50,6 +53,16 @@ public class EventCreate_Activity extends AppCompatActivity{
         yesNoDialog.setCancelable(false);
 
         overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode== Activity.RESULT_OK) {
+            if (requestCode == CANCEL_REQUEST_CODE) {
+                //FINISH ACTIVITY
+            }
+        }
+
     }
 
     private class EventCreateAdapter extends FragmentPagerAdapter{

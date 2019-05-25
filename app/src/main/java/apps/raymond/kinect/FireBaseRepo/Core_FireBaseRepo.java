@@ -439,7 +439,7 @@ public class Core_FireBaseRepo {
     //*-------------------------------------------ETC--------------------------------------------*//
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
     // Todo: Filter our users that have Privacy:private.
-    public Task<List<User_Model>> fetchUsers(final String userID) {
+    public Task<List<User_Model>> getAllUsers(final String userID) {
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override
             public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {

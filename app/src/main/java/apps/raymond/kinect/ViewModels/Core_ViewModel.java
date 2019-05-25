@@ -2,8 +2,6 @@ package apps.raymond.kinect.ViewModels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.content.Context;
-import android.location.Address;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -249,7 +247,7 @@ public class Core_ViewModel extends ViewModel {
 
     //*-------------------------------------------USER-------------------------------------------*//
     public Task<List<User_Model>> fetchUsers(String userID){
-        return mRepository.fetchUsers(userID);
+        return mRepository.getAllUsers(userID);
     }
 
     //Fetch mEventModel invitations (implement observer once I can figure out how to) and set as LiveData object here.

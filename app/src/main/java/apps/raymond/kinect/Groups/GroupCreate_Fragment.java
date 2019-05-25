@@ -159,7 +159,7 @@ public class GroupCreate_Fragment extends Fragment implements
 
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        userAdapter = new AddUsers_Adapter(usersList, this);
+        userAdapter = new AddUsers_Adapter(this);
         usersRecycler.setAdapter(userAdapter);
     }
 

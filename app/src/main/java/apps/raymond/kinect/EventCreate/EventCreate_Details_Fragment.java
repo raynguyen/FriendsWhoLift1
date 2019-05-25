@@ -30,11 +30,14 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
@@ -43,10 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import apps.raymond.kinect.AddUsers_Adapter;
-import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.Events.DatePicker_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Events.TimePicker_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -54,15 +54,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         AddUsers_Adapter.CheckProfileInterface, Spinner.OnItemSelectedListener,
         CompoundButton.OnCheckedChangeListener {
     public static final String TAG = "EventCreate_Details_Fragment";
-    private static final String DATE_PICKER_FRAG = "DatePicker";
-    private static final String TIME_PICKER_FRAG = "TimePicker";
-    private static final String SEQUENCE_START = "StartDate";
-    private static final String SEQUENCE_END = "EndDate";
-    private static final int CANCEL_REQUEST_CODE = 21;
-    public static final int START_DATE_REQUEST = 23;
-    public static final int END_DATE_REQUEST = 24;
-    private static final int START_TIME_REQUEST = 25;
-    private static final int END_TIME_REQUEST = 26;
 
     public static EventCreate_Details_Fragment newInstance(User_Model userModel){
         EventCreate_Details_Fragment fragment = new EventCreate_Details_Fragment();
@@ -142,12 +133,23 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         txtEventTag = view.findViewById(R.id.text_event_tags);
         txtEventTagsContainer = view.findViewById(R.id.text_tags_container);
 
+        SearchView mInviteSearchview = view.findViewById(R.id.searchview_users_invite);
+
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        AddUsers_Adapter mUserAdapter = new AddUsers_Adapter(this);
+        final AddUsers_Adapter mUserAdapter = new AddUsers_Adapter(this);
         usersRecycler.setAdapter(mUserAdapter);
 
-    }
+        mViewModel.getInvitableUsers(mUserID)
+                .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<User_Model>> task) {
+                        if(task.isSuccessful()){
+                            mUserAdapter.setData(task.getResult());
+                        }
+                    }
+                });
+}
 
     @Override
     public void onClick(View v) {
@@ -158,7 +160,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
                 break;
         }
     }
-
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -209,21 +210,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         }
     }
 
-
-
-    private void timePickerDialog(String s){
-        DialogFragment timeFragment = new TimePicker_Fragment();
-        switch(s){
-            case SEQUENCE_START:
-                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_TIME_REQUEST);
-                break;
-            case SEQUENCE_END:
-                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,END_TIME_REQUEST);
-                break;
-        }
-        timeFragment.show(getFragmentManager(),TIME_PICKER_FRAG);
-    }
-
     @Override
     public void addToCheckedList(User_Model clickedUser) {
         mInviteList.add(clickedUser);
@@ -234,25 +220,8 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         mInviteList.remove(clickedUser);
     }
 
-    int startDay, startMonth, startYear, endDay, endMonth, endYear;
-    Long startDateLong, endDateLong;
-    long startDateTimeLong, endDateTimeLong;
-    Address address = null;
-    String startTime, endTime;
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode==Activity.RESULT_OK || resultCode==YesNoDialog.POS_RESULT){
-            Bundle args = null;
-            try{
-                args = data.getExtras();
-            } catch (NullPointerException npe){}
-            switch (requestCode){
-                case CANCEL_REQUEST_CODE:
-                    getFragmentManager().popBackStack();
-                    break;
-            }
-        }
-    }
+
+
 
     /**
      * Method call to concatenate date and time vars into a single date-time Date.
@@ -293,6 +262,11 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         return check;
     }
 
+    int startDay, startMonth, startYear, endDay, endMonth, endYear;
+    Long startDateLong, endDateLong;
+    long startDateTimeLong, endDateTimeLong;
+    Address address = null;
+    String startTime, endTime;
     private void createEvent(){
         String addressLine = null;
         initDates();

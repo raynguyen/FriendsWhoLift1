@@ -168,7 +168,7 @@
         android:focusable="false"/>
 
     <android.support.v7.widget.SearchView
-        android:id="@+id/searchview_users"
+        android:id="@+id/searchview_users_invite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.SearchView>
