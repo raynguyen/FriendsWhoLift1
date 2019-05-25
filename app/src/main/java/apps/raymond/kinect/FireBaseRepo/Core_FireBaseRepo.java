@@ -50,6 +50,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Groups.Group_Model;
+import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -64,7 +65,6 @@ public class Core_FireBaseRepo {
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
     private static final String MESSAGES = "Messages";
-    private static final String LOCATIONS = "Locations";
     private static final String INVITED = "Invited";
     private static final String ACCEPTED = "Accepted";
     private static final String DECLINED = "Declined";
@@ -207,11 +207,6 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    public Task<Void> addLocation(String userID, Address address, String addressName){
-        CollectionReference locationCol = userCollection.document(userID).collection(LOCATIONS);
-        GeoPoint geoPoint = new GeoPoint(address.getLatitude(),address.getLongitude());
-        return locationCol.document(addressName).set(geoPoint);
-    }
     /*------------------------------------------EVENTS---------------------------------------------*
      * When a user registers to or creates an event, the following is the task priority in order to
      * minimize errors in the corresponding Firestore collections.
@@ -485,4 +480,19 @@ public class Core_FireBaseRepo {
         return imageRef.getBytes(1024 * 1024 * 3);
     }
 
+    public Task<List<Location_Model>> getUsersLocations(String userID){
+        return userCollection.document(userID).collection("locations").get()
+                .continueWith(new Continuation<QuerySnapshot, List<Location_Model>>() {
+                    @Override
+                    public List<Location_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Location_Model> results = new ArrayList<>();
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                document.toObject(Location_Model.class);
+                            }
+                        }
+                        return results;
+                    }
+                });
+    }
 }

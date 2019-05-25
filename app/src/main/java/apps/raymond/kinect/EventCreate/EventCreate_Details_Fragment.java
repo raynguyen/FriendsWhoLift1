@@ -8,36 +8,26 @@
  * At the end of the image button will be two view layouts with the date on top and the time on the bottom.
  */
 
-package apps.raymond.kinect.Events;
+package apps.raymond.kinect.EventCreate;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,8 +38,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
@@ -58,24 +46,22 @@ import java.util.Date;
 import java.util.List;
 
 import apps.raymond.kinect.AddUsers_Adapter;
-import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.Maps_Activity;
+import apps.raymond.kinect.Events.DatePicker_Fragment;
+import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Events.TimePicker_Fragment;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Details_Fragment extends Fragment implements View.OnClickListener,
-        AddUsers_Adapter.CheckProfileInterface, BackPressListener,
-        Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+        AddUsers_Adapter.CheckProfileInterface, Spinner.OnItemSelectedListener,
+        CompoundButton.OnCheckedChangeListener {
     public static final String TAG = "EventCreate_Details_Fragment";
     private static final String DATE_PICKER_FRAG = "DatePicker";
     private static final String TIME_PICKER_FRAG = "TimePicker";
     private static final String SEQUENCE_START = "StartDate";
     private static final String SEQUENCE_END = "EndDate";
     private static final int CANCEL_REQUEST_CODE = 21;
-    private static final int MAP_REQUEST_CODE = 22;
     public static final int START_DATE_REQUEST = 23;
     public static final int END_DATE_REQUEST = 24;
     private static final int START_TIME_REQUEST = 25;
@@ -84,21 +70,21 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     private User_Model mUser;
     private String userID;
     Event_Model event;
+    private EventCreate_ViewModel mViewModel; //Need to get users to invite
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //userID = mUser.getEmail();
+        mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.event_create_frag,container,false);
+        return inflater.inflate(R.layout.fragment_event_create_details,container,false);
     }
 
     int privacy;
-    SearchView toolbarSearch;
     EditText nameTxt, descTxt, tagsTxt;
     TextView startDateTxt, endDateTxt, startTimeTxt, endTimeTxt,tagsContainer;
     Spinner visibilitySpinner;
@@ -110,12 +96,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ConstraintLayout layout = view.findViewById(R.id.constraint_layout);
-        animateLayoutChanges(layout);
-
-        /*toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
-        toolbarSearch.setVisibility(View.GONE);
 
         nameTxt = view.findViewById(R.id.event_name_txt);
         descTxt = view.findViewById(R.id.event_desc_txt);
@@ -129,7 +109,9 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         endTimeTxt.setOnClickListener(this);
 
         visibilitySpinner = view.findViewById(R.id.privacy_spinner);
-        ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_item_layout, getResources().getStringArray(R.array.visibility_options) ) {
+        ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(),
+                R.layout.spinner_item_layout,
+                getResources().getStringArray(R.array.visibility_options) ) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -143,7 +125,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             }
             @Override
             public int getCount() {
-                return super.getCount()-1; //don't display last item. It is used as hint.
+                return super.getCount()-1;
             }
         };
         visibilitySpinner.setAdapter(vAdapter);
@@ -184,27 +166,12 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
         ImageButton expandRecycler = view.findViewById(R.id.expand_users_list);
         expandRecycler.setOnClickListener(this);
-
-        Button saveBtn = view.findViewById(R.id.save_btn);
-        saveBtn.setOnClickListener(this);
-        Button cancelBtn = view.findViewById(R.id.cancel_btn);
-        cancelBtn.setOnClickListener(this);*/
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
-            case R.id.save_btn:
-                if(checkFields()){
-                    return;
-                }
-                progressBar.setVisibility(View.VISIBLE);
-                createEvent();
-                break;
-            case R.id.cancel_btn:
-                onBackPress();
-                break;
             case R.id.event_tag_add_btn:
                 checkTagSyntax();
                 break;
@@ -279,35 +246,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    private void datePickerDialog(String s){
-        switch (s){
-            case SEQUENCE_START:
-                DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
-                datePickerFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_DATE_REQUEST);
-                datePickerFragment.show(getFragmentManager(),DATE_PICKER_FRAG);
-                break;
-            case SEQUENCE_END:
-                DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
-                datePicker.setTargetFragment(EventCreate_Details_Fragment.this, END_DATE_REQUEST);
-                datePicker.show(getFragmentManager(), DATE_PICKER_FRAG);
-                break;
-        }
-
-    }
-
-    private void timePickerDialog(String s){
-        DialogFragment timeFragment = new TimePicker_Fragment();
-        switch(s){
-            case SEQUENCE_START:
-                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_TIME_REQUEST);
-                break;
-            case SEQUENCE_END:
-                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,END_TIME_REQUEST);
-                break;
-        }
-        timeFragment.show(getFragmentManager(),TIME_PICKER_FRAG);
-    }
-
     /**
      * Checks the tag against Java regex for only alphanumerics. If the match returns false and the
      * length is >0 we add the tag to the list of tags.
@@ -329,6 +267,34 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         }
     }
 
+    private void datePickerDialog(String s){
+        switch (s){
+            case SEQUENCE_START:
+                DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
+                datePickerFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_DATE_REQUEST);
+                datePickerFragment.show(getFragmentManager(),DATE_PICKER_FRAG);
+                break;
+            case SEQUENCE_END:
+                DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
+                datePicker.setTargetFragment(EventCreate_Details_Fragment.this, END_DATE_REQUEST);
+                datePicker.show(getFragmentManager(), DATE_PICKER_FRAG);
+                break;
+        }
+    }
+
+    private void timePickerDialog(String s){
+        DialogFragment timeFragment = new TimePicker_Fragment();
+        switch(s){
+            case SEQUENCE_START:
+                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_TIME_REQUEST);
+                break;
+            case SEQUENCE_END:
+                timeFragment.setTargetFragment(EventCreate_Details_Fragment.this,END_TIME_REQUEST);
+                break;
+        }
+        timeFragment.show(getFragmentManager(),TIME_PICKER_FRAG);
+    }
+
     @Override
     public void addToCheckedList(User_Model clickedUser) {
         inviteUsersList.add(clickedUser);
@@ -341,14 +307,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         for(User_Model user : inviteUsersList){
             Log.i(TAG,"Inviting: "+user.getEmail());
         }
-    }
-
-    @Override
-    public void onBackPress() {
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setCancelable(false);
-        yesNoDialog.setTargetFragment(this, Core_Activity.YESNO_REQUEST);
-        yesNoDialog.show(getFragmentManager(),null);
     }
 
     int startDay, startMonth, startYear, endDay, endMonth, endYear;
@@ -365,7 +323,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             } catch (NullPointerException npe){
                 Log.i(TAG,"No data returned from activity.");
             }
-
             switch (requestCode){
                 case CANCEL_REQUEST_CODE:
                     getFragmentManager().popBackStack();
@@ -428,31 +385,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             //Throw an alert dialog of the start date is empty or returns null.
             Log.w(TAG,"Error.",e);
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        toolbarSearch.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * A helper method that enables animation automation through Android.
-     *
-     * @param container The view of which we are enabling automatic transitions for.
-     */
-    public static void animateLayoutChanges(ViewGroup container) {
-        final LayoutTransition transition = new LayoutTransition();
-        transition.setDuration(300);
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            transition.enableTransitionType(LayoutTransition.CHANGING);
-            transition.enableTransitionType(LayoutTransition.APPEARING);
-            transition.enableTransitionType(LayoutTransition.CHANGE_APPEARING);
-            transition.enableTransitionType(LayoutTransition.DISAPPEARING);
-            transition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
-        }
-        container.setLayoutTransition(transition);
     }
 
     /**

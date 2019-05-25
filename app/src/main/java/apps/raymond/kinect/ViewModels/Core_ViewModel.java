@@ -239,9 +239,7 @@ public class Core_ViewModel extends ViewModel {
         return null;
     }
     //*-------------------------------------------ETC--------------------------------------------*//
-    public Task<Void> addLocation(String userID,Address address,String addressName){
-        return mRepository.addLocation(userID,address,addressName);
-    }
+
     public Task<byte[]> getImage(String uri){
         return mRepository.getImage(uri);
     }

@@ -3,7 +3,6 @@ package apps.raymond.kinect.Events;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     @Override
     public EventsCore_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.event_cardview,viewGroup,false);
+                .inflate(R.layout.cardview_event,viewGroup,false);
         return new EventViewHolder(view);
     }
 
@@ -198,7 +197,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             attendingTxt = view.findViewById(R.id.text_attending);
             invitedTxt = view.findViewById(R.id.text_invited);
             hostTxt = view.findViewById(R.id.text_host);
-            locationTxt = view.findViewById(R.id.text_location);
+            locationTxt = view.findViewById(R.id.text_lookup);
             timeTxt = view.findViewById(R.id.text_time);
             sportsTag = view.findViewById(R.id.image_sport);
             foodTag = view.findViewById(R.id.image_food);

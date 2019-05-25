@@ -1,4 +1,4 @@
-package apps.raymond.kinect.Events;
+package apps.raymond.kinect.EventCreate;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,22 +11,22 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+import apps.raymond.kinect.DialogFragments.YesNoDialog;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity {
-    private static final String TAG ="EventCreateActivity";
-
-    private User_Model mUserModel;
     private String mUserID;
     private ArrayList<Event_Model> mEventList;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_create);
 
         if(getIntent().getExtras()!=null){
-            mUserModel = getIntent().getExtras().getParcelable("user");
+            User_Model mUserModel = getIntent().getExtras().getParcelable("user");
             mUserID = mUserModel.getEmail();
             if(getIntent().hasExtra("events")){
                 mEventList = getIntent().getExtras().getParcelableArrayList("events");
@@ -75,4 +75,16 @@ public class EventCreate_Activity extends AppCompatActivity {
             return null;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setCancelable(false);
+
+        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+    }
+
+
+
 }

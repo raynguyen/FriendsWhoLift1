@@ -32,21 +32,6 @@ public class EventInvitations_Adapter extends
         this.callback = callback;
     }
 
-    static class InviteMessagesViewHolder extends RecyclerView.ViewHolder{
-        TextView titleTxt, monthTxt, dayTxt;
-        Button acceptBtn, declineBtn;
-        View viewGroup;
-        private InviteMessagesViewHolder(@NonNull View itemView) {
-            super(itemView);
-            titleTxt = itemView.findViewById(R.id.event_name);
-            monthTxt = itemView.findViewById(R.id.text_month);
-            dayTxt = itemView.findViewById(R.id.text_day);
-            acceptBtn = itemView.findViewById(R.id.accept_event_btn);
-            declineBtn = itemView.findViewById(R.id.decline_event_btn);
-            viewGroup = itemView;
-        }
-    }
-
     @NonNull
     @Override
     public EventInvitations_Adapter.InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -102,5 +87,20 @@ public class EventInvitations_Adapter extends
     private void removeItem(int position){
         mEventSet.remove(position);
         notifyItemRemoved(position);
+    }
+
+    static class InviteMessagesViewHolder extends RecyclerView.ViewHolder{
+        TextView titleTxt, monthTxt, dayTxt;
+        Button acceptBtn, declineBtn;
+        View viewGroup;
+        private InviteMessagesViewHolder(@NonNull View itemView) {
+            super(itemView);
+            titleTxt = itemView.findViewById(R.id.event_name);
+            monthTxt = itemView.findViewById(R.id.text_month);
+            dayTxt = itemView.findViewById(R.id.text_day);
+            acceptBtn = itemView.findViewById(R.id.accept_event_btn);
+            declineBtn = itemView.findViewById(R.id.decline_event_btn);
+            viewGroup = itemView;
+        }
     }
 }

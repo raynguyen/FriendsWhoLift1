@@ -35,7 +35,6 @@ public class Launch_Activity extends AppCompatActivity {
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(loginIntent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
                 } else {
                     Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

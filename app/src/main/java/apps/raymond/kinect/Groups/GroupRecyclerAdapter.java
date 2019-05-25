@@ -48,7 +48,7 @@ public class GroupRecyclerAdapter extends RecyclerView.Adapter<GroupRecyclerAdap
     @Override
     public GroupRecyclerAdapter.GroupViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.group_cardview, viewGroup, false);
+                .inflate(R.layout.cardview_group, viewGroup, false);
         return new GroupViewHolder(view);
     }
 
