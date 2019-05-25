@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 
@@ -16,7 +18,7 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventCreate_Activity extends AppCompatActivity {
+public class EventCreate_Activity extends AppCompatActivity{
     private String mUserID;
     private ArrayList<Event_Model> mEventList;
 
@@ -36,9 +38,18 @@ public class EventCreate_Activity extends AppCompatActivity {
         ViewPager mViewPager = findViewById(R.id.viewpager_eventcreate);
         EventCreateAdapter mAdapter = new EventCreateAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
-
         TabLayout mTabs = findViewById(R.id.tablayout_eventcreate);
         mTabs.setupWithViewPager(mViewPager);
+    }
+
+    //ToDo: Show the YeSNoDialog.
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setCancelable(false);
+
+        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
     }
 
     private class EventCreateAdapter extends FragmentPagerAdapter{
@@ -75,16 +86,5 @@ public class EventCreate_Activity extends AppCompatActivity {
             return null;
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setCancelable(false);
-
-        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
-    }
-
-
 
 }
