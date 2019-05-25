@@ -21,7 +21,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +30,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,14 +64,26 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     private static final int START_TIME_REQUEST = 25;
     private static final int END_TIME_REQUEST = 26;
 
-    private User_Model mUser;
-    private String userID;
-    Event_Model event;
+    public static EventCreate_Details_Fragment newInstance(User_Model userModel){
+        EventCreate_Details_Fragment fragment = new EventCreate_Details_Fragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user",userModel);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    private User_Model mUserModel;
+    private String mUserID;
+    private List<String> mPrimesList = new ArrayList<>();
+    private List<String> mTagsList = new ArrayList<>();
+    private List<User_Model> mInviteList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel; //Need to get users to invite
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
+        mUserModel = getArguments().getParcelable("user");
+        mUserID = mUserModel.getEmail();
     }
 
     @Nullable
@@ -85,37 +94,32 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     }
 
     int privacy;
-    EditText nameTxt, descTxt, tagsTxt;
-    TextView startDateTxt, endDateTxt, startTimeTxt, endTimeTxt,tagsContainer;
-    Spinner visibilitySpinner;
-    ProgressBar progressBar;
-    AddUsers_Adapter userAdapter;
-    List<User_Model> usersList, inviteUsersList;
-    ArrayList<String> tagsList, primesList;
-    LinearLayout inviteUsersLayout;
+    EditText txtEventName,txtEventDesc, txtEventTag;
+    TextView txtEventTagsContainer;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        nameTxt = view.findViewById(R.id.event_name_txt);
-        descTxt = view.findViewById(R.id.event_desc_txt);
-        startDateTxt = view.findViewById(R.id.start_date);
-        startDateTxt.setOnClickListener(this);
-        endDateTxt = view.findViewById(R.id.end_date);
-        endDateTxt.setOnClickListener(this);
-        startTimeTxt = view.findViewById(R.id.start_time);
-        startTimeTxt.setOnClickListener(this);
-        endTimeTxt = view.findViewById(R.id.end_time);
-        endTimeTxt.setOnClickListener(this);
+        txtEventName = view.findViewById(R.id.text_event_create_name);
+        txtEventDesc = view.findViewById(R.id.text_event_create_desc);
+        ToggleButton tglSports = view.findViewById(R.id.toggle_sports);
+        tglSports.setOnCheckedChangeListener(this);
+        ToggleButton tglFood = view.findViewById(R.id.toggle_food);
+        tglFood.setOnCheckedChangeListener(this);
+        ToggleButton tglDrinks = view.findViewById(R.id.toggle_drinks);
+        tglDrinks.setOnCheckedChangeListener(this);
+        ToggleButton tglMovie = view.findViewById(R.id.toggle_movie);
+        tglMovie.setOnCheckedChangeListener(this);
+        ToggleButton tglChill = view.findViewById(R.id.toggle_chill);
+        tglChill.setOnCheckedChangeListener(this);
 
-        visibilitySpinner = view.findViewById(R.id.privacy_spinner);
-        ArrayAdapter<String> vAdapter = new ArrayAdapter<String>(requireContext(),
+        Spinner visibilitySpinner = view.findViewById(R.id.spinner_event_privacy);
+        ArrayAdapter<String> mVisibilityAdapter = new ArrayAdapter<String>(requireContext(),
                 R.layout.spinner_item_layout,
                 getResources().getStringArray(R.array.visibility_options) ) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-
                 View v = super.getView(position, convertView, parent);
                 if (position == getCount()) {
                     ((TextView)v.findViewById(R.id.text1)).setText(null);
@@ -128,44 +132,21 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
                 return super.getCount()-1;
             }
         };
-        visibilitySpinner.setAdapter(vAdapter);
+        visibilitySpinner.setAdapter(mVisibilityAdapter);
         visibilitySpinner.setSelection(3);
         visibilitySpinner.setOnItemSelectedListener(this);
-
-        inviteUsersLayout = view.findViewById(R.id.invite_users_layout);
-
-        primesList = new ArrayList<>();
-        ToggleButton sportsTag = view.findViewById(R.id.sports_primary);
-        ToggleButton foodTag = view.findViewById(R.id.food_primary);
-        ToggleButton drinksTag = view.findViewById(R.id.drinks_primary);
-        ToggleButton moviesTag = view.findViewById(R.id.movies_primary);
-        ToggleButton chillTag = view.findViewById(R.id.chill_primary);
-
-        sportsTag.setOnCheckedChangeListener(this);
-        foodTag.setOnCheckedChangeListener(this);
-        drinksTag.setOnCheckedChangeListener(this);
-        moviesTag.setOnCheckedChangeListener(this);
-        chillTag.setOnCheckedChangeListener(this);
-
-        progressBar = view.findViewById(R.id.create_progress_bar);
 
         ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
         addTagsBtn.setOnClickListener(this);
 
-        tagsList = new ArrayList<>();
-        tagsTxt = view.findViewById(R.id.event_tags_txt);
-        tagsContainer = view.findViewById(R.id.tags_container_txt);
+        txtEventTag = view.findViewById(R.id.text_event_tags);
+        txtEventTagsContainer = view.findViewById(R.id.text_tags_container);
 
-        usersList = new ArrayList<>();
-
-        inviteUsersList = new ArrayList<>();
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        userAdapter = new AddUsers_Adapter(usersList, this);
-        usersRecycler.setAdapter(userAdapter);
+        AddUsers_Adapter mUserAdapter = new AddUsers_Adapter(this);
+        usersRecycler.setAdapter(mUserAdapter);
 
-        ImageButton expandRecycler = view.findViewById(R.id.expand_users_list);
-        expandRecycler.setOnClickListener(this);
     }
 
     @Override
@@ -175,69 +156,30 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             case R.id.event_tag_add_btn:
                 checkTagSyntax();
                 break;
-            case R.id.expand_users_list:
-                break;
-            case R.id.start_date:
-                datePickerDialog(SEQUENCE_START);
-                break;
-            case R.id.end_date:
-                datePickerDialog(SEQUENCE_END);
-                break;
-            case R.id.start_time:
-                timePickerDialog(SEQUENCE_START);
-                break;
-            case R.id.end_time:
-                timePickerDialog(SEQUENCE_END);
-                break;
-
         }
     }
+
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int i = buttonView.getId();
         switch (i){
-            case R.id.sports_primary:
-                if(isChecked){
-                    primesList.add(Event_Model.SPORTS);
-                } else {
-                    primesList.remove(Event_Model.SPORTS);
-                }
-                return;
-            case R.id.food_primary:
-                if(isChecked){
-                    primesList.add(Event_Model.FOOD);
-                } else {
-                    primesList.remove(Event_Model.FOOD);
-                }
-                return;
-            case R.id.drinks_primary:
-                if(isChecked){
-                    primesList.add(Event_Model.DRINKS);
-                } else {
-                    primesList.remove(Event_Model.DRINKS);
-                }
-                return;
-            case R.id.movies_primary:
-                if(isChecked){
-                    primesList.add(Event_Model.MOVIES);
-                } else {
-                    primesList.remove(Event_Model.MOVIES);
-                }
-                return;
-            case R.id.chill_primary:
-                if(isChecked){
-                    primesList.add(Event_Model.CHILL);
-                } else {
-                    primesList.remove(Event_Model.CHILL);
-                }
+            case R.id.toggle_sports:
+                break;
+            case R.id.toggle_food:
+                break;
+            case R.id.toggle_drinks:
+                break;
+            case R.id.toggle_movie:
+                break;
+            case R.id.toggle_chill:
                 break;
         }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(parent.getId()==R.id.privacy_spinner){
+        if(parent.getId()==R.id.spinner_event_privacy){
             privacy = position;
         }
     }
@@ -256,31 +198,18 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
      * ToDo: The tags container should house clickable tag icons that are removed upon click.
      */
     private void checkTagSyntax(){
-        String checkTag = tagsTxt.getText().toString();
+        String checkTag = txtEventTag.getText().toString();
         if(!checkTag.equals("") && checkTag.matches("^[a-zA-Z0-9]+$")){
-            if(tagsContainer.getVisibility() == View.GONE){
-                tagsContainer.setVisibility(View.VISIBLE);
+            if(txtEventTagsContainer.getVisibility() == View.GONE){
+                txtEventTagsContainer.setVisibility(View.VISIBLE);
             }
-            tagsList.add(tagsTxt.getText().toString());
-            tagsContainer.setText(tagsList.toString());
-            tagsTxt.getText().clear();
+            mTagsList.add(txtEventTag.getText().toString());
+            txtEventTagsContainer.setText(txtEventTag.toString());
+            txtEventTag.getText().clear();
         }
     }
 
-    private void datePickerDialog(String s){
-        switch (s){
-            case SEQUENCE_START:
-                DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
-                datePickerFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_DATE_REQUEST);
-                datePickerFragment.show(getFragmentManager(),DATE_PICKER_FRAG);
-                break;
-            case SEQUENCE_END:
-                DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
-                datePicker.setTargetFragment(EventCreate_Details_Fragment.this, END_DATE_REQUEST);
-                datePicker.show(getFragmentManager(), DATE_PICKER_FRAG);
-                break;
-        }
-    }
+
 
     private void timePickerDialog(String s){
         DialogFragment timeFragment = new TimePicker_Fragment();
@@ -297,16 +226,12 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
     @Override
     public void addToCheckedList(User_Model clickedUser) {
-        inviteUsersList.add(clickedUser);
+        mInviteList.add(clickedUser);
     }
 
     @Override
     public void removeFromCheckedList(User_Model clickedUser) {
-        Log.i(TAG,"Removing user from list to invite: "+clickedUser.getEmail());
-        inviteUsersList.remove(clickedUser);
-        for(User_Model user : inviteUsersList){
-            Log.i(TAG,"Inviting: "+user.getEmail());
-        }
+        mInviteList.remove(clickedUser);
     }
 
     int startDay, startMonth, startYear, endDay, endMonth, endYear;
@@ -320,48 +245,12 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             Bundle args = null;
             try{
                 args = data.getExtras();
-            } catch (NullPointerException npe){
-                Log.i(TAG,"No data returned from activity.");
-            }
+            } catch (NullPointerException npe){}
             switch (requestCode){
                 case CANCEL_REQUEST_CODE:
                     getFragmentManager().popBackStack();
                     break;
-                case START_DATE_REQUEST:
-                    initializeDates(args, requestCode);
-                    break;
-                case END_DATE_REQUEST:
-                    initializeDates(args, requestCode);
-                    break;
-                case START_TIME_REQUEST:
-                    startTimeTxt.setText(args.getString(TimePicker_Fragment.TIME_12HR));
-                    startTime = args.getString(TimePicker_Fragment.TIME_24HR);
-                    break;
-                case END_TIME_REQUEST:
-                    endTimeTxt.setText(args.getString(TimePicker_Fragment.TIME_12HR));
-                    endTime = args.getString(TimePicker_Fragment.TIME_24HR);
-                    break;
             }
-        }
-    }
-
-    private void initializeDates(Bundle args, int requestCode){
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE MMM d, yyyy");
-        switch(requestCode){
-            case START_DATE_REQUEST:
-                startDay = args.getInt(DatePicker_Fragment.DAY);
-                startMonth = args.getInt(DatePicker_Fragment.MONTH);
-                startYear = args.getInt(DatePicker_Fragment.YEAR);
-                startDateLong = args.getLong(DatePicker_Fragment.DATELONG);
-                startDateTxt.setText(sdf.format(new Date(startDateLong)));
-                break;
-            case END_DATE_REQUEST:
-                endDay = args.getInt(DatePicker_Fragment.DAY);
-                endMonth = args.getInt(DatePicker_Fragment.MONTH);
-                endYear = args.getInt(DatePicker_Fragment.YEAR);
-                endDateLong = args.getLong(DatePicker_Fragment.DATELONG);
-                endDateTxt.setText(sdf.format(new Date(endDateLong)));
-                break;
         }
     }
 
@@ -396,7 +285,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         //Highlight the necessary fields that are empty.
         //Display a toast.
         boolean check = false;
-        if(nameTxt.getText().toString().isEmpty()){
+        if(txtEventName.getText().toString().isEmpty()){
             Log.i(TAG,"Name EditText is empty.");
             Toast.makeText(getContext(),"Finish filling out the crap wtf.",Toast.LENGTH_SHORT).show();
             check = true;
@@ -407,10 +296,11 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     private void createEvent(){
         String addressLine = null;
         initDates();
-        int invitedSize = inviteUsersList.size();
+        int invitedSize = mInviteList.size();
+        Event_Model event;
         double addressLat = 0;
         double addressLng = 0;
-        if(address !=null){
+        /*if(address !=null){
             addressLine = address.getFeatureName()+ " " + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
             addressLat = address.getLatitude();
             addressLng = address.getLongitude();
@@ -422,7 +312,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                     nameTxt.getText().toString(),descTxt.getText().toString(),
                     privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
-        }
+        }*/
 
 
         /*mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -446,3 +336,19 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         });*/
     }
 }
+
+/*
+* private void datePickerDialog(String s){
+        switch (s){
+            case SEQUENCE_START:
+                DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
+                datePickerFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_DATE_REQUEST);
+                datePickerFragment.show(getFragmentManager(),DATE_PICKER_FRAG);
+                break;
+            case SEQUENCE_END:
+                DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
+                datePicker.setTargetFragment(EventCreate_Details_Fragment.this, END_DATE_REQUEST);
+                datePicker.show(getFragmentManager(), DATE_PICKER_FRAG);
+                break;
+        }
+    }*/

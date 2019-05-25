@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -19,10 +20,9 @@ public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.User
         void removeFromCheckedList(User_Model clickedUser);
     }
 
-    private List<User_Model> users;
+    private List<User_Model> mUserList = new ArrayList<>();
     private CheckProfileInterface checkedInterface;
-    public AddUsers_Adapter(List<User_Model> users, CheckProfileInterface checkedInterface){
-        this.users = users;
+    public AddUsers_Adapter(CheckProfileInterface checkedInterface){
         this.checkedInterface = checkedInterface;
     }
 
@@ -47,7 +47,7 @@ public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.User
 
     @Override
     public void onBindViewHolder(@NonNull final UserViewHolder userViewHolder, int i) {
-        final User_Model currentUser = users.get(i);
+        final User_Model currentUser = mUserList.get(i);
         userViewHolder.nameTxt.setText(currentUser.getEmail());
 
         userViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -67,10 +67,15 @@ public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.User
 
     @Override
     public int getItemCount() {
-        if(users !=null){
-            return users.size();
+        if(mUserList !=null){
+            return mUserList.size();
         } else {
             return 0;
         }
+    }
+
+    public void setData(List<User_Model> userModels){
+        this.mUserList = userModels;
+        notifyItemRangeChanged(0,mUserList.size());
     }
 }

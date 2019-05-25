@@ -19,7 +19,7 @@
         android:layout_marginTop="4dp">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/event_name_txt"
+            android:id="@+id/text_event_create_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="26sp"
@@ -34,7 +34,7 @@
         android:layout_marginTop="8dp"
         android:hint="@string/event_desc">
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/event_desc_txt"
+            android:id="@+id/text_event_create_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </android.support.design.widget.TextInputLayout>
@@ -47,35 +47,35 @@
         android:layout_margin="12dp"
         android:weightSum="5">
         <ToggleButton
-            android:id="@+id/sports_primary"
+            android:id="@+id/toggle_sports"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/sports_primary_toggle"
             style="@style/PrimaryToggle"/>
         <ToggleButton
-            android:id="@+id/food_primary"
+            android:id="@+id/toggle_food"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/food_primary_toggle"
             style="@style/PrimaryToggle"/>
         <ToggleButton
-            android:id="@+id/drinks_primary"
+            android:id="@+id/toggle_drinks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/drinks_primary_toggle"
             style="@style/PrimaryToggle"/>
         <ToggleButton
-            android:id="@+id/movies_primary"
+            android:id="@+id/toggle_movie"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/movie_primary_toggle"
             style="@style/PrimaryToggle"/>
         <ToggleButton
-            android:id="@+id/chill_primary"
+            android:id="@+id/toggle_chill"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -98,7 +98,7 @@
             android:contentDescription="@string/messages"/>
 
         <Spinner
-            android:id="@+id/privacy_spinner"
+            android:id="@+id/spinner_event_privacy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -122,8 +122,9 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/baseline_group_black_18dp"
             android:contentDescription="@string/event_tags"/>
+
         <EditText
-            android:id="@+id/event_tags_txt"
+            android:id="@+id/text_event_tags"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -138,15 +139,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/event_tags_txt"
-            app:layout_constraintBottom_toBottomOf="@id/event_tags_txt"
+            app:layout_constraintTop_toTopOf="@id/text_event_tags"
+            app:layout_constraintBottom_toBottomOf="@id/text_event_tags"
             android:src="@drawable/baseline_add_black_18dp"
             android:background="@color/transparent"
             android:contentDescription="@string/Temp"/>
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tags_container_txt"
+        android:id="@+id/text_tags_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/empty_tags"
