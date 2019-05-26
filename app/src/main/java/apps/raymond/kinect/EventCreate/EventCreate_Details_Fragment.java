@@ -38,7 +38,6 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -132,8 +131,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
         txtEventTag = view.findViewById(R.id.text_event_tags);
         txtEventTagsContainer = view.findViewById(R.id.text_tags_container);
-
-        SearchView mInviteSearchview = view.findViewById(R.id.searchview_users_invite);
 
         RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

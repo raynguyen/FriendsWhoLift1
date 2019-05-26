@@ -25,13 +25,14 @@ public class EventCreate_Activity extends AppCompatActivity{
     private String mUserID;
     private ArrayList<Event_Model> mEventList;
 
+    private User_Model mUserModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_create);
 
         if(getIntent().getExtras()!=null){
-            User_Model mUserModel = getIntent().getExtras().getParcelable("user");
+            mUserModel = getIntent().getExtras().getParcelable("user");
             mUserID = mUserModel.getEmail();
             if(getIntent().hasExtra("events")){
                 mEventList = getIntent().getExtras().getParcelableArrayList("events");
@@ -75,9 +76,9 @@ public class EventCreate_Activity extends AppCompatActivity{
         public Fragment getItem(int i) {
             switch (i){
                 case 0:
-                    return new EventCreate_Details_Fragment();
+                    return EventCreate_Details_Fragment.newInstance(mUserModel);
                 case 1:
-                    return EventCreate_Map_Fragment.newInstance(mUserID,mEventList); //TEST THIS.
+                    return EventCreate_Map_Fragment.newInstance(mUserID,mEventList);
             }
             return null;
         }

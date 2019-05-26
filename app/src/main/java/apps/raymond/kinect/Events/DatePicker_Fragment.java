@@ -55,12 +55,6 @@ public class DatePicker_Fragment extends DialogFragment implements android.app.D
         int day = c.get(Calendar.DAY_OF_MONTH);
         // Create a new instance of DatePicker_Fragment and return it
         DatePickerDialog dialog = new DatePickerDialog(requireActivity(), this, year, month, day);
-        if(getTargetRequestCode()== EventCreate_Details_Fragment.START_DATE_REQUEST){
-            dialog.getDatePicker().setMinDate(c.getTimeInMillis());
-        }
-        if(getTargetRequestCode()== EventCreate_Details_Fragment.END_DATE_REQUEST){
-            dialog.getDatePicker().setMinDate(minDate);
-        }
         return dialog;
     }
 
