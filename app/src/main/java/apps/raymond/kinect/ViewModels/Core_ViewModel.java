@@ -136,6 +136,7 @@ public class Core_ViewModel extends ViewModel {
     public Task<Void> addEventToUser(String userID, Event_Model event){
         return mRepository.addEventToUser(userID, event);
     }
+
     public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
         return mRepository.addUserToEvent(userID,user,eventName);
     }
@@ -153,12 +154,6 @@ public class Core_ViewModel extends ViewModel {
                 return mEventMessages;
     }
 
-    public Task<Void> createEvent(Event_Model event){
-        return mRepository.createEvent(event);
-    }
-    public void sendEventInvites(Event_Model event, List<User_Model> inviteList){
-        mRepository.sendEventInvites(event,inviteList);
-    }
     public void deleteEventInvitation(String userID, String eventName){
         mRepository.deleteEventInvitation(userID, eventName);
     }

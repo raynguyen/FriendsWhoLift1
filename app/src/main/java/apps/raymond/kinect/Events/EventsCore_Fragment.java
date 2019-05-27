@@ -30,8 +30,6 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 //ToDo: Listen to changes in Store from the EventsExplore fragment - we don't currently update the recyclerview if we attend an event via Explore fragment.
 public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.EventClickListener {
-    private static final String TAG = "EventsCore_Fragment";
-
     public EventsCore_Fragment(){}
 
     private Core_ViewModel mViewModel;
@@ -62,7 +60,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
             @Override
             public void onChanged(@Nullable User_Model user_model) {
                 if(user_model!=null){
-                    Log.w(TAG,"There was a change in the userModel: "+user_model.getEmail());
                     mUserModel = user_model;
                     mUserID = mUserModel.getEmail();
                     mViewModel.loadAcceptedEvents(mUserID);
@@ -110,11 +107,9 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
         mViewModel.getAcceptedEvents().observe(requireActivity(), new Observer<List<Event_Model>>() {
             @Override
             public void onChanged(@Nullable List<Event_Model> event_models) {
-                Log.w(TAG,"Change in accepted events of viewmodel held by: "+requireActivity().getClass());
                 if(event_models!=null){
                     progressBar.setVisibility(View.GONE);
                     if(!event_models.isEmpty()){
-                        Log.w(TAG,"There was a change in the accepted events list");
                         if(nullText.getVisibility()==View.VISIBLE){
                             nullText.setVisibility(View.GONE);
                         }

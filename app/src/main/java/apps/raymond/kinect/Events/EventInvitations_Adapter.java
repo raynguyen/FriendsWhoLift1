@@ -54,7 +54,6 @@ public class EventInvitations_Adapter extends
             viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.w("InviteAdapter","clicked accept for event: "+event.getOriginalName());
                     removeItem(viewHolder.getAdapterPosition());
                     callback.onRespond(event, ACCEPT);
                 }
@@ -63,7 +62,6 @@ public class EventInvitations_Adapter extends
             viewHolder.declineBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.w("InviteAdapter","clicked decline for event: "+event.getOriginalName());
                     removeItem(viewHolder.getAdapterPosition());
                     callback.onRespond(event,DECLINE);
                 }

@@ -79,18 +79,18 @@ public class EventInvitations_Fragment extends Fragment
         if(newList.contains(event)){
             newList.remove(event);
             mViewModel.setEventInvitations(newList); //Remove the invitation from the ViewModel set and increment attending count.
-            mViewModel.deleteEventInvitation(mUserID,event.getOriginalName()); //Delete the invitation doc and decrement invited count.
+            mViewModel.deleteEventInvitation(mUserID,event.getName()); //Delete the invitation doc and decrement invited count.
         }
         if (response == EventInvitations_Adapter.ACCEPT) {
             Log.w("EventInviteFrag","Accepted event. Should notify observers of activity: "+getActivity().getClass());
-            mViewModel.addUserToEvent(mUserID,mUserModel,event.getOriginalName());//Add user to event's Accepted collection and increment attending count.
+            mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());//Add user to event's Accepted collection and increment attending count.
             mViewModel.addEventToUser(mUserID,event);//Add the event to User's Event collection.
             List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
             acceptedEvents.add(event);
             mViewModel.setAcceptedEvents(acceptedEvents);
         } else if (response == EventInvitations_Adapter.DECLINE) {
             Log.w("EventInviteFrag","Declined event.");
-            mViewModel.declineEventInvitation(event.getOriginalName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
+            mViewModel.declineEventInvitation(event.getName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
         }
     }
 

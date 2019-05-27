@@ -71,7 +71,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.EventCreate.EventCreate_Activity;
-import apps.raymond.kinect.EventCreate.EventCreate_Details_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Groups.GroupCreate_Fragment;
@@ -104,9 +103,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
-    private static final String CREATE_EVENT_FRAG = "CreateEvent";
     private static final String CREATE_GROUP_FRAG = "CreateGroup";
-    private static final String SEARCH_EVENTS_FRAG = "EventCore_Interface";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
     public static final int YESNO_REQUEST = 21;
     public static final int EVENTCREATE = 22;
@@ -196,7 +193,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                getMenuInflater().inflate(R.menu.core_menu,menu);
                toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
                toolbar.setNavigationOnClickListener(this);
-               eventCreate = menu.findItem(R.id.action_create_event);
+               eventCreate = menu.findItem(R.id.action_create_event_launch);
                groupCreate = menu.findItem(R.id.action_create_group);
                return true;
             }
@@ -214,7 +211,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                         .addToBackStack(INV_FRAG)
                         .commit();
                 return true;
-            case R.id.action_create_event:
+            case R.id.action_create_event_launch:
                 ArrayList<Event_Model> mEventList = new ArrayList<>();
                 Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
                 eventCreateIntent.putExtra("user",mUserModel);
@@ -234,6 +231,18 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode==Activity.RESULT_OK){
+            if(requestCode==EVENTCREATE){
+                Event_Model event = data.getParcelableExtra("event");
+                List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+                acceptedEvents.add(event);
+                mViewModel.setAcceptedEvents(acceptedEvents);
+            }
+        }
     }
 
     @Override
@@ -276,18 +285,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.w(TAG,"RESUMING CORE");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.w(TAG,"Destroying core.");
     }
 
     @Override

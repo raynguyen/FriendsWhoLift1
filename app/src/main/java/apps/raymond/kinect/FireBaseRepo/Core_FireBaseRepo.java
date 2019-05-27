@@ -228,7 +228,7 @@ public class Core_FireBaseRepo {
      * @return Task
      */
     public Task<Void> createEvent(final Event_Model event) {
-        DocumentReference eventRef = eventCollection.document(event.getOriginalName());
+        DocumentReference eventRef = eventCollection.document(event.getName());
         //ToDo: We currently overwrite any events with the same name. Need to determine an id method.
         return eventRef.set(event);
     }
@@ -239,7 +239,7 @@ public class Core_FireBaseRepo {
      */
     public Task<Void> addEventToUser(String userID, Event_Model event) {
         return userCollection.document(userID).collection(EVENTS)
-                .document(event.getOriginalName()).set(event);
+                .document(event.getName()).set(event);
     }
 
     /**
@@ -268,15 +268,15 @@ public class Core_FireBaseRepo {
     }
 
     //Todo: Revisit this method to invite users to an event.
-    public void sendEventInvites(final Event_Model groupEvent, final List<User_Model> userList) {
-        final DocumentReference eventDoc = eventCollection.document(groupEvent.getOriginalName());
-        final CollectionReference eventInvitedCol = eventCollection.document(groupEvent.getOriginalName()).collection(INVITED);
+    public void sendEventInvites(final Event_Model event, final List<User_Model> userList) {
+        final DocumentReference eventDoc = eventCollection.document(event.getName());
+        final CollectionReference eventInvitedCol = eventCollection.document(event.getName()).collection(INVITED);
         final WriteBatch inviteBatch = mStore.batch();
         final List<Task<Void>> sendInvites = new ArrayList<>();
 
         for (final User_Model user : userList) {
             sendInvites.add(userCollection.document(user.getEmail()).collection(EVENT_INVITES)
-                    .document(groupEvent.getName()).set(groupEvent, SetOptions.merge())
+                    .document(event.getName()).set(event, SetOptions.merge())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -373,14 +373,14 @@ public class Core_FireBaseRepo {
 
     public Task<Void> postMessage(final Event_Model event,final Message_Model message){
         CollectionReference eventMessagesRef = mStore.collection(EVENTS)
-                .document(event.getOriginalName())
+                .document(event.getName())
                 .collection(MESSAGES);
 
         return eventMessagesRef.document().set(message);
     }
     public Task<List<Message_Model>> getMessages(Event_Model event){
         CollectionReference eventMessagesRef = mStore.collection(EVENTS)
-                .document(event.getOriginalName())
+                .document(event.getName())
                 .collection(MESSAGES);
 
         return eventMessagesRef.get().continueWith(new Continuation<QuerySnapshot, List<Message_Model>>() {

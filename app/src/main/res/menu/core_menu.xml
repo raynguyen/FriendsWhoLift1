@@ -13,7 +13,7 @@
     </item>
 
     <item
-        android:id="@+id/action_create_event"
+        android:id="@+id/action_create_event_launch"
         android:title="@string/create_event"
         android:icon="@drawable/baseline_playlist_add_black_18dp"
         app:showAsAction="ifRoom"

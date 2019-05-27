@@ -22,11 +22,12 @@ public class EventCreate_ViewModel extends ViewModel {
     private MutableLiveData<String> mEventName = new MutableLiveData<>();
     private MutableLiveData<String> mEventDesc = new MutableLiveData<>();
     private List<User_Model> mInviteList = new ArrayList<>();
+    private List<String> mEventPrimes = new ArrayList<>();
     private Event_Model mEventModel = new Event_Model();
 
     public void setEventName(String s){
         mEventName.setValue(s);
-        mEventModel.setOriginalName(s);
+        mEventModel.setName(s);
     }
 
     public MutableLiveData<String> getEventName(){
@@ -42,8 +43,32 @@ public class EventCreate_ViewModel extends ViewModel {
         return mEventDesc;
     }
 
+    public void setEventStart(long start){
+        mEventModel.setLong1(start);
+    }
+
+    public void setEventEnd(long end){
+        mEventModel.setLong2(end);
+    }
+
+    public void setEventAddress(String address){
+        mEventModel.setAddress(address);
+    }
+
+    public List<String> getEventPrimes(){
+        return mEventPrimes;
+    }
+
     public Event_Model getEventModel(){
         return mEventModel;
+    }
+
+    public void addEventPrime(String prime){
+        mEventPrimes.add(prime);
+    }
+
+    public void removeEventPrime(String prime){
+        mEventPrimes.remove(prime);
     }
 
     public void addToInviteList(User_Model userModel){
@@ -74,5 +99,20 @@ public class EventCreate_ViewModel extends ViewModel {
 
     public MutableLiveData<List<Location_Model>> getLocationSet(){
         return mLocationsSet;
+    }
+
+    public Task<Void> createEvent(Event_Model event){
+        return mRepo.createEvent(event);
+    }
+
+    public Task<Void> addEventToUser(String userID, Event_Model event){
+        return mRepo.addEventToUser(userID, event);
+    }
+    public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
+        return mRepo.addUserToEvent(userID,user,eventName);
+    }
+
+    public void sendEventInvites(Event_Model event, List<User_Model> inviteList){
+        mRepo.sendEventInvites(event,inviteList);
     }
 }

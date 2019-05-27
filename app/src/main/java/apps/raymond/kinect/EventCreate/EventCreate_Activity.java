@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +107,6 @@ public class EventCreate_Activity extends AppCompatActivity{
                 //FINISH ACTIVITY
             }
         }
-
     }
 
     @Override
@@ -125,8 +128,23 @@ public class EventCreate_Activity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
-                Event_Model event = mViewModel.getEventModel();
+                final Event_Model event = mViewModel.getEventModel();
                 event.setCreator(mUserID);
+                event.setPrimes(mViewModel.getEventPrimes());
+                event.setInvited(mViewModel.getInviteList().size());
+                mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());
+                    }
+                });
+                mViewModel.addEventToUser(mUserID,event);
+                mViewModel.sendEventInvites(event, mViewModel.getInviteList());
+
+                Intent createdEvent = new Intent();
+                createdEvent.putExtra("event",event);
+                setResult(Activity.RESULT_OK, createdEvent);
+                finish();
             } else {
                 Toast.makeText(this,"Mandatory event fields must be completed.",Toast.LENGTH_LONG).show();
             }

@@ -125,15 +125,18 @@ public class EventExplore_Fragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 if(focusedEvent!=null){
-                    List<Event_Model> newList = mViewModel.getEventInvitations().getValue();
+                    List<Event_Model> inviteList = mViewModel.getEventInvitations().getValue();
                     //Delete the event invitation from DB and ViewModel set if it exists.
-                    if(newList.contains(focusedEvent)){
-                        newList.remove(focusedEvent);
-                        mViewModel.setEventInvitations(newList); //Remove the invitation from the ViewModel set and increment attending count.
-                        mViewModel.deleteEventInvitation(mUserID,focusedEvent.getOriginalName()); //Delete the invitation doc and decrement invited count.
+                    if(inviteList.contains(focusedEvent)){
+                        inviteList.remove(focusedEvent);
+                        mViewModel.setEventInvitations(inviteList); //Remove the invitation from the ViewModel set and increment attending count.
+                        mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
                     }
-                    mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getOriginalName());//Add user to event's Accepted collection and increment attending.
+                    mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName());//Add user to event's Accepted collection and increment attending.
                     mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
+                    List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+                    acceptedEvents.add(focusedEvent);
+                    mViewModel.setAcceptedEvents(acceptedEvents);
                 }
             }
         });

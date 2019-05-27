@@ -137,8 +137,8 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
                 @Override
                 public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                    return mListFull.get(oldPosition).getOriginalName()
-                            .equals(newList.get(newPosition).getOriginalName());
+                    return mListFull.get(oldPosition).getName()
+                            .equals(newList.get(newPosition).getName());
                 }
 
                 //Disabled currently
@@ -166,7 +166,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
                     List<Event_Model> filteredList = new ArrayList<>();
                     String string = constraint.toString().toLowerCase().trim();
                     for(Event_Model event : mListFull){
-                        if(event.getOriginalName().toLowerCase().trim().contains(string)){
+                        if(event.getName().toLowerCase().trim().contains(string)){
                             filteredList.add(event);
                         }
                     }

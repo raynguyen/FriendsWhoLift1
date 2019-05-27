@@ -18,6 +18,15 @@ public class Event_Model implements Parcelable{
     public static final String MOVIES = "Movies";
     public static final String CHILL = "Chill";
 
+    private String creator, name, desc;
+    private double lat, lng;
+    private int privacy;
+    private List<String> tags, primes;
+    private String address = "TBD";
+    private int attending = 1;
+    private int invited;
+    private long long1, long2; //long1 should be a mandatory field that is mutable.
+
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
         public Event_Model createFromParcel(Parcel source) {
@@ -30,24 +39,13 @@ public class Event_Model implements Parcelable{
         }
     };
 
-    private String creator, originalName, name, desc;
-    private double lat, lng;
-    private int privacy;
-    private List<String> tags, primes;
-    private String address = "TBD";
-    private int attending = 1;
-    private int invited;
-    private long long1, long2; //long1 should be a mandatory field that is mutable.
-
     public Event_Model(){
-        // Empty constructor as required by FireBase.
     }
 
     public Event_Model(String creator, String name, String desc, int privacy, ArrayList<String> tags,
                        ArrayList<String> primes, int invited){
         this.creator = creator;
         this.name = name;
-        this.originalName = name;
         this.desc = desc;
         this.privacy = privacy;
         this.tags = tags;
@@ -59,7 +57,6 @@ public class Event_Model implements Parcelable{
                        ArrayList<String> primes, int invited, long long1, long long2){
         this.creator = creator;
         this.name = name;
-        this.originalName = name;
         this.desc = desc;
         this.privacy = privacy;
         this.tags = tags;
@@ -74,7 +71,6 @@ public class Event_Model implements Parcelable{
                        long long1, long long2) {
         this.creator = creator;
         this.name = name;
-        this.originalName = name;
         this.desc = desc;
         this.privacy = privacy;
         this.tags = tags;
@@ -91,7 +87,6 @@ public class Event_Model implements Parcelable{
     private Event_Model(Parcel in){
         creator = in.readString();
         name = in.readString();
-        originalName = this.name;
         desc = in.readString();
         privacy = in.readInt();
         tags = in.readArrayList(null);
@@ -109,14 +104,6 @@ public class Event_Model implements Parcelable{
 
     public void setCreator(String creator){
         this.creator = creator;
-    }
-
-    public String getOriginalName() {
-        return originalName;
-    }
-
-    public void setOriginalName(String name){
-        this.originalName = name;
     }
 
     public String getName(){
