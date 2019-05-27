@@ -22,9 +22,11 @@ public class EventCreate_ViewModel extends ViewModel {
     private MutableLiveData<String> mEventName = new MutableLiveData<>();
     private MutableLiveData<String> mEventDesc = new MutableLiveData<>();
     private List<User_Model> mInviteList = new ArrayList<>();
+    private Event_Model mEventModel = new Event_Model();
 
     public void setEventName(String s){
         mEventName.setValue(s);
+        mEventModel.setOriginalName(s);
     }
 
     public MutableLiveData<String> getEventName(){
@@ -33,10 +35,15 @@ public class EventCreate_ViewModel extends ViewModel {
 
     public void setEventDesc(String s){
         mEventDesc.setValue(s);
+        mEventModel.setDesc(s);
     }
 
     public MutableLiveData<String> getEventDesc(){
         return mEventDesc;
+    }
+
+    public Event_Model getEventModel(){
+        return mEventModel;
     }
 
     public void addToInviteList(User_Model userModel){

@@ -20,8 +20,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Events.Event_Model;
@@ -30,12 +32,11 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity{
     private static final int CANCEL_REQUEST_CODE = 21;
-    private String mUserID;
-    private ArrayList<Event_Model> mEventList;
-
     private EventCreate_ViewModel mViewModel;
+    private ArrayList<Event_Model> mEventList;
     private User_Model mUserModel;
-    private Event_Model mEvent = new Event_Model();
+    private String mUserID;
+
     private String mEventName;
     private String mEventDesc;
     @Override
@@ -107,7 +108,6 @@ public class EventCreate_Activity extends AppCompatActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.w("CreateAct","OnCreateOptions");
         menu.clear();
         getMenuInflater().inflate(R.menu.menu_event_create,menu);
         MenuItem item = menu.findItem(R.id.action_event_create);
@@ -123,14 +123,12 @@ public class EventCreate_Activity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*
-         * If menu click is greyed out, should toast indicating what still needs to be completed.
-         */
-        if(item.getItemId()==R.id.action_create_event){
+        if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
-
+                Event_Model event = mViewModel.getEventModel();
+                event.setCreator(mUserID);
             } else {
-
+                Toast.makeText(this,"Mandatory event fields must be completed.",Toast.LENGTH_LONG).show();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -140,15 +138,13 @@ public class EventCreate_Activity extends AppCompatActivity{
     private void checkFields(){
         if(mEventName !=null && mEventDesc !=null){
             if(mEventName.trim().length() > 0 && mEventDesc.trim().length() > 0 ){
-                Log.w("EventCreatAct","The name and length are non zero. WE CAN CREATE EVENT!");
                 mCreateOptionFlag = true;
-                invalidateOptionsMenu();
+            } else {
+                mCreateOptionFlag = false;
             }
+            invalidateOptionsMenu();
         }
-
     }
-
-
 
     private class EventCreateAdapter extends FragmentPagerAdapter{
 
