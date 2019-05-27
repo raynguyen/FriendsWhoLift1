@@ -31,19 +31,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import apps.raymond.kinect.AddUsers_Adapter;
-import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -86,7 +82,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
     String mEventName, mEventDesc;
-    private Event_Model mEvent = new Event_Model();
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

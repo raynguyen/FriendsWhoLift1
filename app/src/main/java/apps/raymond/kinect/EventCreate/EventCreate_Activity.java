@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -13,6 +14,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +72,7 @@ public class EventCreate_Activity extends AppCompatActivity{
             @Override
             public void onChanged(@Nullable String s) {
                 mEventName = s;
+                checkFields();
             }
         });
 
@@ -76,16 +80,10 @@ public class EventCreate_Activity extends AppCompatActivity{
             @Override
             public void onChanged(@Nullable String s) {
                 mEventDesc = s;
+                checkFields();
             }
         });
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
 
     //ToDo: Show the YeSNoDialog.
     @Override
@@ -107,9 +105,50 @@ public class EventCreate_Activity extends AppCompatActivity{
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.w("CreateAct","OnCreateOptions");
+        menu.clear();
+        getMenuInflater().inflate(R.menu.menu_event_create,menu);
+        MenuItem item = menu.findItem(R.id.action_event_create);
+        SpannableString spanString = new SpannableString(item.getTitle().toString());
+        if(mCreateOptionFlag){
+            spanString.setSpan(new ForegroundColorSpan(Color.WHITE),0,spanString.length(),0);
+        } else {
+            spanString.setSpan(new ForegroundColorSpan(Color.GRAY),0,spanString.length(),0);
+        }
+        item.setTitle(spanString);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*
+         * If menu click is greyed out, should toast indicating what still needs to be completed.
+         */
+        if(item.getItemId()==R.id.action_create_event){
+            if(mCreateOptionFlag){
+
+            } else {
+
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    boolean mCreateOptionFlag = false;
     private void checkFields(){
+        if(mEventName !=null && mEventDesc !=null){
+            if(mEventName.trim().length() > 0 && mEventDesc.trim().length() > 0 ){
+                Log.w("EventCreatAct","The name and length are non zero. WE CAN CREATE EVENT!");
+                mCreateOptionFlag = true;
+                invalidateOptionsMenu();
+            }
+        }
 
     }
+
+
 
     private class EventCreateAdapter extends FragmentPagerAdapter{
 
@@ -145,8 +184,5 @@ public class EventCreate_Activity extends AppCompatActivity{
             return null;
         }
     }
-
-
-
 
 }
