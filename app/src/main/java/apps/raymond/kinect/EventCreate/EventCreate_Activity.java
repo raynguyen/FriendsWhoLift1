@@ -1,6 +1,8 @@
 package apps.raymond.kinect.EventCreate;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,8 +12,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
 
@@ -25,11 +30,26 @@ public class EventCreate_Activity extends AppCompatActivity{
     private String mUserID;
     private ArrayList<Event_Model> mEventList;
 
+    private EventCreate_ViewModel mViewModel;
     private User_Model mUserModel;
+    private Event_Model mEvent = new Event_Model();
+    private String mEventName;
+    private String mEventDesc;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_create);
+        mViewModel = ViewModelProviders.of(this).get(EventCreate_ViewModel.class);
+
+        Toolbar mToolbar = findViewById(R.id.toolbar_event_create);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //onBackPressed();
+            }
+        });
 
         if(getIntent().getExtras()!=null){
             mUserModel = getIntent().getExtras().getParcelable("user");
@@ -44,7 +64,28 @@ public class EventCreate_Activity extends AppCompatActivity{
         mViewPager.setAdapter(mAdapter);
         TabLayout mTabs = findViewById(R.id.tablayout_eventcreate);
         mTabs.setupWithViewPager(mViewPager);
+
+        mViewModel.getEventName().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                mEventName = s;
+            }
+        });
+
+        mViewModel.getEventDesc().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                mEventDesc = s;
+            }
+        });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
 
     //ToDo: Show the YeSNoDialog.
     @Override
@@ -63,6 +104,10 @@ public class EventCreate_Activity extends AppCompatActivity{
                 //FINISH ACTIVITY
             }
         }
+
+    }
+
+    private void checkFields(){
 
     }
 
@@ -100,5 +145,8 @@ public class EventCreate_Activity extends AppCompatActivity{
             return null;
         }
     }
+
+
+
 
 }

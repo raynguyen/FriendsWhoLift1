@@ -10,17 +10,16 @@
 
 package apps.raymond.kinect.EventCreate;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,7 +60,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         return fragment;
     }
 
-    private User_Model mUserModel;
+    User_Model mUserModel;
     private String mUserID;
     private List<String> mPrimesList = new ArrayList<>();
     private List<String> mTagsList = new ArrayList<>();
@@ -78,20 +76,55 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_event_create_details,container,false);
     }
 
     int privacy;
     EditText txtEventName,txtEventDesc, txtEventTag;
     TextView txtEventTagsContainer;
+    RecyclerView recyclerUsers;
+    String mEventName, mEventDesc;
+    private Event_Model mEvent = new Event_Model();
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         txtEventName = view.findViewById(R.id.text_event_create_name);
         txtEventDesc = view.findViewById(R.id.text_event_create_desc);
+        txtEventName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mEventName = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mViewModel.setEventName(mEventName);
+            }
+        });
+
+        txtEventDesc.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mEventDesc = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mViewModel.setEventDesc(mEventDesc);
+            }
+        });
+
         ToggleButton tglSports = view.findViewById(R.id.toggle_sports);
         tglSports.setOnCheckedChangeListener(this);
         ToggleButton tglFood = view.findViewById(R.id.toggle_food);
@@ -132,10 +165,10 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         txtEventTag = view.findViewById(R.id.text_event_tags);
         txtEventTagsContainer = view.findViewById(R.id.text_tags_container);
 
-        RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
-        usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerUsers = view.findViewById(R.id.recycler_invite_users);
+        recyclerUsers.setLayoutManager(new LinearLayoutManager(getContext()));
         final AddUsers_Adapter mUserAdapter = new AddUsers_Adapter(this);
-        usersRecycler.setAdapter(mUserAdapter);
+        recyclerUsers.setAdapter(mUserAdapter);
 
         mViewModel.getInvitableUsers(mUserID)
                 .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
@@ -146,7 +179,14 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
                         }
                     }
                 });
-}
+
+        recyclerUsers.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                Log.w(TAG,"Height of recyclerview = "+ recyclerUsers.getHeight());
+            }
+        });
+    }
 
     @Override
     public void onClick(View v) {
@@ -217,95 +257,19 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         mInviteList.remove(clickedUser);
     }
 
-
-
-
     /**
-     * Method call to concatenate date and time vars into a single date-time Date.
-     */
-    private void initDates() {
-        String startDateString = startDay + "." + startMonth + "." + startYear + "." + startTime;
-        String endDateString = endDay + "." + endMonth + "." + endYear+"." + endTime;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH:mm");
-        try {
-            if(startDateLong !=null || startTime!=null){
-                Date startDateTimeDate = sdf.parse(startDateString);
-                startDateTimeLong = startDateTimeDate.getTime();
-            }
-            if(endDateLong !=null || endTime!=null){
-                Date endStartDateTimeDate = sdf.parse(endDateString);
-                endDateTimeLong = endStartDateTimeDate.getTime();
-            }
-        } catch (Exception e){
-            //Throw an alert dialog of the start date is empty or returns null.
-            Log.w(TAG,"Error.",e);
-        }
-    }
-
-    /**
-     * This method is called before creating an Event instance.
-     * Checks that all fields are filled and are valid inputs.
-     * True if fields require attention.
+     * Called every time we detect a change in the current focus.
      */
     private boolean checkFields(){
         //Highlight the necessary fields that are empty.
         //Display a toast.
-        boolean check = false;
-        if(txtEventName.getText().toString().isEmpty()){
-            Log.i(TAG,"Name EditText is empty.");
-            Toast.makeText(getContext(),"Finish filling out the crap wtf.",Toast.LENGTH_SHORT).show();
-            check = true;
+        //boolean check = false;
+        if(!mEventName.isEmpty() && !mEventDesc.isEmpty()){
+            return true;
         }
-        return check;
+        return false;
     }
 
-    int startDay, startMonth, startYear, endDay, endMonth, endYear;
-    Long startDateLong, endDateLong;
-    long startDateTimeLong, endDateTimeLong;
-    Address address = null;
-    String startTime, endTime;
-    private void createEvent(){
-        String addressLine = null;
-        initDates();
-        int invitedSize = mInviteList.size();
-        Event_Model event;
-        double addressLat = 0;
-        double addressLng = 0;
-        /*if(address !=null){
-            addressLine = address.getFeatureName()+ " " + address.getThoroughfare() + ", " + address.getLocality() +", "+ address.getAdminArea();
-            addressLat = address.getLatitude();
-            addressLng = address.getLongitude();
-            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                    nameTxt.getText().toString(),descTxt.getText().toString(),privacy, tagsList,
-                    primesList, invitedSize, addressLine, addressLat, addressLng, startDateTimeLong,
-                    endDateTimeLong);
-        } else {
-            event = new Event_Model(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                    nameTxt.getText().toString(),descTxt.getText().toString(),
-                    privacy, tagsList, primesList, invitedSize, startDateTimeLong, endDateTimeLong);
-        }*/
-
-
-        /*mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(getContext(),"Created event " + event.getName(),
-                            Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    mViewModel.addEventToUser(userID,event);
-                    mViewModel.addUserToEvent(userID,mUser,event.getOriginalName());
-                    mViewModel.sendEventInvites(event, inviteUsersList);
-                    fm.popBackStack();
-
-
-                    List<Event_Model> eventsList = mViewModel.getAcceptedEvents().getValue();
-                    eventsList.add(event);
-                    mViewModel.setAcceptedEvents(eventsList);
-                }
-            }
-        });*/
-    }
 }
 
 /*
@@ -323,3 +287,25 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
                 break;
         }
     }*/
+
+/*    /**
+ * Method call to concatenate date and time vars into a single date-time Date.
+
+private void initDates() {
+    String startDateString = startDay + "." + startMonth + "." + startYear + "." + startTime;
+    String endDateString = endDay + "." + endMonth + "." + endYear+"." + endTime;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH:mm");
+    try {
+        if(startDateLong !=null || startTime!=null){
+            Date startDateTimeDate = sdf.parse(startDateString);
+            startDateTimeLong = startDateTimeDate.getTime();
+        }
+        if(endDateLong !=null || endTime!=null){
+            Date endStartDateTimeDate = sdf.parse(endDateString);
+            endDateTimeLong = endStartDateTimeDate.getTime();
+        }
+    } catch (Exception e){
+        //Throw an alert dialog of the start date is empty or returns null.
+        Log.w(TAG,"Error.",e);
+    }
+}*/

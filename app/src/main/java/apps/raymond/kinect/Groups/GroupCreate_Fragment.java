@@ -157,7 +157,7 @@ public class GroupCreate_Fragment extends Fragment implements
         Button testBtn = view.findViewById(R.id.test_btn);
         testBtn.setOnClickListener(this);
 
-        RecyclerView usersRecycler = view.findViewById(R.id.add_users_recycler);
+        RecyclerView usersRecycler = view.findViewById(R.id.recycler_invite_users);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new AddUsers_Adapter(this);
         usersRecycler.setAdapter(userAdapter);

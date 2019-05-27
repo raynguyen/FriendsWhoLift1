@@ -40,7 +40,7 @@ public class SearchUsersDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.search_users_dialog,container,false);
 
         List<String> testList = new ArrayList<>();
-        usersRecycler = view.findViewById(R.id.add_users_recycler);
+        usersRecycler = view.findViewById(R.id.recycler_invite_users);
         usersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         //AddUsers_Adapter adapter = new AddUsers_Adapter(SOME_LIST_OF_USERMODELS);
         //usersRecycler.setAdapter(adapter);

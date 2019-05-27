@@ -19,7 +19,7 @@
         </android.support.v7.widget.SearchView>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/add_users_recycler"
+            android:id="@+id/recycler_invite_users"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/groupSearchView">

@@ -159,7 +159,7 @@
             </android.support.v7.widget.SearchView>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/add_users_recycler"
+                android:id="@+id/recycler_invite_users"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 app:layout_constraintTop_toBottomOf="@id/searchview_users">
@@ -172,7 +172,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:text="@string/add_users"
-                app:layout_constraintTop_toBottomOf="@id/add_users_recycler"/>
+                app:layout_constraintTop_toBottomOf="@id/recycler_invite_users"/>
 
             <LinearLayout
                 android:id="@+id/button_layout"
