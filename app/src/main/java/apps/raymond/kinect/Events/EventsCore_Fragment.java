@@ -79,7 +79,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
                         .replace(R.id.full_core_frame,searchFragment,"exploreevents")
                         .addToBackStack("exploreevents")
                         .commit();
-
             }
         });
 

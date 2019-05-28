@@ -289,7 +289,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void addToGroupRecycler(Group_Model groupBase) {
-        Log.i(TAG,"Called addToGroupRecycler implementation in Core Activity");
         updateGroupRecycler.updateGroupRecycler(groupBase);
     }
 
@@ -359,7 +358,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
                             @Override
                             public void onClick(View v) {
                                 onBackPressed();
-                                Log.w(TAG,"Back stack includes: " +getSupportFragmentManager().getFragments().toString());
                             }
                         });
                     }

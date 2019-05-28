@@ -60,6 +60,9 @@
     <string name="empty">Nothing to show</string>
     <string name="attend">Attend</string>
     <string name="return_button">Return</string>
+    <string name="add_connection">Add Connection</string>
+    <string name="delete_connection">Delete Connection</string>
+    <string name="add_location">Add Location</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

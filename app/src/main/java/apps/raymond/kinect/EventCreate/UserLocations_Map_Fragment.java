@@ -8,7 +8,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,35 +32,34 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.Locations_Adapter;
 import apps.raymond.kinect.R;
 
-public class EventCreate_Map_Fragment extends Fragment implements OnMapReadyCallback,
+public class UserLocations_Map_Fragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
 
-    public static EventCreate_Map_Fragment newInstance(String userID, ArrayList<Event_Model> myEvents){
-        EventCreate_Map_Fragment fragment = new EventCreate_Map_Fragment();
+    /*
+     * Need an identifier to determine if we need to load the card to add as a user location or if
+     * we want to set the address for an event.
+     */
+    public static UserLocations_Map_Fragment newInstance(String userID){
+        UserLocations_Map_Fragment fragment = new UserLocations_Map_Fragment();
         Bundle args = new Bundle();
         args.putString("userid",userID);
-        args.putParcelableArrayList("myevents",myEvents);
         fragment.setArguments(args);
         return fragment;
     }
 
     private FusedLocationProviderClient mFusedLocationClient;
-    private ArrayList<Event_Model> mEventList;
     private String mUserID;
     private EventCreate_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEventList = getArguments().getParcelableArrayList("myevents");
         mUserID = getArguments().getString("userid");
         mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
@@ -77,13 +75,12 @@ public class EventCreate_Map_Fragment extends Fragment implements OnMapReadyCall
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event_create_map,container,false);
+        return inflater.inflate(R.layout.fragment_user_locations,container,false);
     }
 
     private MapView mapView;
     private TextView txtNullData;
     private ProgressBar progressBar;
-    private FloatingActionButton btnMaxMap;
     private Locations_Adapter mAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -94,7 +91,6 @@ public class EventCreate_Map_Fragment extends Fragment implements OnMapReadyCall
 
         txtNullData = view.findViewById(R.id.text_null_locations);
         progressBar = view.findViewById(R.id.progress_bar_locations);
-        btnMaxMap = view.findViewById(R.id.fab_maximize_map);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_locations);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

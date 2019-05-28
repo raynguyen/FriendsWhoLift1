@@ -178,7 +178,7 @@ public class EventCreate_Activity extends AppCompatActivity{
                 case 0:
                     return EventCreate_Details_Fragment.newInstance(mUserModel);
                 case 1:
-                    return EventCreate_Map_Fragment.newInstance(mUserID,mEventList);
+                    return UserLocations_Map_Fragment.newInstance(mUserID);
             }
             return null;
         }
