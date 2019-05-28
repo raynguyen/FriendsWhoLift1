@@ -170,9 +170,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     public boolean onCreateOptionsMenu(Menu menu) {
         //if mProfileModel is null we should inflate the logout button.
         //Use a ViewModel to store the clicked UserModel/Location depending on the inflated fragment and determine what MenuItems need to be inflated.
-
-
         getMenuInflater().inflate(R.menu.menu_profile_activity,menu);
+        if(mProfileModel==null){
+            menu.findItem(R.id.action_connect).setEnabled(false).setVisible(false);
+            menu.findItem(R.id.action_delete_connection).setEnabled(false).setVisible(false);
+        } else {
+            menu.findItem(R.id.action_logout).setEnabled(false).setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
