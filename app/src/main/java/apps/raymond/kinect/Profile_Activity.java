@@ -59,9 +59,9 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
 
     TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
     Button btnConnections, btnLocations, btnInterests;
+    ImageButton btnReturn, btnConnect, btnDeleteConnection, btnLogout;
     ImageView profilePic;
     User_Model mUserModel,mProfileModel;
-    Toolbar mToolbar;
     String mUserID, mProfileID;
     private Profile_ViewModel mViewModel;
     @Override
@@ -72,15 +72,14 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         mUserModel = getIntent().getExtras().getParcelable("user");
         mUserID = mUserModel.getEmail();
 
-        mToolbar = findViewById(R.id.toolbar_profile_activity);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        btnReturn = findViewById(R.id.button_return);
+        btnReturn.setOnClickListener(this);
+        btnLogout = findViewById(R.id.button_logout);
+        btnLogout.setOnClickListener(this);
+        btnConnect = findViewById(R.id.button_connect);
+        btnConnect.setOnClickListener(this);
+        btnDeleteConnection = findViewById(R.id.button_delete_connection);
+        btnDeleteConnection.setOnClickListener(this);
 
         txtName = findViewById(R.id.text_profile_name);
         txtConnectionsNum = findViewById(R.id.text_connections_count);
@@ -90,12 +89,15 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         if(getIntent().hasExtra("profilemodel")){
             mProfileModel = getIntent().getExtras().getParcelable("profilemodel");
             mProfileID = mProfileModel.getEmail();
+            btnLogout.setVisibility(View.GONE);
             mViewModel.checkForConnection(mUserID,mProfileID)
                     .addOnCompleteListener(new OnCompleteListener<Boolean>() {
                         @Override
                         public void onComplete(@NonNull Task<Boolean> task) {
                             if(task.getResult()){
-                                //INVALIDATE OPTIONS MENU TO INFLATE THE CORRECT MENU ITEMS
+                                btnDeleteConnection.setVisibility(View.VISIBLE);
+                            } else {
+                                btnConnect.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -131,6 +133,32 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
+            case R.id.button_return:
+                onBackPressed();
+                break;
+            case R.id.button_logout:
+                mViewModel.signOut();
+                Intent loginIntent = new Intent(this, Login_Activity.class);
+                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(loginIntent);
+                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
+                break;
+            case R.id.button_connect:
+                mViewModel.createUserConnection(mUserID,mProfileModel)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                btnConnect.setVisibility(View.GONE);
+                                btnDeleteConnection.setVisibility(View.VISIBLE);
+                            }
+                        });
+                break;
+            case R.id.button_delete_connection:
+                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,
+                        YesNoDialog.DELETE_CONNECTION + " " + mProfileID + "?");
+                yesNoDialog.setCancelable(false);
+                yesNoDialog.show(getSupportFragmentManager(),null);
+                break;
             case R.id.profile_pic:
                 //updateProfilePicture();
                 break;
@@ -161,54 +189,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        //invalidate options menu to inflate the correct items
+                        btnDeleteConnection.setVisibility(View.GONE);
+                        btnConnect.setVisibility(View.VISIBLE);
                     }
                 });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //if mProfileModel is null we should inflate the logout button.
-        //Use a ViewModel to store the clicked UserModel/Location depending on the inflated fragment and determine what MenuItems need to be inflated.
-        getMenuInflater().inflate(R.menu.menu_profile_activity,menu);
-        if(mProfileModel==null){
-            menu.findItem(R.id.action_connect).setEnabled(false).setVisible(false);
-            menu.findItem(R.id.action_delete_connection).setEnabled(false).setVisible(false);
-        } else {
-            menu.findItem(R.id.action_logout).setEnabled(false).setVisible(false);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_logout:
-                mViewModel.signOut();
-                Intent loginIntent = new Intent(this, Login_Activity.class);
-                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(loginIntent);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
-                return true;
-            case R.id.action_add_location:
-                return true;
-            case R.id.action_connect:
-                mViewModel.createUserConnection(mUserID,mProfileModel)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                //invalidate options menu to inflate the correct items
-                            }
-                        });
-                return true;
-            case R.id.action_delete_connection:
-                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,
-                        YesNoDialog.DELETE_CONNECTION + " " + mProfileID + "?");
-                yesNoDialog.setCancelable(false);
-                yesNoDialog.show(getSupportFragmentManager(),null);
-                return true;
-        }
-        return false;
     }
 
     @Override
@@ -307,3 +291,33 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     }
 
 }
+
+/*
+*     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //if mProfileModel is null we should inflate the logout button.
+        //Use a ViewModel to store the clicked UserModel/Location depending on the inflated fragment and determine what MenuItems need to be inflated.
+        getMenuInflater().inflate(R.menu.menu_profile_activity,menu);
+        if(mProfileModel==null){
+            menu.findItem(R.id.action_connect).setEnabled(false).setVisible(false);
+            menu.findItem(R.id.action_delete_connection).setEnabled(false).setVisible(false);
+        } else {
+            menu.findItem(R.id.action_logout).setEnabled(false).setVisible(false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_logout:
+                return true;
+            case R.id.action_add_location:
+                return true;
+            case R.id.action_connect:
+                return true;
+            case R.id.action_delete_connection:
+                return true;
+        }
+        return false;
+    }*/
