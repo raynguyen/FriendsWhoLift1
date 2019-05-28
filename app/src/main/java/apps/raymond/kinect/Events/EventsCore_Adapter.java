@@ -3,6 +3,7 @@ package apps.raymond.kinect.Events;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,19 +71,19 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         if(primes!=null){
             for(String prime : primes){
                 switch (prime){
-                    case Event_Model.SPORTS:
+                    case "sports":
                         vh.sportsTag.setVisibility(View.VISIBLE);
                         break;
-                    case Event_Model.FOOD:
+                    case "food":
                         vh.foodTag.setVisibility(View.VISIBLE);
                         break;
-                    case Event_Model.DRINKS:
+                    case "drinks":
                         vh.drinksTag.setVisibility(View.VISIBLE);
                         break;
-                    case Event_Model.MOVIES:
+                    case "movies":
                         vh.moviesTag.setVisibility(View.VISIBLE);
                         break;
-                    case Event_Model.CHILL:
+                    case "chill":
                         vh.chillTag.setVisibility(View.VISIBLE);
                         break;
                 }

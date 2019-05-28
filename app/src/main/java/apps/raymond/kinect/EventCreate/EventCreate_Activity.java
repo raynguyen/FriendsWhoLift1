@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +26,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Events.Event_Model;
@@ -73,6 +71,7 @@ public class EventCreate_Activity extends AppCompatActivity{
         TabLayout mTabs = findViewById(R.id.tablayout_eventcreate);
         mTabs.setupWithViewPager(mViewPager);
 
+        //Observes the Details fragment to determine if the there is a non-empty string for the name
         mViewModel.getEventName().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -80,7 +79,6 @@ public class EventCreate_Activity extends AppCompatActivity{
                 checkFields();
             }
         });
-
         mViewModel.getEventDesc().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -90,22 +88,15 @@ public class EventCreate_Activity extends AppCompatActivity{
         });
     }
 
-    //ToDo: Show the YeSNoDialog.
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setCancelable(false);
-
-        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode== Activity.RESULT_OK) {
-            if (requestCode == CANCEL_REQUEST_CODE) {
-                //FINISH ACTIVITY
+    boolean mCreateOptionFlag = false;
+    private void checkFields(){
+        if(mEventName !=null && mEventDesc !=null){
+            if(mEventName.trim().length() > 0 && mEventDesc.trim().length() > 0 ){
+                mCreateOptionFlag = true;
+            } else {
+                mCreateOptionFlag = false;
             }
+            invalidateOptionsMenu();
         }
     }
 
@@ -132,6 +123,7 @@ public class EventCreate_Activity extends AppCompatActivity{
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());
+                event.setAttending(1);
                 mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -141,9 +133,9 @@ public class EventCreate_Activity extends AppCompatActivity{
                 mViewModel.addEventToUser(mUserID,event);
                 mViewModel.sendEventInvites(event, mViewModel.getInviteList());
 
-                Intent createdEvent = new Intent();
-                createdEvent.putExtra("event",event);
-                setResult(Activity.RESULT_OK, createdEvent);
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("event",event);
+                setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             } else {
                 Toast.makeText(this,"Mandatory event fields must be completed.",Toast.LENGTH_LONG).show();
@@ -152,18 +144,28 @@ public class EventCreate_Activity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    boolean mCreateOptionFlag = false;
-    private void checkFields(){
-        if(mEventName !=null && mEventDesc !=null){
-            if(mEventName.trim().length() > 0 && mEventDesc.trim().length() > 0 ){
-                mCreateOptionFlag = true;
-            } else {
-                mCreateOptionFlag = false;
+    //ToDo: Show the YeSNoDialog.
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setCancelable(false);
+
+        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode== Activity.RESULT_OK) {
+            if (requestCode == CANCEL_REQUEST_CODE) {
+                //FINISH ACTIVITY
             }
-            invalidateOptionsMenu();
         }
     }
 
+    /**
+     * Adapter class to populate the ViewPager with Details and Map fragments.
+     */
     private class EventCreateAdapter extends FragmentPagerAdapter{
 
         private EventCreateAdapter(FragmentManager fragmentManager){

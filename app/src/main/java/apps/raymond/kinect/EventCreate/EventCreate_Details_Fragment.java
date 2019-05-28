@@ -60,7 +60,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     private String mUserID;
     private List<String> mPrimesList = new ArrayList<>();
     private List<String> mTagsList = new ArrayList<>();
-    private List<User_Model> mInviteList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel; //Need to get users to invite
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,16 +197,31 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         int i = buttonView.getId();
         switch (i){
             case R.id.toggle_sports:
+                updatePrimesList(buttonView.isChecked(),"sports");
                 break;
             case R.id.toggle_food:
+                updatePrimesList(buttonView.isChecked(),"food");
                 break;
             case R.id.toggle_drinks:
+                updatePrimesList(buttonView.isChecked(),"drinks");
                 break;
             case R.id.toggle_movie:
+                updatePrimesList(buttonView.isChecked(),"movies");
                 break;
             case R.id.toggle_chill:
+                updatePrimesList(buttonView.isChecked(),"chill");
                 break;
         }
+    }
+
+    private void updatePrimesList(boolean b,String s){
+        if(b){
+            mViewModel.addEventPrime(s);
+        } else {
+            mViewModel.removeEventPrime(s);
+        }
+
+        Log.w(TAG,""+mViewModel.getEventPrimes().toString());
     }
 
     @Override
@@ -244,12 +258,12 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
     @Override
     public void addToCheckedList(User_Model clickedUser) {
-        mInviteList.add(clickedUser);
+        mViewModel.addToInviteList(clickedUser);
     }
 
     @Override
     public void removeFromCheckedList(User_Model clickedUser) {
-        mInviteList.remove(clickedUser);
+        mViewModel.removeFromInviteList(clickedUser);
     }
 
     /**

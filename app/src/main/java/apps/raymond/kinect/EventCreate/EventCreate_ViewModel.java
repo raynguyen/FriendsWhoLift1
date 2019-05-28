@@ -25,21 +25,21 @@ public class EventCreate_ViewModel extends ViewModel {
     private List<String> mEventPrimes = new ArrayList<>();
     private Event_Model mEventModel = new Event_Model();
 
-    public void setEventName(String s){
+    void setEventName(String s){
         mEventName.setValue(s);
         mEventModel.setName(s);
     }
 
-    public MutableLiveData<String> getEventName(){
+    MutableLiveData<String> getEventName(){
         return mEventName;
     }
 
-    public void setEventDesc(String s){
+    void setEventDesc(String s){
         mEventDesc.setValue(s);
         mEventModel.setDesc(s);
     }
 
-    public MutableLiveData<String> getEventDesc(){
+    MutableLiveData<String> getEventDesc(){
         return mEventDesc;
     }
 
@@ -55,39 +55,39 @@ public class EventCreate_ViewModel extends ViewModel {
         mEventModel.setAddress(address);
     }
 
-    public List<String> getEventPrimes(){
+    List<String> getEventPrimes(){
         return mEventPrimes;
     }
 
-    public Event_Model getEventModel(){
+    Event_Model getEventModel(){
         return mEventModel;
     }
 
-    public void addEventPrime(String prime){
+    void addEventPrime(String prime){
         mEventPrimes.add(prime);
     }
 
-    public void removeEventPrime(String prime){
+    void removeEventPrime(String prime){
         mEventPrimes.remove(prime);
     }
 
-    public void addToInviteList(User_Model userModel){
+    void addToInviteList(User_Model userModel){
         mInviteList.add(userModel);
     }
 
-    public void removeFromInviteList(User_Model userModel){
+    void removeFromInviteList(User_Model userModel){
         mInviteList.remove(userModel);
     }
 
-    public List<User_Model> getInviteList(){
+    List<User_Model> getInviteList(){
         return mInviteList;
     }
 
-    public Task<List<User_Model>> getInvitableUsers(String userID){
+    Task<List<User_Model>> getInvitableUsers(String userID){
         return mRepo.getAllUsers(userID);
     }
 
-    public void loadUserLocations(String userID){
+    void loadUserLocations(String userID){
         mRepo.getUsersLocations(userID)
                 .addOnCompleteListener(new OnCompleteListener<List<Location_Model>>() {
                     @Override
@@ -97,22 +97,22 @@ public class EventCreate_ViewModel extends ViewModel {
                 });
     }
 
-    public MutableLiveData<List<Location_Model>> getLocationSet(){
+    MutableLiveData<List<Location_Model>> getLocationSet(){
         return mLocationsSet;
     }
 
-    public Task<Void> createEvent(Event_Model event){
+    Task<Void> createEvent(Event_Model event){
         return mRepo.createEvent(event);
     }
 
-    public Task<Void> addEventToUser(String userID, Event_Model event){
-        return mRepo.addEventToUser(userID, event);
+    void addEventToUser(String userID, Event_Model event){
+        mRepo.addEventToUser(userID, event);
     }
-    public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
-        return mRepo.addUserToEvent(userID,user,eventName);
+    void addUserToEvent(String userID,User_Model user, String eventName){
+        mRepo.addUserToEvent(userID,user,eventName);
     }
 
-    public void sendEventInvites(Event_Model event, List<User_Model> inviteList){
+    void sendEventInvites(Event_Model event, List<User_Model> inviteList){
         mRepo.sendEventInvites(event,inviteList);
     }
 }

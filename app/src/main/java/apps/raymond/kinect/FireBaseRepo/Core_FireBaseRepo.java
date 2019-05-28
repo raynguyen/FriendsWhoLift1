@@ -21,7 +21,6 @@
 
 package apps.raymond.kinect.FireBaseRepo;
 
-import android.location.Address;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -36,7 +35,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -66,7 +64,6 @@ public class Core_FireBaseRepo {
     private static final String EVENTS = "Events";
     private static final String MESSAGES = "Messages";
     private static final String INVITED = "Invited";
-    private static final String ACCEPTED = "Accepted";
     private static final String DECLINED = "Declined";
     private static final String EVENT_INVITES = "EventInvites";
     private static final String GROUP_INVITES = "GroupInvites";
@@ -248,9 +245,9 @@ public class Core_FireBaseRepo {
      */
     public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
                                      final String eventName) {
-        eventCollection.document(eventName).update("accepted",FieldValue.increment(1));
+        eventCollection.document(eventName).update("attending",FieldValue.increment(1));
         return eventCollection.document(eventName)
-                .collection(ACCEPTED).document(userID).set(userModel);
+                .collection("Accepted").document(userID).set(userModel);
     }
 
     public void declineEventInvitation(String eventName, String userID,User_Model user){

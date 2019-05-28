@@ -12,18 +12,12 @@ import java.util.List;
 
 //ToDo: Consider implementing hashcode to individually identify event without comparing strings.
 public class Event_Model implements Parcelable{
-    public static final String SPORTS = "Sports";
-    public static final String FOOD = "Food";
-    public static final String DRINKS = "Drinks";
-    public static final String MOVIES = "Movies";
-    public static final String CHILL = "Chill";
-
     private String creator, name, desc;
     private double lat, lng;
     private int privacy;
     private List<String> tags, primes;
-    private String address = "TBD";
-    private int attending = 1;
+    private String address = "Location: TBD";
+    private int attending;
     private int invited;
     private long long1, long2; //long1 should be a mandatory field that is mutable.
 
