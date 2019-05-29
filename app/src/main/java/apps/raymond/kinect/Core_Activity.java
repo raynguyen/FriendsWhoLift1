@@ -77,6 +77,7 @@ import apps.raymond.kinect.Groups.GroupCreate_Fragment;
 import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
+import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
@@ -279,7 +280,7 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
          */
         if(v.getId()== -1){
             if(mUserModel !=null){
-                Intent profileIntent = new Intent(this,Profile_Activity.class);
+                Intent profileIntent = new Intent(this, Profile_Activity.class);
                 profileIntent.putExtra("user", mUserModel);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);

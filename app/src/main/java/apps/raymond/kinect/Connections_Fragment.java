@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
@@ -99,7 +99,7 @@ public class Connections_Fragment extends Fragment implements
     @Override
     public void onProfileClick(User_Model profileModel) {
         Toast.makeText(getContext(),"Clicked on profile: "+profileModel.getEmail(),Toast.LENGTH_LONG).show();
-        Intent viewProfileIntent = new Intent(getContext(),Profile_Activity.class);
+        Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
         viewProfileIntent.putExtra("profilemodel",profileModel).putExtra("user",mUserModel);
         startActivity(viewProfileIntent);
     }

@@ -21,6 +21,7 @@ import android.widget.ViewFlipper;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.EventDetail_ViewModel;
 

@@ -120,7 +120,7 @@
     <string name="event_tags">Event tags</string>
     <string name="discovery_header">Discovery Options</string>
     <string name="event_visibility">Who can view this event?</string>
-    <string name="enter_address">Where will this event be hosted?</string>
+    <string name="enter_address">Search a location!</string>
     <string name="location_tbd">Location: TBD</string>
     <string name="time_format">HH:MM</string>
     <string-array name="visibility_options">
@@ -134,6 +134,7 @@
     <string name="search_addresses">Search an address or location.</string>
     <string name="confirm_txt">Set this address as the location of your event?</string>
     <string name="confirm">CONFIRM</string>
+    <string name="view_locations">Show My Locations</string>
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
     <string name="explore_groups">EXPLORE GROUPS</string>
