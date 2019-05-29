@@ -18,7 +18,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
 //from the activity, get all the required fields from this viewmodel and create the event from the activity.
 public class EventCreate_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
-    private MutableLiveData<List<Location_Model>> mLocationsSet = new MutableLiveData<>();
+    private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
     private MutableLiveData<String> mEventName = new MutableLiveData<>();
     private MutableLiveData<String> mEventDesc = new MutableLiveData<>();
     private List<User_Model> mInviteList = new ArrayList<>();
@@ -92,13 +92,13 @@ public class EventCreate_ViewModel extends ViewModel {
                 .addOnCompleteListener(new OnCompleteListener<List<Location_Model>>() {
                     @Override
                     public void onComplete(@NonNull Task<List<Location_Model>> task) {
-                        mLocationsSet.setValue(task.getResult());
+                        mLocations.setValue(task.getResult());
                     }
                 });
     }
 
-    MutableLiveData<List<Location_Model>> getLocationSet(){
-        return mLocationsSet;
+    public MutableLiveData<List<Location_Model>> getLocations(){
+        return mLocations;
     }
 
     Task<Void> createEvent(Event_Model event){

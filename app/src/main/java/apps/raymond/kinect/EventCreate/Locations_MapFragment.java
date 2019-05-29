@@ -3,6 +3,7 @@ package apps.raymond.kinect.EventCreate;
 import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -51,6 +52,7 @@ import java.util.List;
 import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.Locations_Adapter;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, Locations_Adapter.LocationClickInterface {
@@ -74,14 +76,16 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUserID = getArguments().getString("userid");
         mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
+        mUserID = getArguments().getString("userid");
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         if (ActivityCompat.checkSelfPermission(requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(requireActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_REQUEST_CODE);
         }
     }
 
@@ -100,7 +104,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     private Locations_Adapter mAdapter;
     private Location mLastLocation;
     private ViewGroup mMapGroup, mRecyclerGroup;
-    private ImageButton btnShowMap;
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -188,7 +191,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                 }
             }
         });
-        mViewModel.getLocationSet().observe(this, new Observer<List<Location_Model>>() {
+        mViewModel.getLocations().observe(this, new Observer<List<Location_Model>>() {
             @Override
             public void onChanged(@Nullable List<Location_Model> location_models) {
                 progressBar.setVisibility(View.GONE);

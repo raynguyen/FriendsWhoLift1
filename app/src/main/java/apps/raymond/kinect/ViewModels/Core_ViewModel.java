@@ -117,12 +117,9 @@ public class Core_ViewModel extends ViewModel {
      */
     public void loadAcceptedEvents(String userID){
         mRepository.getAcceptedEvents(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                        if(task.isSuccessful()&& task.getResult()!=null){
-                            mAcceptedEvents.setValue(task.getResult());
-                        }
+                .addOnCompleteListener((Task<List<Event_Model>> task)->{
+                    if(task.isSuccessful()&& task.getResult()!=null){
+                        mAcceptedEvents.setValue(task.getResult());
                     }
                 });
     }

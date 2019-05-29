@@ -11,11 +11,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
+import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Profile_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo;
-    private MutableLiveData<List<User_Model>> mConnectionsList = new MutableLiveData<>();
+    private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
+    private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
 
     public Profile_ViewModel(){
         mRepo = new Core_FireBaseRepo();
@@ -27,14 +29,14 @@ public class Profile_ViewModel extends ViewModel {
                     @Override
                     public void onComplete(@NonNull Task<List<User_Model>> task) {
                         if(task.isSuccessful()){
-                            mConnectionsList.setValue(task.getResult());
+                            mConnections.setValue(task.getResult());
                         }
                     }
                 });
     }
 
     public MutableLiveData<List<User_Model>> getUserConnections(){
-        return mConnectionsList;
+        return mConnections;
     }
 
     public Task<Void> createUserConnection(String userID, User_Model profileModel){
@@ -53,5 +55,14 @@ public class Profile_ViewModel extends ViewModel {
         FirebaseAuth.getInstance().signOut();
     }
 
+    void loadUserLocations(String userID){
+        mRepo.getUsersLocations(userID)
+                .addOnCompleteListener((Task<List<Location_Model>> task)->
+                        mLocations.setValue(task.getResult()));
+    }
+
+    MutableLiveData<List<Location_Model>> getLocations(){
+        return mLocations;
+    }
 
 }

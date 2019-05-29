@@ -294,23 +294,22 @@ public class Core_FireBaseRepo {
 
     public Task<List<Event_Model>> getAcceptedEvents(String userID){
         if(userID==null){
-            Log.w(TAG,"The userId is null");
             return null;
         }
 
-        CollectionReference eventsRef = mStore.collection(USERS).document(userID).collection(EVENTS);
-        return eventsRef.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
-            @Override
-            public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<Event_Model> result = new ArrayList<>();
-                if(task.isSuccessful() && task.getResult()!=null){
-                    for(QueryDocumentSnapshot document : task.getResult()){
-                        result.add(document.toObject(Event_Model.class));
+        return mStore.collection(USERS).document(userID).collection(EVENTS).get()
+                .continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
+                    @Override
+                    public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Event_Model> result = new ArrayList<>();
+                        if(task.isSuccessful() && task.getResult()!=null){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                result.add(document.toObject(Event_Model.class));
+                            }
+                        }
+                        return result;
                     }
-                }
-                return result;
-            }
-        });
+                });
     }
 
     public Task<List<User_Model>> getEventInvited(String eventName) {
