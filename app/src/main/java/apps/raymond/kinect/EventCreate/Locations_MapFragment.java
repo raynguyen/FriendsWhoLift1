@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -51,7 +52,7 @@ import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.Locations_Adapter;
 import apps.raymond.kinect.R;
 
-public class UserLocations_Map_Fragment extends Fragment implements OnMapReadyCallback,
+public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
 
@@ -59,8 +60,8 @@ public class UserLocations_Map_Fragment extends Fragment implements OnMapReadyCa
      * Need an identifier to determine if we need to load the card to add as a user location or if
      * we want to set the mAddress for an event.
      */
-    public static UserLocations_Map_Fragment newInstance(String userID){
-        UserLocations_Map_Fragment fragment = new UserLocations_Map_Fragment();
+    public static Locations_MapFragment newInstance(String userID){
+        Locations_MapFragment fragment = new Locations_MapFragment();
         Bundle args = new Bundle();
         args.putString("userid",userID);
         fragment.setArguments(args);
@@ -109,7 +110,6 @@ public class UserLocations_Map_Fragment extends Fragment implements OnMapReadyCa
 
         mMapGroup = view.findViewById(R.id.frame_mapview);
         mRecyclerGroup = view.findViewById(R.id.relative_locations_recycler);
-        btnShowMap = view.findViewById(R.id.button_show_map);
         btnShowRecycler = view.findViewById(R.id.button_view_locations);
         editSearchMap = view.findViewById(R.id.edit_search_location);
         editSearchMap.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -128,31 +128,6 @@ public class UserLocations_Map_Fragment extends Fragment implements OnMapReadyCa
                 ViewGroup.LayoutParams.MATCH_PARENT,0,1.0f);
         final LinearLayout.LayoutParams hideParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,0,0f);
-        btnShowRecycler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==0){
-                    Log.w("MapFrag","The recycler group weight = 0");
-                    mRecyclerGroup.setLayoutParams(showParams);
-                } else {
-                    Log.w("MapFrag","The recycler group weight != 0");
-                    mMapGroup.setLayoutParams(hideParams);
-                }
-            }
-        });
-
-        btnShowMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==1 &&
-                        ((LinearLayout.LayoutParams) mMapGroup.getLayoutParams()).weight==0){
-                    mMapGroup.setLayoutParams(showParams);
-                } else if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==1 &&
-                        ((LinearLayout.LayoutParams) mMapGroup.getLayoutParams()).weight==1){
-                    mRecyclerGroup.setLayoutParams(hideParams);
-                }
-            }
-        });
 
         editSearchMap.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -163,20 +138,27 @@ public class UserLocations_Map_Fragment extends Fragment implements OnMapReadyCa
             }
         });
 
+
+        btnShowRecycler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==0){
+                    mRecyclerGroup.setLayoutParams(showParams);
+                    btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.baseline_keyboard_arrow_down_black_18dp,null));
+                } else {
+                    mRecyclerGroup.setLayoutParams(hideParams);
+                    btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
+                }
+            }
+        });
+
         txtNullData = view.findViewById(R.id.text_null_locations);
         progressBar = view.findViewById(R.id.progress_bar_locations);
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_locations);
         SearchView mSearchView = view.findViewById(R.id.searchview_locations);
-        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.w("MAPFRAG","hello");
-                mMapGroup.setVisibility(View.GONE);
-                btnShowMap.setVisibility(View.VISIBLE);
-            }
-        });
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new Locations_Adapter(this);
         recyclerView.setAdapter(mAdapter);

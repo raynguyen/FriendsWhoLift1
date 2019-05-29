@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|bottom"
-            android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+            android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
             android:background="@color/white"
             android:alpha=".2"
             />
@@ -49,23 +49,13 @@
         android:id="@+id/relative_locations_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0">
-
-        <ImageButton
-            android:id="@+id/button_show_map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
-            android:background="@color/transparent"
-            android:alpha=".2"
-            android:layout_alignParentTop="true"/>
+        android:layout_weight="1">
 
         <android.support.v7.widget.SearchView
             android:id="@+id/searchview_locations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/button_show_map">
+            android:layout_alignParentTop="true">
         </android.support.v7.widget.SearchView>
 
         <android.support.v7.widget.RecyclerView

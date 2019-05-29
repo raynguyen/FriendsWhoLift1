@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity{
@@ -45,6 +46,7 @@ public class EventCreate_Activity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_create);
+        new FluidContentResizer().listen(this);
         mViewModel = ViewModelProviders.of(this).get(EventCreate_ViewModel.class);
 
         Toolbar mToolbar = findViewById(R.id.toolbar_event_create);
@@ -178,7 +180,7 @@ public class EventCreate_Activity extends AppCompatActivity{
                 case 0:
                     return EventCreate_Details_Fragment.newInstance(mUserModel);
                 case 1:
-                    return UserLocations_Map_Fragment.newInstance(mUserID);
+                    return Locations_MapFragment.newInstance(mUserID);
             }
             return null;
         }

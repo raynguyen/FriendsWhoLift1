@@ -11,10 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,13 +29,10 @@ import java.util.Locale;
 
 import apps.raymond.kinect.Connections_Fragment;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.EventCreate.UserLocations_Map_Fragment;
+import apps.raymond.kinect.EventCreate.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.ProfileSettings_Fragment;
-import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.Login.Login_Activity;
-import apps.raymond.kinect.UserProfile.ViewProfile_Fragment;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /**
@@ -174,7 +168,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                         .commit();
                 break;
             case R.id.button_locations:
-                UserLocations_Map_Fragment locationsFragment = UserLocations_Map_Fragment.newInstance(mUserID);
+                Locations_MapFragment locationsFragment = Locations_MapFragment.newInstance(mUserID);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
                         .replace(R.id.frame_profile,locationsFragment,LOCATIONS_FRAG)
