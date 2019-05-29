@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +34,8 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventCreate_Activity extends AppCompatActivity{
+public class EventCreate_Activity extends AppCompatActivity implements
+        Locations_MapFragment.MapMarkerClick{
     private static final int CANCEL_REQUEST_CODE = 21;
     private EventCreate_ViewModel mViewModel;
     private ArrayList<Event_Model> mEventList;
@@ -163,6 +165,12 @@ public class EventCreate_Activity extends AppCompatActivity{
                 //FINISH ACTIVITY
             }
         }
+    }
+
+    @Override
+    public void onMarkerClick() {
+        //Load a dialog to prompt user if they want to set the location for their event
+        Log.w("CreateEventAct","Display a cardview prompting user to set location");
     }
 
     /**

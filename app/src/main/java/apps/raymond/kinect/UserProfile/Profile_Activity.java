@@ -47,7 +47,7 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
 public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
-        YesNoDialog.YesNoCallback {
+        YesNoDialog.YesNoCallback, Locations_MapFragment.MapMarkerClick {
     private static final String TAG = "ProfileActivity";
     private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
     private static final String LOCATIONS_FRAG = "LocationsFrag";
@@ -190,6 +190,15 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                         btnConnect.setVisibility(View.VISIBLE);
                     }
                 });
+    }
+
+    @Override
+    public void onMarkerClick() {
+        //Load a Cardview for the user to prompt for them to add/delete a location from location set.
+        Log.w(TAG,"CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE");
+        //If the prompt returns a positive click, increment the Text on locations button after we
+        //increment number of locations in the user document.
+        //In the activity result, use the ViewModel held by THIS ACTIVITY (Profile_ViewModel)
     }
 
     @Override

@@ -55,13 +55,13 @@ public class Profile_ViewModel extends ViewModel {
         FirebaseAuth.getInstance().signOut();
     }
 
-    void loadUserLocations(String userID){
+    public void loadUserLocations(String userID){
         mRepo.getUsersLocations(userID)
                 .addOnCompleteListener((Task<List<Location_Model>> task)->
                         mLocations.setValue(task.getResult()));
     }
 
-    MutableLiveData<List<Location_Model>> getLocations(){
+    public MutableLiveData<List<Location_Model>> getLocations(){
         return mLocations;
     }
 

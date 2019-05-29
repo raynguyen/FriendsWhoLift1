@@ -55,9 +55,12 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, Locations_Adapter.LocationClickInterface {
+        Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
 
+    public interface MapMarkerClick{
+        void onMarkerClick();
+    }
     /*
      * Need an identifier to determine if we need to load the card to add as a user location or if
      * we want to set the mAddress for an event.
@@ -70,13 +73,24 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         return fragment;
     }
 
+    private MapMarkerClick mMarkerCallback;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            mMarkerCallback = (MapMarkerClick) context;
+        }catch (ClassCastException e){
+            //Some error
+        }
+    }
+
     private FusedLocationProviderClient mFusedLocationClient;
     private String mUserID;
-    private EventCreate_ViewModel mViewModel;
+    private Profile_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class); //LifeCycle is only for this fragment as updates are sent to the parent activity
         mUserID = getArguments().getString("userid");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
@@ -137,6 +151,8 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     mRecyclerGroup.setLayoutParams(hideParams);
+                    btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
                 }
             }
         });
@@ -191,6 +207,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                 }
             }
         });
+
         mViewModel.getLocations().observe(this, new Observer<List<Location_Model>>() {
             @Override
             public void onChanged(@Nullable List<Location_Model> location_models) {
@@ -209,14 +226,21 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
             }
         });
-        mViewModel.loadUserLocations(mUserID);
-        mMap.setOnMarkerClickListener(this);
 
+        mViewModel.loadUserLocations(mUserID);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
+                mMarkerCallback.onMarkerClick();
+                return true;
+            }
+        });
     }
 
     private void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
-        List<Address> list = new ArrayList<>();
+        List<Address> list = new ArrayList<>(1);
         try{
             list = geocoder.getFromLocationName(query, 1);
         }catch (IOException e){
@@ -235,17 +259,12 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
         mMap.moveCamera(CameraUpdateFactory
                 .newLatLngZoom(new LatLng(address.getLatitude(), address.getLongitude()),17.0f));
-        String markerTitle = String.format("%s %s, %s",
+        /*String markerTitle = String.format("%s %s, %s",
                 address.getSubThoroughfare(),
                 address.getThoroughfare(),
-                address.getLocality());
-        mMap.addMarker(new MarkerOptions().position(latLng)).setTitle(markerTitle);
-    }
+                address.getLocality());*/
+        mMap.addMarker(new MarkerOptions().position(latLng));//.setTitle(markerTitle);
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        //Load prompt to either add location to user or set as event location
-        return false;
     }
 
     @Override
