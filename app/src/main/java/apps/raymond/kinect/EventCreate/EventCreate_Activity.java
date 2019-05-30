@@ -30,6 +30,8 @@ import java.util.ArrayList;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.Locations_MapFragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -168,7 +170,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
     }
 
     @Override
-    public void onMarkerClick() {
+    public void onLocationPositiveClick(Location_Model locationModel) {
         //Load a dialog to prompt user if they want to set the location for their event
         Log.w("CreateEventAct","Display a cardview prompting user to set location");
     }
@@ -188,7 +190,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
                 case 0:
                     return EventCreate_Details_Fragment.newInstance(mUserModel);
                 case 1:
-                    return Locations_MapFragment.newInstance(mUserID);
+                    return Locations_MapFragment.newInstance(mUserID,"event");
             }
             return null;
         }

@@ -21,7 +21,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
     private LocationClickInterface mClickInterface;
 
     public interface LocationClickInterface{
-        void onLocationClick(Location_Model location);
+        void onLocationItemClick(Location_Model location);
     }
 
     public Locations_Adapter(LocationClickInterface clickInterface){
@@ -44,7 +44,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
         vh.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mClickInterface.onLocationClick(locationModel);
+                mClickInterface.onLocationItemClick(locationModel);
             }
         });
     }

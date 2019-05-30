@@ -3,6 +3,7 @@ package apps.raymond.kinect.ViewModels;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -56,13 +57,16 @@ public class Profile_ViewModel extends ViewModel {
     }
 
     public void loadUserLocations(String userID){
-        mRepo.getUsersLocations(userID)
-                .addOnCompleteListener((Task<List<Location_Model>> task)->
-                        mLocations.setValue(task.getResult()));
+        mRepo.getUsersLocations(userID).addOnCompleteListener((Task<List<Location_Model>> task)->
+            mLocations.setValue(task.getResult());
     }
 
     public MutableLiveData<List<Location_Model>> getLocations(){
         return mLocations;
+    }
+
+    public Task<Void> addLocationToUser(String userID, Location_Model locationModel){
+        return mRepo.addLocationToUser(userID,locationModel);
     }
 
 }

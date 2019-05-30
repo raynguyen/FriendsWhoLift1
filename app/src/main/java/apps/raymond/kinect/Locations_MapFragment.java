@@ -1,9 +1,8 @@
-package apps.raymond.kinect.EventCreate;
+package apps.raymond.kinect;
 
 import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -26,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -39,6 +39,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -49,36 +50,34 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Location_Model;
-import apps.raymond.kinect.Locations_Adapter;
-import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
-        Locations_Adapter.LocationClickInterface {
+        Locations_Adapter.LocationClickInterface, GoogleMap.OnMarkerClickListener {
     private static final int LOCATION_REQUEST_CODE = 0;
 
     public interface MapMarkerClick{
-        void onMarkerClick();
+        void onLocationPositiveClick(Location_Model location_model);
     }
     /*
      * Need an identifier to determine if we need to load the card to add as a user location or if
      * we want to set the mAddress for an event.
      */
-    public static Locations_MapFragment newInstance(String userID){
+    public static Locations_MapFragment newInstance(String userID,String dialogFlag){
         Locations_MapFragment fragment = new Locations_MapFragment();
         Bundle args = new Bundle();
         args.putString("userid",userID);
+        args.putString("flag",dialogFlag);
         fragment.setArguments(args);
         return fragment;
     }
 
-    private MapMarkerClick mMarkerCallback;
+    private MapMarkerClick mPositiveCallback;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            mMarkerCallback = (MapMarkerClick) context;
+            mPositiveCallback = (MapMarkerClick) context;
         }catch (ClassCastException e){
             //Some error
         }
@@ -87,11 +86,13 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationClient;
     private String mUserID;
     private Profile_ViewModel mViewModel;
+    private String mFlag;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class); //LifeCycle is only for this fragment as updates are sent to the parent activity
+        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class); //Todo: Make a ViewModel Specific for Locations!
         mUserID = getArguments().getString("userid");
+        mFlag = getArguments().getString("flag");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         if (ActivityCompat.checkSelfPermission(requireActivity(),
@@ -110,14 +111,15 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         return inflater.inflate(R.layout.fragment_user_locations,container,false);
     }
 
+    private Location_Model mLocationModel;
     private MapView mapView;
     private EditText editSearchMap;
     private ImageButton btnShowRecycler;
-    private TextView txtNullData;
+    private TextView txtNullData, txtLocationName;
     private ProgressBar progressBar;
     private Locations_Adapter mAdapter;
     private Location mLastLocation;
-    private ViewGroup mMapGroup, mRecyclerGroup;
+    private ViewGroup mMapGroup, mRecyclerGroup, mLocationCard;
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -127,6 +129,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
         mMapGroup = view.findViewById(R.id.frame_mapview);
         mRecyclerGroup = view.findViewById(R.id.relative_locations_recycler);
+
         btnShowRecycler = view.findViewById(R.id.button_view_locations);
         editSearchMap = view.findViewById(R.id.edit_search_location);
         editSearchMap.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -157,7 +160,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             }
         });
 
-
         btnShowRecycler.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,6 +183,30 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new Locations_Adapter(this);
         recyclerView.setAdapter(mAdapter);
+
+        mLocationCard = view.findViewById(R.id.cardview_marker_dialog);
+        Button btnCardPositive = view.findViewById(R.id.button_positive_location);
+        txtLocationName = view.findViewById(R.id.text_location_address);
+        if(getArguments().getString("flag").equals("profile")){
+            btnCardPositive.setText(getString(R.string.save_location));
+        } else {
+            btnCardPositive.setText(getString(R.string.set_location));
+        }
+
+        btnCardPositive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPositiveCallback.onLocationPositiveClick(mLocationModel);
+            }
+        });
+
+        ImageButton btnReturn = view.findViewById(R.id.button_map_return);
+        btnReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().onBackPressed();
+            }
+        });
     }
 
     private GoogleMap mMap;
@@ -205,73 +231,33 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                 requireActivity().getCurrentFocus().clearFocus();
                 hideKeyboardFrom(getContext(),getView());
                 }
+                if(mLocationCard.getVisibility()==View.VISIBLE){
+                    mLocationCard.setVisibility(View.GONE);
+                }
             }
         });
 
         mViewModel.getLocations().observe(this, new Observer<List<Location_Model>>() {
             @Override
             public void onChanged(@Nullable List<Location_Model> location_models) {
+                Log.w("MAPFRAG","hello there wa s achange in your data.");
                 progressBar.setVisibility(View.GONE);
                 if(location_models.size()==0){
                     txtNullData.setVisibility(View.VISIBLE);
                 }
                 mAdapter.setData(location_models);
-
                 for(Location_Model location : location_models){
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(location.getLat(),location.getLng()))
-                            .title(location.getLookup())
-                    );
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)))
+                            .setTag(location);
                 }
 
             }
         });
 
         mViewModel.loadUserLocations(mUserID);
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
-                mMarkerCallback.onMarkerClick();
-                return true;
-            }
-        });
-    }
-
-    private void geoLocate(String query){
-        Geocoder geocoder = new Geocoder(getContext());
-        List<Address> list = new ArrayList<>(1);
-        try{
-            list = geocoder.getFromLocationName(query, 1);
-        }catch (IOException e){
-            Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
-        }
-        if(list.size() > 0){
-            moveToLocation(list.get(0));
-        }
-    }
-
-    /**
-     * Position the map to the first result from the Geolocate query.
-     * @param address Result returned from Geolocate query
-     */
-    private void moveToLocation(Address address){
-        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLngZoom(new LatLng(address.getLatitude(), address.getLongitude()),17.0f));
-        /*String markerTitle = String.format("%s %s, %s",
-                address.getSubThoroughfare(),
-                address.getThoroughfare(),
-                address.getLocality());*/
-        mMap.addMarker(new MarkerOptions().position(latLng));//.setTitle(markerTitle);
-
-    }
-
-    @Override
-    public void onLocationClick(Location_Model location) {
-        //Move the map to the location
-        //Load prompt to either add location to user or set as event location
-
+        mMap.setOnMarkerClickListener(this);
     }
 
     private void getDeviceLocation(){
@@ -289,6 +275,38 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                         }
                     });
         } catch (SecurityException e){}
+    }
+
+    private void geoLocate(String query){
+        Geocoder geocoder = new Geocoder(getContext());
+        List<Address> queryResults = new ArrayList<>(1);
+        try{
+            queryResults = geocoder.getFromLocationName(query, 1);
+        }catch (IOException e){
+            Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
+        }
+        if(queryResults.size() > 0){
+            LatLng latLng = new LatLng(queryResults.get(0).getLatitude(),queryResults.get(0).getLongitude());
+            mLocationModel = new Location_Model(null,queryResults.get(0));
+            mMap.addMarker(new MarkerOptions().position(latLng)).setTag(mLocationModel);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        mLocationModel = (Location_Model) marker.getTag();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
+        txtLocationName.setText(mLocationModel.getAddress());
+        mLocationCard.setVisibility(View.VISIBLE);
+        return true;
+    }
+
+    @Override
+    public void onLocationItemClick(Location_Model location) {
+        LatLng latLng = new LatLng(location.getLat(),location.getLng());
+        mMap.addMarker(new MarkerOptions().position(latLng)).setTag(location);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
     }
 
     @Override

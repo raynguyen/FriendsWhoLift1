@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,8 +30,9 @@ import java.util.Locale;
 
 import apps.raymond.kinect.Connections_Fragment;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.EventCreate.Locations_MapFragment;
+import apps.raymond.kinect.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
+import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.Login.Login_Activity;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
@@ -168,7 +170,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                         .commit();
                 break;
             case R.id.button_locations:
-                Locations_MapFragment locationsFragment = Locations_MapFragment.newInstance(mUserID);
+                Locations_MapFragment locationsFragment = Locations_MapFragment.newInstance(mUserID,"profile");
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
                         .replace(R.id.frame_profile,locationsFragment,LOCATIONS_FRAG)
@@ -193,12 +195,23 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onMarkerClick() {
-        //Load a Cardview for the user to prompt for them to add/delete a location from location set.
-        Log.w(TAG,"CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE");
+    public void onLocationPositiveClick(Location_Model locationModel) {
+        //ToDo:CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE
         //If the prompt returns a positive click, increment the Text on locations button after we
         //increment number of locations in the user document.
         //In the activity result, use the ViewModel held by THIS ACTIVITY (Profile_ViewModel)
+        Log.w(TAG,"PROMPT TO ADD A LOOKUP NAME");
+        locationModel.setLookup("moshimoshi");
+        mViewModel.addLocationToUser(mUserID,locationModel)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getBaseContext(),"Successfully saved location.",Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                });
     }
 
     @Override

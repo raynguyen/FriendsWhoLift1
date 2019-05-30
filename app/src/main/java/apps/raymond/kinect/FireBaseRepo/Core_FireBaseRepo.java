@@ -17,6 +17,20 @@
  *  * can retrieve this data easily. They know where to get the data from and what API calls to make
  *  * when data is updated. You can consider repositories to be mediators between different data
  *  * sources, such as persistent models, web services, and caches
+ *
+ *  * When a user registers to or creates an event, the following is the task priority in order to
+ *      * minimize errors in the corresponding Firestore collections.
+ *      *
+ *      * If the user is creating an Event:
+ *      * 0. Add the Event POJO to the Events collection, then
+ *      *
+ *      * If user opts to attending an event:
+ *      * 1. Add the Event POJO to the User->Events Collection.
+ *      * 2. Add the User POJO to the Events->User Collection
+ *      * 3a. Update the Event Document inside the Events Collection with the modified attendees count.
+ *      * 3b. Remove event invitations if the User opts to attend via an Event Invitation.
+ *      * 3c. Update the Event Document to reflect changes in invitation count is applicable.
+ *
  */
 
 package apps.raymond.kinect.FireBaseRepo;
@@ -181,6 +195,20 @@ public class Core_FireBaseRepo {
                 });
     }
 
+    public void declineEventInvitation(String eventName, String userID,User_Model user){
+        eventCollection.document(eventName).collection(DECLINED).document(userID).set(user);
+    }
+
+    /**
+     * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
+     * invited.
+     * @param eventName The name of the event being modified.
+     */
+    public void deleteEventInvitation(String userID, String eventName){
+        userCollection.document(userID).collection(EVENT_INVITES).document(eventName).delete();
+        eventCollection.document(eventName).update("invited", FieldValue.increment(-1));
+    }
+
     /**
      * Queries the database for a list of a user's connections.
      * @param userID The user of which we want to query a list of user connections for.
@@ -205,20 +233,6 @@ public class Core_FireBaseRepo {
     }
 
     /*------------------------------------------EVENTS---------------------------------------------*
-     * When a user registers to or creates an event, the following is the task priority in order to
-     * minimize errors in the corresponding Firestore collections.
-     *
-     * If the user is creating an Event:
-     * 0. Add the Event POJO to the Events collection, then
-     *
-     * If user opts to attending an event:
-     * 1. Add the Event POJO to the User->Events Collection.
-     * 2. Add the User POJO to the Events->User Collection
-     * 3a. Update the Event Document inside the Events Collection with the modified attendees count.
-     * 3b. Remove event invitations if the User opts to attend via an Event Invitation.
-     * 3c. Update the Event Document to reflect changes in invitation count is applicable.
-     */
-
     /**
      * Creates a document in Events using the event POJO.
      * @param event The created Event POJO.
@@ -248,20 +262,6 @@ public class Core_FireBaseRepo {
         eventCollection.document(eventName).update("attending",FieldValue.increment(1));
         return eventCollection.document(eventName)
                 .collection("Accepted").document(userID).set(userModel);
-    }
-
-    public void declineEventInvitation(String eventName, String userID,User_Model user){
-        eventCollection.document(eventName).collection(DECLINED).document(userID).set(user);
-    }
-
-    /**
-     * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
-     * invited.
-     * @param eventName The name of the event being modified.
-     */
-    public void deleteEventInvitation(String userID, String eventName){
-        userCollection.document(userID).collection(EVENT_INVITES).document(eventName).delete();
-        eventCollection.document(eventName).update("invited", FieldValue.increment(-1));
     }
 
     //Todo: Revisit this method to invite users to an event.
@@ -477,17 +477,33 @@ public class Core_FireBaseRepo {
     }
 
     public Task<List<Location_Model>> getUsersLocations(String userID){
-        return userCollection.document(userID).collection("locations").get()
+        return userCollection.document(userID).collection("Locations").get()
                 .continueWith(new Continuation<QuerySnapshot, List<Location_Model>>() {
                     @Override
                     public List<Location_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
                         List<Location_Model> results = new ArrayList<>();
                         if(task.isSuccessful()){
                             for(QueryDocumentSnapshot document : task.getResult()){
-                                document.toObject(Location_Model.class);
+                                Log.w(TAG,"found object in query: "+document.getId());
+                                results.add(document.toObject(Location_Model.class));
+
                             }
                         }
                         return results;
+                    }
+                });
+    }
+
+    public Task<Void> addLocationToUser(final String userID, Location_Model locationModel){
+        return userCollection.document(userID).collection("Locations")
+                .document(locationModel.getLookup()).set(locationModel)
+                .continueWithTask(new Continuation<Void, Task<Void>>() {
+                    @Override
+                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
+                        if(task.isSuccessful()){
+                            return userCollection.document(userID).update("numlocations",FieldValue.increment(1));
+                        }
+                        return null;
                     }
                 });
     }

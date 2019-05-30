@@ -1,86 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:clickable="true"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:id="@+id/frame_mapview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:clickable="true"
+        android:animateLayoutChanges="true">
 
-        <EditText
-            android:id="@+id/edit_search_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/enter_address"
-            android:autofillHints="@string/search_addresses"
-            android:inputType="text"
-            android:paddingTop="12dp"
-            android:imeOptions="actionSearch"
-            android:elevation="2dp"
-            android:drawableStart="@drawable/baseline_search_black_18dp"
-            />
-
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapview_event_create"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </com.google.android.gms.maps.MapView>
-
-        <ImageButton
-            android:id="@+id/button_view_locations"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
-            android:background="@color/white"
-            android:alpha=".2"
-            />
-    </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/relative_locations_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <android.support.v7.widget.SearchView
-            android:id="@+id/searchview_locations"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true">
-        </android.support.v7.widget.SearchView>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_locations"
+        <FrameLayout
+            android:id="@+id/frame_mapview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_below="@id/searchview_locations"
-            android:layout_alignParentBottom="true">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/text_null_locations"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:elevation="2dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:elevation="2dp"
+                android:background="@color/transparent">
 
-        <ProgressBar
-            android:id="@+id/progress_bar_locations"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout>
+                <ImageButton
+                    android:id="@+id/button_map_return"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_keyboard_arrow_left_black_18dp"
+                    android:background="@drawable/button_ripple"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/return_button"/>
+                <EditText
+                    android:id="@+id/edit_search_location"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_address"
+                    android:autofillHints="@string/search_addresses"
+                    android:inputType="text"
+                    android:paddingTop="12dp"
+                    android:imeOptions="actionSearch"
+                    android:drawableEnd="@drawable/baseline_search_black_18dp"
+                    />
+            </LinearLayout>
 
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapview_event_create"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </com.google.android.gms.maps.MapView>
 
-</LinearLayout>
+            <ImageButton
+                android:id="@+id/button_view_locations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
+                android:background="@color/white"
+                android:alpha=".2"
+                android:contentDescription="@string/return_button"/>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_locations_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchview_locations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true">
+            </android.support.v7.widget.SearchView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_locations"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@id/searchview_locations"
+                android:layout_alignParentBottom="true">
+            </android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/text_null_locations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:elevation="2dp"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar_locations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardview_marker_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        app:cardElevation="8dp"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/text_location_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_addresses"
+                android:textSize="22sp"/>
+
+            <Button
+                android:id="@+id/button_positive_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text_location_address"
+                android:background="@color/white"
+                android:textColor="@color/blueish"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                android:layout_alignEnd="@id/text_location_address"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>
