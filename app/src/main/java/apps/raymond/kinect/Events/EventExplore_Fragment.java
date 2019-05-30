@@ -1,3 +1,17 @@
+/*
+ * ToDo:
+ * Consider consolidating this Activity with the EventExplore_Fragment. Set the architecture such that
+ * the Maps_Activity loads the map and requests permissions as required, but also overlay one of two
+ * fragments depending on the startActivity intent.
+ *
+ * Fragment1: Search nearby events Fragment that loads data and passes back to the activity to populate
+ * the event locations with markers.
+ *
+ * Fragment2: Search functionality to call the Geolocate function and return search results.
+ *
+ * ToDo:
+ * Filter out events that the user is already in attendance or invited to.
+ */
 package apps.raymond.kinect.Events;
 
 import android.Manifest;
@@ -27,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormatSymbols;
@@ -40,20 +55,6 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-/*
- * ToDo:
- * Consider consolidating this Activity with the EventExplore_Fragment. Set the architecture such that
- * the Maps_Activity loads the map and requests permissions as required, but also overlay one of two
- * fragments depending on the startActivity intent.
- *
- * Fragment1: Search nearby events Fragment that loads data and passes back to the activity to populate
- * the event locations with markers.
- *
- * Fragment2: Search functionality to call the Geolocate function and return search results.
- *
- * ToDo:
- * Filter out events that the user is already in attendance or invited to.
- */
 public class EventExplore_Fragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
@@ -73,17 +74,19 @@ public class EventExplore_Fragment extends Fragment implements
     Core_ViewModel mViewModel;
     private User_Model mUserModel;
     private String mUserID;
+    private boolean mLocationPermission = false;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
 
-        if (ActivityCompat.checkSelfPermission(requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.w(TAG,"We must request permission for fine location.");
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
+        } else {
+            mLocationPermission = true;
         }
 
         try{
@@ -145,7 +148,9 @@ public class EventExplore_Fragment extends Fragment implements
     private GoogleMap mMap;
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setPadding(0,400,0,0);
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -154,23 +159,40 @@ public class EventExplore_Fragment extends Fragment implements
                 }
             }
         });
-        googleMap.setPadding(0,400,0,0);
-        try{
-            googleMap.setMyLocationEnabled(true);
-        } catch (SecurityException e){
-            Log.w(TAG,"SecurityException.",e);
+
+        mViewModel.getPublicEvents().observe(this, new Observer<List<Event_Model>>() {
+            @Override
+            public void onChanged(@Nullable List<Event_Model> event_models) {
+                if(event_models!=null && !event_models.isEmpty()){
+                    for(Event_Model event:event_models){
+                        LatLng latLng = new LatLng(event.getLat(),event.getLng());
+                        if(mMap!=null){
+                            //Todo: Custom marker to show the primes on top of the date.
+                            Marker marker =  mMap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title(event.getName()));
+                            marker.setTag(event);
+                        }
+                    }
+                }
+            }
+        });
+        mViewModel.loadPublicEvents();
+
+        if(mLocationPermission){
+            Log.w(TAG,"We have permission and will try to enable location.");
+            getDeviceLocation();
+            try{
+                googleMap.setMyLocationEnabled(true);
+            } catch (SecurityException e){
+                Log.w(TAG,"SecurityException.",e); }
         }
-        mMap.setOnMarkerClickListener(this);
-        getDeviceLocation();
-        getNearbyEventList();
     }
 
     Event_Model focusedEvent;
     Marker focusedMarker;
     @Override
     public boolean onMarkerClick(Marker marker) {
-        //ToDo: Zoom in to the event!
-
         detailsCardView.setVisibility(View.VISIBLE);
         focusedEvent = (Event_Model) marker.getTag();
         focusedMarker = marker;
@@ -192,32 +214,21 @@ public class EventExplore_Fragment extends Fragment implements
         return true;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
-        if (mapViewBundle == null) {
-            mapViewBundle = new Bundle();
-            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
-        }
-
-        mMapView.onSaveInstanceState(mapViewBundle);
-    }
-
     //Consolidate getDeviceLocations to a single class?
-    Location mLastLocation;
     private void getDeviceLocation(){
+        Log.w(TAG,"IN GETDEVICELOCATION!");
         try{
             mFusedLocationClient.getLastLocation()
-                    .addOnCompleteListener(requireActivity(), new OnCompleteListener<Location>() {
+                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
                         @Override
-                        public void onComplete(@NonNull Task<Location> task) {
-                            if(task.isSuccessful() && task.getResult()!=null){
-                                mLastLocation = task.getResult();
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(mLastLocation.getLatitude(),
-                                                mLastLocation.getLongitude()),17.0f));
+                        public void onSuccess(Location location) {
+                            Log.w(TAG,"GETLASTLOCATION SUCCESSFUL!");
+                            if(location!=null){
+                                Log.w(TAG,"Task to get location completed!");
+                                Log.w(TAG,"Trying to move to last location: "+location.getLatitude());
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),17.0f));
+                            } else {
+                                Log.w(TAG,"location is null?!?:");
                             }
                         }
                     });
@@ -226,32 +237,34 @@ public class EventExplore_Fragment extends Fragment implements
         }
     }
 
-    //ToDo: We are currently retrieving the full list of public events.
-    private void getNearbyEventList(){
-        mViewModel.getPublicEvents().observe(this, new Observer<List<Event_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Event_Model> event_models) {
-                if(event_models!=null && !event_models.isEmpty()){
-                    for(Event_Model event:event_models){
-                        LatLng latLng = new LatLng(event.getLat(),event.getLng());
-                        if(mMap!=null){
-                            //Todo: Custom marker to show the primes on top of the date.
-                            Marker marker =  mMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(event.getName()));
-                            marker.setTag(event);
-                        }
-                    }
-                }
-            }
-        });
-        mViewModel.loadPublicEvents();
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==LOCATION_REQUEST_CODE){
+            if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                Log.w(TAG,"we were granted permission for location!");
+                mLocationPermission = true;
+                getDeviceLocation();
+                try{
+                mMap.setMyLocationEnabled(true);
+                }
+                catch (SecurityException se){}
+            } else {
+                Log.w(TAG,"NO permission for location!");
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+        mMapView.onSaveInstanceState(mapViewBundle);
     }
 
     @Override
@@ -289,4 +302,6 @@ public class EventExplore_Fragment extends Fragment implements
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
+
 }
