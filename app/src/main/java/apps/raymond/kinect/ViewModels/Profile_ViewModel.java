@@ -58,7 +58,7 @@ public class Profile_ViewModel extends ViewModel {
 
     public void loadUserLocations(String userID){
         mRepo.getUsersLocations(userID).addOnCompleteListener((Task<List<Location_Model>> task)->
-            mLocations.setValue(task.getResult());
+            mLocations.setValue(task.getResult()));
     }
 
     public MutableLiveData<List<Location_Model>> getLocations(){

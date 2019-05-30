@@ -154,6 +154,9 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     mRecyclerGroup.setLayoutParams(hideParams);
+                    if(mLocationCard.getVisibility()==View.VISIBLE){
+                        mLocationCard.setVisibility(View.GONE);
+                    }
                     btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
                             R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
                 }
@@ -201,6 +204,9 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         });
 
         ImageButton btnReturn = view.findViewById(R.id.button_map_return);
+        if(mFlag.equals("event")){
+            btnReturn.setVisibility(View.GONE);
+        }
         btnReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,7 +246,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         mViewModel.getLocations().observe(this, new Observer<List<Location_Model>>() {
             @Override
             public void onChanged(@Nullable List<Location_Model> location_models) {
-                Log.w("MAPFRAG","hello there wa s achange in your data.");
                 progressBar.setVisibility(View.GONE);
                 if(location_models.size()==0){
                     txtNullData.setVisibility(View.VISIBLE);
@@ -294,19 +299,20 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
+    public void onLocationItemClick(Location_Model location) {
+        LatLng latLng = new LatLng(location.getLat(),location.getLng());
+        Marker locationMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+        locationMarker.setTag(location);
+        onMarkerClick(locationMarker);
+    }
+
+    @Override
     public boolean onMarkerClick(Marker marker) {
         mLocationModel = (Location_Model) marker.getTag();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
         txtLocationName.setText(mLocationModel.getAddress());
         mLocationCard.setVisibility(View.VISIBLE);
         return true;
-    }
-
-    @Override
-    public void onLocationItemClick(Location_Model location) {
-        LatLng latLng = new LatLng(location.getLat(),location.getLng());
-        mMap.addMarker(new MarkerOptions().position(latLng)).setTag(location);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
     }
 
     @Override

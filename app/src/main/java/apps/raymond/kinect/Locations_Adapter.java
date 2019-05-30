@@ -51,7 +51,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mLocationSet.size();
     }
 
     public void setData(List<Location_Model> locationSet){
