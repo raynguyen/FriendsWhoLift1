@@ -53,7 +53,7 @@ import java.util.List;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
-        Locations_Adapter.LocationClickInterface, GoogleMap.OnMarkerClickListener {
+        Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
 
     public interface MapMarkerClick{
@@ -113,13 +113,12 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
     private Location_Model mLocationModel;
     private MapView mapView;
-    private EditText editSearchMap;
     private ImageButton btnShowRecycler;
     private TextView txtNullData, txtLocationName;
     private ProgressBar progressBar;
     private Locations_Adapter mAdapter;
     private Location mLastLocation;
-    private ViewGroup mMapGroup, mRecyclerGroup, mLocationCard;
+    private ViewGroup mRecyclerGroup, mLocationCard;
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -127,11 +126,10 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        mMapGroup = view.findViewById(R.id.frame_mapview);
         mRecyclerGroup = view.findViewById(R.id.relative_locations_recycler);
 
         btnShowRecycler = view.findViewById(R.id.button_view_locations);
-        editSearchMap = view.findViewById(R.id.edit_search_location);
+        EditText editSearchMap = view.findViewById(R.id.edit_search_location);
         editSearchMap.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -262,7 +260,10 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         });
 
         mViewModel.loadUserLocations(mUserID);
-        mMap.setOnMarkerClickListener(this);
+        mMap.setOnMarkerClickListener((Marker marker)-> {
+            onLocationItemClick((Location_Model) marker.getTag());
+            return true;
+        });
     }
 
     private void getDeviceLocation(){
@@ -294,25 +295,17 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             LatLng latLng = new LatLng(queryResults.get(0).getLatitude(),queryResults.get(0).getLongitude());
             mLocationModel = new Location_Model(null,queryResults.get(0));
             mMap.addMarker(new MarkerOptions().position(latLng)).setTag(mLocationModel);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
         }
     }
 
     @Override
     public void onLocationItemClick(Location_Model location) {
-        LatLng latLng = new LatLng(location.getLat(),location.getLng());
-        Marker locationMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-        locationMarker.setTag(location);
-        onMarkerClick(locationMarker);
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        mLocationModel = (Location_Model) marker.getTag();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
+        mLocationModel = location;
         txtLocationName.setText(mLocationModel.getAddress());
+        LatLng latLng = new LatLng(location.getLat(),location.getLng());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
         mLocationCard.setVisibility(View.VISIBLE);
-        return true;
     }
 
     @Override

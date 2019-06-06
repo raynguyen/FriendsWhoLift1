@@ -17,7 +17,7 @@ public class Event_Model implements Parcelable{
     private int privacy;
     private List<String> tags, primes;
     private String address = "Location: TBD";
-    private int attending;
+    private int attending = 1;
     private int invited;
     private long long1, long2; //long1 should be a mandatory field that is mutable.
 

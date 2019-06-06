@@ -20,7 +20,6 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
 public class YesNoDialog extends DialogFragment{
-    private static final String TAG = "YesNoDialog";
     public static final String DISCARD_CHANGES = "Leaving now will discard any changes you have made. \nAre you sure you want to cancel?";
     public static final String DELETE_CONNECTION = "Delete connection with";
     public static final String WARNING = "WARNING!";
@@ -46,6 +45,7 @@ public class YesNoDialog extends DialogFragment{
 
     @Override
     public void onAttach(Context context) {
+        Log.w("YESNODIALOG","in the onAttach of this");
         super.onAttach(context);
         try{
             callback = (YesNoCallback) context;

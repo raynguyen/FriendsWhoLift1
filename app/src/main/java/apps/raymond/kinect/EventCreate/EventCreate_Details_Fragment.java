@@ -58,7 +58,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
     User_Model mUserModel;
     private String mUserID;
-    private List<String> mPrimesList = new ArrayList<>();
     private List<String> mTagsList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel; //Need to get users to invite
     @Override
@@ -220,8 +219,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         } else {
             mViewModel.removeEventPrime(s);
         }
-
-        Log.w(TAG,""+mViewModel.getEventPrimes().toString());
     }
 
     @Override
@@ -251,7 +248,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
                 txtEventTagsContainer.setVisibility(View.VISIBLE);
             }
             mTagsList.add(txtEventTag.getText().toString());
-            txtEventTagsContainer.setText(txtEventTag.toString());
+            txtEventTagsContainer.setText(mTagsList.toString());
             txtEventTag.getText().clear();
         }
     }
@@ -265,20 +262,6 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     public void removeFromCheckedList(User_Model clickedUser) {
         mViewModel.removeFromInviteList(clickedUser);
     }
-
-    /**
-     * Called every time we detect a change in the current focus.
-     */
-    private boolean checkFields(){
-        //Highlight the necessary fields that are empty.
-        //Display a toast.
-        //boolean check = false;
-        if(!mEventName.isEmpty() && !mEventDesc.isEmpty()){
-            return true;
-        }
-        return false;
-    }
-
 }
 
 /*

@@ -63,6 +63,14 @@ public class EventCreate_ViewModel extends ViewModel {
         return mEventModel;
     }
 
+    void setEventLat(double lat){
+        mEventModel.setLat(lat);
+    }
+
+    void setEventLong(double lng){
+        mEventModel.setLng(lng);
+    }
+
     void addEventPrime(String prime){
         mEventPrimes.add(prime);
     }
@@ -85,16 +93,6 @@ public class EventCreate_ViewModel extends ViewModel {
 
     Task<List<User_Model>> getInvitableUsers(String userID){
         return mRepo.getAllUsers(userID);
-    }
-
-    void loadUserLocations(String userID){
-        mRepo.getUsersLocations(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<Location_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Location_Model>> task) {
-                        mLocations.setValue(task.getResult());
-                    }
-                });
     }
 
     public MutableLiveData<List<Location_Model>> getLocations(){

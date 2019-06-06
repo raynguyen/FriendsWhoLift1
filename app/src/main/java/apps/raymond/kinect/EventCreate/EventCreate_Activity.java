@@ -37,10 +37,9 @@ import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity implements
-        Locations_MapFragment.MapMarkerClick{
-    private static final int CANCEL_REQUEST_CODE = 21;
+        Locations_MapFragment.MapMarkerClick, YesNoDialog.YesNoCallback {
     private EventCreate_ViewModel mViewModel;
-    private ArrayList<Event_Model> mEventList;
+    private ArrayList<Event_Model> mEventList; //Todo: determine if we need this.
     private User_Model mUserModel;
     private String mUserID;
 
@@ -56,12 +55,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
         Toolbar mToolbar = findViewById(R.id.toolbar_event_create);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //onBackPressed();
-            }
-        });
+        mToolbar.setNavigationOnClickListener((View v) -> onBackPressed());
 
         if(getIntent().getExtras()!=null){
             mUserModel = getIntent().getExtras().getParcelable("user");
@@ -122,6 +116,22 @@ public class EventCreate_Activity extends AppCompatActivity implements
     }
 
     @Override
+    public void onBackPressed() {
+        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
+        yesNoDialog.setCancelable(false);
+        yesNoDialog.show(getSupportFragmentManager(),"YESNO");
+        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+    }
+
+    @Override
+    public void onLocationPositiveClick(Location_Model locationModel) {
+        Log.w("CreateEventAct","Display a cardview prompting user to set location");
+        mViewModel.setEventLat(locationModel.getLat());
+        mViewModel.setEventLong(locationModel.getLng());
+        mViewModel.setEventAddress(locationModel.getAddress());
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
@@ -129,13 +139,15 @@ public class EventCreate_Activity extends AppCompatActivity implements
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());
-                event.setAttending(1);
-                mViewModel.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());
+                mViewModel.createEvent(event).addOnCompleteListener((Task<Void> task)->
+                    mViewModel.addUserToEvent(mUserID,mUserModel,event.getName()));
+                /*new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());
+                        }
                     }
-                });
+                });*/
                 mViewModel.addEventToUser(mUserID,event);
                 mViewModel.sendEventInvites(event, mViewModel.getInviteList());
 
@@ -150,29 +162,9 @@ public class EventCreate_Activity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    //ToDo: Show the YeSNoDialog.
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,YesNoDialog.DISCARD_CHANGES);
-        yesNoDialog.setCancelable(false);
-
-        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode== Activity.RESULT_OK) {
-            if (requestCode == CANCEL_REQUEST_CODE) {
-                //FINISH ACTIVITY
-            }
-        }
-    }
-
-    @Override
-    public void onLocationPositiveClick(Location_Model locationModel) {
-        //Load a dialog to prompt user if they want to set the location for their event
-        Log.w("CreateEventAct","Display a cardview prompting user to set location");
+    public void onPositiveClick() {
+        finish();
     }
 
     /**
@@ -212,5 +204,4 @@ public class EventCreate_Activity extends AppCompatActivity implements
             return null;
         }
     }
-
 }
