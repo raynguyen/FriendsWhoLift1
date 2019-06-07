@@ -210,26 +210,18 @@ public class EventExplore_Fragment extends Fragment implements
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
         textTime.setText(sdf.format(date));
 
-        marker.getPosition();
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
         return true;
     }
 
-    //Consolidate getDeviceLocations to a single class?
     private void getDeviceLocation(){
-        Log.w(TAG,"IN GETDEVICELOCATION!");
         try{
             mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            Log.w(TAG,"GETLASTLOCATION SUCCESSFUL!");
-                            if(location!=null){
-                                Log.w(TAG,"Task to get location completed!");
-                                Log.w(TAG,"Trying to move to last location: "+location.getLatitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),17.0f));
-                            } else {
-                                Log.w(TAG,"location is null?!?:");
-                            }
+                    .addOnSuccessListener(requireActivity(), (Location location) -> {
+                        if(location!=null){
+                            mMap.moveCamera(CameraUpdateFactory
+                                    .newLatLngZoom(new LatLng(location.getLatitude(),
+                                            location.getLongitude()),17.0f));
                         }
                     });
         } catch (SecurityException e){
@@ -249,15 +241,15 @@ public class EventExplore_Fragment extends Fragment implements
                 try{
                 mMap.setMyLocationEnabled(true);
                 }
-                catch (SecurityException se){}
-            } else {
-                Log.w(TAG,"NO permission for location!");
+                catch (SecurityException se){
+                    Log.w(TAG,"NO permission for location!");
+                }
             }
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
         if (mapViewBundle == null) {
