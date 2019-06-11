@@ -141,13 +141,6 @@ public class EventCreate_Activity extends AppCompatActivity implements
                 event.setInvited(mViewModel.getInviteList().size());
                 mViewModel.createEvent(event).addOnCompleteListener((Task<Void> task)->
                     mViewModel.addUserToEvent(mUserID,mUserModel,event.getName()));
-                /*new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());
-                        }
-                    }
-                });*/
                 mViewModel.addEventToUser(mUserID,event);
                 mViewModel.sendEventInvites(event, mViewModel.getInviteList());
 

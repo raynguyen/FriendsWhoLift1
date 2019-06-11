@@ -8,6 +8,6 @@
     <color name="transparent">#00000000</color>
     <color name="black">#000000</color>
     <color name="gray">#BABABA</color>
-    <color name="white">#ffffff</color>
+    <color name="white">#ffff</color>
     <color name="blueish">#189ea5</color>
 </resources>

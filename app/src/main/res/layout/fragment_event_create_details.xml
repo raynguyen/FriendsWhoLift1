@@ -44,6 +44,34 @@
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
+            android:id="@+id/linear_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorAccent"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/event_month"
+                android:textColor="@color/gray"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/text_date_starting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="26sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text="TODAYS DATE"
+                android:drawableEnd="@drawable/baseline_calendar_today_black_18dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/layout_primarytags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
