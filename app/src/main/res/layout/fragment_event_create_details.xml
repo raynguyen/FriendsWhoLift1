@@ -43,33 +43,85 @@
                 android:layout_height="wrap_content"/>
         </android.support.design.widget.TextInputLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/linear_calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/colorAccent"
+            android:background="@color/colorAccentLight"
             android:layout_margin="4dp"
             android:padding="4dp"
             android:clickable="true"
             android:focusable="true">
 
             <TextView
+                android:id="@+id/text_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_month"
                 android:textColor="@color/gray"
                 android:textSize="18sp" />
-            <TextView
-                android:id="@+id/text_date_starting"
+
+            <LinearLayout
+                android:id="@+id/linear_date_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="26sp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:text="TODAYS DATE"
-                android:drawableEnd="@drawable/baseline_calendar_today_black_18dp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:layout_below="@id/text_year">
+
+                <TextView
+                    android:id="@+id/text_date_start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="26sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:id="@+id/text_time_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="26sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:gravity="end"
+                    android:text="@string/default_time"/>
+            </LinearLayout>
+
+            <ViewFlipper
+                android:id="@+id/viewflipper_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_date_text"
+                android:measureAllChildren="false"
+                android:visibility="gone">
+
+                <CalendarView
+                    android:id="@+id/calendar_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:layout_gravity="center">
+                </CalendarView>
+
+                <NumberPicker
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+                </NumberPicker>
+            </ViewFlipper>
+
+            <ImageButton
+                android:id="@+id/button_close_flipper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/viewflipper_start"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+                android:background="@color/transparent"
+                android:visibility="gone"/>
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/layout_primarytags"

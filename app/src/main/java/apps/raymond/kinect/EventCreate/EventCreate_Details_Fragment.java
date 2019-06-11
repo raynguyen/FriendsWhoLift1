@@ -11,7 +11,6 @@
 package apps.raymond.kinect.EventCreate;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,18 +25,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CalendarView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import apps.raymond.kinect.AddUsers_Adapter;
 import apps.raymond.kinect.R;
@@ -60,6 +66,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     private String mUserID;
     private List<String> mTagsList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel; //Need to get users to invite
+    private final java.text.DateFormat mDateFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,10 +86,51 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     EditText txtEventName,txtEventDesc, txtEventTag;
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
-    String mEventName, mEventDesc;
+    String mEventName, mEventDesc, mEventStart;
+    private CalendarView mCalendar;
+    private Date mDate;
+    private ViewFlipper viewFlipper;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mDate = Calendar.getInstance().getTime();
+        mEventStart = mDateFormat.format(mDate);
+        viewFlipper = view.findViewById(R.id.viewflipper_start);
+
+        ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
+        btnCloseFlipper.setOnClickListener((View v)->{
+            if(viewFlipper.getVisibility() == View.VISIBLE){
+                viewFlipper.setVisibility(View.GONE);
+                btnCloseFlipper.setVisibility(View.GONE);
+            }
+        });
+
+        TextView txtYear = view.findViewById(R.id.text_year);
+        txtYear.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+        TextView txtDateStart = view.findViewById(R.id.text_date_start);
+        txtDateStart.setOnClickListener((View v)-> {
+            if(viewFlipper.getVisibility() == View.GONE){
+                viewFlipper.setVisibility(View.VISIBLE);
+                btnCloseFlipper.setVisibility(View.VISIBLE);
+            }
+            viewFlipper.setDisplayedChild(0);
+        });
+        txtDateStart.setText(mEventStart);
+        TextView txtTimeStart = view.findViewById(R.id.text_time_start);
+        txtTimeStart.setOnClickListener((View v)->{
+            if(viewFlipper.getVisibility() == View.GONE){
+                viewFlipper.setVisibility(View.VISIBLE);
+                btnCloseFlipper.setVisibility(View.VISIBLE);
+            }
+            viewFlipper.setDisplayedChild(1);
+        });
+
+        mCalendar = view.findViewById(R.id.calendar_view);
+        mCalendar.setOnDateChangeListener((CalendarView calendarView, int year, int month, int monthDay)-> {
+            mDate = new GregorianCalendar(year,month,monthDay).getTime();
+            txtDateStart.setText(mDateFormat.format(mDate));
+        });
 
         txtEventName = view.findViewById(R.id.text_event_create_name);
         txtEventDesc = view.findViewById(R.id.text_event_create_desc);

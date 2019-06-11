@@ -123,6 +123,7 @@
     <string name="enter_address">Search a location!</string>
     <string name="location_tbd">Location: TBD</string>
     <string name="time_format">HH:MM</string>
+    <string name="default_time">8:00 AM</string>
     <string-array name="visibility_options">
         <item>Anyone</item>
         <item>Friends of invited guests</item>
