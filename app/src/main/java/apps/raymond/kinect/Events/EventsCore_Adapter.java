@@ -49,6 +49,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
         final Event_Model currEvent = mListFiltered.get(position);
         if(currEvent.getLong1()!=0){
+            Log.w("COREEVENTADAPER: ","long 1 = "+currEvent.getLong1() );
             long long1 = currEvent.getLong1();
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(long1);

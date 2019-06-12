@@ -51,7 +51,7 @@ import apps.raymond.kinect.AddUsers_Adapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventCreate_Details_Fragment extends Fragment implements View.OnClickListener,
+public class EventCreate_Details_Fragment extends Fragment implements
         AddUsers_Adapter.CheckProfileInterface, Spinner.OnItemSelectedListener,
         CompoundButton.OnCheckedChangeListener {
     public static final String TAG = "EventCreate_Details_Fragment";
@@ -67,9 +67,10 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     User_Model mUserModel;
     private SimpleDateFormat _12HrSDF = new SimpleDateFormat("hh:mm a");
     private SimpleDateFormat _24HrSDF = new SimpleDateFormat("HH:mm");
+
     private String mUserID;
     private List<String> mTagsList = new ArrayList<>();
-    private EventCreate_ViewModel mViewModel; //Need to get users to invite
+    private EventCreate_ViewModel mViewModel;
     private final java.text.DateFormat mDateFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,18 +91,14 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     EditText txtEventName,txtEventDesc, txtEventTag;
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
-    String mEventName, mEventDesc, mEventDateStart;
-    private CalendarView mCalendar;
-    private TimePicker mTimePicker;
     private Date mDate;
     private ViewFlipper viewFlipper;
-    private Long mLongStart;
+    private Calendar mGregCalendar = Calendar.getInstance();
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mDate = Calendar.getInstance().getTime();
-        mEventDateStart = mDateFormat.format(mDate);
         viewFlipper = view.findViewById(R.id.viewflipper_start);
 
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
@@ -122,12 +119,14 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             }
             viewFlipper.setDisplayedChild(0);
         });
-        txtDateStart.setText(mEventDateStart);
+        txtDateStart.setText(mDateFormat.format(mDate));
 
-        mCalendar = view.findViewById(R.id.calendar_view);
-        mCalendar.setOnDateChangeListener((CalendarView calendarView, int year, int month, int monthDay)-> {
+        CalendarView calendarView = view.findViewById(R.id.calendar_view);
+        calendarView.setOnDateChangeListener((CalendarView cView, int year, int month, int monthDay)-> {
             mDate = new GregorianCalendar(year,month,monthDay).getTime();
             txtDateStart.setText(mDateFormat.format(mDate));
+            mGregCalendar.set(year,month,monthDay);
+            initDate();
         });
 
         TextView txtTimeStart = view.findViewById(R.id.text_time_start);
@@ -138,15 +137,19 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             }
             viewFlipper.setDisplayedChild(1);
         });
-        mTimePicker = view.findViewById(R.id.time_picker);
+        TimePicker mTimePicker = view.findViewById(R.id.time_picker);
         mTimePicker.setHour(8);
         mTimePicker.setMinute(0);
         mTimePicker.setOnTimeChangedListener((TimePicker picker, int hourOfDay, int minute)->{
             try{
                 Date date = _24HrSDF.parse(hourOfDay+":"+minute);
                 txtTimeStart.setText(_12HrSDF.format(date));
+                mGregCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                mGregCalendar.set(Calendar.MINUTE,minute);
+                initDate();
             } catch (Exception e){}
         });
+
 
         txtEventName = view.findViewById(R.id.text_event_create_name);
         txtEventDesc = view.findViewById(R.id.text_event_create_desc);
@@ -157,12 +160,11 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEventName = s.toString();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mViewModel.setEventName(mEventName);
+                mViewModel.setEventName(s.toString());
             }
         });
 
@@ -173,12 +175,11 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEventDesc = s.toString();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mViewModel.setEventDesc(mEventDesc);
+                mViewModel.setEventDesc(s.toString());
             }
         });
 
@@ -217,7 +218,7 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         visibilitySpinner.setOnItemSelectedListener(this);
 
         ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
-        addTagsBtn.setOnClickListener(this);
+        addTagsBtn.setOnClickListener((View v)-> checkTagSyntax());
 
         txtEventTag = view.findViewById(R.id.text_event_tags);
         txtEventTagsContainer = view.findViewById(R.id.text_tags_container);
@@ -228,31 +229,15 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         recyclerUsers.setAdapter(mUserAdapter);
 
         mViewModel.getInvitableUsers(mUserID)
-                .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<User_Model>> task) {
-                        if(task.isSuccessful()){
-                            mUserAdapter.setData(task.getResult());
-                        }
+                .addOnCompleteListener((Task<List<User_Model>> task) -> {
+                    if(task.isSuccessful()){
+                        mUserAdapter.setData(task.getResult());
                     }
                 });
-
-        recyclerUsers.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                Log.w(TAG,"Height of recyclerview = "+ recyclerUsers.getHeight());
-            }
-        });
     }
 
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        switch (i){
-            case R.id.event_tag_add_btn:
-                checkTagSyntax();
-                break;
-        }
+    private void initDate(){
+        mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
     }
 
     @Override
@@ -327,41 +312,3 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
         mViewModel.removeFromInviteList(clickedUser);
     }
 }
-
-/*
-* private void datePickerDialog(String s){
-        switch (s){
-            case SEQUENCE_START:
-                DatePicker_Fragment datePickerFragment = new DatePicker_Fragment();
-                datePickerFragment.setTargetFragment(EventCreate_Details_Fragment.this,START_DATE_REQUEST);
-                datePickerFragment.show(getFragmentManager(),DATE_PICKER_FRAG);
-                break;
-            case SEQUENCE_END:
-                DatePicker_Fragment datePicker = DatePicker_Fragment.init(startDateLong);
-                datePicker.setTargetFragment(EventCreate_Details_Fragment.this, END_DATE_REQUEST);
-                datePicker.show(getFragmentManager(), DATE_PICKER_FRAG);
-                break;
-        }
-    }*/
-
-/*    /**
- * Method call to concatenate date and time vars into a single date-time Date.
-
-private void initDates() {
-    String startDateString = startDay + "." + startMonth + "." + startYear + "." + startTime;
-    String endDateString = endDay + "." + endMonth + "." + endYear+"." + endTime;
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH:mm");
-    try {
-        if(startDateLong !=null || startTime!=null){
-            Date startDateTimeDate = sdf.parse(startDateString);
-            startDateTimeLong = startDateTimeDate.getTime();
-        }
-        if(endDateLong !=null || endTime!=null){
-            Date endStartDateTimeDate = sdf.parse(endDateString);
-            endDateTimeLong = endStartDateTimeDate.getTime();
-        }
-    } catch (Exception e){
-        //Throw an alert dialog of the start date is empty or returns null.
-        Log.w(TAG,"Error.",e);
-    }
-}*/
