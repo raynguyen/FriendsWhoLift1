@@ -57,7 +57,6 @@
                 android:id="@+id/text_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/event_month"
                 android:textColor="@color/gray"
                 android:textSize="18sp" />
 
@@ -105,11 +104,13 @@
                     android:layout_gravity="center">
                 </CalendarView>
 
-                <NumberPicker
+                <TimePicker
+                    android:id="@+id/time_picker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:timePickerMode="spinner"
                     android:layout_gravity="center">
-                </NumberPicker>
+                </TimePicker>
             </ViewFlipper>
 
             <ImageButton

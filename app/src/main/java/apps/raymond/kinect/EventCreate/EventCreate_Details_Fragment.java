@@ -31,12 +31,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.ToggleButton;
 import android.widget.ViewFlipper;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,6 +65,8 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     }
 
     User_Model mUserModel;
+    private SimpleDateFormat _12HrSDF = new SimpleDateFormat("hh:mm a");
+    private SimpleDateFormat _24HrSDF = new SimpleDateFormat("HH:mm");
     private String mUserID;
     private List<String> mTagsList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel; //Need to get users to invite
@@ -86,16 +90,18 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
     EditText txtEventName,txtEventDesc, txtEventTag;
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
-    String mEventName, mEventDesc, mEventStart;
+    String mEventName, mEventDesc, mEventDateStart;
     private CalendarView mCalendar;
+    private TimePicker mTimePicker;
     private Date mDate;
     private ViewFlipper viewFlipper;
+    private Long mLongStart;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mDate = Calendar.getInstance().getTime();
-        mEventStart = mDateFormat.format(mDate);
+        mEventDateStart = mDateFormat.format(mDate);
         viewFlipper = view.findViewById(R.id.viewflipper_start);
 
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
@@ -116,7 +122,14 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             }
             viewFlipper.setDisplayedChild(0);
         });
-        txtDateStart.setText(mEventStart);
+        txtDateStart.setText(mEventDateStart);
+
+        mCalendar = view.findViewById(R.id.calendar_view);
+        mCalendar.setOnDateChangeListener((CalendarView calendarView, int year, int month, int monthDay)-> {
+            mDate = new GregorianCalendar(year,month,monthDay).getTime();
+            txtDateStart.setText(mDateFormat.format(mDate));
+        });
+
         TextView txtTimeStart = view.findViewById(R.id.text_time_start);
         txtTimeStart.setOnClickListener((View v)->{
             if(viewFlipper.getVisibility() == View.GONE){
@@ -125,11 +138,14 @@ public class EventCreate_Details_Fragment extends Fragment implements View.OnCli
             }
             viewFlipper.setDisplayedChild(1);
         });
-
-        mCalendar = view.findViewById(R.id.calendar_view);
-        mCalendar.setOnDateChangeListener((CalendarView calendarView, int year, int month, int monthDay)-> {
-            mDate = new GregorianCalendar(year,month,monthDay).getTime();
-            txtDateStart.setText(mDateFormat.format(mDate));
+        mTimePicker = view.findViewById(R.id.time_picker);
+        mTimePicker.setHour(8);
+        mTimePicker.setMinute(0);
+        mTimePicker.setOnTimeChangedListener((TimePicker picker, int hourOfDay, int minute)->{
+            try{
+                Date date = _24HrSDF.parse(hourOfDay+":"+minute);
+                txtTimeStart.setText(_12HrSDF.format(date));
+            } catch (Exception e){}
         });
 
         txtEventName = view.findViewById(R.id.text_event_create_name);
