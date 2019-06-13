@@ -324,7 +324,7 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
     public boolean onQueryTextChange(String s) {
         int i = viewPager.getCurrentItem();
         Fragment fragment = pagerAdapter.getFragment(i);
-        switch (i){
+        switch (i) {
             case 0:
                 ((EventsCore_Fragment) fragment).filterRecycler(s);
                 break;

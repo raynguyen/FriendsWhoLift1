@@ -157,15 +157,12 @@ public class EventExplore_Fragment extends Fragment implements
                 List<Event_Model> eventList = mViewModel.getAcceptedEvents().getValue();
                 for(Event_Model event : event_models){
                     if(!eventList.contains(event)){
-                        Log.w(TAG,"The accepted list does not contain: "+event.getName());
                         LatLng latLng = new LatLng(event.getLat(),event.getLng());
                         //Todo: Custom marker to show the primes on top of the date.
                         Marker marker=  mMap.addMarker(new MarkerOptions()
                                 .position(latLng)
                                 .title(event.getName()));
                         marker.setTag(event);
-                    } else {
-                        Log.w(TAG,"The accepted CONTAINS: "+event.getName());
                     }
                 }
             }
@@ -276,7 +273,7 @@ public class EventExplore_Fragment extends Fragment implements
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy(){
         mMapView.onDestroy();
         super.onDestroy();
     }
