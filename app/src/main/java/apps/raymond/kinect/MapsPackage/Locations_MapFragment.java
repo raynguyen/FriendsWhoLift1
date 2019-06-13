@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.MapsPackage;
 
 import android.Manifest;
 import android.app.Activity;
@@ -50,6 +50,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.Locations_Adapter;
+import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,

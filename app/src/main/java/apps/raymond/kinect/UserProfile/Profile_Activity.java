@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import apps.raymond.kinect.Connections_Fragment;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.Locations_MapFragment;
+import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.R;

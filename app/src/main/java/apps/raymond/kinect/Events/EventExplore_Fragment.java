@@ -15,9 +15,10 @@
 package apps.raymond.kinect.Events;
 
 import android.Manifest;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,17 +42,19 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -61,6 +65,7 @@ public class EventExplore_Fragment extends Fragment implements
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
     private static final int LOCATION_REQUEST_CODE = 1;
+    private Location_Model mLocationModel;
 
     public static EventExplore_Fragment newInstance(User_Model userModel){
         EventExplore_Fragment fragment = new EventExplore_Fragment();
@@ -75,12 +80,13 @@ public class EventExplore_Fragment extends Fragment implements
     private User_Model mUserModel;
     private String mUserID;
     private boolean mLocationPermission = false;
+    private List<Event_Model> mEventInvitations;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
-
+        mEventInvitations = mViewModel.getEventInvitations().getValue();
         if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
@@ -113,7 +119,7 @@ public class EventExplore_Fragment extends Fragment implements
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        detailsCardView = view.findViewById(R.id.cardview_event_search);
+        detailsCardView = view.findViewById(R.id.cardview_event_explore);
         textEventName = view.findViewById(R.id.text_name);
         textDesc = view.findViewById(R.id.text_description);
         textThoroughfare = view.findViewById(R.id.text_thoroughfare);
@@ -123,19 +129,21 @@ public class EventExplore_Fragment extends Fragment implements
 
         Button btnAttend = view.findViewById(R.id.button_attend);
         btnAttend.setOnClickListener((View v)->{
+            detailsCardView.setVisibility(View.GONE);
             if(focusedEvent!=null){
-                List<Event_Model> inviteList = mViewModel.getEventInvitations().getValue();
-                //Delete the event invitation from DB and ViewModel set if it exists.
-                if(inviteList.contains(focusedEvent)){
-                    inviteList.remove(focusedEvent);
-                    mViewModel.setEventInvitations(inviteList); //Remove the invitation from the ViewModel set and increment attending count.
+                if(mEventInvitations.contains(focusedEvent)){
+                    mEventInvitations.remove(focusedEvent);
+                    mViewModel.setEventInvitations(mEventInvitations); //Remove the invitation from the ViewModel set and increment attending count.
                     mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
                 }
-                mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName());//Add user to event's Accepted collection and increment attending.
+                mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName())
+                        .addOnCompleteListener((Task<Void> task)->
+                                Toast.makeText(getContext(),"You are now attending: "+focusedEvent.getName(),Toast.LENGTH_LONG).show());
                 mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
                 List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
                 acceptedEvents.add(focusedEvent);
                 mViewModel.setAcceptedEvents(acceptedEvents);
+                focusedMarker.remove();
             }
         });
     }
@@ -178,8 +186,8 @@ public class EventExplore_Fragment extends Fragment implements
         }
     }
 
-    Event_Model focusedEvent;
-    Marker focusedMarker;
+    private Event_Model focusedEvent;
+    private Marker focusedMarker;
     @Override
     public boolean onMarkerClick(Marker marker) {
         detailsCardView.setVisibility(View.VISIBLE);
@@ -188,8 +196,13 @@ public class EventExplore_Fragment extends Fragment implements
 
         textEventName.setText(focusedEvent.getName());
         textDesc.setText(focusedEvent.getDesc());
-        textThoroughfare.setText(focusedEvent.getAddress());
-        textThoroughfare.setText("Papa Johns"); //ToDo: Should just be the address.
+
+        if(focusedEvent.getAddress()!=null){
+            textThoroughfare.setText(focusedEvent.getAddress());
+        } else if(focusedEvent.getLat()!=0 && focusedEvent.getLng()!=0){
+            LatLng latLng = new LatLng(focusedEvent.getLat(),focusedEvent.getLng());
+
+        }
 
         Calendar c = Calendar.getInstance();
         Date date = new Date(focusedEvent.getLong1());
@@ -198,9 +211,23 @@ public class EventExplore_Fragment extends Fragment implements
         textDate.setText(String.valueOf(c.get(Calendar.DATE)));
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
         textTime.setText(sdf.format(date));
-
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
         return true;
+    }
+
+    private Address geoLocate(long lat, long lng){
+        try{
+            Geocoder geocoder = new Geocoder(getContext());
+            List<Address> queryResults = geocoder.getFromLocation(lat,lng,1);
+            if(queryResults.size()>0){
+                return queryResults.get(0);
+            } else {
+                return null;
+            }
+        }catch (IOException e){
+            Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
+        }
+        return null;
     }
 
     private void getDeviceLocation(){
@@ -283,6 +310,5 @@ public class EventExplore_Fragment extends Fragment implements
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
 
 }
