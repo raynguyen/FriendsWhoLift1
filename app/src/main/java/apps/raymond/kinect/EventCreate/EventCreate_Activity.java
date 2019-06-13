@@ -143,7 +143,6 @@ public class EventCreate_Activity extends AppCompatActivity implements
                     mViewModel.addUserToEvent(mUserID,mUserModel,event.getName()));
                 mViewModel.addEventToUser(mUserID,event);
                 mViewModel.sendEventInvites(event, mViewModel.getInviteList());
-
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("event",event);
                 setResult(Activity.RESULT_OK, returnIntent);

@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,7 +25,7 @@ import apps.raymond.kinect.R;
 
 public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.EventViewHolder>
     implements Filterable {
-
+    private SimpleDateFormat sdf = new SimpleDateFormat("MMM",Locale.getDefault());
     private EventClickListener eventClickListener;
     public interface EventClickListener {
         void onEventClick(Event_Model groupEvent);
@@ -49,11 +50,10 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
         final Event_Model currEvent = mListFiltered.get(position);
         if(currEvent.getLong1()!=0){
-            Log.w("COREEVENTADAPER: ","long 1 = "+currEvent.getLong1() );
             long long1 = currEvent.getLong1();
-            Calendar c = Calendar.getInstance();
+            Calendar c = new GregorianCalendar();
             c.setTimeInMillis(long1);
-            vh.monthTxt.setText(new DateFormatSymbols().getMonths()[c.get(Calendar.MONTH)]);
+            vh.monthTxt.setText(sdf.format(c.getTime()));
             vh.dayTxt.setText(String.valueOf(c.get(Calendar.DATE)));
             SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
             vh.timeTxt.setText(sdf.format(new Date(long1)));
@@ -91,12 +91,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             }
         }
 
-        vh.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eventClickListener.onEventClick(currEvent);
-            }
-        });
+        vh.itemView.setOnClickListener((View v)-> eventClickListener.onEventClick(currEvent));
     }
 
     @Override
