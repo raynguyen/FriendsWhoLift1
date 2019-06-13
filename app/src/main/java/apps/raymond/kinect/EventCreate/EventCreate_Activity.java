@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -32,7 +33,7 @@ import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity implements
-        Locations_MapFragment.MapMarkerClick, YesNoDialog.YesNoCallback {
+        Locations_MapFragment.MapCardViewClick, YesNoDialog.YesNoCallback {
 
     private EventCreate_ViewModel mViewModel;
     private User_Model mUserModel;
@@ -109,12 +110,16 @@ public class EventCreate_Activity extends AppCompatActivity implements
         overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
     }
 
+    /**
+     * Callback interface when the positive button in the CardView for the LocationsMap fragment is
+     * clicked. In the case of the fragment attaching to this activity, we bind
+     * @param Address the address where the event is being hosted.
+     */
     @Override
-    public void onLocationPositiveClick(Location_Model locationModel) {
-        Log.w("CreateEventAct","Display a cardview prompting user to set location");
-        mViewModel.setEventLat(locationModel.getLat());
-        mViewModel.setEventLong(locationModel.getLng());
-        mViewModel.setEventAddress(locationModel.getAddress());
+    public void onCardViewPositiveClick(Address address) {
+        mViewModel.setEventLat(address.getLatitude());
+        mViewModel.setEventLong(address.getLongitude());
+        mViewModel.setEventAddress(address.getAddressLine(0));
     }
 
     @Override

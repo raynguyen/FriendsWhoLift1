@@ -108,7 +108,7 @@
         android:layout_gravity="bottom|center_horizontal"
         app:cardElevation="4dp"
         android:layout_margin="16dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <RelativeLayout
             android:layout_width="match_parent"

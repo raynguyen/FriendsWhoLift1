@@ -201,7 +201,6 @@ public class EventExplore_Fragment extends Fragment implements
             textThoroughfare.setText(focusedEvent.getAddress());
         } else if(focusedEvent.getLat()!=0 && focusedEvent.getLng()!=0){
             LatLng latLng = new LatLng(focusedEvent.getLat(),focusedEvent.getLng());
-
         }
 
         Calendar c = Calendar.getInstance();
@@ -215,6 +214,7 @@ public class EventExplore_Fragment extends Fragment implements
         return true;
     }
 
+    //Todo: Consider changing this back to the default for when a user wants to search a location for events.
     private Address geoLocate(long lat, long lng){
         try{
             Geocoder geocoder = new Geocoder(getContext());

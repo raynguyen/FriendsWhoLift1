@@ -58,9 +58,10 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
         Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
+    private MapCardViewClick mPositiveCallback;
 
-    public interface MapMarkerClick{
-        void onLocationPositiveClick(Location_Model location_model);
+    public interface MapCardViewClick {
+        void onCardViewPositiveClick(Address address);
     }
     /*
      * Need an identifier to determine if we need to load the card to add as a user location or if
@@ -75,12 +76,11 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         return fragment;
     }
 
-    private MapMarkerClick mPositiveCallback;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            mPositiveCallback = (MapMarkerClick) context;
+            mPositiveCallback = (MapCardViewClick) context;
         }catch (ClassCastException e){
             //Some error
         }
@@ -114,6 +114,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         return inflater.inflate(R.layout.fragment_user_locations,container,false);
     }
 
+    private Address mFocusedAddress;
     private Location_Model mLocationModel;
     private MapView mapView;
     private ImageButton btnShowRecycler;
@@ -133,16 +134,14 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
         btnShowRecycler = view.findViewById(R.id.button_view_locations);
         EditText editSearchMap = view.findViewById(R.id.edit_search_location);
-        editSearchMap.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
-                    geoLocate(v.getText().toString());
-                }
-                return false;
+        editSearchMap.setOnEditorActionListener((TextView v, int actionId, KeyEvent event)->{
+            if(actionId == EditorInfo.IME_ACTION_SEARCH
+                    || actionId == EditorInfo.IME_ACTION_DONE
+                    || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                geoLocate(v.getText().toString());
+                return true;
             }
+            return false;
         });
 
         final LinearLayout.LayoutParams showParams = new LinearLayout.LayoutParams(
@@ -164,18 +163,15 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             }
         });
 
-        btnShowRecycler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==0){
-                    mRecyclerGroup.setLayoutParams(showParams);
-                    btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.baseline_keyboard_arrow_down_black_18dp,null));
-                } else {
-                    mRecyclerGroup.setLayoutParams(hideParams);
-                    btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
-                }
+        btnShowRecycler.setOnClickListener((View v)->{
+            if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==0){
+                mRecyclerGroup.setLayoutParams(showParams);
+                btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.baseline_keyboard_arrow_down_black_18dp,null));
+            } else {
+                mRecyclerGroup.setLayoutParams(hideParams);
+                btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
             }
         });
 
@@ -196,24 +192,13 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         } else {
             btnCardPositive.setText(getString(R.string.set_location));
         }
-
-        btnCardPositive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPositiveCallback.onLocationPositiveClick(mLocationModel);
-            }
-        });
+        btnCardPositive.setOnClickListener((View v)->mPositiveCallback.onCardViewPositiveClick(mFocusedAddress));
 
         ImageButton btnReturn = view.findViewById(R.id.button_map_return);
         if(mFlag.equals("event")){
             btnReturn.setVisibility(View.GONE);
         }
-        btnReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().onBackPressed();
-            }
-        });
+        btnReturn.setOnClickListener((View v)->requireActivity().onBackPressed());
     }
 
     private GoogleMap mMap;
@@ -231,38 +216,31 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             googleMap.setMyLocationEnabled(true);
             getDeviceLocation();
         } catch (SecurityException e){ }
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if(requireActivity().getCurrentFocus()!=null){
+        mMap.setOnMapClickListener((LatLng latLng)-> {
+            if(requireActivity().getCurrentFocus()!=null){
                 requireActivity().getCurrentFocus().clearFocus();
                 hideKeyboardFrom(getContext(),getView());
-                }
-                if(mLocationCard.getVisibility()==View.VISIBLE){
-                    mLocationCard.setVisibility(View.GONE);
-                }
+            }
+            if(mLocationCard.getVisibility()==View.VISIBLE){
+                mLocationCard.setVisibility(View.GONE);
             }
         });
 
-        mViewModel.getLocations().observe(this, new Observer<List<Location_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Location_Model> location_models) {
-                progressBar.setVisibility(View.GONE);
-                if(location_models.size()==0){
-                    txtNullData.setVisibility(View.VISIBLE);
-                }
-                mAdapter.setData(location_models);
-                for(Location_Model location : location_models){
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.getLat(),location.getLng()))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)))
-                            .setTag(location);
-                }
-
+        mViewModel.getLocations().observe(this,(@Nullable List<Location_Model> location_models)->{
+            progressBar.setVisibility(View.GONE);
+            if(location_models.size()==0){
+                txtNullData.setVisibility(View.VISIBLE);
+            }
+            mAdapter.setData(location_models);
+            for(Location_Model location : location_models){
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLat(),location.getLng()))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)))
+                        .setTag(location);
             }
         });
-
         mViewModel.loadUserLocations(mUserID);
+
         mMap.setOnMarkerClickListener((Marker marker)-> {
             onLocationItemClick((Location_Model) marker.getTag());
             return true;
@@ -295,9 +273,8 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
         }
         if(queryResults.size() > 0){
-            LatLng latLng = new LatLng(queryResults.get(0).getLatitude(),queryResults.get(0).getLongitude());
-            mLocationModel = new Location_Model(null,queryResults.get(0));
-            mMap.addMarker(new MarkerOptions().position(latLng)).setTag(mLocationModel);
+            mFocusedAddress = queryResults.get(0);
+            LatLng latLng = new LatLng(mFocusedAddress.getLatitude(),mFocusedAddress.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
         }
     }

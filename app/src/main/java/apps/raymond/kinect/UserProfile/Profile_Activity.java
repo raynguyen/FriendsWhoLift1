@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,7 +50,7 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
 public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
-        YesNoDialog.YesNoCallback, Locations_MapFragment.MapMarkerClick {
+        YesNoDialog.YesNoCallback, Locations_MapFragment.MapCardViewClick {
     private static final String TAG = "ProfileActivity";
     private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
     private static final String LOCATIONS_FRAG = "LocationsFrag";
@@ -194,24 +195,24 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 });
     }
 
+    /**
+     * Callback interface when user opts to save a new Location (from Locations_MapFragment) for
+     * future usage.
+     * @param address The address class of which we will create a Location_Model to store to DB.
+     */
     @Override
-    public void onLocationPositiveClick(Location_Model locationModel) {
+    public void onCardViewPositiveClick(Address address) {
         //ToDo:CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE
         //If the prompt returns a positive click, increment the Text on locations button after we
         //increment number of locations in the user document.
         //In the activity result, use the ViewModel held by THIS ACTIVITY (Profile_ViewModel)
         Log.w(TAG,"PROMPT TO ADD A LOOKUP NAME");
-        locationModel.setLookup("moshimoshi");
-        mViewModel.addLocationToUser(mUserID,locationModel)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getBaseContext(),"Successfully saved location.",Toast.LENGTH_LONG).show();
-
-                        }
-                    }
-                });
+        Location_Model locationModel = new Location_Model("moshimoshi",address);
+        mViewModel.addLocationToUser(mUserID,locationModel).addOnCompleteListener((Task<Void> task)->{
+            if(task.isSuccessful()){
+                Toast.makeText(getBaseContext(),"Successfully saved location.",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

@@ -137,7 +137,7 @@
     <string name="confirm">CONFIRM</string>
     <string name="view_locations">Show My Locations</string>
     <string name="save_location">Save Location</string>
-    <string name="set_location">Set Event Location</string>
+    <string name="set_location">Set Location</string>
     <!--GROUPS FRAGMENT-->
     <string name="group_header">YOUR GROUPS</string>
     <string name="explore_groups">EXPLORE GROUPS</string>
