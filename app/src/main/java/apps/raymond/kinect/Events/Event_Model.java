@@ -4,10 +4,7 @@ package apps.raymond.kinect.Events;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.firestore.ServerTimestamp;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import android.support.annotation.Nullable;
@@ -21,7 +18,7 @@ public class Event_Model implements Parcelable{
     private String address = "Location: TBD";
     private int attending = 1;
     private int invited;
-    private long long1, long2; //long1 should be a mandatory field that is mutable.
+    private long long1, long2;
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
@@ -84,6 +81,8 @@ public class Event_Model implements Parcelable{
         creator = in.readString();
         name = in.readString();
         desc = in.readString();
+        long1 = in.readLong();
+        long2 = in.readLong();
         privacy = in.readInt();
         tags = in.readArrayList(null);
         primes = in.readArrayList(null);
@@ -207,6 +206,8 @@ public class Event_Model implements Parcelable{
         dest.writeString(creator);
         dest.writeString(name);
         dest.writeString(desc);
+        dest.writeLong(long1);
+        dest.writeLong(long2);
         dest.writeInt(privacy);
         dest.writeList(tags);
         dest.writeList(primes);

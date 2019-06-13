@@ -127,18 +127,19 @@ public class EventCreate_Activity extends AppCompatActivity implements
         if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
                 final Event_Model event = mViewModel.getEventModel();
-                Log.w("EventCreateActivity: ","Created a new event with long = "+event.getLong1());
+                Log.w("EventCreateActivity: ","Created: " +event.getName()+" with long = "+event.getLong1());
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());
-                mViewModel.createEvent(event).addOnCompleteListener((Task<Void> task)->
-                    mViewModel.addUserToEvent(mUserID,mUserModel,event.getName()));
-                mViewModel.addEventToUser(mUserID,event);
-                mViewModel.sendEventInvites(event, mViewModel.getInviteList());
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("event",event);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
+
+                mViewModel.createEvent(event).addOnCompleteListener((Task<Void> task)->
+                        mViewModel.addUserToEvent(mUserID,mUserModel,event.getName()));
+                mViewModel.addEventToUser(mUserID,event);
+                mViewModel.sendEventInvites(event, mViewModel.getInviteList());
             } else {
                 Toast.makeText(this,"Mandatory event fields must be completed.",Toast.LENGTH_LONG).show();
             }
