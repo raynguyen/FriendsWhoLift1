@@ -98,9 +98,8 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  2. See above.
  *  3. Properly update the Events RecyclerView in the Core Events Fragment.
  */
-public class Core_Activity extends AppCompatActivity implements View.OnClickListener,
-        ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener,
-        GroupCreate_Fragment.AddGroup{
+public class Core_Activity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
+        SearchView.OnQueryTextListener, GroupCreate_Fragment.AddGroup{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
@@ -114,7 +113,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         void updateGroupRecycler(Group_Model groupBase);
     }
 
-    Activity thisInstance;
     ViewPager viewPager;
     SearchView toolbarSearch;
     Toolbar toolbar;
@@ -139,11 +137,18 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             mViewModel.loadUserDocument(mUserID);
         }
 
-        thisInstance = this;
-
         toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
+        toolbar.setNavigationOnClickListener((View v)-> {
+            if(mUserModel !=null){
+                Intent profileIntent = new Intent(this, Profile_Activity.class);
+                profileIntent.putExtra("user", mUserModel);
+                startActivity(profileIntent);
+                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
+            }
+        });
 
         toolbarSearch = findViewById(R.id.toolbar_search);
         toolbarSearch.setOnQueryTextListener(this);
@@ -157,19 +162,15 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
 
-        mViewModel.getUserModel().observe(this, new Observer<User_Model>() {
-            @Override
-            public void onChanged(@Nullable User_Model user_model) {
-                if(user_model==null){
-                    Log.w(TAG,"The usermodel held by the view model is null. Should be logged out.");
-                } else {
-                    mUserModel = user_model;
-                    mUserID = mUserModel.getEmail();
-                    mViewModel.loadUserInvitations(mUserID);
-                }
+        mViewModel.getUserModel().observe(this, (User_Model user_model)->{
+            if(user_model==null){
+                //Should never occur but may have to implement a safety.
+            } else {
+                mUserModel = user_model;
+                mUserID = mUserModel.getEmail();
+                mViewModel.loadUserInvitations(mUserID);
             }
         });
-        toolbarListener();
     }
 
     @Override
@@ -192,8 +193,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
        } else {
             if(menu.size()==0){
                getMenuInflater().inflate(R.menu.core_menu,menu);
-               toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
-               toolbar.setNavigationOnClickListener(this);
                eventCreate = menu.findItem(R.id.action_create_event_launch);
                groupCreate = menu.findItem(R.id.action_create_group);
                return true;
@@ -239,8 +238,10 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
         if(resultCode==Activity.RESULT_OK){
             if(requestCode==EVENTCREATE){
                 Event_Model event = data.getParcelableExtra("event");
+                Log.w(TAG,"Finished creating a new event: "+event.getName());
                 List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
                 acceptedEvents.add(event);
+
                 mViewModel.setAcceptedEvents(acceptedEvents);
             }
         }
@@ -270,22 +271,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onPageScrollStateChanged(int i) {
-    }
-
-    @Override
-    public void onClick(View v) {
-        /* ToDo:
-        When profile activity is started, we should keep a savedInstanceState of Core so that if
-        user finishes the Profile Activity, we don't have to reload all the data held by this ViewModel.
-         */
-        if(v.getId()== -1){
-            if(mUserModel !=null){
-                Intent profileIntent = new Intent(this, Profile_Activity.class);
-                profileIntent.putExtra("user", mUserModel);
-                startActivity(profileIntent);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
-            }
-        }
     }
 
     @Override
@@ -330,44 +315,6 @@ public class Core_Activity extends AppCompatActivity implements View.OnClickList
             }
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    /**
-     * Method that determines what the Toolbar should display depending on the visible Fragment in
-     * the ViewPager.
-     *
-     * ToDo: This should be checked to determine a more efficient pattern.
-     */
-    private void toolbarListener(){
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                int i = getSupportFragmentManager().getBackStackEntryCount();
-                if(i > 0){
-                    toolbar.setNavigationIcon(R.drawable.baseline_keyboard_arrow_left_black_18dp);
-                    String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(i-1).getName();
-                    final Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-                    if(fragment instanceof GroupCreate_Fragment){
-                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((BackPressListener) fragment).onBackPress();
-                            }
-                        });
-                    } else {
-                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                onBackPressed();
-                            }
-                        });
-                    }
-                } else {
-                    toolbar.setNavigationIcon(R.drawable.baseline_face_black_18dp);
-                    toolbar.setNavigationOnClickListener((Core_Activity) thisInstance);
-                }
-            }
-        });
     }
 
     @Override

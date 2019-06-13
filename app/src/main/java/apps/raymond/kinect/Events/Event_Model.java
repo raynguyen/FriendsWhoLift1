@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.support.annotation.Nullable;
+
 //ToDo: Consider implementing hashcode to individually identify event without comparing strings.
 public class Event_Model implements Parcelable{
     private String creator, name, desc;
@@ -213,5 +215,13 @@ public class Event_Model implements Parcelable{
         dest.writeString(address);
         dest.writeDouble(lat);
         dest.writeDouble(lng);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(!(obj instanceof Event_Model)){
+            return false;
+        }
+        return ((Event_Model) obj).getName().equals(this.name);
     }
 }

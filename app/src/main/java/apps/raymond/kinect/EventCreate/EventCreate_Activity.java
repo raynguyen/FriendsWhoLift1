@@ -154,6 +154,9 @@ public class EventCreate_Activity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Called when the user confirms that they want to exit the event create activity.
+     */
     @Override
     public void onPositiveClick() {
         finish();

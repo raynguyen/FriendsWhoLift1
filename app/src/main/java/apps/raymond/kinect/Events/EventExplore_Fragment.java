@@ -83,7 +83,6 @@ public class EventExplore_Fragment extends Fragment implements
 
         if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.w(TAG,"We must request permission for fine location.");
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
         } else {
             mLocationPermission = true;
@@ -106,7 +105,6 @@ public class EventExplore_Fragment extends Fragment implements
 
     private ViewGroup detailsCardView;
     private TextView textEventName, textDesc, textThoroughfare, textMonth, textDate, textTime;
-    Button btnAttend;
     private MapView mMapView;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -123,24 +121,21 @@ public class EventExplore_Fragment extends Fragment implements
         textDate = view.findViewById(R.id.text_date);
         textTime = view.findViewById(R.id.text_time);
 
-        btnAttend = view.findViewById(R.id.button_attend);
-        btnAttend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(focusedEvent!=null){
-                    List<Event_Model> inviteList = mViewModel.getEventInvitations().getValue();
-                    //Delete the event invitation from DB and ViewModel set if it exists.
-                    if(inviteList.contains(focusedEvent)){
-                        inviteList.remove(focusedEvent);
-                        mViewModel.setEventInvitations(inviteList); //Remove the invitation from the ViewModel set and increment attending count.
-                        mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
-                    }
-                    mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName());//Add user to event's Accepted collection and increment attending.
-                    mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
-                    List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
-                    acceptedEvents.add(focusedEvent);
-                    mViewModel.setAcceptedEvents(acceptedEvents);
+        Button btnAttend = view.findViewById(R.id.button_attend);
+        btnAttend.setOnClickListener((View v)->{
+            if(focusedEvent!=null){
+                List<Event_Model> inviteList = mViewModel.getEventInvitations().getValue();
+                //Delete the event invitation from DB and ViewModel set if it exists.
+                if(inviteList.contains(focusedEvent)){
+                    inviteList.remove(focusedEvent);
+                    mViewModel.setEventInvitations(inviteList); //Remove the invitation from the ViewModel set and increment attending count.
+                    mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
                 }
+                mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName());//Add user to event's Accepted collection and increment attending.
+                mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
+                List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+                acceptedEvents.add(focusedEvent);
+                mViewModel.setAcceptedEvents(acceptedEvents);
             }
         });
     }
@@ -148,31 +143,29 @@ public class EventExplore_Fragment extends Fragment implements
     private GoogleMap mMap;
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setPadding(0,400,0,0);
+        googleMap.setPadding(0,0,0,0);
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if(detailsCardView.getVisibility()==View.VISIBLE){
-                    detailsCardView.setVisibility(View.GONE);
-                }
+        mMap.setOnMapClickListener((LatLng latlng)->{
+            if(detailsCardView.getVisibility()==View.VISIBLE){
+                detailsCardView.setVisibility(View.GONE);
             }
         });
 
-        mViewModel.getPublicEvents().observe(this, new Observer<List<Event_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<Event_Model> event_models) {
-                if(event_models!=null && !event_models.isEmpty()){
-                    for(Event_Model event:event_models){
+        mViewModel.getPublicEvents().observe(this, (List<Event_Model> event_models)->{
+            if(event_models!=null){
+                List<Event_Model> eventList = mViewModel.getAcceptedEvents().getValue();
+                for(Event_Model event : event_models){
+                    if(!eventList.contains(event)){
+                        Log.w(TAG,"The accepted list does not contain: "+event.getName());
                         LatLng latLng = new LatLng(event.getLat(),event.getLng());
-                        if(mMap!=null){
-                            //Todo: Custom marker to show the primes on top of the date.
-                            Marker marker =  mMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(event.getName()));
-                            marker.setTag(event);
-                        }
+                        //Todo: Custom marker to show the primes on top of the date.
+                        Marker marker=  mMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(event.getName()));
+                        marker.setTag(event);
+                    } else {
+                        Log.w(TAG,"The accepted CONTAINS: "+event.getName());
                     }
                 }
             }
@@ -180,7 +173,6 @@ public class EventExplore_Fragment extends Fragment implements
         mViewModel.loadPublicEvents();
 
         if(mLocationPermission){
-            Log.w(TAG,"We have permission and will try to enable location.");
             getDeviceLocation();
             try{
                 googleMap.setMyLocationEnabled(true);

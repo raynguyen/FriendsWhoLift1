@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -48,16 +49,11 @@ public class Core_ViewModel extends ViewModel {
     }
 
     public void loadUserDocument(String userID){
-        mRepository.getUserDocument(userID)
-                .addOnCompleteListener(new OnCompleteListener<User_Model>() {
-                    @Override
-                    public void onComplete(@NonNull Task<User_Model> task) {
-                        if(task.isSuccessful()){
-                            mUserModel.setValue(task.getResult());
-                        }
-                    }
-                }
-        );
+        mRepository.getUserDocument(userID).addOnCompleteListener((Task<User_Model> task)->{
+            if(task.isSuccessful()){
+                mUserModel.setValue(task.getResult());
+            }
+        });
     }
 
     public void setUserDocument(User_Model user_model){
@@ -73,25 +69,17 @@ public class Core_ViewModel extends ViewModel {
      * @param userID User for whom we are retrieving the invitation sets
      */
     public void loadUserInvitations(String userID){
-        mRepository.getEventInvitations(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                        if(task.isSuccessful()){
-                            mEventInvitations.setValue(task.getResult());
-                        }
-                    }
-                });
+        mRepository.getEventInvitations(userID).addOnCompleteListener((Task<List<Event_Model>> task)->{
+            if(task.isSuccessful()){
+                mEventInvitations.setValue(task.getResult());
+            }
+        });
 
-        mRepository.getGroupInvitations(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<Group_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Group_Model>> task) {
-                        if(task.isSuccessful()){
-                            mGroupInvitations.setValue(task.getResult());
-                        }
-                    }
-                });
+        mRepository.getGroupInvitations(userID).addOnCompleteListener((Task<List<Group_Model>> task)->{
+            if(task.isSuccessful()){
+                mGroupInvitations.setValue(task.getResult());
+            }
+        });
     }
 
     public MutableLiveData<List<Event_Model>> getEventInvitations(){
@@ -116,16 +104,17 @@ public class Core_ViewModel extends ViewModel {
      * @param userID Document parameter to query to correct collection.
      */
     public void loadAcceptedEvents(String userID){
-        mRepository.getAcceptedEvents(userID)
-                .addOnCompleteListener((Task<List<Event_Model>> task)->{
-                    if(task.isSuccessful()&& task.getResult()!=null){
-                        mAcceptedEvents.setValue(task.getResult());
-                    }
-                });
+        mRepository.getAcceptedEvents(userID).addOnCompleteListener((Task<List<Event_Model>> task)->{
+            if(task.isSuccessful()&& task.getResult()!=null){
+                mAcceptedEvents.setValue(task.getResult());
+            }
+        });
     }
-    public void setAcceptedEvents(List<Event_Model> newList){
+    public void setAcceptedEvents(List<Event_Model> newList) {
+        Log.w("COREvIEWmODEL","Calling set accepted events after creating event.");
         mAcceptedEvents.setValue(newList);
     }
+
     public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
         return mAcceptedEvents;
     }
