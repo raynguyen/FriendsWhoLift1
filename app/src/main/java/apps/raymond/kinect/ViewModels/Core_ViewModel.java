@@ -111,10 +111,6 @@ public class Core_ViewModel extends ViewModel {
         });
     }
     public void setAcceptedEvents(List<Event_Model> newList) {
-        Log.w("CoreViewModel: ","Setting AcceptedEvents with a new list!");
-        for(Event_Model event: newList){
-            Log.w("CoreViewModel",""+event.getName()+" long1 = "+event.getLong1());
-        }
         mAcceptedEvents.setValue(newList);
     }
 

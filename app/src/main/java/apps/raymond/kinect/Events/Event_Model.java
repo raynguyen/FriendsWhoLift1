@@ -15,7 +15,7 @@ public class Event_Model implements Parcelable{
     private double lat, lng;
     private int privacy;
     private List<String> tags, primes;
-    private String address = "Location: TBD";
+    private String address;
     private int attending = 1;
     private int invited;
     private long long1, long2;

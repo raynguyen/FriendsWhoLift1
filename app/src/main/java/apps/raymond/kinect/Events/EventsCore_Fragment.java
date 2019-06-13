@@ -101,7 +101,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
         });
 
         mViewModel.getAcceptedEvents().observe(requireActivity(), (List<Event_Model> event_models)-> {
-            Log.w("EventsCoreFragment: ","There was a change detected in AcceptedEvents.");
             if(event_models!=null){
                 progressBar.setVisibility(View.GONE);
                 if(!event_models.isEmpty()){

@@ -127,7 +127,6 @@ public class EventCreate_Activity extends AppCompatActivity implements
         if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
                 final Event_Model event = mViewModel.getEventModel();
-                Log.w("EventCreateActivity: ","Created: " +event.getName()+" with long = "+event.getLong1());
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());
