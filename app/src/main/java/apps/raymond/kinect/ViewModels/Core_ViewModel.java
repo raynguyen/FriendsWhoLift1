@@ -111,7 +111,7 @@ public class Core_ViewModel extends ViewModel {
         });
     }
     public void setAcceptedEvents(List<Event_Model> newList) {
-        Log.w("COREvIEWmODEL","Calling set accepted events after creating event.");
+        Log.w("CoreViewModel: ","Setting AcceptedEvents with a new list!");
         mAcceptedEvents.setValue(newList);
     }
 

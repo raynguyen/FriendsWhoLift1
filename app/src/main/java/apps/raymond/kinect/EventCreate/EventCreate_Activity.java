@@ -38,11 +38,10 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventCreate_Activity extends AppCompatActivity implements
         Locations_MapFragment.MapMarkerClick, YesNoDialog.YesNoCallback {
+
     private EventCreate_ViewModel mViewModel;
-    private ArrayList<Event_Model> mEventList; //Todo: determine if we need this.
     private User_Model mUserModel;
     private String mUserID;
-
     private String mEventName;
     private String mEventDesc;
     @Override
@@ -60,9 +59,6 @@ public class EventCreate_Activity extends AppCompatActivity implements
         if(getIntent().getExtras()!=null){
             mUserModel = getIntent().getExtras().getParcelable("user");
             mUserID = mUserModel.getEmail();
-            if(getIntent().hasExtra("events")){
-                mEventList = getIntent().getExtras().getParcelableArrayList("events");
-            }
         }
 
         ViewPager mViewPager = findViewById(R.id.viewpager_eventcreate);
@@ -72,19 +68,14 @@ public class EventCreate_Activity extends AppCompatActivity implements
         mTabs.setupWithViewPager(mViewPager);
 
         //Observes the Details fragment to determine if the there is a non-empty string for the name
-        mViewModel.getEventName().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                mEventName = s;
-                checkFields();
-            }
+        mViewModel.getEventName().observe(this, (String s) ->{
+            mEventName = s;
+            checkFields();
         });
-        mViewModel.getEventDesc().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                mEventDesc = s;
-                checkFields();
-            }
+
+        mViewModel.getEventDesc().observe(this, (String s) ->{
+            mEventDesc = s;
+            checkFields();
         });
     }
 
@@ -136,6 +127,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
         if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
                 final Event_Model event = mViewModel.getEventModel();
+                Log.w("EventCreateActivity: ","Created a new event with long = "+event.getLong1());
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());

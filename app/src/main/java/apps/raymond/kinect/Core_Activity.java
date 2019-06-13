@@ -238,7 +238,7 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
         if(resultCode==Activity.RESULT_OK){
             if(requestCode==EVENTCREATE){
                 Event_Model event = data.getParcelableExtra("event");
-                Log.w(TAG,"Finished creating a new event: "+event.getName());
+                Log.w(TAG,"Finished creating a new event: "+event.getName() +" with long1 = "+event.getLong1()); //THIS IS RETURNING LONG = 0!!!!???
                 List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
                 acceptedEvents.add(event);
 

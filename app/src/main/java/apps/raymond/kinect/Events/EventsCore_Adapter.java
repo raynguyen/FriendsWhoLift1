@@ -51,6 +51,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         final Event_Model currEvent = mListFiltered.get(position);
         if(currEvent.getLong1()!=0){
             long long1 = currEvent.getLong1();
+            Log.w("EventsCoreAdpater: ","Binding viewholder for "+currEvent.getName() + " which has long1 = "+currEvent.getLong1());
             Calendar c = new GregorianCalendar();
             c.setTimeInMillis(long1);
             vh.monthTxt.setText(sdf.format(c.getTime()));
