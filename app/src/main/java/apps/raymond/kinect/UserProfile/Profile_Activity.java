@@ -178,14 +178,14 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onPositiveClick() {
-        mViewModel.deleteUserConnection(mUserID, mProfileID)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        btnDeleteConnection.setVisibility(View.GONE);
-                        btnConnect.setVisibility(View.VISIBLE);
-                    }
-                });
+        mViewModel.deleteUserConnection(mUserID, mProfileID).addOnCompleteListener((Task<Void> task)-> {
+            if(task.isSuccessful()){
+                btnDeleteConnection.setVisibility(View.GONE);
+                btnConnect.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(this,"Error deleting user.",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**

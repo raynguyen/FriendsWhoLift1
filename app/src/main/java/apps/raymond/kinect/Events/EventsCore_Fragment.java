@@ -50,7 +50,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
 
     Button btnExploreEvents;
     private TextView nullText;
-    int scrolledHeight = 0;
     private ProgressBar progressBar;
     private EventsCore_Adapter mAdapter;
     @Override

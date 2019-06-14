@@ -4,6 +4,8 @@ import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Location_Model implements Parcelable {
     private String lookup;
     private String address;
@@ -89,5 +91,10 @@ public class Location_Model implements Parcelable {
 
     public void setLng(double lng) {
         this.lng = lng;
+    }
+
+    //Not sure if this will work with Firestore APIs!
+    public LatLng getLatLng(){
+        return new LatLng(this.lat,this.lng);
     }
 }

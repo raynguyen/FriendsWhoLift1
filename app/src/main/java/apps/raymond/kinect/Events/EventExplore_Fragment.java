@@ -65,7 +65,6 @@ public class EventExplore_Fragment extends Fragment implements
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
     private static final int LOCATION_REQUEST_CODE = 1;
-    private Location_Model mLocationModel;
 
     public static EventExplore_Fragment newInstance(User_Model userModel){
         EventExplore_Fragment fragment = new EventExplore_Fragment();

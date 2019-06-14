@@ -484,9 +484,7 @@ public class Core_FireBaseRepo {
                         List<Location_Model> results = new ArrayList<>();
                         if(task.isSuccessful()){
                             for(QueryDocumentSnapshot document : task.getResult()){
-                                Log.w(TAG,"found object in query: "+document.getId());
                                 results.add(document.toObject(Location_Model.class));
-
                             }
                         }
                         return results;

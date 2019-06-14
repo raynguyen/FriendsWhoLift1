@@ -140,7 +140,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                     || actionId == EditorInfo.IME_ACTION_DONE
                     || event.getAction() == KeyEvent.KEYCODE_ENTER){
                 geoLocate(v.getText().toString());
-                return true;
             }
             return false;
         });
@@ -198,7 +197,8 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             btnReturn.setVisibility(View.GONE);
 
         }
-        btnCardPositive.setOnClickListener((View v)->mPositiveCallback.onCardViewPositiveClick(mFocusedAddress));
+        btnCardPositive.setOnClickListener((View v)->
+                mPositiveCallback.onCardViewPositiveClick(mFocusedAddress));
 
     }
 
@@ -247,7 +247,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                 onLocationClick((Location_Model) marker.getTag());
                 return true;
             } else if(marker.getTag() instanceof Address){
-                Log.w("MapFragment","The marker clicked does not hold a Location_Model and therefore is not stored in the user.");
                 Address address = (Address) marker.getTag();
                 txtLocationName.setText(address.getAddressLine(0));
                 mLocationCard.setVisibility(View.VISIBLE);
@@ -255,7 +254,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                         LatLng(address.getLatitude(),address.getLongitude()),17.0f));
                 return true;
             }
-            Log.w("MapFragment","there is no data set to this marker.");
             return false;
         });
     }
@@ -274,6 +272,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         } catch (SecurityException e){}
     }
 
+    private Marker mFocusedMarker;
     private void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
         List<Address> queryResults = new ArrayList<>(1);
@@ -285,9 +284,9 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         if(queryResults.size() > 0){
             mFocusedAddress = queryResults.get(0);
             LatLng latLng = new LatLng(mFocusedAddress.getLatitude(),mFocusedAddress.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(latLng)).setTag(mFocusedAddress);
+            mFocusedMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+            mFocusedMarker.setTag(mFocusedAddress);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
-            Log.w("MapFragment","Display a card to prompt user to set event location with result of geolocate.");
             mLocationCard.setVisibility(View.VISIBLE);
             txtLocationName.setText(mFocusedAddress.getAddressLine(0));
         }
@@ -301,15 +300,12 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     public void onLocationClick(Location_Model location) {
         mLocationModel = location;
         txtLocationName.setText(mLocationModel.getAddress());
-        LatLng latLng = new LatLng(location.getLat(),location.getLng());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLocationModel.getLatLng(),17.0f));
 
         if(mFlagProfile){
-            //We have to display the remove Location card.
-            Log.w("MapFragment","Display a card prompting for removal of location_model");
+            //Show a prompt to remove the location from user.
         } else {
             //We are in create activity so we want to show the set location for event card.
-            Log.w("MapFragment","Display a card prompting for setting the location to event.");
             txtLocationName.setText(location.getLookup());
             mLocationCard.setVisibility(View.VISIBLE);
         }
