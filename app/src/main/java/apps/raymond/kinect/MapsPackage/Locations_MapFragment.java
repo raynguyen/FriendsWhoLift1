@@ -46,7 +46,10 @@ import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.Locations_Adapter;
@@ -59,7 +62,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     public static final boolean EVENT_ACTIVITY = false;
     public static final boolean EVENT_PROFILE = true;
     private MapCardViewClick mPositiveCallback;
-
+    private Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
 
     public interface MapCardViewClick {
         void onCardViewPositiveClick(Address address);
@@ -115,7 +118,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         return inflater.inflate(R.layout.fragment_user_locations,container,false);
     }
 
-    private Address mFocusedAddress;
+    private Address mLastAddress;
     private Location_Model mLocationModel;
     private MapView mapView;
     private ImageButton btnShowRecycler;
@@ -149,17 +152,14 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         final LinearLayout.LayoutParams hideParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,0,0f);
 
-        editSearchMap.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
-                    mRecyclerGroup.setLayoutParams(hideParams);
-                    if(mLocationCard.getVisibility()==View.VISIBLE){
-                        mLocationCard.setVisibility(View.GONE);
-                    }
-                    btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
+        editSearchMap.setOnFocusChangeListener((View v, boolean hasFocus)->{
+            if(hasFocus){
+                mRecyclerGroup.setLayoutParams(hideParams);
+                if(mLocationCard.getVisibility()==View.VISIBLE){
+                    mLocationCard.setVisibility(View.GONE);
                 }
+                btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
             }
         });
 
@@ -197,8 +197,18 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             btnReturn.setVisibility(View.GONE);
 
         }
-        btnCardPositive.setOnClickListener((View v)->
-                mPositiveCallback.onCardViewPositiveClick(mFocusedAddress));
+        btnCardPositive.setOnClickListener((View v)->{
+            if(mLastAddress==null){
+                Log.w("MapFragment","HELLO!?@?!#?");
+            }
+            mPositiveCallback.onCardViewPositiveClick(mLastAddress);
+            mLocationCard.setVisibility(View.GONE);
+            if(mFlagProfile){
+                mLastMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+            } else {
+                mLastMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+            }
+        });
 
     }
 
@@ -229,15 +239,18 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
         mViewModel.getLocations().observe(this,(@Nullable List<Location_Model> location_models)->{
             progressBar.setVisibility(View.GONE);
-            if(location_models.size()==0){
-                txtNullData.setVisibility(View.VISIBLE);
-            }
-            mAdapter.setData(location_models);
-            for(Location_Model location : location_models){
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(location.getLat(),location.getLng()))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)))
-                        .setTag(location);
+            if(location_models!=null){
+                if(location_models.size()==0){
+                    txtNullData.setVisibility(View.VISIBLE);
+                }
+                mAdapter.setData(location_models);
+                for(Location_Model location : location_models){
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(location.getLat(),location.getLng()))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                    marker.setTag(location);
+                    mMarkersMap.put(marker.getPosition(),marker);
+                }
             }
         });
         mViewModel.loadUserLocations(mUserID);
@@ -272,7 +285,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         } catch (SecurityException e){}
     }
 
-    private Marker mFocusedMarker;
+    private Marker mLastMarker;
     private void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
         List<Address> queryResults = new ArrayList<>(1);
@@ -282,13 +295,17 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
         }
         if(queryResults.size() > 0){
-            mFocusedAddress = queryResults.get(0);
-            LatLng latLng = new LatLng(mFocusedAddress.getLatitude(),mFocusedAddress.getLongitude());
-            mFocusedMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-            mFocusedMarker.setTag(mFocusedAddress);
+            //We check the Markers map to determine if the location exists in the user's Location_Models.
+            mLastAddress = queryResults.get(0);
+            LatLng latLng = new LatLng(mLastAddress.getLatitude(), mLastAddress.getLongitude());
+            if(!mMarkersMap.containsKey(latLng)){
+                mLastMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+                mLastMarker.setTag(mLastAddress);
+                mMarkersMap.put(latLng,mLastMarker);
+            }
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
             mLocationCard.setVisibility(View.VISIBLE);
-            txtLocationName.setText(mFocusedAddress.getAddressLine(0));
+            txtLocationName.setText(mLastAddress.getAddressLine(0));
         }
     }
 
@@ -301,7 +318,11 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         mLocationModel = location;
         txtLocationName.setText(mLocationModel.getAddress());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLocationModel.getLatLng(),17.0f));
-
+        try{
+            mLastMarker = mMarkersMap.get(mLocationModel.getLatLng());
+        } catch (NullPointerException npe){
+            Log.w("MapFragment: ","For some reason the location does not have a marker in the map.");
+        }
         if(mFlagProfile){
             //Show a prompt to remove the location from user.
         } else {

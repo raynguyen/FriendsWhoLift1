@@ -118,6 +118,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
      */
     @Override
     public void onCardViewPositiveClick(Address address) {
+        Toast.makeText(this,"Location has been set for the event.",Toast.LENGTH_LONG).show();
         mViewModel.setEventLat(address.getLatitude());
         mViewModel.setEventLong(address.getLongitude());
         mViewModel.setEventAddress(address.getAddressLine(0));
