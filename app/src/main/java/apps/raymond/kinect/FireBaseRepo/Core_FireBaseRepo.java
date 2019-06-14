@@ -495,14 +495,11 @@ public class Core_FireBaseRepo {
     public Task<Void> addLocationToUser(final String userID, Location_Model locationModel){
         return userCollection.document(userID).collection("Locations")
                 .document(locationModel.getLookup()).set(locationModel)
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if(task.isSuccessful()){
-                            return userCollection.document(userID).update("numlocations",FieldValue.increment(1));
-                        }
-                        return null;
+                .continueWithTask((Task<Void> task)->{
+                    if(task.isSuccessful()){
+                        return userCollection.document(userID).update("numlocations",FieldValue.increment(1));
                     }
+                    return null;
                 });
     }
 }

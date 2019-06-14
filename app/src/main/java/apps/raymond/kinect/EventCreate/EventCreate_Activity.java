@@ -114,14 +114,14 @@ public class EventCreate_Activity extends AppCompatActivity implements
     /**
      * Callback interface when the positive button in the CardView for the LocationsMap fragment is
      * clicked. In the case of the fragment attaching to this activity, we bind
-     * @param address the address where the event is being hosted.
+     * @param location the address where the event is being hosted.
      */
     @Override
-    public void onCardViewPositiveClick(Address address) {
+    public void onCardViewPositiveClick(Location_Model location) {
         Toast.makeText(this,"Location has been set for the event.",Toast.LENGTH_LONG).show();
-        mViewModel.setEventLat(address.getLatitude());
-        mViewModel.setEventLong(address.getLongitude());
-        mViewModel.setEventAddress(address.getAddressLine(0));
+        mViewModel.setEventLat(location.getLat());
+        mViewModel.setEventLong(location.getLng());
+        mViewModel.setEventAddress(location.getAddress());
     }
 
     @Override

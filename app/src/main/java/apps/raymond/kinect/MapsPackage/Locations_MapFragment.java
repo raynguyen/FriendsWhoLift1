@@ -46,16 +46,17 @@ import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import apps.raymond.kinect.Location_Model;
-import apps.raymond.kinect.Locations_Adapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
+/*
+ToDo: When searching the Locations_Model recycler, slide up to hide the MapView and only show recycler.
+ */
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
         Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
@@ -65,7 +66,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     private Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
 
     public interface MapCardViewClick {
-        void onCardViewPositiveClick(Address address);
+        void onCardViewPositiveClick(Location_Model location);
     }
     /*
      * Need an identifier to determine if we need to load the card to add as a user location or if
@@ -118,14 +119,11 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         return inflater.inflate(R.layout.fragment_user_locations,container,false);
     }
 
-    private Address mLastAddress;
-    private Location_Model mLocationModel;
     private MapView mapView;
     private ImageButton btnShowRecycler;
     private TextView txtNullData, txtLocationName;
     private ProgressBar progressBar;
     private Locations_Adapter mAdapter;
-    private Location mLastLocation;
     private ViewGroup mRecyclerGroup, mLocationCard;
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
@@ -198,10 +196,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
         }
         btnCardPositive.setOnClickListener((View v)->{
-            if(mLastAddress==null){
-                Log.w("MapFragment","HELLO!?@?!#?");
-            }
-            mPositiveCallback.onCardViewPositiveClick(mLastAddress);
+            mPositiveCallback.onCardViewPositiveClick(mLastLocationModel);
             mLocationCard.setVisibility(View.GONE);
             if(mFlagProfile){
                 mLastMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
@@ -271,21 +266,21 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         });
     }
 
+    Location myLocation;
     private void getDeviceLocation(){
         try{
-            mFusedLocationClient.getLastLocation()
-                    .addOnCompleteListener(requireActivity(), (Task<Location> task)-> {
-                        if(task.isSuccessful() && task.getResult()!=null){
-                            mLastLocation = task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastLocation.getLatitude(),
-                                            mLastLocation.getLongitude()),17.0f));
-                        }
-                    });
+            mFusedLocationClient.getLastLocation().addOnCompleteListener(requireActivity(), (Task<Location> task)-> {
+                if(task.isSuccessful() && task.getResult()!=null){
+                    myLocation = task.getResult();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),
+                            myLocation.getLongitude()),17.0f));
+                }
+            });
         } catch (SecurityException e){}
     }
 
     private Marker mLastMarker;
+    private Location_Model mLastLocationModel;
     private void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
         List<Address> queryResults = new ArrayList<>(1);
@@ -296,16 +291,18 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         }
         if(queryResults.size() > 0){
             //We check the Markers map to determine if the location exists in the user's Location_Models.
-            mLastAddress = queryResults.get(0);
-            LatLng latLng = new LatLng(mLastAddress.getLatitude(), mLastAddress.getLongitude());
-            if(!mMarkersMap.containsKey(latLng)){
-                mLastMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-                mLastMarker.setTag(mLastAddress);
-                mMarkersMap.put(latLng,mLastMarker);
-            }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
+            mLastLocationModel = new Location_Model(null, queryResults.get(0));
+            LatLng newLatLng = mLastLocationModel.getLatLng();
             mLocationCard.setVisibility(View.VISIBLE);
-            txtLocationName.setText(mLastAddress.getAddressLine(0));
+            txtLocationName.setText(mLastLocationModel.getAddress());
+
+            if(!mMarkersMap.containsKey(mLastLocationModel.getLatLng())){
+                mLastMarker = mMap.addMarker(new MarkerOptions().position(newLatLng));
+                mLastMarker.setTag(mLastLocationModel);
+                mMarkersMap.put(newLatLng,mLastMarker);
+            }
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng,17.0f));
+
         }
     }
 
@@ -315,11 +312,11 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
      */
     @Override
     public void onLocationClick(Location_Model location) {
-        mLocationModel = location;
-        txtLocationName.setText(mLocationModel.getAddress());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLocationModel.getLatLng(),17.0f));
+        mLastLocationModel = location;
+        txtLocationName.setText(location.getAddress());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location.getLatLng(),17.0f));
         try{
-            mLastMarker = mMarkersMap.get(mLocationModel.getLatLng());
+            //mLastMarker = mMarkersMap.get(mLocationModel.getLatLng());
         } catch (NullPointerException npe){
             Log.w("MapFragment: ","For some reason the location does not have a marker in the map.");
         }
@@ -329,6 +326,22 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             //We are in create activity so we want to show the set location for event card.
             txtLocationName.setText(location.getLookup());
             mLocationCard.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==LOCATION_REQUEST_CODE){
+            if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                getDeviceLocation();
+                try{
+                    mMap.setMyLocationEnabled(true);
+                }
+                catch (SecurityException se){
+                }
+            }
         }
     }
 

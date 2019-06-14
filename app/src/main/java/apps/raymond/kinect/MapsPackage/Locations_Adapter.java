@@ -4,7 +4,7 @@
  * We don't expect that the Location set will change without the user being directly involved in
  * modifying the list so we need not utilize a DiffUtil or observer for changes.
  */
-package apps.raymond.kinect;
+package apps.raymond.kinect.MapsPackage;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +16,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.R;
+
 public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.LocationViewHolder> {
     private List<Location_Model> mLocationSet = new ArrayList<>();
     private LocationClickInterface mClickInterface;
@@ -24,7 +27,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
         void onLocationClick(Location_Model location);
     }
 
-    public Locations_Adapter(LocationClickInterface clickInterface){
+    Locations_Adapter(LocationClickInterface clickInterface){
         mClickInterface = clickInterface;
     }
 
@@ -41,12 +44,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
         final Location_Model locationModel = mLocationSet.get(i);
         vh.txtLookup.setText(locationModel.getLookup());
         vh.txtAddress.setText(locationModel.getAddress());
-        vh.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mClickInterface.onLocationClick(locationModel);
-            }
-        });
+        vh.itemView.setOnClickListener((View v)-> mClickInterface.onLocationClick(locationModel));
     }
 
     @Override

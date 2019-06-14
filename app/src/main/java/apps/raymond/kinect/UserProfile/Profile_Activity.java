@@ -191,17 +191,17 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     /**
      * Callback interface when user opts to save a new Location (from Locations_MapFragment) for
      * future usage.
-     * @param address The address class of which we will create a Location_Model to store to DB.
+     * @param location The address class of which we will create a Location_Model to store to DB.
      */
     @Override
-    public void onCardViewPositiveClick(Address address) {
+    public void onCardViewPositiveClick(Location_Model location) {
         //ToDo:CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE
         //If the prompt returns a positive click, increment the Text on locations button after we
         //increment number of locations in the user document.
         //In the activity result, use the ViewModel held by THIS ACTIVITY (Profile_ViewModel)
         Log.w(TAG,"PROMPT TO ADD A LOOKUP NAME");
-        Location_Model locationModel = new Location_Model("moshimoshi",address);
-        mViewModel.addLocationToUser(mUserID,locationModel).addOnCompleteListener((Task<Void> task)->{
+        location.setLookup("TEMPLOOKUP");
+        mViewModel.addLocationToUser(mUserID,location).addOnCompleteListener((Task<Void> task)->{
             if(task.isSuccessful()){
                 Toast.makeText(getBaseContext(),"Successfully saved location.",Toast.LENGTH_LONG).show();
             }

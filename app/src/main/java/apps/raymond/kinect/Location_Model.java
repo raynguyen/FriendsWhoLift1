@@ -3,6 +3,7 @@ package apps.raymond.kinect;
 import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -27,14 +28,7 @@ public class Location_Model implements Parcelable {
 
     public Location_Model(){}
 
-    public Location_Model(String lookup,String address, Double lat, Double lng){
-        this.lookup = lookup;
-        this.address = address;
-        this.lat = lat;
-        this.lng = lng;
-    }
-
-    public Location_Model(String lookup, Address address){
+    public Location_Model(@Nullable String lookup, Address address){
         this.lookup = lookup;
         this.address = address.getAddressLine(0);
         this.lat = address.getLatitude();
@@ -93,7 +87,7 @@ public class Location_Model implements Parcelable {
         this.lng = lng;
     }
 
-    //Not sure if this will work with Firestore APIs!
+    //This also appears to create a Map field in Firestore with the keys being latitude and longitude.
     public LatLng getLatLng(){
         return new LatLng(this.lat,this.lng);
     }

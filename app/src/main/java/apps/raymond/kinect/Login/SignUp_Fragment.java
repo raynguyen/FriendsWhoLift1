@@ -23,6 +23,9 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+/*
+ToDo: If the user email already exists, the app will continue to stay on the pending screen.
+ */
 public class SignUp_Fragment extends Fragment implements View.OnClickListener{
     private Login_ViewModel mViewModel;
 

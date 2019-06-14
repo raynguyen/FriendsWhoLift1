@@ -47,14 +47,11 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.kinect.Location_Model;
-import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -250,14 +247,12 @@ public class EventExplore_Fragment extends Fragment implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode==LOCATION_REQUEST_CODE){
             if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                Log.w(TAG,"we were granted permission for location!");
                 mLocationPermission = true;
                 getDeviceLocation();
                 try{
                 mMap.setMyLocationEnabled(true);
                 }
                 catch (SecurityException se){
-                    Log.w(TAG,"NO permission for location!");
                 }
             }
         }
