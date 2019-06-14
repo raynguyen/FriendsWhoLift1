@@ -90,17 +90,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             mProfileModel = getIntent().getExtras().getParcelable("profilemodel");
             mProfileID = mProfileModel.getEmail();
             btnLogout.setVisibility(View.GONE);
-            mViewModel.checkForConnection(mUserID,mProfileID)
-                    .addOnCompleteListener(new OnCompleteListener<Boolean>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Boolean> task) {
-                            if(task.getResult()){
-                                btnDeleteConnection.setVisibility(View.VISIBLE);
-                            } else {
-                                btnConnect.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    });
+            mViewModel.checkForConnection(mUserID,mProfileID).addOnCompleteListener((Task<Boolean> task)->{
+                if(task.getResult()){
+                    btnDeleteConnection.setVisibility(View.VISIBLE);
+                } else {
+                    btnConnect.setVisibility(View.VISIBLE);
+                }
+            });
             txtName.setText(mProfileModel.getEmail());
             txtConnectionsNum.setText(String.valueOf(mProfileModel.getNumconnections()));
             txtInterestsNum.setText(String.valueOf(mProfileModel.getNuminterests()));
@@ -145,12 +141,9 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.button_connect:
                 mViewModel.createUserConnection(mUserID,mProfileModel)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                btnConnect.setVisibility(View.GONE);
-                                btnDeleteConnection.setVisibility(View.VISIBLE);
-                            }
+                        .addOnCompleteListener((Task<Void> task)-> {
+                            btnConnect.setVisibility(View.GONE);
+                            btnDeleteConnection.setVisibility(View.VISIBLE);
                         });
                 break;
             case R.id.button_delete_connection:
@@ -171,7 +164,7 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                         .commit();
                 break;
             case R.id.button_locations:
-                Locations_MapFragment locationsFragment = Locations_MapFragment.newInstance(mUserID,"profile");
+                Locations_MapFragment locationsFragment = Locations_MapFragment.newInstance(mUserID,Locations_MapFragment.EVENT_PROFILE);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
                         .replace(R.id.frame_profile,locationsFragment,LOCATIONS_FRAG)

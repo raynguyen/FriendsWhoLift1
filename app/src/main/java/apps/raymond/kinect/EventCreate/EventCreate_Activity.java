@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
+import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
@@ -113,7 +114,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
     /**
      * Callback interface when the positive button in the CardView for the LocationsMap fragment is
      * clicked. In the case of the fragment attaching to this activity, we bind
-     * @param Address the address where the event is being hosted.
+     * @param address the address where the event is being hosted.
      */
     @Override
     public void onCardViewPositiveClick(Address address) {
@@ -169,7 +170,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
                 case 0:
                     return EventCreate_Details_Fragment.newInstance(mUserModel);
                 case 1:
-                    return Locations_MapFragment.newInstance(mUserID,"event");
+                    return Locations_MapFragment.newInstance(mUserID, Locations_MapFragment.EVENT_ACTIVITY);
             }
             return null;
         }

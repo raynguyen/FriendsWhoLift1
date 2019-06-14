@@ -2,7 +2,6 @@ package apps.raymond.kinect.MapsPackage;
 
 import android.Manifest;
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -43,7 +42,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
@@ -58,7 +56,10 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
         Locations_Adapter.LocationClickInterface {
     private static final int LOCATION_REQUEST_CODE = 0;
+    public static final boolean EVENT_ACTIVITY = false;
+    public static final boolean EVENT_PROFILE = true;
     private MapCardViewClick mPositiveCallback;
+
 
     public interface MapCardViewClick {
         void onCardViewPositiveClick(Address address);
@@ -67,11 +68,11 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
      * Need an identifier to determine if we need to load the card to add as a user location or if
      * we want to set the mAddress for an event.
      */
-    public static Locations_MapFragment newInstance(String userID,String dialogFlag){
+    public static Locations_MapFragment newInstance(String userID, boolean flag){
         Locations_MapFragment fragment = new Locations_MapFragment();
         Bundle args = new Bundle();
         args.putString("userid",userID);
-        args.putString("flag",dialogFlag);
+        args.putBoolean("flag",flag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -89,13 +90,13 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationClient;
     private String mUserID;
     private Profile_ViewModel mViewModel;
-    private String mFlag;
+    private boolean mFlagProfile;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class); //Todo: Make a ViewModel Specific for Locations!
         mUserID = getArguments().getString("userid");
-        mFlag = getArguments().getString("flag");
+        mFlagProfile = getArguments().getBoolean("flag");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         if (ActivityCompat.checkSelfPermission(requireActivity(),
@@ -186,19 +187,19 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
         mLocationCard = view.findViewById(R.id.cardview_marker_dialog);
         Button btnCardPositive = view.findViewById(R.id.button_positive_location);
+        ImageButton btnReturn = view.findViewById(R.id.button_map_return);
         txtLocationName = view.findViewById(R.id.text_location_address);
-        if(getArguments().getString("flag").equals("profile")){
+
+        if(mFlagProfile){
             btnCardPositive.setText(getString(R.string.save_location));
+            btnReturn.setOnClickListener((View v)->requireActivity().onBackPressed());
         } else {
             btnCardPositive.setText(getString(R.string.set_location));
+            btnReturn.setVisibility(View.GONE);
+
         }
         btnCardPositive.setOnClickListener((View v)->mPositiveCallback.onCardViewPositiveClick(mFocusedAddress));
 
-        ImageButton btnReturn = view.findViewById(R.id.button_map_return);
-        if(mFlag.equals("event")){
-            btnReturn.setVisibility(View.GONE);
-        }
-        btnReturn.setOnClickListener((View v)->requireActivity().onBackPressed());
     }
 
     private GoogleMap mMap;
@@ -242,23 +243,32 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         mViewModel.loadUserLocations(mUserID);
 
         mMap.setOnMarkerClickListener((Marker marker)-> {
-            onLocationItemClick((Location_Model) marker.getTag());
-            return true;
+            if(marker.getTag() instanceof Location_Model){
+                onLocationClick((Location_Model) marker.getTag());
+                return true;
+            } else if(marker.getTag() instanceof Address){
+                Log.w("MapFragment","The marker clicked does not hold a Location_Model and therefore is not stored in the user.");
+                Address address = (Address) marker.getTag();
+                txtLocationName.setText(address.getAddressLine(0));
+                mLocationCard.setVisibility(View.VISIBLE);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new
+                        LatLng(address.getLatitude(),address.getLongitude()),17.0f));
+                return true;
+            }
+            Log.w("MapFragment","there is no data set to this marker.");
+            return false;
         });
     }
 
     private void getDeviceLocation(){
         try{
             mFusedLocationClient.getLastLocation()
-                    .addOnCompleteListener(requireActivity(), new OnCompleteListener<Location>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Location> task) {
-                            if(task.isSuccessful() && task.getResult()!=null){
-                                mLastLocation = task.getResult();
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(mLastLocation.getLatitude(),
-                                                mLastLocation.getLongitude()),17.0f));
-                            }
+                    .addOnCompleteListener(requireActivity(), (Task<Location> task)-> {
+                        if(task.isSuccessful() && task.getResult()!=null){
+                            mLastLocation = task.getResult();
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(mLastLocation.getLatitude(),
+                                            mLastLocation.getLongitude()),17.0f));
                         }
                     });
         } catch (SecurityException e){}
@@ -275,17 +285,34 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         if(queryResults.size() > 0){
             mFocusedAddress = queryResults.get(0);
             LatLng latLng = new LatLng(mFocusedAddress.getLatitude(),mFocusedAddress.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(latLng)).setTag(mFocusedAddress);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
+            Log.w("MapFragment","Display a card to prompt user to set event location with result of geolocate.");
+            mLocationCard.setVisibility(View.VISIBLE);
+            txtLocationName.setText(mFocusedAddress.getAddressLine(0));
         }
     }
 
+    /**
+     * Method call whenever an item held by the Location_Model recycler is clicked.
+     * @param location the Location_Model held by the view holder of the containing recycler.
+     */
     @Override
-    public void onLocationItemClick(Location_Model location) {
+    public void onLocationClick(Location_Model location) {
         mLocationModel = location;
         txtLocationName.setText(mLocationModel.getAddress());
         LatLng latLng = new LatLng(location.getLat(),location.getLng());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
-        mLocationCard.setVisibility(View.VISIBLE);
+
+        if(mFlagProfile){
+            //We have to display the remove Location card.
+            Log.w("MapFragment","Display a card prompting for removal of location_model");
+        } else {
+            //We are in create activity so we want to show the set location for event card.
+            Log.w("MapFragment","Display a card prompting for setting the location to event.");
+            txtLocationName.setText(location.getLookup());
+            mLocationCard.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -66,7 +66,7 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onLocationItemClick(Location_Model location) {
+    public void onLocationClick(Location_Model location) {
 
     }
 
