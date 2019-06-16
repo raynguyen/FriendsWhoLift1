@@ -121,6 +121,7 @@
     <string name="discovery_header">Discovery Options</string>
     <string name="event_visibility">Who can view this event?</string>
     <string name="enter_address">Search a location!</string>
+    <string name="event_address">EVENT ADDRESS HERE</string>
     <string name="location_tbd">Location: TBD</string>
     <string name="time_format">HH:MM</string>
     <string name="default_time">8:00 AM</string>

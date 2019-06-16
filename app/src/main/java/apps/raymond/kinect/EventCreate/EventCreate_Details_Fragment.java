@@ -67,6 +67,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
     User_Model mUserModel;
     private SimpleDateFormat _12HrSDF = new SimpleDateFormat("hh:mm a");
     private SimpleDateFormat _24HrSDF = new SimpleDateFormat("HH:mm");
+    private SimpleDateFormat _TestFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private String mUserID;
     private List<String> mTagsList = new ArrayList<>();
@@ -91,16 +92,15 @@ public class EventCreate_Details_Fragment extends Fragment implements
     EditText txtEventName,txtEventDesc, txtEventTag;
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
-    private Date mDate;
     private ViewFlipper viewFlipper;
     private Calendar mGregCalendar = Calendar.getInstance();
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mDate = Calendar.getInstance().getTime();
+        String testString = _TestFormat.format(mGregCalendar.getTime());
+        Log.w(TAG,"Test string = "+testString);
         viewFlipper = view.findViewById(R.id.viewflipper_start);
-
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
         btnCloseFlipper.setOnClickListener((View v)->{
             if(viewFlipper.getVisibility() == View.VISIBLE){
@@ -119,14 +119,13 @@ public class EventCreate_Details_Fragment extends Fragment implements
             }
             viewFlipper.setDisplayedChild(0);
         });
-        txtDateStart.setText(mDateFormat.format(mDate));
+        txtDateStart.setText(mDateFormat.format(mGregCalendar.getTime()));
 
         CalendarView calendarView = view.findViewById(R.id.calendar_view);
         calendarView.setOnDateChangeListener((CalendarView cView, int year, int month, int monthDay)-> {
-            mDate = new GregorianCalendar(year,month,monthDay).getTime();
-            txtDateStart.setText(mDateFormat.format(mDate));
+            txtDateStart.setText(mDateFormat.format(mGregCalendar.getTime()));
             mGregCalendar.set(year,month,monthDay);
-            initDate();
+            mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
         });
 
         TextView txtTimeStart = view.findViewById(R.id.text_time_start);
@@ -146,7 +145,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
                 txtTimeStart.setText(_12HrSDF.format(date));
                 mGregCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                 mGregCalendar.set(Calendar.MINUTE,minute);
-                initDate();
+                mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
             } catch (Exception e){}
         });
 
@@ -234,10 +233,6 @@ public class EventCreate_Details_Fragment extends Fragment implements
                         mUserAdapter.setData(task.getResult());
                     }
                 });
-    }
-
-    private void initDate(){
-        mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
     }
 
     @Override

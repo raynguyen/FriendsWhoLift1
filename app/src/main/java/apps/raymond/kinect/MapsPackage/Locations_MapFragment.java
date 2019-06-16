@@ -196,7 +196,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
 
         }
         btnCardPositive.setOnClickListener((View v)->{
-            mPositiveCallback.onCardViewPositiveClick(mLastLocationModel);
+            mPositiveCallback.onCardViewPositiveClick(mLocationResult);
             mLocationCard.setVisibility(View.GONE);
             if(mFlagProfile){
                 mLastMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
@@ -253,16 +253,8 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener((Marker marker)-> {
             if(marker.getTag() instanceof Location_Model){
                 onLocationClick((Location_Model) marker.getTag());
-                return true;
-            } else if(marker.getTag() instanceof Address){
-                Address address = (Address) marker.getTag();
-                txtLocationName.setText(address.getAddressLine(0));
-                mLocationCard.setVisibility(View.VISIBLE);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new
-                        LatLng(address.getLatitude(),address.getLongitude()),17.0f));
-                return true;
             }
-            return false;
+            return true;
         });
     }
 
@@ -280,7 +272,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private Marker mLastMarker;
-    private Location_Model mLastLocationModel;
+    private Location_Model mLocationResult;
     private void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
         List<Address> queryResults = new ArrayList<>(1);
@@ -290,19 +282,16 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
         }
         if(queryResults.size() > 0){
-            //We check the Markers map to determine if the location exists in the user's Location_Models.
-            mLastLocationModel = new Location_Model(null, queryResults.get(0));
-            LatLng newLatLng = mLastLocationModel.getLatLng();
-            mLocationCard.setVisibility(View.VISIBLE);
-            txtLocationName.setText(mLastLocationModel.getAddress());
-
-            if(!mMarkersMap.containsKey(mLastLocationModel.getLatLng())){
+            mLocationResult = new Location_Model(null, queryResults.get(0));
+            LatLng newLatLng = mLocationResult.getLatLng();
+            if(!mMarkersMap.containsKey(mLocationResult.getLatLng())){
                 mLastMarker = mMap.addMarker(new MarkerOptions().position(newLatLng));
-                mLastMarker.setTag(mLastLocationModel);
+                mLastMarker.setTag(mLocationResult);
                 mMarkersMap.put(newLatLng,mLastMarker);
             }
+            mLocationCard.setVisibility(View.VISIBLE);
+            txtLocationName.setText(mLocationResult.getAddress());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng,17.0f));
-
         }
     }
 
@@ -312,21 +301,15 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
      */
     @Override
     public void onLocationClick(Location_Model location) {
-        mLastLocationModel = location;
+        mLocationResult = location;
+        if(location.getLookup()==null || location.getLookup().length()<1){
+            txtLocationName.setText(location.getAddress());
+        } else {
+            txtLocationName.setText(location.getLookup());
+        }
+        mLocationCard.setVisibility(View.VISIBLE);
         txtLocationName.setText(location.getAddress());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location.getLatLng(),17.0f));
-        try{
-            //mLastMarker = mMarkersMap.get(mLocationModel.getLatLng());
-        } catch (NullPointerException npe){
-            Log.w("MapFragment: ","For some reason the location does not have a marker in the map.");
-        }
-        if(mFlagProfile){
-            //Show a prompt to remove the location from user.
-        } else {
-            //We are in create activity so we want to show the set location for event card.
-            txtLocationName.setText(location.getLookup());
-            mLocationCard.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
