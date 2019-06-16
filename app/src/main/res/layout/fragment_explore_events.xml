@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardElevation="4dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_gravity="bottom">
 
         <RelativeLayout
@@ -47,11 +47,10 @@
                 android:id="@+id/text_thoroughfare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/text_description"
+                android:layout_below="@id/layout_date"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="4dp"
-                android:hint="@string/search_addresses"/>
+                android:hint="@string/event_address"/>
 
             <LinearLayout
                 android:id="@+id/layout_date"
@@ -94,37 +93,56 @@
                 android:id="@+id/layout_primes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/text_thoroughfare">
-                <ImageView
-                    android:id="@+id/image_sport"
+                android:layout_below="@id/text_thoroughfare"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/image_sport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_fitness_center_black_18dp"
+                        style="@style/CardPrimaryTags"/>
+                    <ImageView
+                        android:id="@+id/image_food"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_fastfood_black_18dp"
+                        style="@style/CardPrimaryTags"/>
+                    <ImageView
+                        android:id="@+id/image_drinks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_local_bar_black_18dp"
+                        style="@style/CardPrimaryTags"/>
+                    <ImageView
+                        android:id="@+id/image_movie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_movie_creation_black_18dp"
+                        style="@style/CardPrimaryTags"/>
+                    <ImageView
+                        android:id="@+id/image_chill"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_weekend_black_18dp"
+                        style="@style/CardPrimaryTags"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_attending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_fitness_center_black_18dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_food"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_fastfood_black_18dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_drinks"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_local_bar_black_18dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_movie"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_movie_creation_black_18dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_chill"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_weekend_black_18dp"
-                    style="@style/CardPrimaryTags"/>
+                    android:hint="@string/null_dashes"
+                    android:layout_gravity="end"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/baseline_done_outline_black_18dp"
+                    android:scaleY=".75"
+                    android:scaleX=".75"/>
             </LinearLayout>
 
             <Button
@@ -133,6 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/layout_date"
                 android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@id/layout_primes"
                 android:text="@string/attend"
                 style="?android:attr/borderlessButtonStyle"
                 android:textColor="@color/blueish"/>

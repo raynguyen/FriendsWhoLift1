@@ -72,6 +72,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
     private String mUserID;
     private List<String> mTagsList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel;
+    private Calendar mGregCalendar = Calendar.getInstance();
     private final java.text.DateFormat mDateFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +80,11 @@ public class EventCreate_Details_Fragment extends Fragment implements
         mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
         mUserModel = getArguments().getParcelable("user");
         mUserID = mUserModel.getEmail();
+
+        mGregCalendar.set(Calendar.DAY_OF_YEAR,mGregCalendar.get(Calendar.DAY_OF_YEAR)+1);
+        mGregCalendar.set(Calendar.HOUR_OF_DAY,11);
+        mGregCalendar.set(Calendar.MINUTE,0);
+        mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
     }
 
     @Nullable
@@ -93,13 +99,11 @@ public class EventCreate_Details_Fragment extends Fragment implements
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
     private ViewFlipper viewFlipper;
-    private Calendar mGregCalendar = Calendar.getInstance();
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String testString = _TestFormat.format(mGregCalendar.getTime());
-        Log.w(TAG,"Test string = "+testString);
         viewFlipper = view.findViewById(R.id.viewflipper_start);
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
         btnCloseFlipper.setOnClickListener((View v)->{
@@ -148,7 +152,6 @@ public class EventCreate_Details_Fragment extends Fragment implements
                 mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
             } catch (Exception e){}
         });
-
 
         txtEventName = view.findViewById(R.id.text_event_create_name);
         txtEventDesc = view.findViewById(R.id.text_event_create_desc);
