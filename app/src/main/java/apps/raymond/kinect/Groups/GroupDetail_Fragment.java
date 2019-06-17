@@ -88,7 +88,7 @@ public class GroupDetail_Fragment extends Fragment implements View.OnClickListen
         owner = groupBase.getOwner();
 
         fm = requireActivity().getSupportFragmentManager();
-        toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
+        //toolbarSearch = getActivity().findViewById(R.id.toolbar_search);
         toolbarSearch.setVisibility(View.GONE);
 
         viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);

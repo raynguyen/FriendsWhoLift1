@@ -89,6 +89,7 @@
     <string name="event_search">Find Events Near Me!</string>
     <string name="all_events">Show all events</string>
     <string name="accepted_events">Only show events I accepted</string>
+    <string name="fragment_events">EventsFragment</string>
 
     <!--EVENT DETAIL-->
     <string name="authority">Admin</string>

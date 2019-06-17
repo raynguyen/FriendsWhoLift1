@@ -44,16 +44,12 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -63,7 +59,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -71,6 +66,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.EventCreate.EventCreate_Activity;
+import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
 import apps.raymond.kinect.Groups.GroupCreate_Fragment;
@@ -98,7 +94,7 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  2. See above.
  *  3. Properly update the Events RecyclerView in the Core Events Fragment.
  */
-public class Core_Activity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
+public class Core_Activity extends AppCompatActivity implements
         SearchView.OnQueryTextListener, GroupCreate_Fragment.AddGroup{
 
     private static final String TAG = "Core_Activity";
@@ -114,9 +110,6 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     ViewPager viewPager;
-    SearchView toolbarSearch;
-    Toolbar toolbar;
-    private Core_Adapter pagerAdapter;
     private User_Model mUserModel;
     private String mUserID;
     private Core_ViewModel mViewModel;
@@ -124,6 +117,11 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
+
+        EventsCore_Fragment eventsFragment = new EventsCore_Fragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.core_frame,eventsFragment,getResources().getString(R.string.fragment_events))
+                .commit();
 
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
         if(getIntent().hasExtra("user")){
@@ -137,7 +135,16 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
             mViewModel.loadUserDocument(mUserID);
         }
 
-        toolbar = findViewById(R.id.core_toolbar);
+        FloatingActionButton btnExploreEvents = findViewById(R.id.button_explore_events);
+        btnExploreEvents.setOnClickListener((View v)->{
+            EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.full_core_frame,searchFragment,"exploreevents")
+                    .addToBackStack("exploreevents")
+                    .commit();
+        });
+
+        Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
@@ -149,18 +156,6 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }
         });
-
-        toolbarSearch = findViewById(R.id.toolbar_search);
-        toolbarSearch.setOnQueryTextListener(this);
-
-        viewPager = findViewById(R.id.core_ViewPager);
-        pagerAdapter = new Core_Adapter(getSupportFragmentManager());
-
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.addOnPageChangeListener(this);
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(viewPager);
 
         mViewModel.getUserModel().observe(this, (User_Model user_model)->{
             if(user_model==null){
@@ -174,31 +169,10 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     @Override
-    public void onAttachFragment(Fragment fragment) {
-        //ToDo: The fragment should not implement activity method. Check what was changed for the events and do the same for Group.
-        if(fragment instanceof GroupsCore_Fragment){
-            try {
-                updateGroupRecycler = (UpdateGroupRecycler) fragment;
-            } catch (ClassCastException e){
-                Log.i(TAG,"GroupsCore_Fragment does not implement UpdateGroupRecycler interface.");
-            }
-        }
-    }
-
-    MenuItem eventCreate, groupCreate;
-    @Override
     public boolean onCreateOptionsMenu(Menu menu){
-       if(getSupportFragmentManager().getBackStackEntryCount()>0){
-            return false;
-       } else {
-            if(menu.size()==0){
-               getMenuInflater().inflate(R.menu.core_menu,menu);
-               eventCreate = menu.findItem(R.id.action_create_event_launch);
-               groupCreate = menu.findItem(R.id.action_create_group);
-               return true;
-            }
-            return false;
-       }
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.core_menu,menu);
+        return false;
     }
 
     @Override
@@ -222,13 +196,6 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
                 startActivityForResult(eventCreateIntent,EVENTCREATE);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
                 return true;
-            case R.id.action_create_group:
-                GroupCreate_Fragment groupFragment = GroupCreate_Fragment.newInstance(mUserModel);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,groupFragment,CREATE_GROUP_FRAG)
-                        .addToBackStack(CREATE_GROUP_FRAG)
-                        .commit();
-                return true;
         }
         return false;
     }
@@ -243,32 +210,6 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
                 mViewModel.setAcceptedEvents(acceptedEvents);
             }
         }
-    }
-
-    @Override
-    public void onPageScrolled(int i, float v, int i1) {
-    }
-
-    @Override
-    public void onPageSelected(int i) {
-        switch (i){
-            case 0:
-                eventCreate.setVisible(true);
-                eventCreate.setEnabled(true);
-                groupCreate.setVisible(false);
-                groupCreate.setEnabled(false);
-                break;
-            case 1:
-                eventCreate.setVisible(false);
-                eventCreate.setEnabled(false);
-                groupCreate.setVisible(true);
-                groupCreate.setEnabled(true);
-                break;
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int i) {
     }
 
     @Override
@@ -299,23 +240,6 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(!toolbarSearch.isIconified()){
-            toolbarSearch.setIconified(true);
-        }
-
-        if(ev.getAction() == MotionEvent.ACTION_DOWN){
-            View v = getCurrentFocus();
-            if(v instanceof EditText){
-                v.clearFocus();
-                InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(),0);
-            }
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String s) {
         return false;
     }
@@ -323,75 +247,10 @@ public class Core_Activity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public boolean onQueryTextChange(String s) {
         int i = viewPager.getCurrentItem();
-        Fragment fragment = pagerAdapter.getFragment(i);
-        switch (i) {
-            case 0:
-                ((EventsCore_Fragment) fragment).filterRecycler(s);
-                break;
-            case 1:
-                ((GroupsCore_Fragment) fragment).filterRecycler(s);
-                break;
-            default:
-                return false;
+        EventsCore_Fragment eventsFragment = (EventsCore_Fragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_events));
+        if(eventsFragment!=null){
+            eventsFragment.filterRecycler(s);
         }
-        return false;
-    }
-
-    /**
-     * Adapter class that is designated to create Fragments for a ViewPager.
-     */
-    public class Core_Adapter extends FragmentStatePagerAdapter {
-        private List<Fragment> fragments;
-        private Core_Adapter(FragmentManager fm) {
-            super(fm);
-            fragments = new ArrayList<>();
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            fragments.add(position, fragment);
-            return fragment;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                    return new EventsCore_Fragment();
-                case 1:
-                    return new GroupsCore_Fragment();
-                default:
-                    return null;
-            }
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Events";
-                case 1:
-                    return "Groups";
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            fragments.remove(position);
-            super.destroyItem(container, position, object);
-        }
-
-        private Fragment getFragment(int position) {
-            return fragments.get(position);
-        }
+        return true;
     }
 }

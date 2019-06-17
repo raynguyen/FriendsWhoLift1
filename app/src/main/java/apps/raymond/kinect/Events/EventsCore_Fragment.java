@@ -69,15 +69,6 @@ public class EventsCore_Fragment extends Fragment implements EventsCore_Adapter.
         progressBar = view.findViewById(R.id.progress_bar);
         nullText = view.findViewById(R.id.fragment_null_data_text);
 
-        btnExploreEvents = view.findViewById(R.id.search_events_btn);
-        btnExploreEvents.setOnClickListener((View v)->{
-            EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.full_core_frame,searchFragment,"exploreevents")
-                    .addToBackStack("exploreevents")
-                    .commit();
-        });
-
         final RecyclerView eventsRecycler = view.findViewById(R.id.events_Recycler);
         mAdapter = new EventsCore_Adapter(this);
         eventsRecycler.setAdapter(mAdapter);
