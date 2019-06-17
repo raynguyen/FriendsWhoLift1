@@ -1,6 +1,7 @@
 package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.R;
@@ -77,9 +79,50 @@ public class EventInvitations_Adapter extends
         return 0;
     }
 
-    public void setData(List<Event_Model> eventsInviteList){
-        this.mEventSet = eventsInviteList;
-        notifyDataSetChanged();
+    /**
+     * Method to set the data for the RecyclerView. If mEventSet is null, this adapter has not been
+     * passed data to populate the recycler view.
+     *
+     * DiffUtil is used to determine the changes between the existing mListFull and eventsList.
+     * Using the change determined by DiffUtil, we can simply request the Adapter to create/delete
+     * views as required by the change in data.
+     *
+     * Note that notifyItemRangeChanged is preferred over notifyDataSetChanged.
+     *
+     * @param newList New data set to populate the RecyclerView
+     */
+    public void setData(final List<Event_Model> newList){
+        if(mEventSet==null){
+            mEventSet = new ArrayList<>(newList);
+            notifyItemRangeChanged(0,newList.size());
+        } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return mEventSet.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return newList.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                    return mEventSet.get(oldPosition).getName()
+                            .equals(newList.get(newPosition).getName());
+                }
+
+                //Disabled currently
+                @Override
+                public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                    return true;
+                }
+            });
+            mEventSet.clear();
+            mEventSet.addAll(newList);
+            result.dispatchUpdatesTo(this);
+        }
     }
 
     private void removeItem(int position){

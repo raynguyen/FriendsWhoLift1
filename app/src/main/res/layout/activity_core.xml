@@ -44,6 +44,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@color/transparent"
             android:src="@drawable/baseline_face_black_18dp"
-            app:borderWidth="0dp" />
+            app:borderWidth="0dp"
+            android:backgroundTint="@color/transparent"/>
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

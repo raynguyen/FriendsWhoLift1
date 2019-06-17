@@ -68,16 +68,10 @@ public class Core_ViewModel extends ViewModel {
      * Query the data base to retrieve a list of the user's invitations.
      * @param userID User for whom we are retrieving the invitation sets
      */
-    public void loadUserInvitations(String userID){
+    public void loadEventInvitations(String userID){
         mRepository.getEventInvitations(userID).addOnCompleteListener((Task<List<Event_Model>> task)->{
             if(task.isSuccessful()){
                 mEventInvitations.setValue(task.getResult());
-            }
-        });
-
-        mRepository.getGroupInvitations(userID).addOnCompleteListener((Task<List<Group_Model>> task)->{
-            if(task.isSuccessful()){
-                mGroupInvitations.setValue(task.getResult());
             }
         });
     }
@@ -86,15 +80,11 @@ public class Core_ViewModel extends ViewModel {
         return mEventInvitations;
     }
 
-    public void setEventInvitations(List<Event_Model> newEventInvitations){
-        mEventInvitations.setValue(newEventInvitations);
+    public void setEventInvitations(List<Event_Model> newList){
+        mEventInvitations.setValue(newList);
     }
 
-    public MutableLiveData<List<Group_Model>> getGroupInvitations(){
-        return mGroupInvitations;
-    }
-
-    public void declineEventInvitation(String eventName, String userID, User_Model user){
+    public void updateEventInviteDeclined(String userID, String eventName, User_Model user){
         mRepository.declineEventInvitation(eventName,userID,user);
     }
     //*------------------------------------------EVENTS------------------------------------------*//

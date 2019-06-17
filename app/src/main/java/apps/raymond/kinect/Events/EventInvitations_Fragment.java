@@ -89,7 +89,7 @@ public class EventInvitations_Fragment extends Fragment
             mViewModel.setAcceptedEvents(acceptedEvents);
         } else if (response == EventInvitations_Adapter.DECLINE) {
             Log.w("EventInviteFrag","Declined event.");
-            mViewModel.declineEventInvitation(event.getName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
+            mViewModel.updateEventInviteDeclined(event.getName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
         }
     }
 

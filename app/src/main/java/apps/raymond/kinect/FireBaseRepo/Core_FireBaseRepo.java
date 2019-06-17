@@ -123,18 +123,15 @@ public class Core_FireBaseRepo {
     }
 
     public Task<List<Event_Model>> getEventInvitations(String userID) {
-        CollectionReference eventMessages = userCollection.document(userID).collection(EVENT_INVITES);
-        return eventMessages.get().continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
-            @Override
-            public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<Event_Model> eventInvites = new ArrayList<>();
-                if (task.isSuccessful() && task.getResult() != null) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        eventInvites.add(document.toObject(Event_Model.class));
+        return mStore.collection(USERS).document(userID).collection(EVENT_INVITES).get()
+                .continueWith((Task<QuerySnapshot> task)->{
+                    List<Event_Model> eventInvites = new ArrayList<>();
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            eventInvites.add(document.toObject(Event_Model.class));
+                        }
                     }
-                }
-                return eventInvites;
-            }
+                    return eventInvites;
         });
     }
     public Task<List<Group_Model>> getGroupInvitations(String userID) {
@@ -207,6 +204,7 @@ public class Core_FireBaseRepo {
     public void deleteEventInvitation(String userID, String eventName){
         userCollection.document(userID).collection(EVENT_INVITES).document(eventName).delete();
         eventCollection.document(eventName).update("invited", FieldValue.increment(-1));
+        eventCollection.document(eventName).collection(INVITED).document(userID).delete();
     }
 
     /**

@@ -22,7 +22,6 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-//ToDo: Add a tab for invited/declined invitations. Allow for swipe left to decline or swipe right to accept!
 public class ViewInvitations_Fragment extends Fragment implements
         EventInvitations_Adapter.EventInvitationInterface{
 
@@ -58,18 +57,20 @@ public class ViewInvitations_Fragment extends Fragment implements
         eventInviteRecycler = view.findViewById(R.id.recycler_invitations);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new EventInvitations_Adapter(this);
-        mAdapter.setData(mViewModel.getEventInvitations().getValue());
         eventInviteRecycler.setAdapter(mAdapter);
 
-        mViewModel.getAcceptedEvents().observe(requireActivity(), (List<Event_Model> events)-> {
-            progressBar.setVisibility(View.GONE);
-            if(events!=null && events.isEmpty()){
+        mViewModel.getEventInvitations().observe(requireActivity(), (List<Event_Model> events)-> {
+            if(progressBar.getVisibility()==View.VISIBLE){
+                progressBar.setVisibility(View.GONE);
+            }
+            if(events.isEmpty()){
                 nullDataTxt.setVisibility(View.VISIBLE);
             } else {
+                Log.w("InvitationsFrag","Calling set data of size = "+events.size());
                 mAdapter.setData(events);
             }
         });
-        mViewModel.loadUserInvitations(mUserID);
+        mViewModel.loadEventInvitations(mUserID);
     }
 
     @Override
@@ -79,23 +80,25 @@ public class ViewInvitations_Fragment extends Fragment implements
 
     @Override
     public void onRespond(Event_Model event, int response) {
-        Log.w("EventInviteFrag","Bruh we are in respond so we should be updating the recycler!!");
-        List<Event_Model> newList = mViewModel.getEventInvitations().getValue();
-        if(newList.contains(event)){
-            newList.remove(event);
-            mViewModel.setEventInvitations(newList); //Remove the invitation from the ViewModel set and increment attending count.
-            mViewModel.deleteEventInvitation(mUserID,event.getName()); //Delete the invitation doc and decrement invited count.
+        List<Event_Model> mList = mViewModel.getEventInvitations().getValue();
+        if(mList.contains(event)){
+            mList.remove(event);
+            mViewModel.deleteEventInvitation(mUserID,event.getName()); //Delete the invitation in both user and event collections.
+            mViewModel.setEventInvitations(mList); //Remove the invitation from the ViewModel set and increment attending count.
         }
         if (response == EventInvitations_Adapter.ACCEPT) {
-            Log.w("EventInviteFrag","Accepted event. Should notify observers of activity: "+getActivity().getClass());
+            event.setAttending(event.getAttending()+1);
+            event.setInvited(event.getInvited()-1);
             mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());//Add user to event's Accepted collection and increment attending count.
             mViewModel.addEventToUser(mUserID,event);//Add the event to User's Event collection.
+
+            //Notify the core Recycler of new event.
             List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
             acceptedEvents.add(event);
             mViewModel.setAcceptedEvents(acceptedEvents);
         } else if (response == EventInvitations_Adapter.DECLINE) {
-            Log.w("EventInviteFrag","Declined event.");
-            mViewModel.declineEventInvitation(event.getName(),mUserID,mUserModel);//Add the user to event's Declined collection. NOT SURE WHAT TO DO WITH THIS DATA.
+            mViewModel.updateEventInviteDeclined(event.getName(),mUserID,mUserModel);//Move the user to the declined invitation list.
         }
+        mViewModel.deleteEventInvitation(mUserID,event.getName());//Remove and update all fields regarding the invitation.
     }
 }
