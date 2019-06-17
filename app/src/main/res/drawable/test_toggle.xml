@@ -6,6 +6,6 @@
     <item android:state_checked="false" android:drawable="@color/transparent">
     </item>
 
-    <item android:drawable="@drawable/baseline_fitness_center_black_18dp">
+    <item android:drawable="@drawable/ic_fitness_center_black_24dp">
     </item>
 </selector>

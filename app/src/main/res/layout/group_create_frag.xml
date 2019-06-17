@@ -57,7 +57,7 @@
                 android:layout_margin="8dp"
                 android:background="#ffffff"
                 android:contentDescription="@string/Temp"
-                android:src="@drawable/baseline_add_photo_alternate_black_18dp"
+                android:src="@drawable/ic_insert_photo_black_24dp"
                 app:layout_constraintBottom_toBottomOf="@id/image_view"
                 app:layout_constraintEnd_toEndOf="parent" />
 

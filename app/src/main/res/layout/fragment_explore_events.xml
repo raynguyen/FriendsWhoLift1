@@ -105,31 +105,31 @@
                         android:id="@+id/image_sport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/baseline_fitness_center_black_18dp"
+                        android:src="@drawable/ic_fitness_center_black_24dp"
                         style="@style/CardPrimaryTags"/>
                     <ImageView
                         android:id="@+id/image_food"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/baseline_fastfood_black_18dp"
+                        android:src="@drawable/ic_local_dining_black_24dp"
                         style="@style/CardPrimaryTags"/>
                     <ImageView
                         android:id="@+id/image_drinks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/baseline_local_bar_black_18dp"
+                        android:src="@drawable/ic_local_bar_black_24dp"
                         style="@style/CardPrimaryTags"/>
                     <ImageView
                         android:id="@+id/image_movie"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/baseline_movie_creation_black_18dp"
+                        android:src="@drawable/ic_movie_black_24dp"
                         style="@style/CardPrimaryTags"/>
                     <ImageView
                         android:id="@+id/image_chill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/baseline_weekend_black_18dp"
+                        android:src="@drawable/ic_weekend_black_24dp"
                         style="@style/CardPrimaryTags"/>
                 </LinearLayout>
 
@@ -140,7 +140,7 @@
                     android:hint="@string/null_dashes"
                     android:layout_gravity="end"
                     android:drawablePadding="4dp"
-                    android:drawableStart="@drawable/baseline_done_outline_black_18dp"
+                    android:drawableStart="@drawable/ic_done_black_24dp"
                     android:scaleY=".75"
                     android:scaleX=".75"/>
             </LinearLayout>

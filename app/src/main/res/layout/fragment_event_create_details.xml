@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/viewflipper_start"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
                 android:background="@color/transparent"
                 android:visibility="gone"/>
         </RelativeLayout>
@@ -136,35 +136,40 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/sports_primary_toggle"
+                android:background="@drawable/toggle_fitness"
+                android:drawableTint="@color/colorAccentLight"
+                android:backgroundTint="@color/colorAccentLight"
+                android:buttonTint="@color/fui_bgTwitter"
+                android:foregroundTint="@color/fui_bgTwitter"
+
                 style="@style/PrimaryToggle"/>
             <ToggleButton
                 android:id="@+id/toggle_food"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/food_primary_toggle"
+                android:background="@drawable/toggle_food"
                 style="@style/PrimaryToggle"/>
             <ToggleButton
                 android:id="@+id/toggle_drinks"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/drinks_primary_toggle"
+                android:background="@drawable/toggle_drinks"
                 style="@style/PrimaryToggle"/>
             <ToggleButton
                 android:id="@+id/toggle_movie"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/movie_primary_toggle"
+                android:background="@drawable/toggle_movie"
                 style="@style/PrimaryToggle"/>
             <ToggleButton
                 android:id="@+id/toggle_chill"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/chill_primary_toggle"
+                android:background="@drawable/toggle_chill"
                 style="@style/PrimaryToggle"/>
         </LinearLayout>
 
@@ -179,7 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/baseline_mail_black_18dp"
+                android:src="@drawable/ic_email_black_24dp"
                 android:contentDescription="@string/messages"/>
 
             <Spinner
@@ -205,7 +210,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/baseline_group_black_18dp"
+                android:src="@drawable/ic_group_black_24dp"
                 android:contentDescription="@string/event_tags"/>
 
             <EditText
@@ -226,7 +231,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/text_event_tags"
                 app:layout_constraintBottom_toBottomOf="@id/text_event_tags"
-                android:src="@drawable/baseline_add_black_18dp"
+                android:src="@drawable/ic_add_black_24dp"
                 android:background="@color/transparent"
                 android:contentDescription="@string/Temp"/>
         </LinearLayout>

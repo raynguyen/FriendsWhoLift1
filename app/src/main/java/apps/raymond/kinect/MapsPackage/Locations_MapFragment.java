@@ -157,7 +157,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                     mLocationCard.setVisibility(View.GONE);
                 }
                 btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
+                        R.drawable.ic_keyboard_arrow_up_black_24dp,null));
             }
         });
 
@@ -165,11 +165,11 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
             if(((LinearLayout.LayoutParams) mRecyclerGroup.getLayoutParams()).weight==0){
                 mRecyclerGroup.setLayoutParams(showParams);
                 btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.baseline_keyboard_arrow_down_black_18dp,null));
+                        R.drawable.ic_keyboard_arrow_down_black_24dp,null));
             } else {
                 mRecyclerGroup.setLayoutParams(hideParams);
                 btnShowRecycler.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.baseline_keyboard_arrow_up_black_18dp,null));
+                        R.drawable.ic_keyboard_arrow_up_black_24dp,null));
             }
         });
 

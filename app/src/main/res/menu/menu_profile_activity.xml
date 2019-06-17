@@ -4,7 +4,7 @@
     <item
         android:title="@string/add_connection"
         android:id="@+id/action_connect"
-        android:icon="@drawable/baseline_person_add_black_18dp"
+        android:icon="@drawable/ic_person_add_black_24dp"
         app:showAsAction="ifRoom"
         android:iconTint="@color/white">
     </item>
@@ -24,7 +24,7 @@
     </item>
     <item android:title="@string/logout"
         android:id="@+id/action_logout"
-        android:icon="@drawable/baseline_transfer_within_a_station_black_18dp"
+        android:icon="@drawable/ic_transfer_within_a_station_black_24dp"
         android:iconTint="@color/white"
         app:showAsAction="ifRoom">
     </item>

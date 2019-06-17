@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gallery_img"
         android:padding="10dp"
-        android:src="@drawable/baseline_photo_camera_black_18dp"/>
+        android:src="@drawable/ic_photo_camera_black_24dp"/>
     <TextView
         android:id="@+id/camera_txt"
         android:layout_width="100dp"
@@ -37,7 +37,7 @@
         app:layout_constraintEnd_toStartOf="@id/google_img"
         app:layout_constraintTop_toTopOf="parent"
         android:padding="10dp"
-        android:src="@drawable/baseline_photo_library_black_18dp"/>
+        android:src="@drawable/ic_photo_library_black_24dp"/>
     <TextView
         android:id="@+id/gallery_txt"
         android:layout_width="100dp"

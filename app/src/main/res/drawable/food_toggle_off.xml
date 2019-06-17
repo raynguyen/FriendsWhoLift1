@@ -3,7 +3,7 @@
     <item android:drawable="@color/transparent">
     </item>
     <item>
-        <bitmap android:src="@drawable/baseline_fastfood_black_18dp"
+        <bitmap android:src="@drawable/ic_local_dining_black_24dp"
             android:gravity="center">
         </bitmap>
     </item>

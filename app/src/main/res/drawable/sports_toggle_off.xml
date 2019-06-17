@@ -3,7 +3,7 @@
     <item android:drawable="@color/transparent">
     </item>
     <item>
-        <bitmap android:src="@drawable/baseline_fitness_center_black_18dp"
+        <bitmap android:src="@drawable/ic_fitness_center_black_24dp"
             android:gravity="center">
         </bitmap>
     </item>

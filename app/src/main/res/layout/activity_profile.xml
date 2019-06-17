@@ -15,7 +15,7 @@
         android:id="@+id/button_return"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+        android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
         android:background="@drawable/button_ripple"
         android:layout_marginTop="4dp"/>
 
@@ -23,7 +23,7 @@
         android:id="@+id/button_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_transfer_within_a_station_black_18dp"
+        android:src="@drawable/ic_transfer_within_a_station_black_24dp"
         android:background="@drawable/button_ripple"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="4dp"/>
@@ -32,7 +32,7 @@
         android:id="@+id/button_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_person_add_black_18dp"
+        android:src="@drawable/ic_person_add_black_24dp"
         android:background="@drawable/button_ripple"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="4dp"
@@ -55,7 +55,7 @@
         android:layout_marginTop="48dp"
         android:contentDescription="@string/profile_picture"
         android:background="#0000"
-        android:src="@drawable/baseline_face_black_18dp"
+        android:src="@drawable/ic_face_black_24dp"
         android:clickable="true"
         android:focusable="true"
         android:layout_centerHorizontal="true"/>

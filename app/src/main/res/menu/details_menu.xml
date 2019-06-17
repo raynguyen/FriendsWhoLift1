@@ -17,7 +17,7 @@
     <item
         android:id="@+id/action_invite"
         android:title="@string/invite_users"
-        android:icon="@drawable/baseline_mail_black_18dp"
+        android:icon="@drawable/ic_email_black_24dp"
         app:showAsAction="ifRoom"
         android:visible="true"
         android:iconTint="@color/white">
