@@ -45,6 +45,7 @@ public class ViewInvitations_Fragment extends Fragment implements
 
     RecyclerView eventInviteRecycler;
     EventInvitations_Adapter mAdapter;
+    private TextView txtNullData;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -53,29 +54,33 @@ public class ViewInvitations_Fragment extends Fragment implements
         closeBtn.setOnClickListener((View v)->requireActivity().getSupportFragmentManager().popBackStack());
 
         ProgressBar progressBar = view.findViewById(R.id.progress_bar_invitations);
-        TextView nullDataTxt = view.findViewById(R.id.text_null_data_invitations);
+        txtNullData = view.findViewById(R.id.text_null_data_invitations);
         eventInviteRecycler = view.findViewById(R.id.recycler_invitations);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new EventInvitations_Adapter(this);
         eventInviteRecycler.setAdapter(mAdapter);
 
+        if(mViewModel.getEventInvitations().getValue()!=null){
+            initRecycler(mViewModel.getEventInvitations().getValue());
+        }
         mViewModel.getEventInvitations().observe(requireActivity(), (List<Event_Model> events)-> {
             if(progressBar.getVisibility()==View.VISIBLE){
                 progressBar.setVisibility(View.GONE);
             }
-            if(events.isEmpty()){
-                nullDataTxt.setVisibility(View.VISIBLE);
-            } else {
-                Log.w("InvitationsFrag","Calling set data of size = "+events.size());
-                mAdapter.setData(events);
-            }
+            initRecycler(events);
         });
-        mViewModel.loadEventInvitations(mUserID);
+    }
+
+    private void initRecycler(List<Event_Model> events){
+        if(events.isEmpty()){
+            txtNullData.setVisibility(View.VISIBLE);
+        } else {
+            mAdapter.setData(events);
+        }
     }
 
     @Override
     public void onEventDetail(Event_Model event) {
-
     }
 
     @Override

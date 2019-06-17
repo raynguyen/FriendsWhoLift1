@@ -152,7 +152,7 @@ public class Core_Activity extends AppCompatActivity implements
             } else {
                 mUserModel = user_model;
                 mUserID = mUserModel.getEmail();
-                //mViewModel.loadEventInvitations(mUserID); //To display a dialog when new invitations are received.
+                mViewModel.loadEventInvitations(mUserID);
             }
         });
     }
