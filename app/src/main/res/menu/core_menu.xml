@@ -7,7 +7,7 @@
         android:title="@string/messages"
         app:showAsAction="ifRoom"
         android:orderInCategory="0"
-        android:icon="@drawable/ic_email_black_24dp"
+        android:icon="@drawable/ic_email_white_24dp"
         android:visible="true"
         android:iconTint="@color/white">
     </item>

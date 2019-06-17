@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_fitness_center_black_24dp"
-        android:color="@color/colorAccentLight"
-        android:state_pressed="true"/>
-    <item android:drawable="@drawable/ic_fitness_center_black_24dp"
-        android:color="@color/gray"
-        android:state_pressed="false"/>
+    <item android:drawable="@drawable/ic_fitness_selected"
+        android:state_checked="true" />
+    <item android:drawable="@drawable/ic_fitness_unselected"
+        android:state_checked="false"/>
 </selector>

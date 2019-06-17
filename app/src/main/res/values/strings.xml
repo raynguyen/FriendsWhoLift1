@@ -32,13 +32,6 @@
     them we can not provide you any suggestions!
     Would you like to register some tags now?</string>
 
-    <string name="upcoming_events">Upcoming Events</string>
-    <string-array name="array_liftsSpinner">
-        <item>Choose a lift</item>
-        <item>Bench Press</item>
-        <item>Dead Lift</item>
-        <item>Squat</item>
-    </string-array>
     <string name="title_activity_home">HomeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
@@ -63,6 +56,7 @@
     <string name="add_connection">Add Connection</string>
     <string name="delete_connection">Delete Connection</string>
     <string name="add_location">Add Location</string>
+    <string name="time_holder">"HH:MM AA</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>

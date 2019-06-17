@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_face_black_24dp">
+            app:navigationIcon="@drawable/ic_face_black_24dp"
+            android:padding="0dp">
         </android.support.v7.widget.Toolbar>
 
         <FrameLayout

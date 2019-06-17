@@ -43,6 +43,49 @@
                 android:layout_height="wrap_content"/>
         </android.support.design.widget.TextInputLayout>
 
+        <LinearLayout
+            android:id="@+id/layout_primarytags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5">
+            <ToggleButton
+                android:id="@+id/toggle_sports"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_fitness"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/toggle_food"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_food"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/toggle_drinks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_drinks"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/toggle_movie"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_movie"
+                style="@style/PrimaryToggle"/>
+            <ToggleButton
+                android:id="@+id/toggle_chill"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_chill"
+                style="@style/PrimaryToggle"/>
+        </LinearLayout>
+
         <RelativeLayout
             android:id="@+id/linear_calendar"
             android:layout_width="match_parent"
@@ -125,60 +168,12 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/layout_primarytags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="12dp"
-            android:weightSum="5">
-            <ToggleButton
-                android:id="@+id/toggle_sports"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_fitness"
-                android:drawableTint="@color/colorAccentLight"
-                android:backgroundTint="@color/colorAccentLight"
-                android:buttonTint="@color/fui_bgTwitter"
-                android:foregroundTint="@color/fui_bgTwitter"
-
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_food"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_food"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_drinks"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_drinks"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_movie"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_movie"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_chill"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_chill"
-                style="@style/PrimaryToggle"/>
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/layout_privacy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -206,13 +201,6 @@
             android:orientation="horizontal"
             android:paddingTop="12dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_group_black_24dp"
-                android:contentDescription="@string/event_tags"/>
-
             <EditText
                 android:id="@+id/text_event_tags"
                 android:layout_width="0dp"
@@ -228,6 +216,7 @@
                 android:id="@+id/event_tag_add_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/text_event_tags"
                 app:layout_constraintBottom_toBottomOf="@id/text_event_tags"
