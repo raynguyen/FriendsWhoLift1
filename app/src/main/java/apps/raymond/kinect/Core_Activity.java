@@ -57,10 +57,7 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +66,6 @@ import apps.raymond.kinect.EventCreate.EventCreate_Activity;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Fragment;
-import apps.raymond.kinect.Groups.GroupCreate_Fragment;
-import apps.raymond.kinect.Groups.Group_Model;
-import apps.raymond.kinect.Groups.GroupsCore_Fragment;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -95,30 +89,25 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  3. Properly update the Events RecyclerView in the Core Events Fragment.
  */
 public class Core_Activity extends AppCompatActivity implements
-        SearchView.OnQueryTextListener, GroupCreate_Fragment.AddGroup{
+        SearchView.OnQueryTextListener{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
-    private static final String CREATE_GROUP_FRAG = "CreateGroup";
     public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
     public static final int YESNO_REQUEST = 21;
     public static final int EVENTCREATE = 22;
-
-    public UpdateGroupRecycler updateGroupRecycler;
-    public interface UpdateGroupRecycler{
-        void updateGroupRecycler(Group_Model groupBase);
-    }
 
     ViewPager viewPager;
     private User_Model mUserModel;
     private String mUserID;
     private Core_ViewModel mViewModel;
+    private EventsCore_Fragment eventsFragment;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
 
-        EventsCore_Fragment eventsFragment = new EventsCore_Fragment();
+        eventsFragment = new EventsCore_Fragment();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.core_frame,eventsFragment,getResources().getString(R.string.fragment_events))
                 .commit();
@@ -170,9 +159,8 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.core_menu,menu);
-        return false;
+        return true;
     }
 
     @Override
@@ -213,11 +201,6 @@ public class Core_Activity extends AppCompatActivity implements
     }
 
     @Override
-    public void addToGroupRecycler(Group_Model groupBase) {
-        updateGroupRecycler.updateGroupRecycler(groupBase);
-    }
-
-    @Override
     public void onBackPressed() {
         Log.i(TAG,"List of fragments: \n " + getSupportFragmentManager().getFragments().toString());
         int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -246,8 +229,6 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public boolean onQueryTextChange(String s) {
-        int i = viewPager.getCurrentItem();
-        EventsCore_Fragment eventsFragment = (EventsCore_Fragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_events));
         if(eventsFragment!=null){
             eventsFragment.filterRecycler(s);
         }

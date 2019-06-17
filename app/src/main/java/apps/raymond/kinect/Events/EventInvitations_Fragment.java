@@ -45,7 +45,6 @@ public class EventInvitations_Fragment extends Fragment
     }
 
     TextView nullDataTxt;
-
     RecyclerView eventInviteRecycler;
     EventInvitations_Adapter mAdapter;
     ProgressBar progressBar;

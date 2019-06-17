@@ -18,7 +18,7 @@
         android:fitsSystemWindows="true">
 
         <TextView
-            android:id="@+id/title_Txt"
+            android:id="@+id/text_invitations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
@@ -27,38 +27,41 @@
             android:textSize="20sp"
             android:paddingBottom="12dp"/>
 
-        <ImageButton
-            android:id="@+id/messages_close_btn"
+        <ProgressBar
+            android:id="@+id/progress_bar_invitations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/title_Txt"
-            app:layout_constraintEnd_toEndOf="@id/title_Txt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <ImageButton
+            android:id="@+id/button_close_invitations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/text_invitations"
+            app:layout_constraintEnd_toEndOf="@id/text_invitations"
             android:src="@drawable/baseline_clear_black_18dp"
             android:contentDescription="@string/Temp"
             android:background="#ffffff"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/text_null_data_invitations"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/title_Txt">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/null_data"
+            android:visibility="invisible"/>
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/invite_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </android.support.design.widget.TabLayout>
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/invite_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:minHeight="300dp"
-                android:maxHeight="500dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintTop_toBottomOf="@id/invite_tabs">
-            </android.support.v4.view.ViewPager>
-        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_invitations"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_invitations">
+        </android.support.v7.widget.RecyclerView>
 
 
     </android.support.constraint.ConstraintLayout>

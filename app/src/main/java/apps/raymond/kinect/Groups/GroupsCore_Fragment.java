@@ -28,7 +28,7 @@ import apps.raymond.kinect.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener, Core_Activity.UpdateGroupRecycler {
+public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapter.GroupClickListener {
     private static final String TAG = "GroupsCore_Fragment";
 
     //Required empty fragment. Not sure why it is needed.
@@ -139,12 +139,6 @@ public class GroupsCore_Fragment extends Fragment implements GroupRecyclerAdapte
                 .replace(R.id.core_frame,detailedGroup, GroupDetail_Fragment.TAG)
                 .addToBackStack(GroupDetail_Fragment.TAG)
                 .commit();*/
-    }
-
-    @Override
-    public void updateGroupRecycler(Group_Model groupBase) {
-        myGroups.add(groupBase);
-        mAdapter.addData(groupBase);
     }
 
     public void filterRecycler(String constraint){
