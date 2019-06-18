@@ -137,7 +137,7 @@ public class EventInvitations_Adapter extends
         private InviteMessagesViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTxt = itemView.findViewById(R.id.event_name);
-            monthTxt = itemView.findViewById(R.id.text_month);
+            monthTxt = itemView.findViewById(R.id.text_month_day);
             dayTxt = itemView.findViewById(R.id.text_day);
             acceptBtn = itemView.findViewById(R.id.accept_event_btn);
             declineBtn = itemView.findViewById(R.id.decline_event_btn);

@@ -19,6 +19,7 @@ public class Event_Model implements Parcelable{
     private int attending = 1;
     private int invited;
     private long long1, long2;
+    private boolean timesuggest = false;
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
@@ -194,6 +195,14 @@ public class Event_Model implements Parcelable{
 
     public long getLong2(){
         return long2;
+    }
+
+    public boolean isTimesuggest() {
+        return timesuggest;
+    }
+
+    public void setTimesuggest(boolean timesuggest) {
+        this.timesuggest = timesuggest;
     }
 
     @Override

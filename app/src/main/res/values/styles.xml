@@ -40,8 +40,6 @@
     </style>
 
     <style name="CardPrimaryTags">
-        <item name="android:scaleY">0.75</item>
-        <item name="android:scaleX">0.75</item>
         <item name="android:visibility">gone</item>
         <item name="android:tint">@color/colorAccentLight</item>
     </style>
@@ -51,6 +49,13 @@
         <item name="android:focusable">true</item>
         <item name="android:textSize">20sp</item>
         <item name="android:background">@drawable/button_ripple</item>
+    </style>
+
+    <style name="EventCardViewText">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center_horizontal</item>
+
     </style>
 
 </resources>

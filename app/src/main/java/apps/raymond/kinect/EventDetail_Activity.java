@@ -70,7 +70,7 @@ public class EventDetail_Activity extends AppCompatActivity implements View.OnCl
         textDesc = findViewById(R.id.text_description);
         textDesc.setText(mEventModel.getDesc());
 
-        textMonth = findViewById(R.id.text_month);
+        textMonth = findViewById(R.id.text_month_day);
         textDate = findViewById(R.id.text_date);
         textTime = findViewById(R.id.text_time);
         convertLongToDate();

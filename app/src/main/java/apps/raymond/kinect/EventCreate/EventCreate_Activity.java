@@ -67,7 +67,6 @@ public class EventCreate_Activity extends AppCompatActivity implements
         //Observes the Details fragment to determine if the there is a non-empty string for the name
         mViewModel.getEventName().observe(this, (String s) ->{
             mEventName = s;
-            Log.w("EventCreateAct","the event name = "+mEventName);
             checkFields();
         });
 

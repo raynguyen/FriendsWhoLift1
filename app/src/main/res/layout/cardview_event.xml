@@ -23,25 +23,16 @@
             android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="12dp"
+            android:layout_margin="12dp"
             android:padding="8dp"
             android:background="@drawable/event_date_background">
             <TextView
-                android:id="@+id/text_month"
+                android:id="@+id/text_month_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/event_month"
                 android:gravity="center"
                 android:textColor="@color/white" />
-            <TextView
-                android:id="@+id/text_day"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/event_day"
-                android:gravity="center"
-                android:paddingTop="4dp"
-                android:textColor="@color/white"/>
             <TextView
                 android:id="@+id/text_time"
                 android:layout_width="match_parent"
@@ -63,38 +54,34 @@
             android:layout_marginTop="8dp"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:gravity="center"/>
+            style="@style/EventCardViewText"/>
 
         <TextView
             android:id="@+id/text_lookup"
             android:layout_width="0dp"
             android:layout_height="27dp"
             android:layout_below="@+id/text_name"
-            android:gravity="center"
-            android:maxLines="1"
             android:hint="@string/location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
-            app:layout_constraintTop_toBottomOf="@id/text_name" />
+            app:layout_constraintTop_toBottomOf="@id/text_name"
+            style="@style/EventCardViewText"/>
 
         <TextView
             android:id="@+id/text_host"
             android:layout_width="0dp"
             android:layout_height="27dp"
             android:layout_below="@+id/text_name"
-            android:gravity="center"
-            android:maxLines="1"
             android:hint="@string/creator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
-            app:layout_constraintTop_toBottomOf="@id/text_lookup" />
+            app:layout_constraintTop_toBottomOf="@id/text_lookup"
+            style="@style/EventCardViewText"/>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@id/calendar_layout"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_host"
             android:baselineAligned="false"
             android:paddingStart="8dp"
@@ -102,10 +89,39 @@
             android:weightSum="1">
 
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_attending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/null_dashes"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="4dp"
+                    android:textAlignment="gravity"
+                    android:textSize="20sp"
+                    android:drawableStart="@drawable/ic_done_black_24dp" />
+
+                <TextView
+                    android:id="@+id/text_invited"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/null_dashes"
+                    android:gravity="center_vertical"
+                    android:textAlignment="gravity"
+                    android:textSize="20sp"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/ic_email_black_24dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_weight=".75">
+                android:layout_weight="1"
+                android:paddingStart="8dp">
 
                 <ImageView
                     android:id="@+id/image_sport"
@@ -137,40 +153,6 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_weekend_black_24dp"
                     style="@style/CardPrimaryTags"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_weight=".25"
-                android:gravity="end">
-
-                <TextView
-                    android:id="@+id/text_attending"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/null_dashes"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="4dp"
-                    android:textAlignment="gravity"
-                    android:textSize="20sp"
-                    android:drawableStart="@drawable/ic_done_black_24dp"
-                    android:scaleY=".75"
-                    android:scaleX=".75"/>
-
-                <TextView
-                    android:id="@+id/text_invited"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/null_dashes"
-                    android:gravity="center_vertical"
-                    android:textAlignment="gravity"
-                    android:textSize="20sp"
-                    android:drawablePadding="4dp"
-                    android:drawableStart="@drawable/ic_email_black_24dp"
-                    android:scaleY=".75"
-                    android:scaleX=".75"/>
             </LinearLayout>
 
         </LinearLayout>

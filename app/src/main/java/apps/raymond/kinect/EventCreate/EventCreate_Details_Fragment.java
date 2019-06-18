@@ -32,6 +32,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
@@ -66,7 +67,6 @@ public class EventCreate_Details_Fragment extends Fragment implements
         return fragment;
     }
 
-    User_Model mUserModel;
     private SimpleDateFormat _12HrSDF = new SimpleDateFormat("hh:mm a");
     private SimpleDateFormat _24HrSDF = new SimpleDateFormat("HH:mm");
 
@@ -80,9 +80,8 @@ public class EventCreate_Details_Fragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(EventCreate_ViewModel.class);
-        mUserModel = getArguments().getParcelable("user");
+        User_Model mUserModel = getArguments().getParcelable("user");
         mUserID = mUserModel.getEmail();
-
         mTempLong = mGregCalendar.getTimeInMillis();
     }
 
@@ -103,9 +102,14 @@ public class EventCreate_Details_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Switch switchDates = view.findViewById(R.id.switch_date_suggest);
         TextView txtYear = view.findViewById(R.id.text_year);
         TextView txtDateStart = view.findViewById(R.id.text_date_start);
         TextView txtTimeStart = view.findViewById(R.id.text_time_start);
+
+        switchDates.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked)-> {
+            mViewModel.getEventModel().setTimesuggest(isChecked);
+        });
 
         viewFlipper = view.findViewById(R.id.viewflipper_start);
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);

@@ -119,7 +119,7 @@ public class EventExplore_Fragment extends Fragment implements
         textEventName = view.findViewById(R.id.text_name);
         textDesc = view.findViewById(R.id.text_description);
         textThoroughfare = view.findViewById(R.id.text_thoroughfare);
-        textMonth = view.findViewById(R.id.text_month);
+        textMonth = view.findViewById(R.id.text_month_day);
         textDate = view.findViewById(R.id.text_date);
         textTime = view.findViewById(R.id.text_time);
 

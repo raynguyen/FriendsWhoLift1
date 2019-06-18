@@ -12,7 +12,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +24,8 @@ import apps.raymond.kinect.R;
 
 public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.EventViewHolder>
     implements Filterable {
-    private SimpleDateFormat sdf = new SimpleDateFormat("MMM",Locale.getDefault());
+    private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd",Locale.getDefault());
+    private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
     private EventClickListener eventClickListener;
     public interface EventClickListener {
         void onEventClick(Event_Model groupEvent);
@@ -53,12 +53,16 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             long long1 = currEvent.getLong1();
             Calendar c = new GregorianCalendar();
             c.setTimeInMillis(long1);
-            vh.monthTxt.setText(sdf.format(c.getTime()));
-            vh.dayTxt.setText(String.valueOf(c.get(Calendar.DATE)));
-            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
-            vh.timeTxt.setText(sdf.format(new Date(long1)));
+            vh.txtDate.setText(sdf.format(c.getTime()));
+            vh.timeTxt.setText(timeSDF.format(new Date(long1)));
+            if(vh.timeTxt.getVisibility()==View.GONE){
+                vh.timeTxt.setVisibility(View.VISIBLE);
+            }
+        } else {
+            vh.txtDate.setText(R.string.date_tbd);
+            vh.timeTxt.setVisibility(View.GONE);
         }
-        vh.nameTxt.setText(currEvent.getName());
+        vh.txtName.setText(currEvent.getName());
         vh.attendingTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
         vh.invitedTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
         vh.hostTxt.setText(currEvent.getCreator());
@@ -184,13 +188,12 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
-        private TextView nameTxt, dayTxt, monthTxt, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;
+        private TextView txtName, txtDate, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;
         private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag;
         private EventViewHolder(View view){
             super(view);
-            nameTxt = view.findViewById(R.id.text_name);
-            dayTxt = view.findViewById(R.id.text_day);
-            monthTxt = view.findViewById(R.id.text_month);
+            txtName = view.findViewById(R.id.text_name);
+            txtDate = view.findViewById(R.id.text_month_day);
             attendingTxt = view.findViewById(R.id.text_attending);
             invitedTxt = view.findViewById(R.id.text_invited);
             hostTxt = view.findViewById(R.id.text_host);
