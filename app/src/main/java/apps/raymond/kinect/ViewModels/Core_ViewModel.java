@@ -48,16 +48,16 @@ public class Core_ViewModel extends ViewModel {
         mRepository = new Core_FireBaseRepo();
     }
 
+    public void setUserDocument(User_Model user_model){
+        mUserModel.setValue(user_model);
+    }
+
     public void loadUserDocument(String userID){
         mRepository.getUserDocument(userID).addOnCompleteListener((Task<User_Model> task)->{
             if(task.isSuccessful()){
                 mUserModel.setValue(task.getResult());
             }
         });
-    }
-
-    public void setUserDocument(User_Model user_model){
-        mUserModel.setValue(user_model);
     }
 
     public MutableLiveData<User_Model> getUserModel(){

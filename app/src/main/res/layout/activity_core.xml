@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/full_core_frame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,6 +35,45 @@
             android:fitsSystemWindows="true"
             app:layout_constraintVertical_weight="1">
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/events_Recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:scrollbars="vertical"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout_editor_absoluteX="29dp">
+            </android.support.v7.widget.RecyclerView>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/progress_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.4"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/progress_guideline"
+                app:layout_constraintHeight_percent="0.5"
+                android:indeterminate="true"/>
+
+            <TextView
+                android:id="@+id/fragment_null_data_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/null_events"
+                android:textSize="26sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progress_bar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton

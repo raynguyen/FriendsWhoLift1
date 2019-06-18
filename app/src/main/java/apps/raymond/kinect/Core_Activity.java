@@ -44,6 +44,7 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -52,12 +53,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +70,7 @@ import java.util.List;
 import apps.raymond.kinect.EventCreate.EventCreate_Activity;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Events.EventsCore_Fragment;
+import apps.raymond.kinect.Events.EventsCore_Adapter;
 import apps.raymond.kinect.Interfaces.BackPressListener;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -89,7 +94,7 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  3. Properly update the Events RecyclerView in the Core Events Fragment.
  */
 public class Core_Activity extends AppCompatActivity implements
-        SearchView.OnQueryTextListener{
+        SearchView.OnQueryTextListener, EventsCore_Adapter.EventClickListener{
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
@@ -101,28 +106,54 @@ public class Core_Activity extends AppCompatActivity implements
     private User_Model mUserModel;
     private String mUserID;
     private Core_ViewModel mViewModel;
-    private EventsCore_Fragment eventsFragment;
+    private EventsCore_Adapter mAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
-
-        eventsFragment = new EventsCore_Fragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.core_frame,eventsFragment,getResources().getString(R.string.fragment_events))
-                .commit();
-
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+
+        mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
+            if(user_model!=null){
+                mUserModel = user_model;
+                mUserID = mUserModel.getEmail();
+                mViewModel.loadAcceptedEvents(mUserID);
+            }
+        });
+
         if(getIntent().hasExtra("user")){
+            //User signed in from login and we have retrieved document.
             mUserModel = getIntent().getExtras().getParcelable("user");
             mUserID = mUserModel.getEmail();
             mViewModel.setUserDocument(mUserModel);
         } else if(getIntent().hasExtra("userID")){
+            //Called if previous user is detected. We must then fetch the user document from DB.
             mUserID = getIntent().getExtras().getString("userID");
-            Log.w(TAG,"Starting core activity with mUserID: "+ mUserID);
-            Log.w(TAG,"Have to fetch the UserModel document from database.");
             mViewModel.loadUserDocument(mUserID);
         }
+
+        ProgressBar progressBar = findViewById(R.id.progress_bar);
+        TextView nullText = findViewById(R.id.fragment_null_data_text);
+
+        final RecyclerView eventsRecycler = findViewById(R.id.events_Recycler);
+        mAdapter = new EventsCore_Adapter(this);
+        eventsRecycler.setAdapter(mAdapter);
+        eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
+        eventsRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        mViewModel.getAcceptedEvents().observe(this, (List<Event_Model> event_models)-> {
+            if(event_models!=null){
+                progressBar.setVisibility(View.GONE);
+                if(!event_models.isEmpty()){
+                    if(nullText.getVisibility()==View.VISIBLE){
+                        nullText.setVisibility(View.GONE);
+                    }
+                    mAdapter.setData(event_models);
+                } else {
+                    nullText.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         FloatingActionButton btnExploreEvents = findViewById(R.id.button_explore_events);
         btnExploreEvents.setOnClickListener((View v)->{
@@ -155,6 +186,13 @@ public class Core_Activity extends AppCompatActivity implements
                 mViewModel.loadEventInvitations(mUserID);
             }
         });
+    }
+
+    @Override
+    public void onEventClick(Event_Model event) {
+        Intent detailActivity = new Intent(this,EventDetail_Activity.class);
+        detailActivity.putExtra("user",mUserModel).putExtra("event",event);
+        startActivity(detailActivity);
     }
 
     @Override
@@ -229,9 +267,7 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public boolean onQueryTextChange(String s) {
-        if(eventsFragment!=null){
-            eventsFragment.filterRecycler(s);
-        }
+        mAdapter.getFilter().filter(s);
         return true;
     }
 }
