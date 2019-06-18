@@ -49,6 +49,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -85,7 +86,6 @@ public class Core_FireBaseRepo {
 
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
-    private CollectionReference groupCollection = mStore.collection(GROUPS);
     private CollectionReference userCollection = mStore.collection(USERS);
     private CollectionReference eventCollection = mStore.collection(EVENTS);
 
@@ -104,16 +104,11 @@ public class Core_FireBaseRepo {
      */
     public Task<User_Model> getUserDocument(String userID){
         DocumentReference userDoc = userCollection.document(userID);
-        return userDoc.get().continueWith(new Continuation<DocumentSnapshot, User_Model>() {
-            @Override
-            public User_Model then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                if(task.isSuccessful()){
-                    if(task.getResult()!=null){
-                        return task.getResult().toObject(User_Model.class);
-                    }
-                }
-                return null;
+        return userDoc.get().continueWith((Task<DocumentSnapshot> task)-> {
+            if(task.getResult()!=null){
+                return task.getResult().toObject(User_Model.class);
             }
+            return null;
         });
     }
 
@@ -134,46 +129,25 @@ public class Core_FireBaseRepo {
                     return eventInvites;
         });
     }
-    public Task<List<Group_Model>> getGroupInvitations(String userID) {
-        return userCollection.document(userID).collection(GROUP_INVITES).get()
-                .continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
-                    @Override
-                    public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Group_Model> result = new ArrayList<>();
-                        if (task.isSuccessful() && task.getResult()!=null) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                result.add(document.toObject(Group_Model.class));
-                            }
-                        }
-                        return result;
-                    }
-                });
-    }
+
 
     public Task<Void> addConnection(final String userID, final User_Model newUserConnection){
         return userCollection.document(userID).collection("Connections")
                 .document(newUserConnection.getEmail())
                 .set(newUserConnection)
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        if(task.isSuccessful()){
-                            return userCollection.document(userID)
-                                    .update("numconnections", FieldValue.increment(1));
-                        }
-                        return null;
+                .continueWithTask((Task<Void> task)->{
+                    if(task.isSuccessful()){
+                        return userCollection.document(userID).update("numconnections", FieldValue.increment(1));
                     }
+                    return null;
                 });
     }
+
     public Task<Void> deleteUserConnection(final String userID, String  connectionID){
         return userCollection.document(userID).collection("Connections")
                 .document(connectionID).delete()
-                .continueWithTask(new Continuation<Void, Task<Void>>() {
-                    @Override
-                    public Task<Void> then(@NonNull Task<Void> task) throws Exception {
-                        return userCollection.document(userID)
-                                .update("numconnections",FieldValue.increment(-1));
-                    }
+                .continueWithTask((Task<Void> task)-> {
+                    return userCollection.document(userID).update("numconnections", FieldValue.increment(-1));
                 });
     }
     public Task<Boolean> checkForConnection(String userID, String checkID){
@@ -291,22 +265,15 @@ public class Core_FireBaseRepo {
     }
 
     public Task<List<Event_Model>> getAcceptedEvents(String userID){
-        if(userID==null){
-            return null;
-        }
-
-        return mStore.collection(USERS).document(userID).collection(EVENTS).get()
-                .continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
-                    @Override
-                    public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Event_Model> result = new ArrayList<>();
-                        if(task.isSuccessful() && task.getResult()!=null){
-                            for(QueryDocumentSnapshot document : task.getResult()){
-                                result.add(document.toObject(Event_Model.class));
-                            }
+        return mStore.collection(USERS).document(userID).collection(EVENTS).orderBy("long1", Query.Direction.ASCENDING)
+                .get().continueWith((Task<QuerySnapshot> task)->{
+                    List<Event_Model> result = new ArrayList<>();
+                    if(task.isSuccessful() && task.getResult()!=null){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            result.add(document.toObject(Event_Model.class));
                         }
-                        return result;
                     }
+                    return result;
                 });
     }
 
@@ -498,6 +465,22 @@ public class Core_FireBaseRepo {
                         return userCollection.document(userID).update("numlocations",FieldValue.increment(1));
                     }
                     return null;
+                });
+    }
+
+    public Task<List<Group_Model>> getGroupInvitations(String userID) {
+        return userCollection.document(userID).collection(GROUP_INVITES).get()
+                .continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
+                    @Override
+                    public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Group_Model> result = new ArrayList<>();
+                        if (task.isSuccessful() && task.getResult()!=null) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                result.add(document.toObject(Group_Model.class));
+                            }
+                        }
+                        return result;
+                    }
                 });
     }
 }

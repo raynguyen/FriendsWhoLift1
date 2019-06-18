@@ -48,6 +48,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
             android:weightSum="5">
             <ToggleButton
                 android:id="@+id/toggle_sports"
@@ -115,7 +117,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="26sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/gray"
                     android:textStyle="bold"
                     android:layout_weight="1"
                     />
@@ -125,10 +127,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="26sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/gray"
                     android:textStyle="bold"
                     android:gravity="end"
-                    android:text="@string/default_time"/>
+                    android:text="@string/default_time" />
             </LinearLayout>
 
             <ViewFlipper

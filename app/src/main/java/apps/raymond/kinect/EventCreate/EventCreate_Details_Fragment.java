@@ -10,11 +10,13 @@
 
 package apps.raymond.kinect.EventCreate;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -67,12 +69,12 @@ public class EventCreate_Details_Fragment extends Fragment implements
     User_Model mUserModel;
     private SimpleDateFormat _12HrSDF = new SimpleDateFormat("hh:mm a");
     private SimpleDateFormat _24HrSDF = new SimpleDateFormat("HH:mm");
-    private SimpleDateFormat _TestFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private String mUserID;
     private List<String> mTagsList = new ArrayList<>();
     private EventCreate_ViewModel mViewModel;
     private Calendar mGregCalendar = Calendar.getInstance();
+    private long mTempLong;
     private final java.text.DateFormat mDateFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,10 +83,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
         mUserModel = getArguments().getParcelable("user");
         mUserID = mUserModel.getEmail();
 
-        mGregCalendar.set(Calendar.DAY_OF_YEAR,mGregCalendar.get(Calendar.DAY_OF_YEAR)+1);
-        mGregCalendar.set(Calendar.HOUR_OF_DAY,11);
-        mGregCalendar.set(Calendar.MINUTE,0);
-        mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
+        mTempLong = mGregCalendar.getTimeInMillis();
     }
 
     @Nullable
@@ -95,7 +94,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
     }
 
     int privacy;
-    EditText txtEventName,txtEventDesc, txtEventTag;
+    EditText txtEventTag;
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
     private ViewFlipper viewFlipper;
@@ -103,6 +102,10 @@ public class EventCreate_Details_Fragment extends Fragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        TextView txtYear = view.findViewById(R.id.text_year);
+        TextView txtDateStart = view.findViewById(R.id.text_date_start);
+        TextView txtTimeStart = view.findViewById(R.id.text_time_start);
 
         viewFlipper = view.findViewById(R.id.viewflipper_start);
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
@@ -113,9 +116,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
             }
         });
 
-        TextView txtYear = view.findViewById(R.id.text_year);
         txtYear.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
-        TextView txtDateStart = view.findViewById(R.id.text_date_start);
         txtDateStart.setOnClickListener((View v)-> {
             if(viewFlipper.getVisibility() == View.GONE){
                 viewFlipper.setVisibility(View.VISIBLE);
@@ -132,7 +133,6 @@ public class EventCreate_Details_Fragment extends Fragment implements
             mViewModel.setEventStart(mGregCalendar.getTimeInMillis());
         });
 
-        TextView txtTimeStart = view.findViewById(R.id.text_time_start);
         txtTimeStart.setOnClickListener((View v)->{
             if(viewFlipper.getVisibility() == View.GONE){
                 viewFlipper.setVisibility(View.VISIBLE);
@@ -140,6 +140,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
             }
             viewFlipper.setDisplayedChild(1);
         });
+
         TimePicker mTimePicker = view.findViewById(R.id.time_picker);
         mTimePicker.setHour(8);
         mTimePicker.setMinute(0);
@@ -153,8 +154,19 @@ public class EventCreate_Details_Fragment extends Fragment implements
             } catch (Exception e){}
         });
 
-        txtEventName = view.findViewById(R.id.text_event_create_name);
-        txtEventDesc = view.findViewById(R.id.text_event_create_desc);
+        mViewModel.getEventStart().observe(this, (Long aLong)-> {
+            Log.w(TAG,"CHANGE IN DATE!");
+            if(aLong!=null && aLong!=mTempLong){
+                txtDateStart.setTextColor(ContextCompat.getColor(requireContext(),R.color.white));
+                txtTimeStart.setTextColor(ContextCompat.getColor(requireContext(),R.color.white));
+            } else {
+                txtDateStart.setTextColor(ContextCompat.getColor(requireContext(),R.color.gray));
+                txtTimeStart.setTextColor(ContextCompat.getColor(requireContext(),R.color.gray));
+            }
+        });
+
+        EditText txtEventName = view.findViewById(R.id.text_event_create_name);
+        EditText txtEventDesc = view.findViewById(R.id.text_event_create_desc);
         txtEventName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

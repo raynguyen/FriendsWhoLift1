@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 
+import java.util.Calendar;
+
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
@@ -38,9 +40,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
 
     private EventCreate_ViewModel mViewModel;
     private User_Model mUserModel;
-    private String mUserID;
-    private String mEventName;
-    private String mEventDesc;
+    private String mUserID, mEventName, mEventDesc;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +67,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
         //Observes the Details fragment to determine if the there is a non-empty string for the name
         mViewModel.getEventName().observe(this, (String s) ->{
             mEventName = s;
+            Log.w("EventCreateAct","the event name = "+mEventName);
             checkFields();
         });
 
@@ -78,11 +79,9 @@ public class EventCreate_Activity extends AppCompatActivity implements
 
     boolean mCreateOptionFlag = false;
     private void checkFields(){
-        if(mEventName !=null && mEventDesc !=null){
-            if(mEventName.trim().length() > 0 && mEventDesc.trim().length() > 0 ){
-                mCreateOptionFlag = true;
-            } else {
-                mCreateOptionFlag = false;
+        if(mEventName!=null && mEventDesc!=null){
+            if(mEventName.trim().length()>0 && mEventDesc.trim().length()>0){
+                mCreateOptionFlag=true;
             }
             invalidateOptionsMenu();
         }
@@ -129,6 +128,10 @@ public class EventCreate_Activity extends AppCompatActivity implements
         if(item.getItemId()==R.id.action_event_create){
             if(mCreateOptionFlag){
                 final Event_Model event = mViewModel.getEventModel();
+                if(event.getLong1() == Calendar.getInstance().getTimeInMillis()){
+                    Log.w("EventCreateAct: ","Do you want to set a time for the event?");
+                }
+
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());

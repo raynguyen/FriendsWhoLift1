@@ -3,6 +3,7 @@ package apps.raymond.kinect.EventCreate;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +22,7 @@ public class EventCreate_ViewModel extends ViewModel {
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
     private MutableLiveData<String> mEventName = new MutableLiveData<>();
     private MutableLiveData<String> mEventDesc = new MutableLiveData<>();
+    private MutableLiveData<Long> mEventStart = new MutableLiveData<>();
     private List<User_Model> mInviteList = new ArrayList<>();
     private List<String> mEventPrimes = new ArrayList<>();
     private Event_Model mEventModel = new Event_Model();
@@ -43,7 +45,12 @@ public class EventCreate_ViewModel extends ViewModel {
         return mEventDesc;
     }
 
+    MutableLiveData<Long> getEventStart(){
+        return mEventStart;
+    }
+
     public void setEventStart(long start){
+        mEventStart.setValue(start);
         mEventModel.setLong1(start);
     }
 
