@@ -26,7 +26,8 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 //ToDo: The data for the recyclerview is never set!
-public class Members_Panel_Fragment extends Fragment implements ProfileRecyclerAdapter.ProfileClickListener {
+public class Members_Panel_Fragment extends Fragment implements
+        ProfileRecyclerAdapter.ProfileClickListener {
     private static final String TAG = "Custom_Members_Panel";
     private static final String GROUP_PARCEL = "GroupParcel";
 

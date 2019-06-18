@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,107 +31,62 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Groups.Members_Panel_Fragment;
+import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-public class EventDetail_Activity extends AppCompatActivity implements View.OnClickListener,
+public class EventDetail_Activity extends AppCompatActivity implements
         EventMessages_Fragment.MessagesFragment_Interface{
+    private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a",Locale.getDefault());
 
     User_Model mUserModel;
     Core_ViewModel mViewModel;
     Event_Model mEventModel;
-    Toolbar toolbar;
-    ViewGroup informationLayout, usersLayout;
-    ViewFlipper profilesFlipper;
-    TextView textName, textHost, textDesc, textMonth, textDate, textTime;
-    ViewPager mViewPager;
-    Button btnFlipPager;
+    ViewGroup informationLayout;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail_);
 
-        mEventModel = getIntent().getExtras().getParcelable("event");
+        mEventModel = getIntent().getExtras().getParcelable("event"); //RETRIEVE THE EVENT, can't rely on detail click
         mUserModel = getIntent().getExtras().getParcelable("user");
 
-        toolbar = findViewById(R.id.toolbar_event);
+        Toolbar toolbar = findViewById(R.id.toolbar_event);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(this);
+        toolbar.setNavigationOnClickListener((View v)->onBackPressed());
 
-        //ToDo: Consider refactoring this back to a fragment.
-        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        TextView txtEventStart = findViewById(R.id.text_event_start);
+        TextView textName = findViewById(R.id.text_name);
+        TextView textHost = findViewById(R.id.text_host);
+        TextView textDesc = findViewById(R.id.text_description);
 
-        informationLayout = findViewById(R.id.layout_information);
-        textName = findViewById(R.id.text_name);
         textName.setText(mEventModel.getName());
-        textHost = findViewById(R.id.text_host);
         String hostString = getString(R.string.host) + " " + mEventModel.getCreator();
         textHost.setText(hostString);
-        textDesc = findViewById(R.id.text_description);
         textDesc.setText(mEventModel.getDesc());
 
-        textMonth = findViewById(R.id.text_month_day);
-        textDate = findViewById(R.id.text_date);
-        textTime = findViewById(R.id.text_time);
-        convertLongToDate();
+        VerticalTextView vTxtMembers = findViewById(R.id.vtext_members);
+        vTxtMembers.setOnClickListener((View v)->{
+            Log.w("EventDetailAct: ","Should expand the members tray.");
+        });
 
-        mViewPager = findViewById(R.id.viewpager_messages);
-        DetailPagerAdapter adapter = new DetailPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(adapter);
+        if(mEventModel.getLong1()!=0){
+            String mEventStart = sdf.format(new Date(mEventModel.getLong1()));
+            txtEventStart.setText(mEventStart);
+        } else {
+            txtEventStart.setText(R.string.date_tbd);
+        }
 
+        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+        informationLayout = findViewById(R.id.layout_information);
 
-        usersLayout = findViewById(R.id.layout_users);
-        btnFlipPager = findViewById(R.id.button_flip_pager);
-        btnFlipPager.setOnClickListener(this);
-
-        profilesFlipper = findViewById(R.id.viewflipper_profiles);
-    }
-
-    /**
-     * Converts mEventModel long field to a date field and populates the appropriate views.
-     */
-    private void convertLongToDate(){
-        long long1 = mEventModel.getLong1();
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(long1);
-        textMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(c.getTime()));
-        textDate.setText(String.valueOf(c.get(Calendar.DATE)));
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
-        textTime.setText(sdf.format(new Date(long1)));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        switch (i){
-            case -1:
-                onBackPressed();
-                break;
-            case R.id.button_accepted_users:
-                profilesFlipper.setDisplayedChild(0);
-                break;
-            case R.id.button_declined_users:
-                profilesFlipper.setDisplayedChild(1);
-                break;
-            case R.id.button_invited_users:
-                profilesFlipper.setDisplayedChild(2);
-                break;
-            case R.id.button_flip_pager:
-                if(mViewPager.getCurrentItem()==0){
-                    btnFlipPager.setText(R.string.view_event_users);
-                    mViewPager.setCurrentItem(1);
-                } else if(mViewPager.getCurrentItem()==1){
-                    btnFlipPager.setText(R.string.view_event_messages);
-                    mViewPager.setCurrentItem(0);
-                }
-                break;
-        }
     }
 
     @Override

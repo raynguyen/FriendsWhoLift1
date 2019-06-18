@@ -4,7 +4,6 @@
     android:id="@+id/layout_users"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@id/button_flip_pager"
     android:layout_alignParentBottom="true"
     android:visibility="visible">
 
