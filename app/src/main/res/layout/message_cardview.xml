@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
+    android:id="@+id/cardview_message"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,7 +14,7 @@
             android:id="@+id/image_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sports_toggle_on"
+            android:src="@drawable/ic_face_black_24dp"
             android:contentDescription="@string/profile_picture"
             android:layout_centerVertical="true"
             android:layout_margin="4dp"/>
@@ -24,7 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/image_profile"
             android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:hint="@string/event_name"/>
 
         <TextView
             android:id="@+id/text_message"

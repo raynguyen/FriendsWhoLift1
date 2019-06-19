@@ -30,7 +30,7 @@ import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-public class EventMessages_Fragment extends Fragment implements Messages_Adapter.ProfileClickListener {
+public class EventMessages_Fragment extends Fragment{
     private static final String TAG = "MessagesFragment";
     private static final String EVENT = "Event";
     private static final String GROUP = "Group";
@@ -124,7 +124,7 @@ public class EventMessages_Fragment extends Fragment implements Messages_Adapter
         });
 
         mRecyclerView = view.findViewById(R.id.recyclerview_messages);
-        mAdapter = new Messages_Adapter(messages, this);
+        //mAdapter = new Messages_Adapter( this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -139,12 +139,6 @@ public class EventMessages_Fragment extends Fragment implements Messages_Adapter
         loadMessages();
 
         editNewMessage = view.findViewById(R.id.edit_new_message);
-    }
-
-
-    @Override
-    public void loadProfile() {
-
     }
 
     /**

@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
@@ -26,10 +29,10 @@ import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.EventDetail_ViewModel;
 
-public class EventDetail_Activity extends AppCompatActivity{
+public class EventDetail_Activity extends AppCompatActivity implements
+        Messages_Adapter.ProfileClickListener{
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a",Locale.getDefault());
 
-    ViewGroup informationLayout;
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
     @Override
@@ -42,17 +45,24 @@ public class EventDetail_Activity extends AppCompatActivity{
         mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
 
         Toolbar toolbar = findViewById(R.id.toolbar_event);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener((View v)->onBackPressed());
-
         TextView txtEventStart = findViewById(R.id.text_event_start);
         TextView textName = findViewById(R.id.text_name);
         TextView textHost = findViewById(R.id.text_host);
         TextView textDesc = findViewById(R.id.text_description);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
+        VerticalTextView vTxtMembers = findViewById(R.id.vtext_members);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener((View v)->onBackPressed());
+        Messages_Adapter mMessageAdapter = new Messages_Adapter(this);
+        recyclerView.setAdapter(mMessageAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         textName.setText(mEventName);
         mViewModel.getEventModel().observe(this,(@NonNull Event_Model event)->{
+            mViewModel.loadEventInformation(event.getName());
+
             String hostString = getString(R.string.host) + " " + event.getCreator();
             textHost.setText(hostString);
             textDesc.setText(event.getDesc());
@@ -65,16 +75,22 @@ public class EventDetail_Activity extends AppCompatActivity{
             }
         });
 
+        mViewModel.getEventMessages().observe(this,(List<Message_Model> messages)->{
+            Log.w("DetailActivity","Change in messages observed.");
+            mMessageAdapter.setData(messages);
+        });
+
         mViewModel.loadEventModel(mEventName);
 
-        VerticalTextView vTxtMembers = findViewById(R.id.vtext_members);
         vTxtMembers.setOnClickListener((View v)->{
             Log.w("EventDetailAct: ","Should expand the members tray.");
         });
 
-        //Add the messages recycler here.
+    }
 
-        //MembersPanel_Fragment fragment = MembersPanel_Fragment.newInstance();
+    @Override
+    public void loadProfile(String author) {
+        //Called when clicking on a message to load the message author's profile.
     }
 
     @Override

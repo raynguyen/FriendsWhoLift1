@@ -2,7 +2,6 @@ package apps.raymond.kinect;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +17,11 @@ public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.Mess
 
     private ProfileClickListener listener;
     public interface ProfileClickListener{
-        void loadProfile();
+        void loadProfile(String author);
     }
 
-    private List<Message_Model> messages;
-    public Messages_Adapter(List<Message_Model> messages, ProfileClickListener listener){
-        this.messages = new ArrayList<>(messages);
+    private List<Message_Model> mMessages;
+    public Messages_Adapter(ProfileClickListener listener){
         this.listener = listener;
     }
 
@@ -37,37 +35,49 @@ public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.Mess
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder vh, int i) {
-        if(messages!=null && messages.size()!=0){
-            final Message_Model message = messages.get(i);
-            vh.textAuthor.setText(message.getAuthor());
-            vh.textMessage.setText(message.getMessage());
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault());
-            Date date = new Date(message.getTimestamp());
-            String timeStamp = sdf.format(date);
-            vh.textTimestamp.setText(timeStamp);
-        }
+        final Message_Model message = mMessages.get(i);
+        vh.viewGroup.setOnClickListener((View v)->listener.loadProfile(message.getAuthor()));
+        vh.textAuthor.setText(message.getAuthor());
+        vh.textMessage.setText(message.getMessage());
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault());
+        Date date = new Date(message.getTimestamp());
+        String timeStamp = sdf.format(date);
+        vh.textTimestamp.setText(timeStamp);
+
     }
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        if(mMessages !=null){
+            return mMessages.size();
+        } else {
+            return 0;
+        }
     }
 
     public void updateData(List<Message_Model> newMessages){
-        messages = newMessages;
+        mMessages = newMessages;
         notifyDataSetChanged();
     }
 
+    public void setData(List<Message_Model> newMessages){
+        if(mMessages ==null){
+            mMessages = new ArrayList<>(newMessages);
+            notifyItemRangeChanged(0,newMessages.size());
+        }
+    }
+
     public void addNewMessage(Message_Model newMessage){
-        messages.add(0,newMessage);
+        mMessages.add(0,newMessage);
         notifyItemInserted(0);
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder{
-
+        private ViewGroup viewGroup;
         private TextView textAuthor,textMessage,textTimestamp;
         private MessageViewHolder(View view){
             super(view);
+            viewGroup = view.findViewById(R.id.cardview_message);
             textAuthor = view.findViewById(R.id.text_author);
             textMessage = view.findViewById(R.id.text_message);
             textTimestamp = view.findViewById(R.id.text_timestamp);
