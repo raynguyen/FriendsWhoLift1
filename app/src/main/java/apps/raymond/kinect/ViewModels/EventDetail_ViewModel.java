@@ -70,6 +70,14 @@ public class EventDetail_ViewModel extends ViewModel {
         mRepository.leaveEvent(userID, eventName);
     }
 
+    public Task<Void> postNewMessage(String eventName, Message_Model message){
+        return mRepository.postMessage(eventName,message);
+    }
+
+    public void setEventMessages(List<Message_Model> messages){
+        mEventMessages.setValue(messages);
+    }
+
     public Task<Void> addUserConnection(String userID,User_Model user){
         return mRepository.addConnection(userID,user);
     }

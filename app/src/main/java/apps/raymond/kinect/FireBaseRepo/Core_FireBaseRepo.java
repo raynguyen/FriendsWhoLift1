@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Groups.Group_Model;
 import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -74,14 +73,12 @@ import apps.raymond.kinect.UserProfile.User_Model;
  */
 public class Core_FireBaseRepo {
     private static final String TAG = "Core_FireBaseRepo";
-    private static final String GROUPS = "Groups";
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
     private static final String MESSAGES = "Messages";
     private static final String INVITED = "Invited";
     private static final String DECLINED = "Declined";
     private static final String EVENT_INVITES = "EventInvites";
-    private static final String GROUP_INVITES = "GroupInvites";
     private static final String EVENT_INVITED_FIELD = "invited";
 
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -340,13 +337,11 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    public Task<Void> postMessage(final Event_Model event,final Message_Model message){
-        CollectionReference eventMessagesRef = mStore.collection(EVENTS)
-                .document(event.getName())
-                .collection(MESSAGES);
-
-        return eventMessagesRef.document().set(message);
+    public Task<Void> postMessage(final String eventName,final Message_Model message){
+        return mStore.collection(EVENTS).document(eventName).collection(MESSAGES).document()
+                .set(message);
     }
+
     public Task<List<Message_Model>> getEventMessages(@NonNull String eventName){
         return mStore.collection(EVENTS).document(eventName).collection(MESSAGES).get()
                 .continueWith((Task<QuerySnapshot> task)-> {
@@ -382,27 +377,6 @@ public class Core_FireBaseRepo {
         //Delete the user model from event attending.
         //--Decrement attending count.
         //Delete the event from user's accepted events.
-    }
-    //*------------------------------------------GROUPS------------------------------------------*//
-    // Info below may be outdated.
-    // Steps are to get the keySet corresponding to what groups the user is registered with
-    // Then we want to retrieve the Document snapshots of the groups named in the KeySet.
-    // Then we read the imageURI field to get the photo storage reference and download the photo
-    // Finally we want to use the document snapshot and the retrieved byte[] to create a group base object.
-    public Task<List<Group_Model>> getUsersGroups(String userID) {
-        CollectionReference groupsRef = mStore.collection(USERS).document(userID).collection(GROUPS);
-        return groupsRef.get().continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
-            @Override
-            public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<Group_Model> result = new ArrayList<>();
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document: task.getResult()){
-                        result.add(document.toObject(Group_Model.class));
-                    }
-                }
-                return result;
-            }
-        });
     }
 
     //*-------------------------------------------ETC--------------------------------------------*//
@@ -476,19 +450,4 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    public Task<List<Group_Model>> getGroupInvitations(String userID) {
-        return userCollection.document(userID).collection(GROUP_INVITES).get()
-                .continueWith(new Continuation<QuerySnapshot, List<Group_Model>>() {
-                    @Override
-                    public List<Group_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Group_Model> result = new ArrayList<>();
-                        if (task.isSuccessful() && task.getResult()!=null) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                result.add(document.toObject(Group_Model.class));
-                            }
-                        }
-                        return result;
-                    }
-                });
-    }
 }

@@ -1,6 +1,7 @@
 package apps.raymond.kinect;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,9 +16,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,6 +58,8 @@ public class EventDetail_Activity extends AppCompatActivity implements
         TextView textHost = findViewById(R.id.text_host);
         TextView textDesc = findViewById(R.id.text_description);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
+        ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
+        TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
         VerticalTextView vTxtMembers = findViewById(R.id.vtext_members);
 
         setSupportActionBar(toolbar);
@@ -76,8 +86,19 @@ public class EventDetail_Activity extends AppCompatActivity implements
         });
 
         mViewModel.getEventMessages().observe(this,(List<Message_Model> messages)->{
-            Log.w("DetailActivity","Change in messages observed.");
-            mMessageAdapter.setData(messages);
+            if (messages != null) {
+                if(mMessagesProgress.getVisibility()==View.VISIBLE){
+                    mMessagesProgress.setVisibility(View.GONE);
+                }
+                if(messages.size()==0){
+                    txtEmptyMessages.setVisibility(View.VISIBLE);
+                } else {
+                    if(txtEmptyMessages.getVisibility()==View.VISIBLE){
+                        txtEmptyMessages.setVisibility(View.GONE);
+                    }
+                    mMessageAdapter.setData(messages);
+                }
+            }
         });
 
         mViewModel.loadEventModel(mEventName);
@@ -86,6 +107,35 @@ public class EventDetail_Activity extends AppCompatActivity implements
             Log.w("EventDetailAct: ","Should expand the members tray.");
         });
 
+        EditText editNewMessage = findViewById(R.id.edit_new_message);
+        ImageButton btnPostMessage = findViewById(R.id.button_post_message);
+        btnPostMessage.setOnClickListener((View v)->{
+            if(editNewMessage.getText().toString().trim().length()>0){
+                createMessage(editNewMessage.getText().toString());
+                editNewMessage.getText().clear();
+                try {
+                    InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                } catch (Exception e){
+                    //Purposely empty.
+                }
+            }
+        });
+
+    }
+
+    private void createMessage(String messageBody){
+        long timeStamp = System.currentTimeMillis();
+        final Message_Model newMessage = new Message_Model(mUserID,messageBody,timeStamp);
+        mViewModel.postNewMessage(mEventName, newMessage).addOnCompleteListener((Task<Void> task)->{
+            if(task.isSuccessful()){
+                List<Message_Model> list = mViewModel.getEventMessages().getValue();
+                if(list!=null){
+                    list.add(newMessage);
+                    mViewModel.setEventMessages(list);
+                }
+            }
+        });
     }
 
     @Override

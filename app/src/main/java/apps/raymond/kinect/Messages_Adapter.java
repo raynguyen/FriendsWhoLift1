@@ -1,6 +1,7 @@
 package apps.raymond.kinect;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,21 +56,38 @@ public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.Mess
         }
     }
 
-    public void updateData(List<Message_Model> newMessages){
-        mMessages = newMessages;
-        notifyDataSetChanged();
-    }
-
     public void setData(List<Message_Model> newMessages){
         if(mMessages ==null){
             mMessages = new ArrayList<>(newMessages);
             notifyItemRangeChanged(0,newMessages.size());
-        }
-    }
+        } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return mMessages.size();
+                }
 
-    public void addNewMessage(Message_Model newMessage){
-        mMessages.add(0,newMessage);
-        notifyItemInserted(0);
+                @Override
+                public int getNewListSize() {
+                    return newMessages.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                    return mMessages.get(oldPosition).getMessage()
+                            .equals(newMessages.get(newPosition).getMessage());
+                }
+
+                //Disabled currently
+                @Override
+                public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                    return true;
+                }
+            });
+            mMessages.clear();
+            mMessages.addAll(newMessages);
+            result.dispatchUpdatesTo(this);
+        }
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder{
