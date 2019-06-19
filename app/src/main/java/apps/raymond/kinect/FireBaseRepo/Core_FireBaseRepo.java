@@ -76,6 +76,7 @@ public class Core_FireBaseRepo {
     private static final String USERS = "Users";
     private static final String EVENTS = "Events";
     private static final String MESSAGES = "Messages";
+    private static final String ACCEPTED = "Accepted";
     private static final String INVITED = "Invited";
     private static final String DECLINED = "Declined";
     private static final String EVENT_INVITES = "EventInvites";
@@ -301,20 +302,15 @@ public class Core_FireBaseRepo {
     }
 
     public Task<List<User_Model>> getEventAttending(String eventName) {
-        return eventCollection.document(eventName).collection("Accepted").get()
-                .continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
-                    @Override
-                    public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<User_Model> results = new ArrayList<>();
-                        if (task.isSuccessful()) {
-                            if (task.getResult() != null) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    results.add(document.toObject(User_Model.class));
-                                }
-                            }
+        return eventCollection.document(eventName).collection(ACCEPTED).get()
+                .continueWith((@NonNull Task<QuerySnapshot> task)-> {
+                    List<User_Model> results = new ArrayList<>();
+                    if (task.isSuccessful() && task.getResult()!=null) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            results.add(document.toObject(User_Model.class));
                         }
-                        return results;
                     }
+                    return results;
                 });
     }
 

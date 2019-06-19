@@ -147,7 +147,7 @@ public class EventUsers_Fragment extends Fragment implements View.OnClickListene
                 invitedAdapter.setData(user_models);
             }
         });
-        mViewModel.loadEventInformation(mEventModel.getName());
+        mViewModel.loadEventMessages(mEventModel.getName());
     }
 
     @Override

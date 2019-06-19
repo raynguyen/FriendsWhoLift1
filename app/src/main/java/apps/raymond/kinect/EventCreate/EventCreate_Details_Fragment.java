@@ -97,7 +97,6 @@ public class EventCreate_Details_Fragment extends Fragment implements
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
     private ViewFlipper viewFlipper;
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -212,7 +211,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
         ToggleButton tglChill = view.findViewById(R.id.toggle_chill);
         tglChill.setOnCheckedChangeListener(this);
 
-        Spinner visibilitySpinner = view.findViewById(R.id.spinner_event_privacy);
+        Spinner sprPrivacy = view.findViewById(R.id.spinner_event_privacy);
         ArrayAdapter<String> mVisibilityAdapter = new ArrayAdapter<String>(requireContext(),
                 R.layout.spinner_item_layout,
                 getResources().getStringArray(R.array.visibility_options) ) {
@@ -231,9 +230,10 @@ public class EventCreate_Details_Fragment extends Fragment implements
                 return super.getCount()-1;
             }
         };
-        visibilitySpinner.setAdapter(mVisibilityAdapter);
-        visibilitySpinner.setSelection(3);
-        visibilitySpinner.setOnItemSelectedListener(this);
+
+        sprPrivacy.setAdapter(mVisibilityAdapter);
+        sprPrivacy.setSelection(3);
+        sprPrivacy.setOnItemSelectedListener(this);
 
         ImageButton addTagsBtn = view.findViewById(R.id.event_tag_add_btn);
         addTagsBtn.setOnClickListener((View v)-> checkTagSyntax());

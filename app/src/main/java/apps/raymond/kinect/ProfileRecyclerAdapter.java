@@ -13,7 +13,6 @@ import java.util.List;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ProfileViewHolder> {
-    private static final String TAG = "PROFILE RECYCLER ADAPTER";
 
     private ProfileClickListener listener;
     public interface ProfileClickListener {
@@ -25,14 +24,6 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         this.listener = profileClickListener;
     }
 
-    static class ProfileViewHolder extends RecyclerView.ViewHolder{
-        private TextView name;
-        private ProfileViewHolder(View itemView){
-            super(itemView);
-            name = itemView.findViewById(R.id.user_name_txt);
-        }
-    }
-
     @NonNull
     @Override
     public ProfileRecyclerAdapter.ProfileViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -41,19 +32,10 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ProfileViewHolder profileViewHolder, int i) {
-        if(mDataSet !=null){
-            final User_Model currUser = mDataSet.get(i);
-            profileViewHolder.name.setText(currUser.getEmail());
-            profileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onProfileClick(currUser);
-                }
-            });
-        } else {
-            Log.i(TAG,"Empty profiles list.");
-        }
+    public void onBindViewHolder(@NonNull final ProfileViewHolder vh, int i) {
+        final User_Model currUser = mDataSet.get(i);
+        vh.name.setText(currUser.getEmail());
+        vh.itemView.setOnClickListener((View v)-> listener.onProfileClick(currUser));
     }
 
     @Override
@@ -66,7 +48,23 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     }
 
     public void setData(List<User_Model> newData){
-        this.mDataSet = newData;
-        notifyItemRangeChanged(0,newData.size());
+        if(mDataSet==null){
+            this.mDataSet = newData;
+            notifyItemRangeChanged(0,newData.size());
+        } else {
+            //DIFFUTIL HERE.
+        }
+
+    }
+
+    /**
+     * View holder class to contain the information of Users.
+     */
+    static class ProfileViewHolder extends RecyclerView.ViewHolder{
+        private TextView name;
+        private ProfileViewHolder(View itemView){
+            super(itemView);
+            name = itemView.findViewById(R.id.user_name_txt);
+        }
     }
 }

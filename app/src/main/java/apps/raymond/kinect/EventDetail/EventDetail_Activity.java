@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
@@ -31,10 +33,11 @@ import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UIResources.VerticalTextView;
 
 public class EventDetail_Activity extends AppCompatActivity implements
         Messages_Adapter.ProfileClickListener {
+    private static final int ATTENDING = 0;
+    private static final int INVITED = 1;
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a",Locale.getDefault());
 
     private EventDetail_ViewModel mViewModel;
@@ -52,6 +55,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
         TextView txtEventStart = findViewById(R.id.text_event_start);
         TextView textName = findViewById(R.id.text_name);
         TextView textHost = findViewById(R.id.text_host);
+        ImageView imgPrivacy = findViewById(R.id.image_privacy);
         TextView textDesc = findViewById(R.id.text_description);
         TextView txtAttending = findViewById(R.id.text_attending_count);
         TextView txtInvited = findViewById(R.id.text_invited_count);
@@ -62,14 +66,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
         ImageButton btnMapView = findViewById(R.id.button_map_show);
         ImageButton btnInviteUser = findViewById(R.id.button_invite_user);
 
-        btnMapView.setOnClickListener((View v)->{
-            Log.w("EventDetailAct","INVITE USER PROMPT!");
-        });
-        btnInviteUser.setOnClickListener((View v)->{
-            Log.w("EventDetailAct","Inflate a mapview and show location.");
-        });
-
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener((View v)->onBackPressed());
@@ -77,10 +73,19 @@ public class EventDetail_Activity extends AppCompatActivity implements
         recyclerView.setAdapter(mMessageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        btnMapView.setOnClickListener((View v)->{
+            Log.w("EventDetailAct","Inflate a mapview and show location.");
+        });
+        btnInviteUser.setOnClickListener((View v)->{
+            Log.w("EventDetailAct","INVITE USER PROMPT!");
+        });
+        txtAttending.setOnClickListener((View  v) -> showMembersPanel(ATTENDING));
+        txtInvited.setOnClickListener((View v) -> showMembersPanel(INVITED));
+
         textName.setText(mEventName);
+        //Update the information views with the event model retrieved from the data base.
         mViewModel.getEventModel().observe(this,(Event_Model event)->{
-            Log.w("EventDetail: ","There was a change in the event model. We should load the model from dB!");
-            mViewModel.loadEventInformation(event.getName());
+            mViewModel.loadEventMessages(event.getName());
 
             String hostString = getString(R.string.host) + " " + event.getCreator();
             textHost.setText(hostString);
@@ -94,9 +99,31 @@ public class EventDetail_Activity extends AppCompatActivity implements
             } else {
                 txtEventStart.setText(R.string.date_tbd);
             }
+
+            switch (event.getPrivacy()){
+                case Event_Model.EXCLUSIVE:
+                    Log.w("EventCreateAct","Privacy is exclusive");
+                    imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_close_black_24dp));
+                    break;
+                case Event_Model.PRIVATE:
+                    Log.w("EventCreateAct","Privacy is private");
+                    imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_delete_black_24dp));
+                    break;
+                case Event_Model.PUBLIC:
+                    Log.w("EventCreateAct","Privacy is public");
+                    imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_public_black_24dp));
+                    break;
+            }
+
+            EventMembers_Fragment membersFrag = EventMembers_Fragment.newInstance(mEventName);
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack("members")
+                    .add(R.id.frame_members_fragment,membersFrag,"members")
+                    .commit();
         });
 
         mViewModel.loadEventModel(mEventName);
+        //Load the messages recycler with the retrieved messages.
         mViewModel.getEventMessages().observe(this,(List<Message_Model> messages)->{
             if (messages != null) {
                 if(mMessagesProgress.getVisibility()==View.VISIBLE){
@@ -113,8 +140,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
 
-
-
         EditText editNewMessage = findViewById(R.id.edit_new_message);
         ImageButton btnPostMessage = findViewById(R.id.button_post_message);
         btnPostMessage.setOnClickListener((View v)->{
@@ -130,11 +155,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
 
-        EventMembers_Fragment membersFrag = new EventMembers_Fragment();
-        getSupportFragmentManager().beginTransaction()
-                .addToBackStack("members")
-                .add(R.id.frame_members_fragment,membersFrag,"members")
-                .commit();
+
     }
 
     private void createMessage(String messageBody){
@@ -150,6 +171,22 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
     }
+
+    /**
+     * Slides the members frame layout into view if it is currently off screen.
+     * @param i variable to determine which recycler view to display
+     */
+    private void showMembersPanel(int i){
+        switch (i){
+            case ATTENDING:
+                Log.w("EventDetailAct","Show the attending users recycler.");
+                break;
+            case INVITED:
+                Log.w("EventDetailAct","Show the invited users recycler.");
+                break;
+        }
+    }
+
 
     @Override
     public void loadProfile(String author) {

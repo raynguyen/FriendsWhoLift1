@@ -123,10 +123,10 @@
     <string name="date_tbd">Date TBD</string>
     <string name="event_time_suggest">Allow users to suggest new dates?</string>
     <string-array name="visibility_options">
+        <item>Only invited users.</item>
+        <item>Users accepted by admins only.</item>
         <item>Anyone</item>
-        <item>Friends of invited guests</item>
-        <item>Invitation only</item>
-        <item>Who may join this event?</item>
+        <item>Who can join this event?</item>
     </string-array>
 
     <!--MAPS-->

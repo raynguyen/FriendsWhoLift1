@@ -29,7 +29,15 @@ public class EventDetail_ViewModel extends ViewModel {
         });
     }
 
-    public void loadEventInformation(final String eventName){
+    public void loadEventMessages(final String eventName){
+        mRepository.getEventMessages(eventName).addOnCompleteListener((@NonNull Task<List<Message_Model>> task)->{
+            if(task.isSuccessful()){
+                mEventMessages.setValue(task.getResult());
+            }
+        });
+    }
+
+    public void loadEventMembers(final String eventName){
         mRepository.getEventAttending(eventName).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
             if(task.isSuccessful()){
                 mEventAcceptedList.setValue(task.getResult());
@@ -39,12 +47,6 @@ public class EventDetail_ViewModel extends ViewModel {
         mRepository.getEventInvited(eventName).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
             if(task.isSuccessful()){
                 mEventInvitedList.setValue(task.getResult());
-            }
-        });
-
-        mRepository.getEventMessages(eventName).addOnCompleteListener((@NonNull Task<List<Message_Model>> task)->{
-            if(task.isSuccessful()){
-                mEventMessages.setValue(task.getResult());
             }
         });
     }
