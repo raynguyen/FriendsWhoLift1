@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -36,10 +40,17 @@ public class EventMembers_Fragment extends Fragment implements
         mEventName = getArguments().getString("name");
     }
 
+    private RecyclerView recyclerViewA;
+    private TextView txtNullAccepted;
+    private ProgressBar pbAccepted;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event_members,container,false);
+        View view = inflater.inflate(R.layout.fragment_event_members,container,false);
+        recyclerViewA = view.findViewById(R.id.recycler_members_accepted);
+        txtNullAccepted = view.findViewById(R.id.text_null_accepted);
+        pbAccepted = view.findViewById(R.id.progress_members_loading);
+        return view;
     }
 
     @Override
@@ -48,9 +59,23 @@ public class EventMembers_Fragment extends Fragment implements
         ProfileRecyclerAdapter mAdapterA = new ProfileRecyclerAdapter(this);
         ProfileRecyclerAdapter mAdapterI = new ProfileRecyclerAdapter(this);
 
+        recyclerViewA.setAdapter(mAdapterA);
+        recyclerViewA.setLayoutManager(new LinearLayoutManager(getContext()));
+
         mViewModel.getEventAccepted().observe(requireActivity(),(List<User_Model> list)->{
             Log.w("MembersFragment","There was a change in the attending members list.");
-            mAdapterA.setData(list);
+            if(pbAccepted.getVisibility()==View.VISIBLE){
+                pbAccepted.setVisibility(View.GONE);
+            }
+            if(list.size()==0){
+                txtNullAccepted.setVisibility(View.VISIBLE);
+            } else {
+                if(txtNullAccepted.getVisibility()==View.VISIBLE){
+                    txtNullAccepted.setVisibility(View.GONE);
+                }
+                mAdapterA.setData(list);
+            }
+
         });
         mViewModel.getEventInvited().observe(requireActivity(),(List<User_Model> list)->{
             Log.w("MembersFragment","There was a change in the invited members list.");

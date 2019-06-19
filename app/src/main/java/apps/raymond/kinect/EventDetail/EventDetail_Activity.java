@@ -52,6 +52,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail_);
+
         mUserID = getIntent().getStringExtra("userID");
         mEventName = getIntent().getStringExtra("name");
 
