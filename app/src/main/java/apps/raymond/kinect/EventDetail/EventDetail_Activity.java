@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +16,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,6 +46,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
+    private FrameLayout mMembersFrame;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +55,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
         mEventName = getIntent().getStringExtra("name");
 
         mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
-
+        mMembersFrame = findViewById(R.id.frame_members_fragment);
         Toolbar toolbar = findViewById(R.id.toolbar_event);
         TextView txtEventStart = findViewById(R.id.text_event_start);
         TextView textName = findViewById(R.id.text_name);
@@ -116,6 +121,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
 
             EventMembers_Fragment membersFrag = EventMembers_Fragment.newInstance(mEventName);
+            //membersFrag.setEnterTransition();
             getSupportFragmentManager().beginTransaction()
                     .addToBackStack("members")
                     .add(R.id.frame_members_fragment,membersFrag,"members")
@@ -180,6 +186,8 @@ public class EventDetail_Activity extends AppCompatActivity implements
         switch (i){
             case ATTENDING:
                 Log.w("EventDetailAct","Show the attending users recycler.");
+                Animation anim = AnimationUtils.loadAnimation(this,R.anim.fui_slide_in_right);
+                mMembersFrame.startAnimation(anim);
                 break;
             case INVITED:
                 Log.w("EventDetailAct","Show the invited users recycler.");

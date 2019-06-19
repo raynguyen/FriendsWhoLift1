@@ -42,7 +42,6 @@ public class EventMembers_Fragment extends Fragment implements
         return inflater.inflate(R.layout.fragment_event_members,container,false);
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
