@@ -47,6 +47,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
     private FrameLayout mMembersFrame;
+    private EventMembers_Fragment membersFrag;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,12 +121,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
                     break;
             }
 
-            EventMembers_Fragment membersFrag = EventMembers_Fragment.newInstance(mEventName);
-            //membersFrag.setEnterTransition();
-            getSupportFragmentManager().beginTransaction()
-                    .addToBackStack("members")
-                    .add(R.id.frame_members_fragment,membersFrag,"members")
-                    .commit();
+            membersFrag = EventMembers_Fragment.newInstance(mEventName);
         });
 
         mViewModel.loadEventModel(mEventName);
@@ -186,6 +182,12 @@ public class EventDetail_Activity extends AppCompatActivity implements
         switch (i){
             case ATTENDING:
                 Log.w("EventDetailAct","Show the attending users recycler.");
+                getSupportFragmentManager().beginTransaction()
+                        .addToBackStack("members")
+                        .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
+                        .add(R.id.frame_members_fragment,membersFrag,"members")
+                        .commit();
+
                 Animation anim = AnimationUtils.loadAnimation(this,R.anim.fui_slide_in_right);
                 mMembersFrame.startAnimation(anim);
                 break;
