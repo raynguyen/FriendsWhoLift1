@@ -149,12 +149,12 @@ public class GroupDetail_Fragment extends Fragment implements View.OnClickListen
         int i = v.getId();
         switch (i){
             case R.id.members_vtxt:
-                MembersPanel_Fragment membersPanel = MembersPanel_Fragment.newInstance(groupBase);
+               /* MembersPanel_Fragment membersPanel = MembersPanel_Fragment.newInstance(groupBase);
                 getChildFragmentManager().beginTransaction()
                         .addToBackStack(MEMBERS_FRAG)
                         .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
                         .replace(R.id.members_frame,membersPanel,MEMBERS_FRAG)
-                        .commit();
+                        .commit();*/
                 break;
         }
     }

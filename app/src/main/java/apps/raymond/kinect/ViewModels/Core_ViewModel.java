@@ -115,19 +115,6 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.addUserToEvent(userID,user,eventName);
     }
 
-    public MutableLiveData<List<Message_Model>> getEventMessages(Event_Model event){
-        mRepository.getEventMessages(event)
-                .addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<Message_Model>> task) {
-                        if(task.isSuccessful() && task.getResult()!=null){
-                            mEventMessages.setValue(task.getResult());
-                        }
-                    }
-                });
-                return mEventMessages;
-    }
-
     public void deleteEventInvitation(String userID, String eventName){
         mRepository.deleteEventInvitation(userID, eventName);
     }
