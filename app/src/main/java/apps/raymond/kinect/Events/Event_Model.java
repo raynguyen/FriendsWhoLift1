@@ -11,6 +11,9 @@ import android.support.annotation.Nullable;
 
 //ToDo: Consider implementing hashcode to individually identify event without comparing strings.
 public class Event_Model implements Parcelable{
+    private static final int EXCLUSIVE = 0; //Invitation only. Not visible on map.
+    private static final int PRIVATE = 1; //Invitation only. Can request to attend.
+    private static final int PUBLIC = 2; //Open to all users.
     private String creator, name, desc;
     private double lat, lng;
     private int privacy;

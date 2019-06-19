@@ -106,19 +106,20 @@
             android:layout_marginBottom="12dp"/>
 
         <ImageButton
+            android:id="@+id/button_invite_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_black_24dp"
             android:background="@color/transparent"
             android:tint="@color/white"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="24dp"
             />
 
         <TextView
             android:id="@+id/text_attending_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="99+"
+            android:hint="@string/null_dashes"
             android:drawableTop="@drawable/ic_done_black_24dp"
             android:gravity="center_horizontal"
             android:layout_marginBottom="12dp"/>
@@ -127,7 +128,7 @@
             android:id="@+id/text_invited_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="99+"
+            android:hint="@string/null_dashes"
             android:drawableTop="@drawable/ic_email_black_24dp"
             android:gravity="center_horizontal"/>
     </LinearLayout>

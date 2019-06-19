@@ -34,5 +34,9 @@ public class EventMembers_Fragment extends Fragment {
         Log.w("EventMembersFrag","ON VIEW CREATED.");
     }
 
+    private void showMembersPanel(int i){
+        //Slide in the members panel and move the pager/flipper to the correct recyclerview.
+    }
+
 
 }

@@ -53,9 +53,22 @@ public class EventDetail_Activity extends AppCompatActivity implements
         TextView textName = findViewById(R.id.text_name);
         TextView textHost = findViewById(R.id.text_host);
         TextView textDesc = findViewById(R.id.text_description);
+        TextView txtAttending = findViewById(R.id.text_attending_count);
+        TextView txtInvited = findViewById(R.id.text_invited_count);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
         ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
         TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
+
+        ImageButton btnMapView = findViewById(R.id.button_map_show);
+        ImageButton btnInviteUser = findViewById(R.id.button_invite_user);
+
+        btnMapView.setOnClickListener((View v)->{
+            Log.w("EventDetailAct","INVITE USER PROMPT!");
+        });
+        btnInviteUser.setOnClickListener((View v)->{
+            Log.w("EventDetailAct","Inflate a mapview and show location.");
+        });
+
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -72,6 +85,8 @@ public class EventDetail_Activity extends AppCompatActivity implements
             String hostString = getString(R.string.host) + " " + event.getCreator();
             textHost.setText(hostString);
             textDesc.setText(event.getDesc());
+            txtAttending.setText(String.valueOf(event.getAttending()));
+            txtInvited.setText(String.valueOf(event.getInvited()));
 
             if(event.getLong1()!=0){
                 String mEventStart = sdf.format(new Date(event.getLong1()));
@@ -81,6 +96,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
 
+        mViewModel.loadEventModel(mEventName);
         mViewModel.getEventMessages().observe(this,(List<Message_Model> messages)->{
             if (messages != null) {
                 if(mMessagesProgress.getVisibility()==View.VISIBLE){
@@ -97,7 +113,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
 
-        mViewModel.loadEventModel(mEventName);
+
 
         EditText editNewMessage = findViewById(R.id.edit_new_message);
         ImageButton btnPostMessage = findViewById(R.id.button_post_message);
