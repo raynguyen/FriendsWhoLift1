@@ -1,4 +1,4 @@
-package apps.raymond.kinect.Login;
+package apps.raymond.kinect.StartUp;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;

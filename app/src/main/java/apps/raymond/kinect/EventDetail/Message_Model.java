@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.EventDetail;
 
 import android.os.Parcel;
 import android.os.Parcelable;

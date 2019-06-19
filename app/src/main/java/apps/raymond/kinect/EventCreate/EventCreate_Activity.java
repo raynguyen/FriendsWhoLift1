@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -27,9 +26,8 @@ import com.google.android.gms.tasks.Task;
 import java.util.Calendar;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;

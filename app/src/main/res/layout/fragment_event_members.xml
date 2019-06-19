@@ -6,25 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true">
 
-    <ImageButton
-        android:id="@+id/close_members_drawer_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/swipe_right_btn"
-        android:contentDescription="@string/Temp"
-        android:src="@drawable/ic_today_black_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.442" />
-
     <LinearLayout
         android:id="@+id/drawer_frame"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@id/close_members_drawer_btn"
-        app:layout_constraintEnd_toEndOf="parent"
         android:background="@drawable/members_panel_background"
         android:padding="12dp">
 

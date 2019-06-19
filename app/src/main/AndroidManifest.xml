@@ -28,7 +28,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity
-            android:name=".Launch_Activity"
+            android:name=".StartUp.Launch_Activity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Login.Login_Activity"
+            android:name=".StartUp.Login_Activity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
@@ -55,7 +55,7 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <activity android:name=".EventDetail_Activity"
+        <activity android:name=".EventDetail.EventDetail_Activity"
             android:theme="@style/AppTheme">
         </activity>
 

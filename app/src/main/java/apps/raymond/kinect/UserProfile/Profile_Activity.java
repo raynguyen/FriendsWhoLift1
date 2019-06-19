@@ -4,12 +4,10 @@ import android.app.PendingIntent;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.File;
@@ -33,9 +30,9 @@ import apps.raymond.kinect.Connections_Fragment;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
-import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.Login.Login_Activity;
+import apps.raymond.kinect.StartUp.Login_Activity;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /**

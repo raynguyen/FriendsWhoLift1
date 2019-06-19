@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.MapsPackage;
 
 import android.location.Address;
 import android.os.Parcel;

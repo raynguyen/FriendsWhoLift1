@@ -5,7 +5,7 @@
  *  2. Determine the error type if log-in was unsuccessful and set the appropriate error messages
  *  to the fields that must be corrected if applicable.
  */
-package apps.raymond.kinect.Login;
+package apps.raymond.kinect.StartUp;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;

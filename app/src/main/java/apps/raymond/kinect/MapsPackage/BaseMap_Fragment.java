@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.R;
 
 public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback,

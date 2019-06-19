@@ -3,7 +3,6 @@ package apps.raymond.kinect.ViewModels;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -12,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
-import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Profile_ViewModel extends ViewModel {

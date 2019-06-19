@@ -5,7 +5,7 @@
  * If a user is detected, we want to finish this activity and start the Core_Activity.
  * Otherwise, start the Login_Activity.
  */
-package apps.raymond.kinect;
+package apps.raymond.kinect.StartUp;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import apps.raymond.kinect.Login.Login_Activity;
+import apps.raymond.kinect.Core_Activity;
+import apps.raymond.kinect.R;
 
 public class Launch_Activity extends AppCompatActivity {
     @Override

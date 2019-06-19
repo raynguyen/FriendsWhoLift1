@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.EventDetail;
 
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import apps.raymond.kinect.R;
 
 public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.MessageViewHolder> {
 
@@ -30,7 +32,7 @@ public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.Mess
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.message_cardview, viewGroup,false);
+                .inflate(R.layout.cardview_message, viewGroup,false);
         return new MessageViewHolder(view);
     }
 

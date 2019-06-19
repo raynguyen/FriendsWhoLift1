@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.UIResources;
 
 import android.graphics.Rect;
 import android.support.annotation.NonNull;

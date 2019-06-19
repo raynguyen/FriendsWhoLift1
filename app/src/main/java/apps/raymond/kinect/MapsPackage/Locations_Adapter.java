@@ -16,7 +16,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Location_Model;
 import apps.raymond.kinect.R;
 
 public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.LocationViewHolder> {

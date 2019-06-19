@@ -23,7 +23,7 @@ import java.util.List;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
-import apps.raymond.kinect.ViewModels.EventDetail_ViewModel;
+import apps.raymond.kinect.EventDetail.EventDetail_ViewModel;
 
 
 //ToDo: Currently three separate views that are navigated via ViewFlipper. This should be converted to a

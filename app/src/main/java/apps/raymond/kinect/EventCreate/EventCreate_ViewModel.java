@@ -2,10 +2,7 @@ package apps.raymond.kinect.EventCreate;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
@@ -13,7 +10,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
-import apps.raymond.kinect.Location_Model;
+import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 //Create more fields that are set from the EventDetails and Map fragments. When the user clicks create event
 //from the activity, get all the required fields from this viewmodel and create the event from the activity.

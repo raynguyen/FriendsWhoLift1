@@ -44,7 +44,6 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -68,10 +67,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.EventCreate.EventCreate_Activity;
+import apps.raymond.kinect.EventDetail.EventDetail_Activity;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Adapter;
 import apps.raymond.kinect.Interfaces.BackPressListener;
+import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
@@ -98,8 +99,6 @@ public class Core_Activity extends AppCompatActivity implements
 
     private static final String TAG = "Core_Activity";
     private static final String INV_FRAG = "ViewInvitations_Fragment";
-    public static final String INVITE_USERS_FRAG = "InviteUsersFrag";
-    public static final int YESNO_REQUEST = 21;
     public static final int EVENTCREATE = 22;
 
     ViewPager viewPager;
@@ -167,7 +166,7 @@ public class Core_Activity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setBackgroundColor(getColor(R.color.colorAccentLight));
+        toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         toolbar.setNavigationOnClickListener((View v)-> {
             if(mUserModel !=null){
                 Intent profileIntent = new Intent(this, Profile_Activity.class);
@@ -190,7 +189,7 @@ public class Core_Activity extends AppCompatActivity implements
 
     @Override
     public void onEventClick(Event_Model event) {
-        Intent detailActivity = new Intent(this,EventDetail_Activity.class);
+        Intent detailActivity = new Intent(this, EventDetail_Activity.class);
         detailActivity.putExtra("userID",mUserModel.getEmail()).putExtra("name",event.getName());
         startActivity(detailActivity);
     }

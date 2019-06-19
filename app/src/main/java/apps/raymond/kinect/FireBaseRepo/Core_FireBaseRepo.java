@@ -62,8 +62,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Location_Model;
-import apps.raymond.kinect.Message_Model;
+import apps.raymond.kinect.MapsPackage.Location_Model;
+import apps.raymond.kinect.EventDetail.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /**

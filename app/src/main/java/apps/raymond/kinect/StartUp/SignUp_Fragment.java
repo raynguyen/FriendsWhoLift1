@@ -4,7 +4,7 @@
  *  sure the pattern required in order to accomplish this
  */
 
-package apps.raymond.kinect.Login;
+package apps.raymond.kinect.StartUp;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;

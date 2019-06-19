@@ -1,10 +1,9 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.EventDetail;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,7 +22,6 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
@@ -33,12 +30,11 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.VerticalTextView;
-import apps.raymond.kinect.UserProfile.User_Model;
-import apps.raymond.kinect.ViewModels.EventDetail_ViewModel;
 
 public class EventDetail_Activity extends AppCompatActivity implements
-        Messages_Adapter.ProfileClickListener{
+        Messages_Adapter.ProfileClickListener {
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a",Locale.getDefault());
 
     private EventDetail_ViewModel mViewModel;
@@ -60,7 +56,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
         RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
         ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
         TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
-        VerticalTextView vTxtMembers = findViewById(R.id.vtext_members);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -70,7 +65,8 @@ public class EventDetail_Activity extends AppCompatActivity implements
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         textName.setText(mEventName);
-        mViewModel.getEventModel().observe(this,(@NonNull Event_Model event)->{
+        mViewModel.getEventModel().observe(this,(Event_Model event)->{
+            Log.w("EventDetail: ","There was a change in the event model. We should load the model from dB!");
             mViewModel.loadEventInformation(event.getName());
 
             String hostString = getString(R.string.host) + " " + event.getCreator();
@@ -103,10 +99,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         mViewModel.loadEventModel(mEventName);
 
-        vTxtMembers.setOnClickListener((View v)->{
-            Log.w("EventDetailAct: ","Should expand the members tray.");
-        });
-
         EditText editNewMessage = findViewById(R.id.edit_new_message);
         ImageButton btnPostMessage = findViewById(R.id.button_post_message);
         btnPostMessage.setOnClickListener((View v)->{
@@ -122,6 +114,11 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
 
+        EventMembers_Fragment membersFrag = new EventMembers_Fragment();
+        getSupportFragmentManager().beginTransaction()
+                .addToBackStack("members")
+                .add(R.id.frame_members_fragment,membersFrag,"members")
+                .commit();
     }
 
     private void createMessage(String messageBody){

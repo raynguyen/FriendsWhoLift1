@@ -1,4 +1,4 @@
-package apps.raymond.kinect.ViewModels;
+package apps.raymond.kinect.EventDetail;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -10,7 +10,6 @@ import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
-import apps.raymond.kinect.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventDetail_ViewModel extends ViewModel {
