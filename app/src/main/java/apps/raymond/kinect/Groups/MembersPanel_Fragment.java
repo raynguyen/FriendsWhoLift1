@@ -20,33 +20,32 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-//ToDo: The data for the recyclerview is never set!
-public class Members_Panel_Fragment extends Fragment implements
+public class MembersPanel_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener {
     private static final String TAG = "Custom_Members_Panel";
     private static final String GROUP_PARCEL = "GroupParcel";
 
-    public static Members_Panel_Fragment newInstance(Group_Model group){
-        Members_Panel_Fragment membersPanel = new Members_Panel_Fragment();
+    public static MembersPanel_Fragment newInstance(Event_Model event){
+        MembersPanel_Fragment membersPanel = new MembersPanel_Fragment();
         Bundle args = new Bundle();
-        args.putParcelable(GROUP_PARCEL, group);
+        args.putParcelable("event", event);
         membersPanel.setArguments(args);
-
         return membersPanel;
     }
 
     Core_ViewModel viewModel;
-    Group_Model group;
     List<User_Model> membersList;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        group = getArguments().getParcelable(GROUP_PARCEL);
+        // = getArguments().getParcelable(GROUP_PARCEL);
         viewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         membersList = new ArrayList<>();
         fetchMembersList();
@@ -88,8 +87,7 @@ public class Members_Panel_Fragment extends Fragment implements
     }
 
     private void fetchMembersList(){
-        Log.i(TAG,"Fetching members of " + group.getOriginalName());
-        viewModel.fetchGroupMembers(group).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
+        /*viewModel.fetchGroupMembers(group).addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
             @Override
             public void onComplete(@NonNull Task<List<User_Model>> task) {
                 if(task.isSuccessful()){
@@ -102,7 +100,7 @@ public class Members_Panel_Fragment extends Fragment implements
                     }
                 }
             }
-        });
+        });*/
     }
 
     @Override

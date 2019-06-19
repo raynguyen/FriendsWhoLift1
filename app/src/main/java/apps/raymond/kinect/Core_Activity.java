@@ -191,7 +191,7 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     public void onEventClick(Event_Model event) {
         Intent detailActivity = new Intent(this,EventDetail_Activity.class);
-        detailActivity.putExtra("user",mUserModel).putExtra("event",event);
+        detailActivity.putExtra("userID",mUserModel.getEmail()).putExtra("name",event.getName());
         startActivity(detailActivity);
     }
 

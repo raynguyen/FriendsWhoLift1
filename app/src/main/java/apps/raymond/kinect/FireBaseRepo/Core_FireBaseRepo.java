@@ -103,8 +103,7 @@ public class Core_FireBaseRepo {
      * @return User_Model POJO.
      */
     public Task<User_Model> getUserDocument(String userID){
-        DocumentReference userDoc = userCollection.document(userID);
-        return userDoc.get().continueWith((Task<DocumentSnapshot> task)-> {
+        return userCollection.document(userID).get().continueWith((Task<DocumentSnapshot> task)-> {
             if(task.getResult()!=null){
                 return task.getResult().toObject(User_Model.class);
             }
@@ -264,6 +263,15 @@ public class Core_FireBaseRepo {
         });
     }
 
+    public Task<Event_Model> getEventModel(String eventName) {
+        return eventCollection.document(eventName).get().continueWith((Task<DocumentSnapshot> task) -> {
+            if (task.getResult() != null) {
+                return task.getResult().toObject(Event_Model.class);
+            }
+            return null;
+        });
+    }
+
     public Task<List<Event_Model>> getAcceptedEvents(String userID){
         return mStore.collection(USERS).document(userID).collection(EVENTS).orderBy("long1", Query.Direction.ASCENDING)
                 .get().continueWith((Task<QuerySnapshot> task)->{
@@ -339,23 +347,17 @@ public class Core_FireBaseRepo {
 
         return eventMessagesRef.document().set(message);
     }
-    public Task<List<Message_Model>> getMessages(Event_Model event){
-        CollectionReference eventMessagesRef = mStore.collection(EVENTS)
-                .document(event.getName())
-                .collection(MESSAGES);
-
-        return eventMessagesRef.get().continueWith(new Continuation<QuerySnapshot, List<Message_Model>>() {
-            @Override
-            public List<Message_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<Message_Model> result = new ArrayList<>();
-                if(task.isSuccessful() && task.getResult()!=null){
-                    for(QueryDocumentSnapshot document: task.getResult()){
-                        result.add(document.toObject(Message_Model.class));
+    public Task<List<Message_Model>> getEventMessages(@NonNull String eventName){
+        return mStore.collection(EVENTS).document(eventName).collection(MESSAGES).get()
+                .continueWith((Task<QuerySnapshot> task)-> {
+                    List<Message_Model> result = new ArrayList<>();
+                    if(task.isSuccessful() && task.getResult()!=null){
+                        for(QueryDocumentSnapshot document: task.getResult()){
+                            result.add(document.toObject(Message_Model.class));
+                        }
                     }
-                }
-                return result;
-            }
-        });
+                    return result;
+                });
     }
 
     //ToDo: this has to be refactored to accept a location object input and return a list of events within some radius of the latlng.
@@ -374,6 +376,12 @@ public class Core_FireBaseRepo {
                         return publicEvents;
                     }
                 });
+    }
+
+    public void leaveEvent(String userID, String eventName){
+        //Delete the user model from event attending.
+        //--Decrement attending count.
+        //Delete the event from user's accepted events.
     }
     //*------------------------------------------GROUPS------------------------------------------*//
     // Info below may be outdated.

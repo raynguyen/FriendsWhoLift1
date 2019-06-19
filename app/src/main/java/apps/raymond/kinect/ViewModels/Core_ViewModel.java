@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -117,7 +116,7 @@ public class Core_ViewModel extends ViewModel {
     }
 
     public MutableLiveData<List<Message_Model>> getEventMessages(Event_Model event){
-        mRepository.getMessages(event)
+        mRepository.getEventMessages(event)
                 .addOnCompleteListener(new OnCompleteListener<List<Message_Model>>() {
                     @Override
                     public void onComplete(@NonNull Task<List<Message_Model>> task) {

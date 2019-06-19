@@ -37,7 +37,6 @@ public class EventMessages_Fragment extends Fragment implements Messages_Adapter
 
     private MessagesFragment_Interface activityInterface;
     public interface MessagesFragment_Interface{
-        User_Model getCurrentUser();
         void onMessagesScrolled(View v, int dy);
     }
 
@@ -83,7 +82,6 @@ public class EventMessages_Fragment extends Fragment implements Messages_Adapter
         } catch (Exception e){
             Log.w(TAG, "Some exception caught:",e);
         }
-        currUser = activityInterface.getCurrentUser();
     }
 
     @Nullable

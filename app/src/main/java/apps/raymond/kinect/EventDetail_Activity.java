@@ -5,10 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,40 +13,33 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Groups.Members_Panel_Fragment;
 import apps.raymond.kinect.UIResources.VerticalTextView;
 import apps.raymond.kinect.UserProfile.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.EventDetail_ViewModel;
 
-public class EventDetail_Activity extends AppCompatActivity implements
-        EventMessages_Fragment.MessagesFragment_Interface{
+public class EventDetail_Activity extends AppCompatActivity{
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a",Locale.getDefault());
 
-    User_Model mUserModel;
-    Core_ViewModel mViewModel;
-    Event_Model mEventModel;
     ViewGroup informationLayout;
+    private EventDetail_ViewModel mViewModel;
+    private String mUserID, mEventName;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail_);
+        mUserID = getIntent().getStringExtra("userID");
+        mEventName = getIntent().getStringExtra("name");
 
-        mEventModel = getIntent().getExtras().getParcelable("event"); //RETRIEVE THE EVENT, can't rely on detail click
-        mUserModel = getIntent().getExtras().getParcelable("user");
+        mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
 
         Toolbar toolbar = findViewById(R.id.toolbar_event);
         setSupportActionBar(toolbar);
@@ -62,58 +51,35 @@ public class EventDetail_Activity extends AppCompatActivity implements
         TextView textHost = findViewById(R.id.text_host);
         TextView textDesc = findViewById(R.id.text_description);
 
-        textName.setText(mEventModel.getName());
-        String hostString = getString(R.string.host) + " " + mEventModel.getCreator();
-        textHost.setText(hostString);
-        textDesc.setText(mEventModel.getDesc());
+        textName.setText(mEventName);
+        mViewModel.getEventModel().observe(this,(@NonNull Event_Model event)->{
+            String hostString = getString(R.string.host) + " " + event.getCreator();
+            textHost.setText(hostString);
+            textDesc.setText(event.getDesc());
+
+            if(event.getLong1()!=0){
+                String mEventStart = sdf.format(new Date(event.getLong1()));
+                txtEventStart.setText(mEventStart);
+            } else {
+                txtEventStart.setText(R.string.date_tbd);
+            }
+        });
+
+        mViewModel.loadEventModel(mEventName);
 
         VerticalTextView vTxtMembers = findViewById(R.id.vtext_members);
         vTxtMembers.setOnClickListener((View v)->{
             Log.w("EventDetailAct: ","Should expand the members tray.");
         });
 
-        if(mEventModel.getLong1()!=0){
-            String mEventStart = sdf.format(new Date(mEventModel.getLong1()));
-            txtEventStart.setText(mEventStart);
-        } else {
-            txtEventStart.setText(R.string.date_tbd);
-        }
+        //Add the messages recycler here.
 
-        mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
-        informationLayout = findViewById(R.id.layout_information);
-
+        //MembersPanel_Fragment fragment = MembersPanel_Fragment.newInstance();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public User_Model getCurrentUser() {
-        return mUserModel;
-    }
-
-    //ToDo:Need to test this on a device, it is too difficult to test via emulator.
-    private int scrollDist = 0;
-    boolean isVisible = true;
-    @Override
-    public void onMessagesScrolled(View view, int dy) {
-        if(isVisible && scrollDist > 25){
-            informationLayout.setVisibility(View.GONE);
-            view.setVisibility(View.GONE);
-            isVisible = false;
-            scrollDist = 0;
-        } else if(!isVisible && scrollDist <-25){
-            informationLayout.setVisibility(View.VISIBLE);
-            view.setVisibility(View.VISIBLE);
-            isVisible = true;
-            scrollDist = 0;
-        }
-
-        if((isVisible && dy > 0)||(!isVisible && dy < 0)){
-            scrollDist += dy;
-        }
     }
 
     @Override
@@ -137,6 +103,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(getBaseContext(),"Leaving mEventModel",Toast.LENGTH_LONG).show();
+                                mViewModel.leaveEvent(mUserID, mEventName);
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -154,7 +121,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
     }
 
     //TODO: WHEN CREATING THE FRAGMENTS, CONSIDER RETRIEVING THE DATA IN THE ACTIVITY AND PASSING TO THE FRAGMENTS.
-    private class DetailPagerAdapter extends FragmentStatePagerAdapter{
+    /*private class DetailPagerAdapter extends FragmentStatePagerAdapter{
 
         private List<Fragment> fragments;
         private DetailPagerAdapter(FragmentManager fm) {
@@ -186,5 +153,5 @@ public class EventDetail_Activity extends AppCompatActivity implements
         public int getCount() {
             return 2;
         }
-    }
+    }*/
 }
