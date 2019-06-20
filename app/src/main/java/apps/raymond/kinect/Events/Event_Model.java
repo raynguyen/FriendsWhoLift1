@@ -9,6 +9,8 @@ import java.util.List;
 
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 //ToDo: Consider implementing hashcode to individually identify event without comparing strings.
 public class Event_Model implements Parcelable{
     public static final int EXCLUSIVE = 0; //Invitation only. Not visible on map.
@@ -182,6 +184,10 @@ public class Event_Model implements Parcelable{
 
     public double getLng(){
         return lng;
+    }
+
+    public LatLng getLatLng(){
+        return new LatLng(this.lat,this.lng);
     }
 
     public void setLong1(long long1){

@@ -84,8 +84,6 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
         } catch (SecurityException e){
             //Some error
         }
-
-        getDeviceLocation();
     }
 
     public void geoLocate(String query){
@@ -97,12 +95,12 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
             Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
         }
         if(queryResults.size() > 0){
-            //We check the Markers map to determine if the location exists in the user's Location_Models.
             mResultAddress = queryResults.get(0);
             LatLng latLng = new LatLng(mResultAddress.getLatitude(), mResultAddress.getLongitude());
             if(!mMarkersMap.containsKey(latLng)){
+                Location_Model resultLocation = new Location_Model(null,mResultAddress);
                 mResultMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-                mResultMarker.setTag(mResultAddress);
+                mResultMarker.setTag(resultLocation);
                 mMarkersMap.put(latLng,mResultMarker);
             }
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));

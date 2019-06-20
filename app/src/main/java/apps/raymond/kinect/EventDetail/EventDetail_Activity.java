@@ -53,6 +53,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private String mUserID, mEventName;
     private FrameLayout mMembersFrame;
     private EventMembers_Fragment membersFrag;
+    private EventLocation_Fragment locationFrag;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +89,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         btnMapView.setOnClickListener((View v)->{
             Log.w("EventDetailAct","Inflate a mapview and show location.");
+            showLocationMap();
         });
         btnInviteUser.setOnClickListener((View v)->{
             Log.w("EventDetailAct","INVITE USER PROMPT!");
@@ -131,6 +133,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
 
             membersFrag = EventMembers_Fragment.newInstance(mEventName);
+            locationFrag = new EventLocation_Fragment();
         });
 
         mViewModel.loadEventModel(mEventName);
@@ -165,9 +168,8 @@ public class EventDetail_Activity extends AppCompatActivity implements
                 }
             }
         });
-
-
     }
+
 
     private void createMessage(String messageBody){
         long timeStamp = System.currentTimeMillis();
@@ -190,21 +192,34 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private void showMembersPanel(int i){
         switch (i){
             case ATTENDING:
-                Log.w("EventDetailAct","Show the attending users recycler.");
+                getSupportFragmentManager().popBackStack();
                 getSupportFragmentManager().beginTransaction()
-                        //.addToBackStack("members")
+                        .addToBackStack("members")
                         .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
-                        .add(R.id.frame_members_fragment,membersFrag,"members")
+                        .replace(R.id.frame_members_fragment,membersFrag,"members")
                         .commit();
 
-                Animation anim = AnimationUtils.loadAnimation(this,R.anim.fui_slide_in_right);
-                mMembersFrame.startAnimation(anim);
+                //Animation anim = AnimationUtils.loadAnimation(this,R.anim.fui_slide_in_right);
+                //mMembersFrame.startAnimation(anim);
                 break;
             case INVITED:
                 Log.w("EventDetailAct","Show the invited users recycler.");
                 break;
         }
     }
+
+    /**
+     * Pop the current top fragment from the FragmentManager and add the map fragment to the stack.
+     */
+    private void showLocationMap(){
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction()
+                .addToBackStack("location")
+                .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
+                .replace(R.id.frame_members_fragment,locationFrag,"location")
+                .commit();
+    }
+
 
 
     @Override

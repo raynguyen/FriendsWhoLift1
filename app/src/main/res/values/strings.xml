@@ -97,6 +97,7 @@
     <string name="leave_event_message">Are you sure you want to un-attend the event?</string>
     <string name="view_event_messages">View Event Messages</string>
     <string name="view_event_users">View Event Users</string>
+    <string name="null_messages">There are no posts.</string>
 
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>

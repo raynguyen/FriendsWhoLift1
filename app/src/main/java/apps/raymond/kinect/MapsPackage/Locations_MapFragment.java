@@ -3,6 +3,7 @@ package apps.raymond.kinect.MapsPackage;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +44,8 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /*
 ToDo: When searching the Locations_Model recycler, slide up to hide the MapView and only show recycler.
+ When setting a new location for the event, check to see if there is already an existing set location,
+ if yes change the marker color of the old location back to red/cyan depending on what it is.
  */
 public class Locations_MapFragment extends BaseMap_Fragment implements OnMapReadyCallback,
         Locations_Adapter.LocationClickInterface {
@@ -52,6 +56,7 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
     public interface MapCardViewClick {
         void onCardViewPositiveClick(Location_Model location);
     }
+
     /*
      * Need an identifier to determine if we need to load the card to add as a user location or if
      * we want to set the mAddress for an event.
@@ -168,8 +173,8 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
         } else {
             btnCardPositive.setText(getString(R.string.set_location));
             btnReturn.setVisibility(View.GONE);
-
         }
+
         btnCardPositive.setOnClickListener((View v)->{
             mPositiveCallback.onCardViewPositiveClick(mLocationResult);
             mLocationCard.setVisibility(View.GONE);
@@ -184,6 +189,7 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
+        getDeviceLocation();
         View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) btnLocation.getLayoutParams();
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
@@ -200,6 +206,13 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
             if(mLocationCard.getVisibility()==View.VISIBLE){
                 mLocationCard.setVisibility(View.GONE);
             }
+        });
+
+        mMap.setOnMarkerClickListener((Marker marker)-> {
+            if(marker.getTag() instanceof Location_Model){
+                onLocationClick((Location_Model) marker.getTag());
+            }
+            return true;
         });
 
         mViewModel.getLocations().observe(this,(@Nullable List<Location_Model> location_models)->{
@@ -220,12 +233,6 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
         });
         mViewModel.loadUserLocations(mUserID);
 
-        mMap.setOnMarkerClickListener((Marker marker)-> {
-            if(marker.getTag() instanceof Location_Model){
-                onLocationClick((Location_Model) marker.getTag());
-            }
-            return true;
-        });
     }
 
     private Location_Model mLocationResult;
