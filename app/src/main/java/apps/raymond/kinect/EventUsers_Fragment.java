@@ -89,7 +89,7 @@ public class EventUsers_Fragment extends Fragment implements View.OnClickListene
         txtDeclinedNull = view.findViewById(R.id.text_declined_null);
 
         txtAccepted = view.findViewById(R.id.text_accepted_count);
-        txtInvited = view.findViewById(R.id.text_invited_count);
+        txtInvited = view.findViewById(R.id.text_invited_show);
         txtDeclined = view.findViewById(R.id.text_declined_count);
 
         mAcceptedPB = view.findViewById(R.id.progress_accepted);

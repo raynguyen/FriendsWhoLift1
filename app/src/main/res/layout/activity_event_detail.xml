@@ -121,26 +121,25 @@
             android:clickable="true"/>
 
         <ImageButton
+            android:id="@+id/button_messages_show"
+            android:src="@drawable/ic_mode_comment_black_24dp"
+            style="@style/EventDetailSideIcon"/>
+
+        <ImageButton
             android:id="@+id/button_map_show"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_map_black_24dp"
-            android:background="@drawable/button_ripple"
             android:tint="@color/white"
-            android:layout_marginBottom="24dp"/>
+            style="@style/EventDetailSideIcon"/>
 
         <ImageButton
             android:id="@+id/button_invite_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_add_black_24dp"
-            android:background="@drawable/button_ripple"
             android:tint="@color/white"
-            android:layout_marginBottom="24dp"
+            style="@style/EventDetailSideIcon"
             />
 
         <TextView
-            android:id="@+id/text_attending_count"
+            android:id="@+id/text_attending_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/null_dashes"
@@ -151,7 +150,7 @@
             android:clickable="true"/>
 
         <TextView
-            android:id="@+id/text_invited_count"
+            android:id="@+id/text_invited_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/null_dashes"
@@ -201,7 +200,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/post_message_rectangle"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:padding="4dp">
 
             <EditText
                 android:id="@+id/edit_new_message"
@@ -210,7 +210,7 @@
                 android:maxLines="5"
                 android:scrollHorizontally="false"
                 android:inputType="text|textMultiLine"
-                android:background="@color/transparent"
+                android:background="@color/white"
                 android:padding="8dp"
                 android:hint="@string/new_message"
                 android:clickable="true"

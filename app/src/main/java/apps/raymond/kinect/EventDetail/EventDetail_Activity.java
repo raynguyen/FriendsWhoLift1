@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,15 +12,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -31,8 +26,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +34,8 @@ import java.util.Locale;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 
+//Todo: On Scroll of messages, animate the information hover bar so that it is hidden and all that
+// remains is the information icon on the right panel.
 public class EventDetail_Activity extends AppCompatActivity implements
         Messages_Adapter.ProfileClickListener {
     private static final int ATTENDING = 0;
@@ -51,34 +46,33 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
-    private FrameLayout mMembersFrame;
     private EventMembers_Fragment membersFrag;
     private EventLocation_Fragment locationFrag;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_detail_);
+        setContentView(R.layout.activity_event_detail);
 
         mUserID = getIntent().getStringExtra("userID");
         mEventName = getIntent().getStringExtra("name");
 
         mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
-        mMembersFrame = findViewById(R.id.frame_members_fragment);
         Toolbar toolbar = findViewById(R.id.toolbar_event);
         TextView textName = findViewById(R.id.text_name);
         TextView textDesc = findViewById(R.id.text_description);
         TextView textMonth = findViewById(R.id.text_event_month);
         TextView textDate = findViewById(R.id.text_event_date);
         TextView textTime = findViewById(R.id.text_event_time);
-        TextView txtAttending = findViewById(R.id.text_attending_count);
-        TextView txtInvited = findViewById(R.id.text_invited_count);
         ImageView imgPrivacy = findViewById(R.id.image_privacy);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
         ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
         TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
 
+        ImageButton btnMessages = findViewById(R.id.button_messages_show);
         ImageButton btnMapView = findViewById(R.id.button_map_show);
         ImageButton btnInviteUser = findViewById(R.id.button_invite_user);
+        TextView txtAttending = findViewById(R.id.text_attending_show);
+        TextView txtInvited = findViewById(R.id.text_invited_show);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -87,14 +81,17 @@ public class EventDetail_Activity extends AppCompatActivity implements
         recyclerView.setAdapter(mMessageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        btnMapView.setOnClickListener((View v)->{
-            Log.w("EventDetailAct","Inflate a mapview and show location.");
+        btnMessages.setOnClickListener((View v)->getSupportFragmentManager().popBackStack());
+        btnMapView.setOnClickListener((View v)-> {
+            v.setBackground(ContextCompat.getDrawable(this,R.drawable.icon_selected_background));
             showLocationMap();
         });
-        btnInviteUser.setOnClickListener((View v)->{
-            Log.w("EventDetailAct","INVITE USER PROMPT!");
+        btnInviteUser.setOnClickListener((View v)->Log.w("EventDetailAct","INVITE USER PROMPT!"));
+
+        txtAttending.setOnClickListener((View  v) -> {
+            showMembersPanel(ATTENDING);
+            v.setBackground(ContextCompat.getDrawable(this,R.drawable.icon_selected_background));
         });
-        txtAttending.setOnClickListener((View  v) -> showMembersPanel(ATTENDING));
         txtInvited.setOnClickListener((View v) -> showMembersPanel(INVITED));
 
         textName.setText(mEventName);
@@ -198,9 +195,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
                         .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
                         .replace(R.id.frame_members_fragment,membersFrag,"members")
                         .commit();
-
-                //Animation anim = AnimationUtils.loadAnimation(this,R.anim.fui_slide_in_right);
-                //mMembersFrame.startAnimation(anim);
                 break;
             case INVITED:
                 Log.w("EventDetailAct","Show the invited users recycler.");
