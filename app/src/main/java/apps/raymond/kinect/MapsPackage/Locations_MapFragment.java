@@ -1,23 +1,15 @@
 package apps.raymond.kinect.MapsPackage;
 
-import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +24,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -42,10 +32,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,13 +43,11 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 /*
 ToDo: When searching the Locations_Model recycler, slide up to hide the MapView and only show recycler.
  */
-public class Locations_MapFragment extends Fragment implements OnMapReadyCallback,
+public class Locations_MapFragment extends BaseMap_Fragment implements OnMapReadyCallback,
         Locations_Adapter.LocationClickInterface {
-    private static final int LOCATION_REQUEST_CODE = 0;
     public static final boolean EVENT_ACTIVITY = false;
     public static final boolean EVENT_PROFILE = true;
     private MapCardViewClick mPositiveCallback;
-    private Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
 
     public interface MapCardViewClick {
         void onCardViewPositiveClick(Location_Model location);
@@ -90,24 +75,16 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    private FusedLocationProviderClient mFusedLocationClient;
     private String mUserID;
     private Profile_ViewModel mViewModel;
     private boolean mFlagProfile;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class); //Todo: Make a ViewModel Specific for Locations!
-        mUserID = getArguments().getString("userid");
-        mFlagProfile = getArguments().getBoolean("flag");
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-        if (ActivityCompat.checkSelfPermission(requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_REQUEST_CODE);
+        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class);
+        if(getArguments()!=null){
+            mUserID = getArguments().getString("userid");
+            mFlagProfile = getArguments().getBoolean("flag");
         }
     }
 
@@ -115,23 +92,22 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_locations,container,false);
+        View v = inflater.inflate(R.layout.fragment_user_locations,container,false);
+        mMapView = v.findViewById(R.id.mapview_event_create);
+        return v;
     }
 
-    private MapView mapView;
     private ImageButton btnShowRecycler;
     private TextView txtNullData, txtLocationName;
     private ProgressBar progressBar;
     private Locations_Adapter mAdapter;
-    private ViewGroup mRecyclerGroup, mLocationCard;
+    private ViewGroup mLocationCard;
+    private Marker mLastMarker;
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mapView = view.findViewById(R.id.mapview_event_create);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
 
-        mRecyclerGroup = view.findViewById(R.id.relative_locations_recycler);
+        ViewGroup mRecyclerGroup = view.findViewById(R.id.relative_locations_recycler);
 
         btnShowRecycler = view.findViewById(R.id.button_view_locations);
         EditText editSearchMap = view.findViewById(R.id.edit_search_location);
@@ -203,24 +179,19 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
                 mLastMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
             }
         });
-
     }
 
-    private GoogleMap mMap;
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        View btnLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        super.onMapReady(googleMap);
+        View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) btnLocation.getLayoutParams();
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_END,0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_START,0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         rlp.setMargins(0, 0, 0, 40);
-        try{
-            googleMap.setMyLocationEnabled(true);
-            getDeviceLocation();
-        } catch (SecurityException e){ }
+
         mMap.setOnMapClickListener((LatLng latLng)-> {
             if(requireActivity().getCurrentFocus()!=null){
                 requireActivity().getCurrentFocus().clearFocus();
@@ -257,42 +228,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         });
     }
 
-    Location myLocation;
-    private void getDeviceLocation(){
-        try{
-            mFusedLocationClient.getLastLocation().addOnCompleteListener(requireActivity(), (Task<Location> task)-> {
-                if(task.isSuccessful() && task.getResult()!=null){
-                    myLocation = task.getResult();
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),
-                            myLocation.getLongitude()),17.0f));
-                }
-            });
-        } catch (SecurityException e){}
-    }
-
-    private Marker mLastMarker;
     private Location_Model mLocationResult;
-    private void geoLocate(String query){
-        Geocoder geocoder = new Geocoder(getContext());
-        List<Address> queryResults = new ArrayList<>(1);
-        try{
-            queryResults = geocoder.getFromLocationName(query, 1);
-        }catch (IOException e){
-            Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
-        }
-        if(queryResults.size() > 0){
-            mLocationResult = new Location_Model(null, queryResults.get(0));
-            LatLng newLatLng = mLocationResult.getLatLng();
-            if(!mMarkersMap.containsKey(mLocationResult.getLatLng())){
-                mLastMarker = mMap.addMarker(new MarkerOptions().position(newLatLng));
-                mLastMarker.setTag(mLocationResult);
-                mMarkersMap.put(newLatLng,mLastMarker);
-            }
-            mLocationCard.setVisibility(View.VISIBLE);
-            txtLocationName.setText(mLocationResult.getAddress());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng,17.0f));
-        }
-    }
 
     /**
      * Method call whenever an item held by the Location_Model recycler is clicked.
@@ -300,6 +236,7 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
      */
     @Override
     public void onLocationClick(Location_Model location) {
+        mLastMarker = mMarkersMap.get(location.getLatLng());
         mLocationResult = location;
         if(location.getLookup()==null || location.getLookup().length()<1){
             txtLocationName.setText(location.getAddress());
@@ -309,58 +246,6 @@ public class Locations_MapFragment extends Fragment implements OnMapReadyCallbac
         mLocationCard.setVisibility(View.VISIBLE);
         txtLocationName.setText(location.getAddress());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location.getLatLng(),17.0f));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==LOCATION_REQUEST_CODE){
-            if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                getDeviceLocation();
-                try{
-                    mMap.setMyLocationEnabled(true);
-                }
-                catch (SecurityException se){
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mapView.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mapView.onStop();
-    }
-
-    @Override
-    public void onPause() {
-        mapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        mapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
     }
 
     public static void hideKeyboardFrom(Context context, View view) {

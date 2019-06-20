@@ -192,7 +192,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
             case ATTENDING:
                 Log.w("EventDetailAct","Show the attending users recycler.");
                 getSupportFragmentManager().beginTransaction()
-                        .addToBackStack("members")
+                        //.addToBackStack("members")
                         .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
                         .add(R.id.frame_members_fragment,membersFrag,"members")
                         .commit();

@@ -1,8 +1,3 @@
-/**
- * This is an attempt at consolidating the code from EventExplore_Fragment and Locations_Fragment.
- * -Both of these fragments contain similar attributes and methods so we can experiment with creating
- *  a base class.
- */
 package apps.raymond.kinect.MapsPackage;
 
 import android.Manifest;
@@ -16,13 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -43,15 +34,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import apps.raymond.kinect.R;
 
-public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback,
-        Locations_Adapter.LocationClickInterface {
+public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
     private static final int LOCATION_REQUEST_CODE = 0;
-    private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private Location mLastLocation;
-    private Marker mLastMarker;
-    private Address mLastAddress;
-    private Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
+    protected GoogleMap mMap;
+    protected FusedLocationProviderClient mFusedLocationClient;
+    protected Location mLastLocation;
+    protected Marker mResultMarker;
+    protected Address mResultAddress;
+    protected Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
+    protected MapView mMapView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,45 +60,35 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback,
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_locations,container,false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_map_base,container,false);
+        mMapView = v.findViewById(R.id.mapview);
+        return v;
     }
 
-    private MapView mMapView;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mMapView = view.findViewById(R.id.mapview_event_create);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-
-
-
-        EditText editSearchMap = view.findViewById(R.id.edit_search_location);
-        editSearchMap.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH
-                    || actionId == EditorInfo.IME_ACTION_DONE
-                    || event.getAction() == KeyEvent.KEYCODE_ENTER) {
-                geoLocate(v.getText().toString());
-                return true;
-            }
-            return false;
-        });
-    }
-
-    @Override
-    public void onLocationClick(Location_Model location) {
-
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        try{
+            googleMap.setMyLocationEnabled(true);
+            getDeviceLocation();
+        } catch (SecurityException e){
+            //Some error
+        }
+
+        getDeviceLocation();
     }
 
-
-    private void geoLocate(String query){
+    public void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
         List<Address> queryResults = new ArrayList<>(1);
         try{
@@ -117,20 +98,18 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback,
         }
         if(queryResults.size() > 0){
             //We check the Markers map to determine if the location exists in the user's Location_Models.
-            mLastAddress = queryResults.get(0);
-            LatLng latLng = new LatLng(mLastAddress.getLatitude(), mLastAddress.getLongitude());
+            mResultAddress = queryResults.get(0);
+            LatLng latLng = new LatLng(mResultAddress.getLatitude(), mResultAddress.getLongitude());
             if(!mMarkersMap.containsKey(latLng)){
-                mLastMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-                mLastMarker.setTag(mLastAddress);
-                mMarkersMap.put(latLng,mLastMarker);
+                mResultMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+                mResultMarker.setTag(mResultAddress);
+                mMarkersMap.put(latLng,mResultMarker);
             }
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
-            //mLocationCard.setVisibility(View.VISIBLE);
-            //txtLocationName.setText(mLastAddress.getAddressLine(0));
         }
     }
 
-    private void getDeviceLocation(){
+    protected void getDeviceLocation(){
         try{
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(requireActivity(), (Task<Location> task)-> {
@@ -141,7 +120,26 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback,
                                             mLastLocation.getLongitude()),17.0f));
                         }
                     });
-        } catch (SecurityException e){}
+        } catch (SecurityException e){
+            //Unable to get device location for some reason.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==LOCATION_REQUEST_CODE){
+            if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                getDeviceLocation();
+                try{
+                    mMap.setMyLocationEnabled(true);
+                }
+                catch (SecurityException se){
+                    //Permission not granted to find location.
+                }
+            }
+        }
     }
 
     @Override
