@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -29,6 +30,8 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,8 +45,10 @@ public class EventDetail_Activity extends AppCompatActivity implements
         Messages_Adapter.ProfileClickListener {
     private static final int ATTENDING = 0;
     private static final int INVITED = 1;
-    private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a",Locale.getDefault());
 
+    private SimpleDateFormat monthSDF = new SimpleDateFormat("MMM",Locale.getDefault());
+    private SimpleDateFormat dateSDF = new SimpleDateFormat("dd",Locale.getDefault());
+    private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
     private FrameLayout mMembersFrame;
@@ -59,13 +64,14 @@ public class EventDetail_Activity extends AppCompatActivity implements
         mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
         mMembersFrame = findViewById(R.id.frame_members_fragment);
         Toolbar toolbar = findViewById(R.id.toolbar_event);
-        TextView txtEventStart = findViewById(R.id.text_event_start);
         TextView textName = findViewById(R.id.text_name);
-        TextView textHost = findViewById(R.id.text_host);
-        ImageView imgPrivacy = findViewById(R.id.image_privacy);
         TextView textDesc = findViewById(R.id.text_description);
+        TextView textMonth = findViewById(R.id.text_event_month);
+        TextView textDate = findViewById(R.id.text_event_date);
+        TextView textTime = findViewById(R.id.text_event_time);
         TextView txtAttending = findViewById(R.id.text_attending_count);
         TextView txtInvited = findViewById(R.id.text_invited_count);
+        ImageView imgPrivacy = findViewById(R.id.image_privacy);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
         ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
         TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
@@ -94,30 +100,32 @@ public class EventDetail_Activity extends AppCompatActivity implements
         mViewModel.getEventModel().observe(this,(Event_Model event)->{
             mViewModel.loadEventMessages(event.getName());
 
-            String hostString = getString(R.string.host) + " " + event.getCreator();
-            textHost.setText(hostString);
             textDesc.setText(event.getDesc());
             txtAttending.setText(String.valueOf(event.getAttending()));
             txtInvited.setText(String.valueOf(event.getInvited()));
 
             if(event.getLong1()!=0){
-                String mEventStart = sdf.format(new Date(event.getLong1()));
-                txtEventStart.setText(mEventStart);
+                Date date = new Date(event.getLong1());
+                textMonth.setText(monthSDF.format(date));
+                textDate.setText(dateSDF.format(date));
+                textTime.setText(timeSDF.format(date));
             } else {
-                txtEventStart.setText(R.string.date_tbd);
+                textTime.setVisibility(View.GONE);
+                Button btnSuggestDate = findViewById(R.id.button_suggest_date);
+                btnSuggestDate.setVisibility(View.VISIBLE);
+                btnSuggestDate.setOnClickListener((View v)->{
+                    Toast.makeText(this,"SUGGEST NEW DATE",Toast.LENGTH_LONG).show();
+                });
             }
 
             switch (event.getPrivacy()){
                 case Event_Model.EXCLUSIVE:
-                    Log.w("EventCreateAct","Privacy is exclusive");
                     imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_close_black_24dp));
                     break;
                 case Event_Model.PRIVATE:
-                    Log.w("EventCreateAct","Privacy is private");
                     imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_delete_black_24dp));
                     break;
                 case Event_Model.PUBLIC:
-                    Log.w("EventCreateAct","Privacy is public");
                     imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_public_black_24dp));
                     break;
             }
@@ -211,12 +219,9 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(menu.size()==0){
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.event_detail_menu, menu);
-            return true;
-        }
-        return false;
+        menu.clear();
+        getMenuInflater().inflate(R.menu.event_detail_menu, menu);
+        return true;
     }
 
     @Override
@@ -246,39 +251,4 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         }
     }
-
-    //TODO: WHEN CREATING THE FRAGMENTS, CONSIDER RETRIEVING THE DATA IN THE ACTIVITY AND PASSING TO THE FRAGMENTS.
-    /*private class DetailPagerAdapter extends FragmentStatePagerAdapter{
-
-        private List<Fragment> fragments;
-        private DetailPagerAdapter(FragmentManager fm) {
-            super(fm);
-            fragments = new ArrayList<>();
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            fragments.add(position, fragment);
-            return fragment;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                    return EventMessages_Fragment.newInstance(mEventModel);
-                case 1:
-                    return EventUsers_Fragment.newInstance(mEventModel,mUserModel);
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-    }*/
 }

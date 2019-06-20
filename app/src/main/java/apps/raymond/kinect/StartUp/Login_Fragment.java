@@ -61,16 +61,17 @@ public class Login_Fragment extends Fragment implements View.OnClickListener {
         txtSignUp.setOnClickListener(this);
     }
 
+    //ToDo: Renable log in button if the log in fails.
     @Override
     public void onClick(View v) {
         int i = v.getId();
         switch (i){
             case R.id.button_login:
-                progressBar.setVisibility(View.VISIBLE);
-                btnLogin.setVisibility(View.GONE);
                 final String userName = txtUserName.getText().toString();
                 String password = txtPassword.getText().toString();
                 if(validateInput(userName,password)) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    btnLogin.setVisibility(View.GONE);
                     mViewModel.signInWithEmail(userName, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override

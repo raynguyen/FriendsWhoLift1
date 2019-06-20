@@ -122,6 +122,7 @@
     <string name="default_time">8:00 AM</string>
     <string name="date_tbd">Date TBD</string>
     <string name="event_time_suggest">Allow users to suggest new dates?</string>
+    <string name="suggest">SUGGEST</string>
     <string-array name="visibility_options">
         <item>Only invited users.</item>
         <item>Users accepted by admins only.</item>

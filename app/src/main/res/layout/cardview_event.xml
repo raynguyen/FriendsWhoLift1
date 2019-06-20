@@ -102,7 +102,7 @@
                     android:drawablePadding="4dp"
                     android:textAlignment="gravity"
                     android:textSize="20sp"
-                    android:drawableStart="@drawable/ic_done_black_24dp" />
+                    android:drawableStart="@drawable/ic_person_black_24dp" />
 
                 <TextView
                     android:id="@+id/text_invited"

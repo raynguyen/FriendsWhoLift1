@@ -45,17 +45,15 @@
     </style>
 
     <style name="EventDateText">
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:background">@drawable/button_ripple</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
     <style name="EventCardViewText">
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">center_horizontal</item>
-
     </style>
 
 </resources>
