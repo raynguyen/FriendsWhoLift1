@@ -3,8 +3,10 @@ package apps.raymond.kinect.EventDetail;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +46,9 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private SimpleDateFormat monthSDF = new SimpleDateFormat("MMM",Locale.getDefault());
     private SimpleDateFormat dateSDF = new SimpleDateFormat("dd",Locale.getDefault());
     private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
+    private Drawable mSelectedIcon;
+    private Drawable mBtnRipple;
+    private View mFocusedView;
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
     private EventMembers_Fragment membersFrag;
@@ -55,6 +60,10 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         mUserID = getIntent().getStringExtra("userID");
         mEventName = getIntent().getStringExtra("name");
+
+
+        mSelectedIcon = ContextCompat.getDrawable(this,R.drawable.icon_selected_background);
+        mBtnRipple = ContextCompat.getDrawable(this,R.drawable.button_ripple);
 
         mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
         Toolbar toolbar = findViewById(R.id.toolbar_event);
@@ -70,7 +79,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         ImageButton btnMessages = findViewById(R.id.button_messages_show);
         ImageButton btnMapView = findViewById(R.id.button_map_show);
-        ImageButton btnInviteUser = findViewById(R.id.button_invite_user);
         TextView txtAttending = findViewById(R.id.text_attending_show);
         TextView txtInvited = findViewById(R.id.text_invited_show);
 
@@ -81,18 +89,11 @@ public class EventDetail_Activity extends AppCompatActivity implements
         recyclerView.setAdapter(mMessageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        btnMessages.setOnClickListener((View v)->getSupportFragmentManager().popBackStack());
-        btnMapView.setOnClickListener((View v)-> {
-            v.setBackground(ContextCompat.getDrawable(this,R.drawable.icon_selected_background));
-            showLocationMap();
-        });
-        btnInviteUser.setOnClickListener((View v)->Log.w("EventDetailAct","INVITE USER PROMPT!"));
-
-        txtAttending.setOnClickListener((View  v) -> {
-            showMembersPanel(ATTENDING);
-            v.setBackground(ContextCompat.getDrawable(this,R.drawable.icon_selected_background));
-        });
-        txtInvited.setOnClickListener((View v) -> showMembersPanel(INVITED));
+        mFocusedView = btnMessages;
+        btnMessages.setOnClickListener(this::switchDetailFragment);
+        btnMapView.setOnClickListener(this::switchDetailFragment);
+        txtAttending.setOnClickListener(this::switchDetailFragment);
+        txtInvited.setOnClickListener(this::switchDetailFragment);
 
         textName.setText(mEventName);
         //Update the information views with the event model retrieved from the data base.
@@ -167,7 +168,45 @@ public class EventDetail_Activity extends AppCompatActivity implements
         });
     }
 
+    /**
+     *
+     * @param v the view of which we want to highlight as the icon for the displayed content.
+     */
+    private void switchDetailFragment(View v){
+        if(mFocusedView==v){
+            return;
+        }
 
+        mFocusedView.setBackground(mBtnRipple);
+        v.setBackground(mSelectedIcon);
+        mFocusedView = v;
+
+        getSupportFragmentManager().popBackStack();
+        switch (v.getId()){
+            case R.id.button_messages_show:
+                //Do nothing
+                break;
+            case R.id.button_map_show:
+                getSupportFragmentManager().beginTransaction()
+                        .addToBackStack("location")
+                        .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_down,R.anim.slide_in_down,R.anim.slide_out_down)
+                        .replace(R.id.frame_members_fragment,locationFrag,"location")
+                        .commit();
+                break;
+            case R.id.text_attending_show:
+                getSupportFragmentManager().beginTransaction()
+                        .addToBackStack("members")
+                        .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_down,R.anim.slide_in_down,R.anim.slide_out_down)
+                        .replace(R.id.frame_members_fragment,membersFrag,"members")
+                        .commit();
+                break;
+        }
+    }
+
+    /**
+     *
+     * @param messageBody text of the message to be posted to the event.
+     */
     private void createMessage(String messageBody){
         long timeStamp = System.currentTimeMillis();
         final Message_Model newMessage = new Message_Model(mUserID,messageBody,timeStamp);
@@ -181,40 +220,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
             }
         });
     }
-
-    /**
-     * Slides the members frame layout into view if it is currently off screen.
-     * @param i variable to determine which recycler view to display
-     */
-    private void showMembersPanel(int i){
-        switch (i){
-            case ATTENDING:
-                getSupportFragmentManager().popBackStack();
-                getSupportFragmentManager().beginTransaction()
-                        .addToBackStack("members")
-                        .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
-                        .replace(R.id.frame_members_fragment,membersFrag,"members")
-                        .commit();
-                break;
-            case INVITED:
-                Log.w("EventDetailAct","Show the invited users recycler.");
-                break;
-        }
-    }
-
-    /**
-     * Pop the current top fragment from the FragmentManager and add the map fragment to the stack.
-     */
-    private void showLocationMap(){
-        getSupportFragmentManager().popBackStack();
-        getSupportFragmentManager().beginTransaction()
-                .addToBackStack("location")
-                .setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_right,R.anim.slide_in_right,R.anim.slide_out_right)
-                .replace(R.id.frame_members_fragment,locationFrag,"location")
-                .commit();
-    }
-
-
 
     @Override
     public void loadProfile(String author) {

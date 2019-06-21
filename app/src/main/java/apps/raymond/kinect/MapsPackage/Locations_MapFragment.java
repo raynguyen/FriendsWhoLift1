@@ -190,6 +190,7 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
         getDeviceLocation();
+
         View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) btnLocation.getLayoutParams();
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);

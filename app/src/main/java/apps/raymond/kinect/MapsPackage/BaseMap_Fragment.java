@@ -80,7 +80,7 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
         mMap = googleMap;
         try{
             googleMap.setMyLocationEnabled(true);
-            getDeviceLocation();
+            //getDeviceLocation();
         } catch (SecurityException e){
             //Some error
         }
