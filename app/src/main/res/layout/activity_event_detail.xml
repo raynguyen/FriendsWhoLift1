@@ -18,13 +18,6 @@
         app:layout_constraintTop_toTopOf="parent">
     </android.support.v7.widget.Toolbar>
 
-    <android.support.constraint.Guideline
-        android:id="@+id/drawer_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".9"/>
-
     <RelativeLayout
         android:id="@+id/layout_information"
         android:layout_width="0dp"
@@ -43,7 +36,8 @@
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/layout_event_date"/>
+            android:layout_toStartOf="@+id/layout_event_date"
+            />
 
         <TextView
             android:id="@+id/text_description"
@@ -54,8 +48,7 @@
             android:layout_toStartOf="@+id/layout_event_date"
             android:hint="@string/event_desc"
             android:textSize="16sp"
-            android:maxLines="3"
-            />
+            android:maxLines="3" />
 
         <LinearLayout
             android:id="@+id/layout_event_date"
@@ -64,9 +57,13 @@
             android:orientation="vertical"
             android:layout_alignParentEnd="true"
             android:background="@color/blueish"
+            android:paddingTop="4dp"
+            android:layout_marginEnd="4dp"
             android:padding="8dp"
             android:gravity="center_horizontal"
-            android:clickable="true">
+            android:clickable="true"
+            android:elevation="4dp"
+            android:layout_centerVertical="true">
 
             <TextView
                 android:id="@+id/text_event_month"
@@ -88,8 +85,85 @@
                 style="@style/EventDateText"
                 android:background="@color/transparent"
                 android:visibility="gone"/>
+            <TextView
+                android:id="@+id/text_date_suggest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/suggest"
+                android:paddingTop="8dp"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_details"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_description"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/layout_event_date"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/text_event_host"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_face_black_24dp"
+                android:drawableTint="@color/black"
+                android:hint="@string/host"
+                android:layout_marginEnd="24dp"
+                />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_map_black_24dp"
+                    android:tint="@color/black"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_map_black_24dp"
+                    android:tint="@color/black"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_map_black_24dp"
+                    android:tint="@color/black"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_map_black_24dp"
+                    android:tint="@color/black"/>
+            </LinearLayout>
+
+            <!--The icon will change depending on event privacy (i.e. exclusive, private, public)-->
+            <ImageView
+                android:id="@+id/image_privacy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_public_black_24dp"
+                android:tint="@color/black"
+                android:clickable="true"/>
+
         </LinearLayout>
     </RelativeLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/drawer_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".9"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -100,27 +174,7 @@
         app:layout_constraintTop_toBottomOf="@id/layout_information"
         app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center_horizontal"
-        android:paddingTop="4dp"
         android:background="@drawable/event_detail_side">
-
-        <ToggleButton
-            android:id="@+id/tgl_event_information"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_info_outline_black_24dp"
-            android:textOn="@null"
-            android:textOff="@null"
-            android:layout_marginBottom="12dp"
-            />
-
-        <!--The icon will change depending on event privacy (i.e. exclusive, private, public)-->
-        <ImageView
-            android:id="@+id/image_privacy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_public_black_24dp"
-            android:layout_marginBottom="18dp"
-            android:clickable="true"/>
 
         <ImageButton
             android:id="@+id/button_messages_show"
@@ -166,7 +220,9 @@
         app:layout_constraintTop_toBottomOf="@id/layout_information"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/drawer_guideline">
+        app:layout_constraintEnd_toStartOf="@id/drawer_guideline"
+        android:paddingStart="2dp"
+        android:paddingTop="2dp">
 
         <ProgressBar
             android:id="@+id/progress_loading_messages"
@@ -197,8 +253,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/post_message_rectangle"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="2dp">
+            android:layout_gravity="bottom">
 
             <EditText
                 android:id="@+id/edit_new_message"

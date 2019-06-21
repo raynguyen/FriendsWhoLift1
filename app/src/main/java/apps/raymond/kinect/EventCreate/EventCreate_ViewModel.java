@@ -51,10 +51,6 @@ public class EventCreate_ViewModel extends ViewModel {
         mEventModel.setLong1(start);
     }
 
-    public void setEventEnd(long end){
-        mEventModel.setLong2(end);
-    }
-
     public void setEventAddress(String address){
         mEventModel.setAddress(address);
     }

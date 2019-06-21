@@ -23,7 +23,7 @@ public class Event_Model implements Parcelable{
     private String address;
     private int attending = 1;
     private int invited;
-    private long long1, long2;
+    private long long1;
     private boolean timesuggest = false;
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
@@ -53,7 +53,7 @@ public class Event_Model implements Parcelable{
     }
 
     public Event_Model(String creator, String name, String desc,int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited, long long1, long long2){
+                       ArrayList<String> primes, int invited, long long1){
         this.creator = creator;
         this.name = name;
         this.desc = desc;
@@ -62,12 +62,11 @@ public class Event_Model implements Parcelable{
         this.primes = primes;
         this.invited = invited;
         this.long1 = long1;
-        this.long2 = long2;
     }
 
     public Event_Model(String creator, String name, String desc, int privacy, ArrayList<String> tags,
                        ArrayList<String> primes, int invited, String address, double lat, double lng,
-                       long long1, long long2) {
+                       long long1) {
         this.creator = creator;
         this.name = name;
         this.desc = desc;
@@ -79,7 +78,6 @@ public class Event_Model implements Parcelable{
         this.lat = lat;
         this.lng = lng;
         this.long1 = long1;
-        this.long2 = long2;
     }
 
     @SuppressWarnings("unchecked")
@@ -88,7 +86,6 @@ public class Event_Model implements Parcelable{
         name = in.readString();
         desc = in.readString();
         long1 = in.readLong();
-        long2 = in.readLong();
         privacy = in.readInt();
         tags = in.readArrayList(null);
         primes = in.readArrayList(null);
@@ -198,14 +195,6 @@ public class Event_Model implements Parcelable{
         return long1;
     }
 
-    public void setLong2(long long2){
-        this.long2 = long2;
-    }
-
-    public long getLong2(){
-        return long2;
-    }
-
     public boolean isTimesuggest() {
         return timesuggest;
     }
@@ -225,7 +214,6 @@ public class Event_Model implements Parcelable{
         dest.writeString(name);
         dest.writeString(desc);
         dest.writeLong(long1);
-        dest.writeLong(long2);
         dest.writeInt(privacy);
         dest.writeList(tags);
         dest.writeList(primes);

@@ -19,13 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.Task;
 
@@ -65,13 +68,19 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
         Toolbar toolbar = findViewById(R.id.toolbar_event);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener((View v)->onBackPressed());
+        Messages_Adapter mMessageAdapter = new Messages_Adapter(this);
+
         TextView textName = findViewById(R.id.text_name);
         TextView textDesc = findViewById(R.id.text_description);
         ViewGroup viewDate = findViewById(R.id.layout_event_date);
         TextView textMonth = findViewById(R.id.text_event_month);
         TextView textDate = findViewById(R.id.text_event_date);
         TextView textTime = findViewById(R.id.text_event_time);
-        ImageView imgPrivacy = findViewById(R.id.image_privacy);
+        TextView textDateSuggest = findViewById(R.id.text_date_suggest);
+        LinearLayout viewDetails = findViewById(R.id.layout_details);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_messages);
         ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
         TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
@@ -80,17 +89,15 @@ public class EventDetail_Activity extends AppCompatActivity implements
         ImageButton btnMapView = findViewById(R.id.button_map_show);
         TextView txtAttending = findViewById(R.id.text_attending_show);
         TextView txtInvited = findViewById(R.id.text_invited_show);
+        ImageView imgPrivacy = findViewById(R.id.image_privacy);
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener((View v)->onBackPressed());
-        Messages_Adapter mMessageAdapter = new Messages_Adapter(this);
         recyclerView.setAdapter(mMessageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         viewDate.setOnClickListener((View v)->Log.w("EventDetailAct","Clicked on the layout to suggest a date!"));
 
         mFocusedView = btnMessages;
+        textDateSuggest.setOnClickListener((View v)->Log.w("EventDetail","Suggest new date."));
         btnMessages.setOnClickListener(this::switchDetailFragment);
         btnMapView.setOnClickListener(this::switchDetailFragment);
         txtAttending.setOnClickListener(this::switchDetailFragment);
@@ -100,30 +107,32 @@ public class EventDetail_Activity extends AppCompatActivity implements
         //Update the information views with the event model retrieved from the data base.
         mViewModel.getEventModel().observe(this,(Event_Model event)->{
             if(event!=null){
-                mViewModel.loadEventMessages(event.getName());
-
                 textDesc.setText(event.getDesc());
                 txtAttending.setText(String.valueOf(event.getAttending()));
                 txtInvited.setText(String.valueOf(event.getInvited()));
 
-                if(event.getLong1()!=0){
+                switch (event.getPrivacy()){
+                    case Event_Model.EXCLUSIVE:
+                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_lock_outline_black_24dp));
+                        break;
+                    case Event_Model.PRIVATE:
+                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_vpn_lock_black_24dp));
+                        break;
+                    case Event_Model.PUBLIC:
+                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_public_black_24dp));
+                        break;
+                }
+
+                mViewModel.loadEventMessages(event.getName());
+
+                if(event.getLong1()!=0) {
                     Date date = new Date(event.getLong1());
                     textMonth.setText(monthSDF.format(date));
                     textDate.setText(dateSDF.format(date));
                     textTime.setText(timeSDF.format(date));
                     textTime.setVisibility(View.VISIBLE);
-                }
-
-                switch (event.getPrivacy()){
-                    case Event_Model.EXCLUSIVE:
-                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_close_black_24dp));
-                        break;
-                    case Event_Model.PRIVATE:
-                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_delete_black_24dp));
-                        break;
-                    case Event_Model.PUBLIC:
-                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_public_black_24dp));
-                        break;
+                } else {
+                    textDateSuggest.setVisibility(View.VISIBLE);
                 }
 
                 membersFrag = EventMembers_Fragment.newInstance(mEventName);

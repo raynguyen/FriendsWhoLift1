@@ -6,6 +6,5 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:clickable="true"
-    android:background="@color/white"
-    android:layout_margin="2dp">
+    android:background="@color/white">
 </com.google.android.gms.maps.MapView>
