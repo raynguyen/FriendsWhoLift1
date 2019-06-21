@@ -65,19 +65,20 @@
             android:layout_alignParentEnd="true"
             android:background="@color/blueish"
             android:padding="8dp"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:clickable="true">
 
             <TextView
                 android:id="@+id/text_event_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DATE"
+                android:text="@string/date"
                 style="@style/EventDateText"/>
             <TextView
                 android:id="@+id/text_event_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TBD"
+                android:text="@string/tbd"
                 style="@style/EventDateText"/>
             <TextView
                 android:id="@+id/text_event_time"
@@ -86,15 +87,6 @@
                 android:hint="@string/time_format"
                 style="@style/EventDateText"
                 android:background="@color/transparent"
-                android:visibility="visible"/>
-
-            <Button
-                android:id="@+id/button_suggest_date"
-                style="@android:style/Widget.Holo.Light.Button.Toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/suggest"
-                android:textSize="12sp"
                 android:visibility="gone"/>
         </LinearLayout>
     </RelativeLayout>
@@ -111,6 +103,14 @@
         android:paddingTop="4dp"
         android:background="@drawable/event_detail_side">
 
+        <ToggleButton
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_info_outline_black_24dp"
+            android:textOn="@null"
+            android:textOff="@null"
+            />
+
         <!--The icon will change depending on event privacy (i.e. exclusive, private, public)-->
         <ImageView
             android:id="@+id/image_privacy"
@@ -119,6 +119,7 @@
             android:src="@drawable/ic_public_black_24dp"
             android:layout_marginBottom="18dp"
             android:clickable="true"/>
+
 
         <ImageButton
             android:id="@+id/button_messages_show"
@@ -141,6 +142,7 @@
             android:gravity="center_horizontal"
             android:layout_marginBottom="12dp"
             android:background="@drawable/button_ripple"
+            android:drawableTint="@color/white"
             android:clickable="true"/>
 
         <TextView
@@ -151,6 +153,7 @@
             android:drawableTop="@drawable/ic_email_black_24dp"
             android:gravity="center_horizontal"
             android:background="@drawable/button_ripple"
+            android:drawableTint="@color/white"
             android:clickable="true"/>
     </LinearLayout>
 

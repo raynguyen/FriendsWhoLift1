@@ -98,6 +98,8 @@
     <string name="location_tbd">Location: TBD</string>
     <string name="time_format">HH:MM</string>
     <string name="default_time">8:00 AM</string>
+    <string name="date">DATE</string>
+    <string name="tbd">TBD</string>
     <string name="date_tbd">Date TBD</string>
     <string name="event_time_suggest">Allow users to suggest new dates?</string>
     <string name="suggest">SUGGEST</string>

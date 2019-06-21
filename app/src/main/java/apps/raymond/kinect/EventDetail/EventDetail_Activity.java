@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,6 +67,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar_event);
         TextView textName = findViewById(R.id.text_name);
         TextView textDesc = findViewById(R.id.text_description);
+        ViewGroup viewDate = findViewById(R.id.layout_event_date);
         TextView textMonth = findViewById(R.id.text_event_month);
         TextView textDate = findViewById(R.id.text_event_date);
         TextView textTime = findViewById(R.id.text_event_time);
@@ -85,6 +87,8 @@ public class EventDetail_Activity extends AppCompatActivity implements
         Messages_Adapter mMessageAdapter = new Messages_Adapter(this);
         recyclerView.setAdapter(mMessageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        viewDate.setOnClickListener((View v)->Log.w("EventDetailAct","Clicked on the layout to suggest a date!"));
 
         mFocusedView = btnMessages;
         btnMessages.setOnClickListener(this::switchDetailFragment);
@@ -106,13 +110,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
                 textMonth.setText(monthSDF.format(date));
                 textDate.setText(dateSDF.format(date));
                 textTime.setText(timeSDF.format(date));
-            } else {
-                textTime.setVisibility(View.GONE);
-                Button btnSuggestDate = findViewById(R.id.button_suggest_date);
-                btnSuggestDate.setVisibility(View.VISIBLE);
-                btnSuggestDate.setOnClickListener((View v)->{
-                    Toast.makeText(this,"SUGGEST NEW DATE",Toast.LENGTH_LONG).show();
-                });
+                textTime.setVisibility(View.VISIBLE);
             }
 
             switch (event.getPrivacy()){
