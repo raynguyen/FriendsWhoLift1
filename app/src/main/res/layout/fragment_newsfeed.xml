@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -11,4 +14,64 @@
         android:tint="@color/black"
         />
 
-</android.support.constraint.ConstraintLayout>
+    <ViewFlipper
+        android:id="@+id/viewflipper_news"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="events have updates you have not read."
+            android:background="@drawable/tab_gradient"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="EVENTS COMING UP THIS WEEK"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="EVENTS AROUND YOUR AREA YOU MAY BE INTERESTED IN"
+            android:background="@drawable/recycler_rectangle"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="SOME OF YOUR FRIENDS ATTENDING THESE VENTS"
+            android:background="@color/blueish"/>
+
+        <!--
+        <include android:id="@+id/page_unread_updates"
+            layout="@layout/unread_event_posts">
+        </include><include android:id="@+id/page_week"
+            layout="@layout/upcoming_weekly_events">
+        </include>
+        <include android:id="@+id/page_popular_friends"
+            layout="@layout/upcoming_weekly_events">
+        </include>-->
+    </ViewFlipper>
+
+    <!--Events based on locations you held events before.-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </RelativeLayout>
+
+    <!--Events that are popular with your friends.-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </RelativeLayout>
+
+
+</LinearLayout>

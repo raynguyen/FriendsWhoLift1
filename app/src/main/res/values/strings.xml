@@ -36,9 +36,11 @@
     <string name="time_holder">HH:MM AA</string>
     <string name="invite_users">INVITE USERS</string>
     <string name="members">MEMBERS</string>
+
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
     <string name="messages">Messages</string>
+    <string name="upcoming_this_week">You have 8 events coming up this week!</string>
 
     <!--USER STRINGS-->
     <string name="profile_picture">Profile Picture</string>
