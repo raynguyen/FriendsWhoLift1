@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class EventMembers_Fragment extends Fragment implements
     private RecyclerView recyclerViewA;
     private TextView txtNullAccepted;
     private ProgressBar pbAccepted;
+    private SearchView searchView;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class EventMembers_Fragment extends Fragment implements
         recyclerViewA = view.findViewById(R.id.recycler_members_accepted);
         txtNullAccepted = view.findViewById(R.id.text_null_accepted);
         pbAccepted = view.findViewById(R.id.progress_members_loading);
+        searchView = view.findViewById(R.id.search_members);
         return view;
     }
 

@@ -8,8 +8,6 @@
     android:orientation="vertical"
     android:padding="12dp"
     android:clickable="true"
-    android:layout_marginTop="2dp"
-    android:layout_marginLeft="2dp"
     android:background="@color/white">
 
     <TextView
@@ -23,10 +21,18 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginBottom="8dp" />
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_members"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_members_heading">
+    </android.support.v7.widget.SearchView>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/search_members"
+        android:layout_alignParentBottom="true">
 
         <TextView
             android:id="@+id/text_null_accepted"
