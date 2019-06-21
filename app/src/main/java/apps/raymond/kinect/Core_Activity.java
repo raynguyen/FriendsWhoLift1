@@ -171,7 +171,7 @@ public class Core_Activity extends AppCompatActivity implements
                     .commit();
         });
 
-        Toolbar toolbar = findViewById(R.id.core_toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_core);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));

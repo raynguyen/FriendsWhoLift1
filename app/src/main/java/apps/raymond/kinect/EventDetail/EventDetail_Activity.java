@@ -51,6 +51,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private Drawable mSelectedIcon;
     private Drawable mBtnRipple;
     private View mFocusedView;
+    private ImageButton btnMessages;
     private EventDetail_ViewModel mViewModel;
     private String mUserID, mEventName;
     private EventMembers_Fragment membersFrag;
@@ -85,7 +86,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
         ProgressBar mMessagesProgress = findViewById(R.id.progress_loading_messages);
         TextView txtEmptyMessages = findViewById(R.id.text_empty_messages);
 
-        ImageButton btnMessages = findViewById(R.id.button_messages_show);
+        btnMessages = findViewById(R.id.button_messages_show);
         ImageButton btnMapView = findViewById(R.id.button_map_show);
         TextView txtAttending = findViewById(R.id.text_attending_show);
         TextView txtInvited = findViewById(R.id.text_invited_show);
@@ -270,5 +271,15 @@ public class EventDetail_Activity extends AppCompatActivity implements
                 return false;
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        int i = getSupportFragmentManager().getFragments().size();
+        super.onBackPressed();
+        if(i>1){
+            btnMessages.performClick();
+        }
+
     }
 }
