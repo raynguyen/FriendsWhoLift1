@@ -90,39 +90,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:contentDescription="@string/Temp"
-                    android:src="@drawable/ic_group_add_black_24dp" />
-
-                <TextView
-                    style="@style/UserOptions"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:clickable="false"
-                    android:text="@string/open_group_invite" />
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    android:clickable="false"
-                    android:contentDescription="@string/Temp"
-                    android:padding="0dp"
-                    android:src="@drawable/ic_done_black_24dp"
-                    android:visibility="invisible" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <ImageView

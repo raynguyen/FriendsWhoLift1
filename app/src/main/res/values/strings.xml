@@ -11,29 +11,6 @@
     <string name="value">Add Value</string>
 
     <string name="null_events">You have no upcoming events.</string>
-    <string name="null_groups">You are not associated with any groups.</string>
-
-    <!-- Strings that are used in group_create_frag -->
-    <string name="group_name">GROUP NAME</string>
-    <string name="descriptor">Description for the group.</string>
-    <string name="private_txt">Private</string>
-    <string name="public_txt">Public</string>
-    <string name="authorized_invite">Who can invite users?</string>
-    <string name="create_group">Create Group</string>
-    <string name="groups">GROUPS</string>
-    <string-array name="array_invite_authorize">
-        <item>Owner</item>
-        <item>Admins and owner</item>
-        <item>Any member</item>
-    </string-array>
-
-    <string name="group_dialog_body">It appears that you have no tags associated with your profile.
-        These tags are used to find locale Groups that share the same interests as you and without
-    them we can not provide you any suggestions!
-    Would you like to register some tags now?</string>
-
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- General Strings -->
     <string name="app_name">Kinect</string>
@@ -56,8 +33,9 @@
     <string name="add_connection">Add Connection</string>
     <string name="delete_connection">Delete Connection</string>
     <string name="add_location">Add Location</string>
-    <string name="time_holder">"HH:MM AA</string>
-
+    <string name="time_holder">HH:MM AA</string>
+    <string name="invite_users">INVITE USERS</string>
+    <string name="members">MEMBERS</string>
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
     <string name="messages">Messages</string>
@@ -69,7 +47,6 @@
     <string name="interests">Interests</string>
     <string name="visibility">Visibility</string>
     <string name="open_event_invite">Open to event invites</string>
-    <string name="open_group_invite">Open to group invites</string>
     <string name="friends_invite">Only friends can invite me</string>
     <string name="private_invite">Invites to me are disabled</string>
     <string name="notifications">Notifications</string>
@@ -138,27 +115,13 @@
     <string name="view_locations">Show My Locations</string>
     <string name="save_location">Save Location</string>
     <string name="set_location">Set Location</string>
-    <!--GROUPS FRAGMENT-->
-    <string name="group_header">YOUR GROUPS</string>
-    <string name="explore_groups">EXPLORE GROUPS</string>
-
-    <!--GROUPS DETAIL FRAGMENT-->
-    <string name="group_privacy">Who can see this group?</string>
-    <string name="group_invite">Who can invite to this group?</string>
-    <string name="members">MEMBERS</string>
-    <string name="invite_users">Invite Users</string>
-    <string name="view_users">View Event Users</string>
-
-    <!--GROUP CREATION-->
-    <string name="creating_group">CREATING GROUP</string>
-    <string name="add_users">Full screen</string>
 
     <!--MESSAGES DIALOG-->
     <string name="accept">ACCEPT</string>
     <string name="decline">DECLINE</string>
     <string name="invitations">INVITATIONS</string>
     <string name="title_activity_maps_">Map</string>
-    <string name="new_message">Write a new message.</string>
+    <string name="new_message">Post a new message.</string>
 
     <!--MESSAGES-->
     <string name="post">Post</string>

@@ -40,8 +40,6 @@ import apps.raymond.kinect.R;
 // remains is the information icon on the right panel.
 public class EventDetail_Activity extends AppCompatActivity implements
         Messages_Adapter.ProfileClickListener {
-    private static final int ATTENDING = 0;
-    private static final int INVITED = 1;
 
     private SimpleDateFormat monthSDF = new SimpleDateFormat("MMM",Locale.getDefault());
     private SimpleDateFormat dateSDF = new SimpleDateFormat("dd",Locale.getDefault());
@@ -60,7 +58,6 @@ public class EventDetail_Activity extends AppCompatActivity implements
 
         mUserID = getIntent().getStringExtra("userID");
         mEventName = getIntent().getStringExtra("name");
-
 
         mSelectedIcon = ContextCompat.getDrawable(this,R.drawable.icon_selected_background);
         mBtnRipple = ContextCompat.getDrawable(this,R.drawable.button_ripple);

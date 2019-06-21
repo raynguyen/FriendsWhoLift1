@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_face_black_24dp"
         android:contentDescription="@string/Temp"
-        android:clickable="false"/>
+        android:clickable="false"
+        android:tint="@color/black"/>
     <TextView
         android:id="@+id/user_name_txt"
         android:layout_width="0dp"

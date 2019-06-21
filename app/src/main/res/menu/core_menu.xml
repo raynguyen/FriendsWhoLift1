@@ -21,12 +21,4 @@
         android:iconTint="@color/white">
     </item>
 
-    <item
-        android:id="@+id/action_create_group"
-        android:title="@string/create_group"
-        android:icon="@drawable/ic_insert_photo_black_24dp"
-        app:showAsAction="ifRoom"
-        android:visible="false">
-    </item>
-
 </menu>
