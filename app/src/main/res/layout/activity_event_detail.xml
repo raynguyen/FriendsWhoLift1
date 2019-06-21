@@ -104,11 +104,13 @@
         android:background="@drawable/event_detail_side">
 
         <ToggleButton
+            android:id="@+id/tgl_event_information"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="@drawable/ic_info_outline_black_24dp"
             android:textOn="@null"
             android:textOff="@null"
+            android:layout_marginBottom="12dp"
             />
 
         <!--The icon will change depending on event privacy (i.e. exclusive, private, public)-->
@@ -119,7 +121,6 @@
             android:src="@drawable/ic_public_black_24dp"
             android:layout_marginBottom="18dp"
             android:clickable="true"/>
-
 
         <ImageButton
             android:id="@+id/button_messages_show"
