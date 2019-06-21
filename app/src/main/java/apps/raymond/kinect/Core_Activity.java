@@ -93,6 +93,14 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  1b. See above.
  *  2. See above.
  *  3. Properly update the Events RecyclerView in the Core Events Fragment.
+ *
+ *
+ * ToDo:
+ *  Reconfigure home screen. NEWS FEED TYPE FEATURE
+ *  1.Searchbar to filter upcoming events.
+ *  2.Upcoming events that you may be interested from TAGS or PAST LOCATIONS.
+ *  3.Upcoming events that your friends are interested/attending.
+ *
  */
 public class Core_Activity extends AppCompatActivity implements
         SearchView.OnQueryTextListener, EventsCore_Adapter.EventClickListener{
@@ -158,14 +166,14 @@ public class Core_Activity extends AppCompatActivity implements
         btnExploreEvents.setOnClickListener((View v)->{
             EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.full_core_frame,searchFragment,"exploreevents")
+                    .replace(R.id.frame_core_full,searchFragment,"exploreevents")
                     .addToBackStack("exploreevents")
                     .commit();
         });
 
         Toolbar toolbar = findViewById(R.id.core_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         toolbar.setNavigationOnClickListener((View v)-> {
             if(mUserModel !=null){
@@ -206,7 +214,7 @@ public class Core_Activity extends AppCompatActivity implements
             case R.id.action_invitations:
                 ViewInvitations_Fragment fragment = new ViewInvitations_Fragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.core_frame,fragment,INV_FRAG)
+                        .replace(R.id.frame_core_full,fragment,INV_FRAG)
                         .addToBackStack(INV_FRAG)
                         .commit();
                 return true;

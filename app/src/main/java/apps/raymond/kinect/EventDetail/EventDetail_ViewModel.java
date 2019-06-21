@@ -24,9 +24,8 @@ public class EventDetail_ViewModel extends ViewModel {
     }
 
     public void loadEventModel(final String eventName){
-        mRepository.getEventModel(eventName).addOnCompleteListener((Task<Event_Model> task)->{
-            mEventModel.setValue(task.getResult());
-        });
+        mRepository.getEventModel(eventName).addOnCompleteListener((Task<Event_Model> task)->
+            mEventModel.setValue(task.getResult()));
     }
 
     public void loadEventMessages(final String eventName){

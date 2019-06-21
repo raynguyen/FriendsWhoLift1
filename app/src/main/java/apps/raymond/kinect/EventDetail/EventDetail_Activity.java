@@ -99,34 +99,36 @@ public class EventDetail_Activity extends AppCompatActivity implements
         textName.setText(mEventName);
         //Update the information views with the event model retrieved from the data base.
         mViewModel.getEventModel().observe(this,(Event_Model event)->{
-            mViewModel.loadEventMessages(event.getName());
+            if(event!=null){
+                mViewModel.loadEventMessages(event.getName());
 
-            textDesc.setText(event.getDesc());
-            txtAttending.setText(String.valueOf(event.getAttending()));
-            txtInvited.setText(String.valueOf(event.getInvited()));
+                textDesc.setText(event.getDesc());
+                txtAttending.setText(String.valueOf(event.getAttending()));
+                txtInvited.setText(String.valueOf(event.getInvited()));
 
-            if(event.getLong1()!=0){
-                Date date = new Date(event.getLong1());
-                textMonth.setText(monthSDF.format(date));
-                textDate.setText(dateSDF.format(date));
-                textTime.setText(timeSDF.format(date));
-                textTime.setVisibility(View.VISIBLE);
+                if(event.getLong1()!=0){
+                    Date date = new Date(event.getLong1());
+                    textMonth.setText(monthSDF.format(date));
+                    textDate.setText(dateSDF.format(date));
+                    textTime.setText(timeSDF.format(date));
+                    textTime.setVisibility(View.VISIBLE);
+                }
+
+                switch (event.getPrivacy()){
+                    case Event_Model.EXCLUSIVE:
+                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_close_black_24dp));
+                        break;
+                    case Event_Model.PRIVATE:
+                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_delete_black_24dp));
+                        break;
+                    case Event_Model.PUBLIC:
+                        imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_public_black_24dp));
+                        break;
+                }
+
+                membersFrag = EventMembers_Fragment.newInstance(mEventName);
+                locationFrag = new EventLocation_Fragment();
             }
-
-            switch (event.getPrivacy()){
-                case Event_Model.EXCLUSIVE:
-                    imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_close_black_24dp));
-                    break;
-                case Event_Model.PRIVATE:
-                    imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_delete_black_24dp));
-                    break;
-                case Event_Model.PUBLIC:
-                    imgPrivacy.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_public_black_24dp));
-                    break;
-            }
-
-            membersFrag = EventMembers_Fragment.newInstance(mEventName);
-            locationFrag = new EventLocation_Fragment();
         });
 
         mViewModel.loadEventModel(mEventName);
