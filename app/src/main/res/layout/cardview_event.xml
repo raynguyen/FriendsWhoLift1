@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent"
-    android:background="@drawable/event_cardview_bgd">
+    android:background="@drawable/event_cardview_bgd"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_body_layout"
