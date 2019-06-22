@@ -2,6 +2,7 @@ package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -187,10 +188,12 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
+        private CardView cardView;
         private TextView txtName, txtDate, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;
         private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag;
         private EventViewHolder(View view){
             super(view);
+            cardView = view.findViewById(R.id.cardview_event);
             txtName = view.findViewById(R.id.text_name);
             txtDate = view.findViewById(R.id.text_month_day);
             attendingTxt = view.findViewById(R.id.text_attending);

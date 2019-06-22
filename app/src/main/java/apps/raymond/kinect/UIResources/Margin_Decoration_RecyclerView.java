@@ -16,8 +16,8 @@ public class Margin_Decoration_RecyclerView extends RecyclerView.ItemDecoration 
         if(parent.getChildAdapterPosition(view)==0){
             outRect.top = MARGIN;
         }
-        outRect.left = MARGIN;
-        outRect.right = MARGIN;
-        outRect.bottom = MARGIN;
+        outRect.left = 8;
+        outRect.right = 8;
+        outRect.bottom = 24;
     }
 }

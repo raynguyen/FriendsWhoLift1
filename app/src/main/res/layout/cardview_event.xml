@@ -6,15 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="12dp">
+    android:background="@drawable/event_cardview_bgd">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_body_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/event_cardview_bgd">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/calendar_layout"
