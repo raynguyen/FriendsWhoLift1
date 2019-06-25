@@ -38,7 +38,7 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mNewEventsFeed = new MutableLiveData<>();
-
+    private MutableLiveData<List<Event_Model>> mPopFriendsFeed = new MutableLiveData<>();
 
     public Core_ViewModel(){
         mRepository = new Core_FireBaseRepo();
@@ -131,10 +131,17 @@ public class Core_ViewModel extends ViewModel {
         return mPublicEvents;
     }
 
-    public void loadNewEventsFeed(){
-        mRepository.loadNewEventsFeed().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
+    //This should load all the relevant recycler data.
+    public void loadEventsFeed(){
+        mRepository.loadNewEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
                 mNewEventsFeed.setValue(task.getResult());
+            }
+        });
+
+        mRepository.loadPopularEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
+            if(task.getResult()!=null){
+                mPopFriendsFeed.setValue(task.getResult());
             }
         });
     }
@@ -143,6 +150,9 @@ public class Core_ViewModel extends ViewModel {
         return mNewEventsFeed;
     }
 
+    public MutableLiveData<List<Event_Model>> getPopFriendsFeed(){
+        return mPopFriendsFeed;
+    }
 
 
     //*-------------------------------------------ETC--------------------------------------------*//

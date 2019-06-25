@@ -356,7 +356,7 @@ public class Core_FireBaseRepo {
         //Delete the event from user's accepted events.
     }
 
-    public Task<List<Event_Model>> loadNewEventsFeed(){
+    public Task<List<Event_Model>> loadNewEvents(){
         Query query = eventCollection.whereEqualTo("privacy",Event_Model.PUBLIC)
                 .whereArrayContains("primes",Event_Model.SPORTS).limit(3);
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
@@ -368,9 +368,17 @@ public class Core_FireBaseRepo {
             }
             return result;
         });
-
     }
 
+    /**
+     * We first query the Events collection for public events. Within this first subset of events,
+     * we then filter for
+     * @return
+     */
+    public Task<List<Event_Model>> loadPopularEvents(){
+        //Query query = eventCollection.
+        return null;
+    }
 
     //*-------------------------------------------ETC--------------------------------------------*//
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.

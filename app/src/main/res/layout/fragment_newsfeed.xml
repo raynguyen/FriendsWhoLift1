@@ -11,73 +11,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/layout_upcoming_events"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="0dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="TOTAL ATTENDING EVENTS:" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="423443241241"
-                android:gravity="center"/>
-        </LinearLayout>
-
         <apps.raymond.kinect.UIResources.NewsFeed_ViewFlipper
             android:id="@+id/viewflipper_news"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
+            <!--New events that contain tags you follow.-->
             <include
-                layout="@layout/layout_new_events">
+                layout="@layout/layout_tags_interests">
             </include>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                android:text="EVENTS COMING UP THIS WEEK"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                android:text="EVENTS AROUND YOUR AREA YOU MAY BE INTERESTED IN"
-                android:background="@drawable/recycler_rectangle"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                android:text="SOME OF YOUR FRIENDS ATTENDING THESE VENTS"
-                android:background="@color/blueish"/>
-
-            <!--
-            <include android:id="@+id/page_unread_updates"
-                layout="@layout/unread_event_posts">
-            </include><include android:id="@+id/page_week"
-                layout="@layout/upcoming_weekly_events">
+            <!--Public events your friends are attending but you are not.-->
+            <include
+                layout="@layout/layout_popular_friends">
             </include>
-            <include android:id="@+id/page_popular_friends"
-                layout="@layout/upcoming_weekly_events">
-            </include>-->
+
+            <!--Public events at locations you frequent.-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="EVENTS AROUND YOUR AREA YOU MAY BE INTERESTED IN"/>
+
         </apps.raymond.kinect.UIResources.NewsFeed_ViewFlipper>
 
         <!--Events based on locations you held events before.-->

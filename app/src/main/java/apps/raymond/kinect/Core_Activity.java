@@ -120,11 +120,41 @@ public class Core_Activity extends AppCompatActivity implements
         setContentView(R.layout.activity_core);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
+        ProgressBar progressBar = findViewById(R.id.progress_bar);
+        TextView textNullEvents = findViewById(R.id.fragment_null_data_text);
+        TextView textNumEvents = findViewById(R.id.text_events_count);
+
+        final RecyclerView eventsRecycler = findViewById(R.id.events_Recycler);
+        mAdapter = new EventsCore_Adapter(this);
+        eventsRecycler.setAdapter(mAdapter);
+        eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
+        eventsRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        mViewModel.getAcceptedEvents().observe(this, (List<Event_Model> events)-> {
+            if(events!=null){
+                textNumEvents.setText(String.valueOf(events.size()));
+                progressBar.setVisibility(View.GONE);
+                if(!events.isEmpty()){
+                    if(textNullEvents.getVisibility()==View.VISIBLE){
+                        textNullEvents.setVisibility(View.GONE);
+                    }
+                    mAdapter.setData(events);
+                } else {
+                    textNullEvents.setVisibility(View.VISIBLE);
+                }
+            } else {
+                textNumEvents.setText("??");
+            }
+        });
+
         mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
             if(user_model!=null){
                 mUserModel = user_model;
                 mUserID = mUserModel.getEmail();
                 mViewModel.loadAcceptedEvents(mUserID);
+                mViewModel.loadEventInvitations(mUserID);
+            } else {
+                //Todo: add safety prevention?
             }
         });
 
@@ -139,29 +169,6 @@ public class Core_Activity extends AppCompatActivity implements
             mViewModel.loadUserDocument(mUserID);
         }
 
-        ProgressBar progressBar = findViewById(R.id.progress_bar);
-        TextView nullText = findViewById(R.id.fragment_null_data_text);
-
-        final RecyclerView eventsRecycler = findViewById(R.id.events_Recycler);
-        mAdapter = new EventsCore_Adapter(this);
-        eventsRecycler.setAdapter(mAdapter);
-        eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
-        eventsRecycler.setLayoutManager(new LinearLayoutManager(this));
-
-        mViewModel.getAcceptedEvents().observe(this, (List<Event_Model> event_models)-> {
-            if(event_models!=null){
-                progressBar.setVisibility(View.GONE);
-                if(!event_models.isEmpty()){
-                    if(nullText.getVisibility()==View.VISIBLE){
-                        nullText.setVisibility(View.GONE);
-                    }
-                    mAdapter.setData(event_models);
-                } else {
-                    nullText.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
         FloatingActionButton btnExploreEvents = findViewById(R.id.button_explore_events);
         btnExploreEvents.setOnClickListener((View v)->{
             EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
@@ -173,7 +180,6 @@ public class Core_Activity extends AppCompatActivity implements
 
         Toolbar toolbar = findViewById(R.id.toolbar_core);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         toolbar.setNavigationOnClickListener((View v)-> {
             if(mUserModel !=null){
@@ -181,16 +187,6 @@ public class Core_Activity extends AppCompatActivity implements
                 profileIntent.putExtra("user", mUserModel);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
-            }
-        });
-
-        mViewModel.getUserModel().observe(this, (User_Model user_model)->{
-            if(user_model==null){
-                //Should never occur but may have to implement a safety.
-            } else {
-                mUserModel = user_model;
-                mUserID = mUserModel.getEmail();
-                mViewModel.loadEventInvitations(mUserID);
             }
         });
     }

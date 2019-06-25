@@ -21,16 +21,17 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
 public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.EventClickListener {
 
     private Core_ViewModel mViewModel;
-    private EventsNewsFeed_Adapter mNewAdapter;
+    private EventsNewsFeed_Adapter mNewAdapter, mFriendsAdapter;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         mNewAdapter = new EventsNewsFeed_Adapter(this);
+        mFriendsAdapter = new EventsNewsFeed_Adapter(this);
     }
 
     ViewFlipper viewFlipper;
-    RecyclerView recyclerNewEvents;
+    RecyclerView recyclerNewEvents, recyclerPopularFriends;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -38,6 +39,7 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
         View v = inflater.inflate(R.layout.fragment_newsfeed,container,false);
         viewFlipper = v.findViewById(R.id.viewflipper_news);
         recyclerNewEvents = v.findViewById(R.id.recycler_new_events);
+        recyclerPopularFriends = v.findViewById(R.id.recycler_events_friends);
         return v;
     }
 
@@ -49,13 +51,16 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
 
         recyclerNewEvents.setAdapter(mNewAdapter);
         recyclerNewEvents.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerPopularFriends.setAdapter(mFriendsAdapter);
+        recyclerPopularFriends.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mViewModel.getNewEventsFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
             mNewAdapter.setData(event_models);
             Log.w("CoreFragment","Got some events to load into the new events feed! " + event_models.size());
-
         });
-        mViewModel.loadNewEventsFeed();
+
+
+        mViewModel.loadEventsFeed();
     }
 
     @Override

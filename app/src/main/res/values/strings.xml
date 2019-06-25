@@ -40,8 +40,8 @@
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
     <string name="messages">Messages</string>
-    <string name="upcoming_this_week">You have 8 events coming up this week!</string>
     <string name="events_new_interested">New events you may be interested in!</string>
+    <string name="events_popular_friends">Events popular with your connections.</string>
 
     <!--USER STRINGS-->
     <string name="profile_picture">Profile Picture</string>
