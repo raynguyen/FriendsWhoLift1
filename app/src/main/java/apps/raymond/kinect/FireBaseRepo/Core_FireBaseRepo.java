@@ -332,7 +332,10 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    //ToDo: this has to be refactored to accept a location object input and return a list of events within some radius of the latlng.
+    /**
+     *
+     * @return a list of all public events from the database.
+     */
     public Task<List<Event_Model>> getPublicEvents(){
         CollectionReference eventsRef = mStore.collection(EVENTS);
         return eventsRef.whereEqualTo("privacy",0).get()
@@ -371,6 +374,8 @@ public class Core_FireBaseRepo {
     }
 
     /**
+     * Prior to calling this method we want to ensure that we have a List<String> of all the user's
+     * connections. We will then query for all public events
      * We first query the Events collection for public events. Within this first subset of events,
      * we then filter for
      * @return

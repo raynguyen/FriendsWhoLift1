@@ -16,18 +16,19 @@ import android.widget.ViewFlipper;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.EventClickListener {
 
     private Core_ViewModel mViewModel;
-    private EventsNewsFeed_Adapter mNewAdapter, mFriendsAdapter;
+    private EventsNewsFeed_Adapter mNewAdapter, mPopularAdapter;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         mNewAdapter = new EventsNewsFeed_Adapter(this);
-        mFriendsAdapter = new EventsNewsFeed_Adapter(this);
+        mPopularAdapter = new EventsNewsFeed_Adapter(this);
     }
 
     ViewFlipper viewFlipper;
@@ -51,16 +52,34 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
 
         recyclerNewEvents.setAdapter(mNewAdapter);
         recyclerNewEvents.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerPopularFriends.setAdapter(mFriendsAdapter);
+        recyclerPopularFriends.setAdapter(mPopularAdapter);
         recyclerPopularFriends.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        //Needed to show new events in area.
         mViewModel.getNewEventsFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
             mNewAdapter.setData(event_models);
             Log.w("CoreFragment","Got some events to load into the new events feed! " + event_models.size());
         });
 
+        //Needed to determine events that are popular with friends.
+        mViewModel.getUserConnections().observe(requireActivity(),(@Nullable List<User_Model> connections)->{
+            //We require the user connections so that we can query public events the connections are
+            //attending that exclude you.
+        });
 
-        mViewModel.loadEventsFeed();
+        //Needed to determine events that are popular with friends.
+        mViewModel.getPublicEvents().observe(requireActivity(),(@Nullable List<Event_Model> publicEvents)->{
+            //We want a list of public events so that we can check to see if the user is attending
+            //the event. If not, check if
+        });
+
+        //Needed to determine events that are popular with friends.
+        mViewModel.getPopularFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
+            mPopularAdapter.setData(event_models);
+            Log.w("CoreFragment","Got a list of event models that your friends joined: " + event_models.size());
+        });
+
+        mViewModel.loadNewEventsFeed();
     }
 
     @Override

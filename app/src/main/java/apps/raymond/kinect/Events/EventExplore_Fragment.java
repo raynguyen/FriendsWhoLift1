@@ -131,15 +131,16 @@ public class EventExplore_Fragment extends Fragment implements
                     mEventInvitations.remove(focusedEvent);
                     mViewModel.setEventInvitations(mEventInvitations); //Remove the invitation from the ViewModel set and increment attending count.
                     mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
+                } else {
+                    mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName())
+                            .addOnCompleteListener((Task<Void> task)->
+                                    Toast.makeText(getContext(),"You are now attending: "+focusedEvent.getName(),Toast.LENGTH_LONG).show());
+                    mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
+                    List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+                    acceptedEvents.add(focusedEvent);
+                    mViewModel.setAcceptedEvents(acceptedEvents);
+                    focusedMarker.remove();
                 }
-                mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName())
-                        .addOnCompleteListener((Task<Void> task)->
-                                Toast.makeText(getContext(),"You are now attending: "+focusedEvent.getName(),Toast.LENGTH_LONG).show());
-                mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
-                List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
-                acceptedEvents.add(focusedEvent);
-                mViewModel.setAcceptedEvents(acceptedEvents);
-                focusedMarker.remove();
             }
         });
     }
@@ -156,22 +157,16 @@ public class EventExplore_Fragment extends Fragment implements
             }
         });
 
-        mViewModel.getPublicEvents().observe(this, (List<Event_Model> event_models)->{
-            if(event_models!=null){
-                List<Event_Model> eventList = mViewModel.getAcceptedEvents().getValue();
-                for(Event_Model event : event_models){
-                    if(!eventList.contains(event)){
-                        LatLng latLng = new LatLng(event.getLat(),event.getLng());
-                        //Todo: Custom marker to show the primes on top of the date.
-                        Marker marker=  mMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title(event.getName()));
-                        marker.setTag(event);
-                    }
-                }
-            }
-        });
-        mViewModel.loadPublicEvents();
+        mViewModel.getPublicEvents().observe(this, (List<Event_Model> publicEvents)-> addEventsToMap(publicEvents));
+        if(mViewModel.getPublicEvents().getValue()!=null){
+            //If the list of public events is not null when the fragment is first instantiated, we
+            //simply want to populate the map with the public events.
+            List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();
+            addEventsToMap(publicEvents);
+        } else {
+            //Else, we want to call on the repository to load the public events to our view model.
+            mViewModel.loadPublicEvents();
+        }
 
         if(mLocationPermission){
             getDeviceLocation();
@@ -179,6 +174,26 @@ public class EventExplore_Fragment extends Fragment implements
                 googleMap.setMyLocationEnabled(true);
             } catch (SecurityException e){
                 Log.w(TAG,"SecurityException.",e); }
+        }
+    }
+
+    /**
+     *
+     *
+     * */
+    private void addEventsToMap(List<Event_Model> publicEvents){
+        List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+        if(publicEvents!=null && acceptedEvents!=null){
+            //For each event in public events, if the event is not also held by the acceptedEvents list, add the event to the map.
+            for(Event_Model event: publicEvents){
+                if(!acceptedEvents.contains(event)){
+                    LatLng latLng = new LatLng(event.getLat(),event.getLng());
+                    Marker marker=  mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(event.getName()));
+                    marker.setTag(event);
+                }
+            }
         }
     }
 
@@ -208,22 +223,6 @@ public class EventExplore_Fragment extends Fragment implements
         textTime.setText(sdf.format(date));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
         return true;
-    }
-
-    //Todo: Consider changing this back to the default for when a user wants to search a location for events.
-    private Address geoLocate(long lat, long lng){
-        try{
-            Geocoder geocoder = new Geocoder(getContext());
-            List<Address> queryResults = geocoder.getFromLocation(lat,lng,1);
-            if(queryResults.size()>0){
-                return queryResults.get(0);
-            } else {
-                return null;
-            }
-        }catch (IOException e){
-            Log.e("MapFragment", "geoLocate: IOException: " + e.getMessage() );
-        }
-        return null;
     }
 
     private void getDeviceLocation(){

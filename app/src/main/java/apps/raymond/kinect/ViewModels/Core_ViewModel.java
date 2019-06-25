@@ -34,6 +34,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository;
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
+    private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>();
@@ -60,6 +61,14 @@ public class Core_ViewModel extends ViewModel {
         return mUserModel;
     }
 
+    public void loadUserConnections(String userID){
+
+    }
+
+    public MutableLiveData<List<User_Model>> getUserConnections(){
+        return mConnections;
+    }
+
     /**
      * Query the data base to retrieve a list of the user's invitations.
      * @param userID User for whom we are retrieving the invitation sets
@@ -83,6 +92,7 @@ public class Core_ViewModel extends ViewModel {
     public void updateEventInviteDeclined(String userID, String eventName, User_Model user){
         mRepository.declineEventInvitation(eventName,userID,user);
     }
+
     //*------------------------------------------EVENTS------------------------------------------*//
     /**
      * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
@@ -132,31 +142,31 @@ public class Core_ViewModel extends ViewModel {
     }
 
     //This should load all the relevant recycler data.
-    public void loadEventsFeed(){
+    public void loadNewEventsFeed(){
         mRepository.loadNewEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
                 mNewEventsFeed.setValue(task.getResult());
             }
         });
+    }
 
-        mRepository.loadPopularEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
+    public void loadPopularEventsFeed(){
+        /*mRepository.loadPopularEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
                 mPopFriendsFeed.setValue(task.getResult());
             }
-        });
+        });*/
     }
 
     public MutableLiveData<List<Event_Model>> getNewEventsFeed(){
         return mNewEventsFeed;
     }
 
-    public MutableLiveData<List<Event_Model>> getPopFriendsFeed(){
+    public MutableLiveData<List<Event_Model>> getPopularFeed(){
         return mPopFriendsFeed;
     }
 
-
     //*-------------------------------------------ETC--------------------------------------------*//
-
     public Task<byte[]> getImage(String uri){
         return mRepository.getImage(uri);
     }
