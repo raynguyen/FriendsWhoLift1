@@ -37,7 +37,7 @@
                 android:gravity="center"/>
         </LinearLayout>
 
-        <ViewFlipper
+        <apps.raymond.kinect.UIResources.NewsFeed_ViewFlipper
             android:id="@+id/viewflipper_news"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -78,7 +78,7 @@
             <include android:id="@+id/page_popular_friends"
                 layout="@layout/upcoming_weekly_events">
             </include>-->
-        </ViewFlipper>
+        </apps.raymond.kinect.UIResources.NewsFeed_ViewFlipper>
 
         <!--Events based on locations you held events before.-->
         <RelativeLayout
