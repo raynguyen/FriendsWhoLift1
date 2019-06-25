@@ -7,14 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 import apps.raymond.kinect.Events.Event_Model;
 
 public class EventsNewsFeed_Adapter extends RecyclerView.Adapter<EventsNewsFeed_Adapter.EventViewHolder> {
     private List<Event_Model> mDataSet;
     private EventClickListener listener;
-
 
     public interface EventClickListener{
         void onEventClick(Event_Model event);
@@ -27,7 +25,7 @@ public class EventsNewsFeed_Adapter extends RecyclerView.Adapter<EventsNewsFeed_
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_event,viewGroup,false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_newsfeed_event,viewGroup,false);
         return new EventViewHolder(v);
     }
 

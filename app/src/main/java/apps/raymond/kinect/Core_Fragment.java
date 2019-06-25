@@ -52,12 +52,11 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
 
         mViewModel.getNewEventsFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
             mNewAdapter.setData(event_models);
-            Log.w("CoreFragment","Got some events to load into the new events feed!");
+            Log.w("CoreFragment","Got some events to load into the new events feed! " + event_models.size());
 
         });
         mViewModel.loadNewEventsFeed();
     }
-
 
     @Override
     public void onEventClick(Event_Model event) {
