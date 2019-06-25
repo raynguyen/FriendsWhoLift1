@@ -37,6 +37,8 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>();
+    private MutableLiveData<List<Event_Model>> mNewEventsFeed = new MutableLiveData<>();
+
 
     public Core_ViewModel(){
         mRepository = new Core_FireBaseRepo();
@@ -128,6 +130,20 @@ public class Core_ViewModel extends ViewModel {
     public MutableLiveData<List<Event_Model>> getPublicEvents(){
         return mPublicEvents;
     }
+
+    public void loadNewEventsFeed(){
+        mRepository.loadNewEventsFeed().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
+            if(task.getResult()!=null){
+                mNewEventsFeed.setValue(task.getResult());
+            }
+        });
+    }
+
+    public MutableLiveData<List<Event_Model>> getNewEventsFeed(){
+        return mNewEventsFeed;
+    }
+
+
 
     //*-------------------------------------------ETC--------------------------------------------*//
 

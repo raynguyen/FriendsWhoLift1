@@ -314,25 +314,6 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    public Task<List<User_Model>> getEventDeclined(String eventName, final Event_Model event,
-                                                    final String status) {
-        return eventCollection.document(eventName).collection(status).get()
-                .continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
-                    @Override
-                    public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<User_Model> results = new ArrayList<>();
-                        if (task.isSuccessful()) {
-                            if (task.getResult() != null) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    results.add(document.toObject(User_Model.class));
-                                }
-                            }
-                        }
-                        return results;
-                    }
-                });
-    }
-
     public Task<Void> postMessage(final String eventName,final Message_Model message){
         return mStore.collection(EVENTS).document(eventName).collection(MESSAGES).document()
                 .set(message);
@@ -370,10 +351,26 @@ public class Core_FireBaseRepo {
     }
 
     public void leaveEvent(String userID, String eventName){
-        //Delete the user model from event attending.
+        //TODO: Delete the user model from event attending.
         //--Decrement attending count.
         //Delete the event from user's accepted events.
     }
+
+    public Task<List<Event_Model>> loadNewEventsFeed(){
+        Query query = eventCollection.whereEqualTo("privacy",Event_Model.PUBLIC)
+                .whereArrayContains("primes","sports").limit(3);
+        return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
+            List<Event_Model> result = new ArrayList<>();
+            if(task.isSuccessful() && task.getResult()!=null){
+                for(QueryDocumentSnapshot document: task.getResult()){
+                    result.add(document.toObject(Event_Model.class));
+                }
+            }
+            return result;
+        });
+
+    }
+
 
     //*-------------------------------------------ETC--------------------------------------------*//
     //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.

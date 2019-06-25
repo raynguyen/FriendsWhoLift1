@@ -1,31 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:animateLayoutChanges="true">
-    <ImageView
+
+    <LinearLayout
+        android:id="@+id/layout_upcoming_events"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_face_black_24dp"
-        android:tint="@color/black"
-        />
+        android:orientation="horizontal"
+        android:paddingStart="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="TOTAL ATTENDING EVENTS:" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="423443241241"
+            android:gravity="center"/>
+    </LinearLayout>
 
     <ViewFlipper
         android:id="@+id/viewflipper_news"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:text="events have updates you have not read."
-            android:background="@drawable/tab_gradient"/>
+        <include
+            layout="@layout/layout_new_events">
+        </include>
 
         <TextView
             android:layout_width="match_parent"

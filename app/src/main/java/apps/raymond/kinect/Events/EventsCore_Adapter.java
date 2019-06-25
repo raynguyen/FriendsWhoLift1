@@ -27,6 +27,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd",Locale.getDefault());
     private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
     private EventClickListener eventClickListener;
+
     public interface EventClickListener {
         void onEventClick(Event_Model event);
     }
