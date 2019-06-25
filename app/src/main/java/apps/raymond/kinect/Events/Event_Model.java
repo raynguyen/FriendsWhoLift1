@@ -13,6 +13,13 @@ import com.google.android.gms.maps.model.LatLng;
 
 //ToDo: Consider implementing hashcode to individually identify event without comparing strings.
 public class Event_Model implements Parcelable{
+    public static final String SPORTS = "sports";
+    public static final String DRINKS = "drinks";
+    public static final String FOOD = "food";
+    public static final String MOVIE = "movies";
+    public static final String CHILL = "chill";
+    public static final String CONCERT = "concert";
+
     public static final int EXCLUSIVE = 0; //Invitation only. Not visible on map.
     public static final int PRIVATE = 1; //Invitation only. Can request to attend.
     public static final int PUBLIC = 2; //Open to all users.
@@ -21,7 +28,7 @@ public class Event_Model implements Parcelable{
     private int privacy;
     private List<String> tags, primes;
     private String address;
-    private int attending = 1;
+    private int attending;
     private int invited;
     private long long1;
     private boolean timesuggest = false;

@@ -77,20 +77,23 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         if(primes!=null){
             for(String prime : primes){
                 switch (prime){
-                    case "sports":
+                    case Event_Model.SPORTS:
                         vh.sportsTag.setVisibility(View.VISIBLE);
                         break;
-                    case "food":
+                    case Event_Model.FOOD:
                         vh.foodTag.setVisibility(View.VISIBLE);
                         break;
-                    case "drinks":
+                    case Event_Model.DRINKS:
                         vh.drinksTag.setVisibility(View.VISIBLE);
                         break;
-                    case "movies":
+                    case Event_Model.MOVIE:
                         vh.moviesTag.setVisibility(View.VISIBLE);
                         break;
-                    case "chill":
+                    case Event_Model.CHILL:
                         vh.chillTag.setVisibility(View.VISIBLE);
+                        break;
+                    case Event_Model.CONCERT:
+                        vh.concertTag.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -189,12 +192,10 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder{
-        private CardView cardView;
         private TextView txtName, txtDate, attendingTxt, invitedTxt, hostTxt, locationTxt, timeTxt;
-        private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag;
+        private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag, concertTag;
         private EventViewHolder(View view){
             super(view);
-            cardView = view.findViewById(R.id.cardview_event);
             txtName = view.findViewById(R.id.text_name);
             txtDate = view.findViewById(R.id.text_month_day);
             attendingTxt = view.findViewById(R.id.text_attending);
@@ -207,6 +208,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             drinksTag = view.findViewById(R.id.image_drinks);
             moviesTag = view.findViewById(R.id.image_movie);
             chillTag = view.findViewById(R.id.image_chill);
+            concertTag = view.findViewById(R.id.image_concert);
         }
     }
 }

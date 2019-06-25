@@ -358,7 +358,7 @@ public class Core_FireBaseRepo {
 
     public Task<List<Event_Model>> loadNewEventsFeed(){
         Query query = eventCollection.whereEqualTo("privacy",Event_Model.PUBLIC)
-                .whereArrayContains("primes","sports").limit(3);
+                .whereArrayContains("primes",Event_Model.SPORTS).limit(3);
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
             List<Event_Model> result = new ArrayList<>();
             if(task.isSuccessful() && task.getResult()!=null){

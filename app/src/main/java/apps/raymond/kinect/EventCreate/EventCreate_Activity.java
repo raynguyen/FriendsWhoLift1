@@ -33,6 +33,7 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+//ToDo: The attending count is incorrect.
 public class EventCreate_Activity extends AppCompatActivity implements
         Locations_MapFragment.MapCardViewClick, YesNoDialog.YesNoCallback {
 

@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.AddUsers_Adapter;
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -92,7 +93,6 @@ public class EventCreate_Details_Fragment extends Fragment implements
         return inflater.inflate(R.layout.fragment_event_create_details,container,false);
     }
 
-    int privacy;
     EditText txtEventTag;
     TextView txtEventTagsContainer;
     RecyclerView recyclerUsers;
@@ -259,25 +259,28 @@ public class EventCreate_Details_Fragment extends Fragment implements
         int i = buttonView.getId();
         switch (i){
             case R.id.toggle_sports:
-                updatePrimesList(buttonView.isChecked(),"sports");
+                updatePrimesList(buttonView.isChecked(),Event_Model.SPORTS);
                 break;
             case R.id.toggle_food:
-                updatePrimesList(buttonView.isChecked(),"food");
+                updatePrimesList(buttonView.isChecked(),Event_Model.FOOD);
                 break;
             case R.id.toggle_drinks:
-                updatePrimesList(buttonView.isChecked(),"drinks");
+                updatePrimesList(buttonView.isChecked(),Event_Model.DRINKS);
                 break;
             case R.id.toggle_movie:
-                updatePrimesList(buttonView.isChecked(),"movies");
+                updatePrimesList(buttonView.isChecked(),Event_Model.MOVIE);
                 break;
             case R.id.toggle_chill:
-                updatePrimesList(buttonView.isChecked(),"chill");
+                updatePrimesList(buttonView.isChecked(),Event_Model.CHILL);
+                break;
+            case R.id.toggle_concert:
+                updatePrimesList(buttonView.isChecked(), Event_Model.CONCERT);
                 break;
         }
     }
 
-    private void updatePrimesList(boolean b,String s){
-        if(b){
+    private void updatePrimesList(boolean checked,String s){
+        if(checked){
             mViewModel.addEventPrime(s);
         } else {
             mViewModel.removeEventPrime(s);
@@ -287,7 +290,19 @@ public class EventCreate_Details_Fragment extends Fragment implements
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(parent.getId()==R.id.spinner_event_privacy){
-            privacy = position;
+            /*switch(position){
+                case Event_Model.EXCLUSIVE:
+
+                    Log.w(TAG,"PRIVACY IS EXCLUSIVE");
+                    break;
+                case Event_Model.PRIVATE:
+                    Log.w(TAG,"PRIVACY IS private");
+                    break;
+                case Event_Model.PUBLIC:
+                    Log.w(TAG,"PRIVACY IS PUBLIC");
+                    break;
+            }*/
+            mViewModel.getEventModel().setPrivacy(position);
         }
     }
 

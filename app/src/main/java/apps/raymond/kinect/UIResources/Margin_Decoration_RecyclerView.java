@@ -18,6 +18,6 @@ public class Margin_Decoration_RecyclerView extends RecyclerView.ItemDecoration 
         }
         outRect.left = 8;
         outRect.right = 8;
-        outRect.bottom = 24;
+        outRect.bottom = 12;
     }
 }

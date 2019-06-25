@@ -1,92 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="12dp"
     android:animateLayoutChanges="true">
 
     <LinearLayout
-        android:id="@+id/layout_upcoming_events"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="8dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout_upcoming_events"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="TOTAL ATTENDING EVENTS:" />
+            android:orientation="horizontal"
+            android:paddingStart="8dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="423443241241"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="TOTAL ATTENDING EVENTS:" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="423443241241"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <ViewFlipper
+            android:id="@+id/viewflipper_news"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                layout="@layout/layout_new_events">
+            </include>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="EVENTS COMING UP THIS WEEK"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="EVENTS AROUND YOUR AREA YOU MAY BE INTERESTED IN"
+                android:background="@drawable/recycler_rectangle"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="SOME OF YOUR FRIENDS ATTENDING THESE VENTS"
+                android:background="@color/blueish"/>
+
+            <!--
+            <include android:id="@+id/page_unread_updates"
+                layout="@layout/unread_event_posts">
+            </include><include android:id="@+id/page_week"
+                layout="@layout/upcoming_weekly_events">
+            </include>
+            <include android:id="@+id/page_popular_friends"
+                layout="@layout/upcoming_weekly_events">
+            </include>-->
+        </ViewFlipper>
+
+        <!--Events based on locations you held events before.-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </RelativeLayout>
+
+        <!--Events that are popular with your friends.-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </RelativeLayout>
     </LinearLayout>
-
-    <ViewFlipper
-        android:id="@+id/viewflipper_news"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <include
-            layout="@layout/layout_new_events">
-        </include>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:text="EVENTS COMING UP THIS WEEK"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:text="EVENTS AROUND YOUR AREA YOU MAY BE INTERESTED IN"
-            android:background="@drawable/recycler_rectangle"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:text="SOME OF YOUR FRIENDS ATTENDING THESE VENTS"
-            android:background="@color/blueish"/>
-
-        <!--
-        <include android:id="@+id/page_unread_updates"
-            layout="@layout/unread_event_posts">
-        </include><include android:id="@+id/page_week"
-            layout="@layout/upcoming_weekly_events">
-        </include>
-        <include android:id="@+id/page_popular_friends"
-            layout="@layout/upcoming_weekly_events">
-        </include>-->
-    </ViewFlipper>
-
-    <!--Events based on locations you held events before.-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </RelativeLayout>
-
-    <!--Events that are popular with your friends.-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </RelativeLayout>
-
-
-</LinearLayout>
+</android.support.v7.widget.CardView>

@@ -2,7 +2,6 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardview_event"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent"
@@ -59,6 +58,7 @@
             style="@style/EventCardViewText"/>
 
         <LinearLayout
+            android:id="@+id/layout_primes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -69,33 +69,27 @@
 
             <ImageView
                 android:id="@+id/image_sport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_fitness_center_black_24dp"
                 style="@style/CardPrimaryTags"/>
             <ImageView
                 android:id="@+id/image_food"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_local_dining_black_24dp"
                 style="@style/CardPrimaryTags"/>
             <ImageView
                 android:id="@+id/image_drinks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_local_bar_black_24dp"
                 style="@style/CardPrimaryTags"/>
             <ImageView
                 android:id="@+id/image_movie"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_movie_black_24dp"
                 style="@style/CardPrimaryTags"/>
             <ImageView
                 android:id="@+id/image_chill"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/ic_weekend_black_24dp"
+                style="@style/CardPrimaryTags"/>
+            <ImageView
+                android:id="@+id/image_concert"
+                android:src="@drawable/ic_music_note_black_24dp"
                 style="@style/CardPrimaryTags"/>
         </LinearLayout>
 
