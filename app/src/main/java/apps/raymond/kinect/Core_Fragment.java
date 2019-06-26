@@ -13,6 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewFlipper;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
@@ -20,9 +24,9 @@ import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.EventClickListener {
-
     private Core_ViewModel mViewModel;
     private EventsNewsFeed_Adapter mNewAdapter, mPopularAdapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,17 +64,21 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
             mNewAdapter.setData(event_models);
             Log.w("CoreFragment","Got some events to load into the new events feed! " + event_models.size());
         });
+        mViewModel.loadNewEventsFeed();
 
         //Needed to determine events that are popular with friends.
         mViewModel.getUserConnections().observe(requireActivity(),(@Nullable List<User_Model> connections)->{
             //We require the user connections so that we can query public events the connections are
             //attending that exclude you.
+            filterPopularEvents();
         });
+
 
         //Needed to determine events that are popular with friends.
         mViewModel.getPublicEvents().observe(requireActivity(),(@Nullable List<Event_Model> publicEvents)->{
             //We want a list of public events so that we can check to see if the user is attending
             //the event. If not, check if
+            filterPopularEvents();
         });
 
         //Needed to determine events that are popular with friends.
@@ -80,9 +88,50 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
         });
 
         //Needed to determine events held at locations where you have previously been to.
+        /// STUFF HERE
 
-        //When we have a list of usere connections and public events, we can iterate through the
-        mViewModel.loadNewEventsFeed();
+    }
+
+    //ToDo: Public events need to be filtered to exlude all events held by the AcceptedEvents.
+    //ToDo: There is no guarantee that AcceptedEvents is not null.
+    /**
+     * Method to filter out from the public events,
+     */
+    private void filterPopularEvents(){
+        String userID = mViewModel.getUserID().getValue();
+        List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();
+        List<User_Model> userConnections = mViewModel.getUserConnections().getValue();
+        List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+        List<Event_Model> filteredEvents = new ArrayList<>(); //List containing events after filtering for public without user and with connections.
+        if(publicEvents!=null && userConnections!=null){
+            Log.w("CoreFragment","Size of public events before filter = "+publicEvents.size());
+            //Filter all public events for events the user has not enrolled.
+            if(acceptedEvents!=null){
+                List<Event_Model> tempList = new ArrayList<>();
+                for(Event_Model event : publicEvents){
+                    if(acceptedEvents.contains(event)){
+                        tempList.add(event);
+                    }
+                }
+                publicEvents.removeAll(tempList);
+                Log.w("CoreFragment","Size of public events after filter = "+publicEvents.size());
+                //mViewModel.setPublicEvents(publicEvents); //SET THE PUBLIC EVENTS WITH THE FILTERED LIST. THIS SHOULD GO SOMEWHERE
+                //Have a filteredPublicEvents and call this above method in the core?
+            }
+            //For each connection, check each event in the filtered public events to see if there is a connected user attending the event.
+            for(User_Model connection : userConnections){
+                for(Event_Model event : publicEvents){
+                    mViewModel.checkForUser(connection.getEmail(),event.getName())
+                        .addOnCompleteListener((@NonNull Task<Boolean> task)->{
+                            if(task.getResult()){
+                                filteredEvents.add(event);
+                            }
+                        });
+                }
+            }
+            Log.w("CoreFragment","Size of final list = "+filteredEvents.size());
+
+        }
     }
 
     @Override

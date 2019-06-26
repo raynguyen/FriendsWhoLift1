@@ -153,6 +153,8 @@ public class Core_Activity extends AppCompatActivity implements
                 mUserID = mUserModel.getEmail();
                 mViewModel.loadAcceptedEvents(mUserID);
                 mViewModel.loadEventInvitations(mUserID);
+                mViewModel.loadPublicEvents();
+                mViewModel.loadUserConnections(mUserID);
             } else {
                 //Todo: add safety prevention?
             }
@@ -161,7 +163,6 @@ public class Core_Activity extends AppCompatActivity implements
         if(getIntent().hasExtra("user")){
             //User signed in from login and we have retrieved document.
             mUserModel = getIntent().getExtras().getParcelable("user");
-            mUserID = mUserModel.getEmail();
             mViewModel.setUserDocument(mUserModel);
         } else if(getIntent().hasExtra("userID")){
             //Called if previous user is detected. We must then fetch the user document from DB.

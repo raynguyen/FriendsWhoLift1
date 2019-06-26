@@ -157,13 +157,9 @@ public class EventExplore_Fragment extends Fragment implements
             }
         });
 
-        mViewModel.getPublicEvents().observe(this, (List<Event_Model> publicEvents)-> {
-            Log.w(TAG,"Size of list: "+publicEvents.size());
-            addEventsToMap(publicEvents);
-        });
+        mViewModel.getPublicEvents().observe(this, (List<Event_Model> publicEvents)-> addEventsToMap(publicEvents));
 
         if(mViewModel.getPublicEvents().getValue()!=null){
-
             //If the list of public events is not null when the fragment is first instantiated, we
             //simply want to populate the map with the public events.
             List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();
@@ -183,9 +179,11 @@ public class EventExplore_Fragment extends Fragment implements
     }
 
     /**
-     *
-     *
-     * */
+     * Method call to create Markers on the google map with each marker with a tag corresponding to
+     * the Event_Model. Once an unfiltered list of public events is retrieved, we ensure that the
+     * event is not already in the list of accepted events for the current user. If there is a match,
+     * we skip creating a marker on the map for the respective event.
+     */
     private void addEventsToMap(List<Event_Model> publicEvents){
         List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
         if(publicEvents!=null && acceptedEvents!=null){

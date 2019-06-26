@@ -33,6 +33,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  */
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository;
+    private MutableLiveData<String> mUserID = new MutableLiveData<>();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
@@ -47,12 +48,14 @@ public class Core_ViewModel extends ViewModel {
 
     public void setUserDocument(User_Model user_model){
         mUserModel.setValue(user_model);
+        mUserID.setValue(user_model.getEmail());
     }
 
     public void loadUserDocument(String userID){
         mRepository.getUserDocument(userID).addOnCompleteListener((Task<User_Model> task)->{
             if(task.isSuccessful()){
                 mUserModel.setValue(task.getResult());
+                mUserID.setValue(task.getResult().getEmail());
             }
         });
     }
@@ -61,8 +64,16 @@ public class Core_ViewModel extends ViewModel {
         return mUserModel;
     }
 
-    public void loadUserConnections(String userID){
+    public MutableLiveData<String> getUserID(){
+        return mUserID;
+    }
 
+    public void loadUserConnections(String userID){
+        mRepository.getUserConnections(userID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)->{
+            if(task.isSuccessful()){
+                mConnections.setValue(task.getResult());
+            }
+        });
     }
 
     public MutableLiveData<List<User_Model>> getUserConnections(){
@@ -167,6 +178,9 @@ public class Core_ViewModel extends ViewModel {
         return mPopFriendsFeed;
     }
 
+    public Task<Boolean> checkForUser(String userID, String eventName){
+        return mRepository.checkForUser(userID, eventName);
+    }
     //*-------------------------------------------ETC--------------------------------------------*//
     public Task<byte[]> getImage(String uri){
         return mRepository.getImage(uri);

@@ -185,19 +185,14 @@ public class Core_FireBaseRepo {
      */
     public Task<List<User_Model>> getUserConnections(String userID){
         return userCollection.document(userID).collection("Connections").get()
-                .continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
-                    @Override
-                    public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<User_Model> results = new ArrayList<>();
-                        if(task.isSuccessful()){
-                            if(task.getResult() !=null){
-                                for(QueryDocumentSnapshot document : task.getResult()){
-                                    results.add(document.toObject(User_Model.class));
-                                }
-                            }
+                .continueWith((@NonNull Task<QuerySnapshot> task)-> {
+                    List<User_Model> results = new ArrayList<>();
+                    if(task.isSuccessful() && task.getResult()!=null){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            results.add(document.toObject(User_Model.class));
                         }
-                        return results;
                     }
+                    return results;
                 });
     }
 
@@ -381,6 +376,16 @@ public class Core_FireBaseRepo {
     public Task<List<Event_Model>> loadPopularEvents(){
         //Query query = eventCollection.
         return null;
+    }
+
+    public Task<Boolean> checkForUser(String userID, String eventName){
+        return eventCollection.document(eventName).collection(ACCEPTED).document(userID).get()
+                .continueWith((@NonNull Task<DocumentSnapshot> task)->{
+                    if(task.isSuccessful()){
+                        return task.getResult().exists();
+                    }
+                    return false;
+                });
     }
 
     //*-------------------------------------------ETC--------------------------------------------*//
