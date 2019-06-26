@@ -157,8 +157,13 @@ public class EventExplore_Fragment extends Fragment implements
             }
         });
 
-        mViewModel.getPublicEvents().observe(this, (List<Event_Model> publicEvents)-> addEventsToMap(publicEvents));
+        mViewModel.getPublicEvents().observe(this, (List<Event_Model> publicEvents)-> {
+            Log.w(TAG,"Size of list: "+publicEvents.size());
+            addEventsToMap(publicEvents);
+        });
+
         if(mViewModel.getPublicEvents().getValue()!=null){
+
             //If the list of public events is not null when the fragment is first instantiated, we
             //simply want to populate the map with the public events.
             List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();

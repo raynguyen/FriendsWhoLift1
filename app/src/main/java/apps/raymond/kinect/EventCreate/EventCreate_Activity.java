@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
@@ -133,6 +134,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
                 event.setCreator(mUserID);
                 event.setPrimes(mViewModel.getEventPrimes());
                 event.setInvited(mViewModel.getInviteList().size());
+                event.setCreate(Calendar.getInstance().getTimeInMillis());
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("event",event);
                 setResult(Activity.RESULT_OK, returnIntent);

@@ -79,6 +79,9 @@ public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.Ev
             Log.w("CoreFragment","Got a list of event models that your friends joined: " + event_models.size());
         });
 
+        //Needed to determine events held at locations where you have previously been to.
+
+        //When we have a list of usere connections and public events, we can iterate through the
         mViewModel.loadNewEventsFeed();
     }
 

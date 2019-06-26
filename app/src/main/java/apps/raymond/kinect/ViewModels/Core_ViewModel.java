@@ -127,12 +127,9 @@ public class Core_ViewModel extends ViewModel {
     }
 
     public void loadPublicEvents(){
-        mRepository.getPublicEvents().addOnCompleteListener(new OnCompleteListener<List<Event_Model>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Event_Model>> task) {
-                if(task.isSuccessful()){
-                    mPublicEvents.setValue(task.getResult());
-                }
+        mRepository.getPublicEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)-> {
+            if(task.isSuccessful()){
+                mPublicEvents.setValue(task.getResult());
             }
         });
     }
@@ -156,6 +153,10 @@ public class Core_ViewModel extends ViewModel {
                 mPopFriendsFeed.setValue(task.getResult());
             }
         });*/
+    }
+
+    public void loadLocationEventsFeed(){
+
     }
 
     public MutableLiveData<List<Event_Model>> getNewEventsFeed(){

@@ -23,6 +23,7 @@ public class Event_Model implements Parcelable{
     public static final int EXCLUSIVE = 0; //Invitation only. Not visible on map.
     public static final int PRIVATE = 1; //Invitation only. Can request to attend.
     public static final int PUBLIC = 2; //Open to all users.
+    public static final String CREATE = "create";
     private String creator, name, desc;
     private double lat, lng;
     private int privacy;
@@ -31,6 +32,7 @@ public class Event_Model implements Parcelable{
     private int attending;
     private int invited;
     private long long1;
+    private long create;
     private boolean timesuggest = false;
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
@@ -93,6 +95,7 @@ public class Event_Model implements Parcelable{
         name = in.readString();
         desc = in.readString();
         long1 = in.readLong();
+        create = in.readLong();
         privacy = in.readInt();
         tags = in.readArrayList(null);
         primes = in.readArrayList(null);
@@ -202,6 +205,14 @@ public class Event_Model implements Parcelable{
         return long1;
     }
 
+    public long getCreate() {
+        return create;
+    }
+
+    public void setCreate(long create) {
+        this.create = create;
+    }
+
     public boolean isTimesuggest() {
         return timesuggest;
     }
@@ -221,6 +232,7 @@ public class Event_Model implements Parcelable{
         dest.writeString(name);
         dest.writeString(desc);
         dest.writeLong(long1);
+        dest.writeLong(create);
         dest.writeInt(privacy);
         dest.writeList(tags);
         dest.writeList(primes);

@@ -333,23 +333,21 @@ public class Core_FireBaseRepo {
     }
 
     /**
-     *
+     * Fetch a list of public events and order by most recently created (i.e. largest value for the
+     * 'create' field.
      * @return a list of all public events from the database.
      */
     public Task<List<Event_Model>> getPublicEvents(){
         CollectionReference eventsRef = mStore.collection(EVENTS);
-        return eventsRef.whereEqualTo("privacy",0).get()
-                .continueWith(new Continuation<QuerySnapshot, List<Event_Model>>() {
-                    @Override
-                    public List<Event_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Event_Model> publicEvents = new ArrayList<>();
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot document : task.getResult()){
-                                publicEvents.add(document.toObject(Event_Model.class));
-                            }
+        return eventsRef.whereEqualTo("privacy",Event_Model.PUBLIC).orderBy(Event_Model.CREATE).get()
+                .continueWith((@NonNull Task<QuerySnapshot> task)-> {
+                    List<Event_Model> publicEvents = new ArrayList<>();
+                    if(task.isSuccessful() && task.getResult()!=null){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            publicEvents.add(document.toObject(Event_Model.class));
                         }
-                        return publicEvents;
                     }
+                    return publicEvents;
                 });
     }
 
