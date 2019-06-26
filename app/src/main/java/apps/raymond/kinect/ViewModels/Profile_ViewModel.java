@@ -42,12 +42,20 @@ public class Profile_ViewModel extends ViewModel {
 
     public void loadSuggestedConnections(String userID){
         //Todo: Determine an algorithm to determine how to find suggested users to connect with.
+        //Currently returns the entire list of users for the application.
+        mRepo.getAllUsers(userID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
+            if(task.isSuccessful()){
+                mSuggestedConnections.setValue(task.getResult());
+            }
+        });
     }
 
     public MutableLiveData<List<User_Model>> getSuggestedConnections(){
         return mSuggestedConnections;
     }
 
+    //ToDo: OnComplete, we want to update the list held by suggested users. We want to remove the
+    // suggested user should we create the connection.
     public Task<Void> createUserConnection(String userID, User_Model profileModel){
         return mRepo.addConnection(userID,profileModel);
     }

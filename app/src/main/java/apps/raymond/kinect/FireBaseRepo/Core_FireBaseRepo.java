@@ -389,8 +389,13 @@ public class Core_FireBaseRepo {
     }
 
     //*-------------------------------------------ETC--------------------------------------------*//
-    //Will currently return a whole list of users to populate the recyclerview for inviting users to event/groups.
-    // Todo: Filter our users that have Privacy:private.
+    // Todo: Filter our users that have Privacy:private. Consider removing the 'code' out to viewmodel
+    //  or to an application class.
+    /**
+     * Query FireStore for a list of all users registered to the application.
+     * @param userID parameter so that we exclude the current user from the result list.
+     * @return a list of all users in the application.
+     */
     public Task<List<User_Model>> getAllUsers(final String userID) {
         return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
             @Override

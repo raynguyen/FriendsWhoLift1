@@ -120,22 +120,25 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
             }
             //For each connection, check each event in the filtered public events to see if there is a connected user attending the event.
             for(User_Model connection : userConnections){
+                Log.w("CoreFragment","Iterating through connection "+connection.getEmail());
                 for(Event_Model event : publicEvents){
+                    Log.w("CoreFragment","Checking for connection in event: " + event.getName());
                     mViewModel.checkForUser(connection.getEmail(),event.getName())
                         .addOnCompleteListener((@NonNull Task<Boolean> task)->{
+                            Log.w("CoreFragment","Event: " + event.getName() + " check returned "+task.getResult());
                             if(task.getResult()){
                                 filteredEvents.add(event);
                             }
                         });
                 }
             }
-            Log.w("CoreFragment","Size of final list = "+filteredEvents.size());
-
+            //Todo: Because the check is asynchronous, we have to use the filteredEvents as a mutable live data
+            // and continuously update the livedata as the tasks are being completed.
         }
     }
 
     @Override
     public void onEventClick(Event_Model event) {
-
+        Log.w("CoreFragment","Clicked on event in news feed: " +event.getName());
     }
 }

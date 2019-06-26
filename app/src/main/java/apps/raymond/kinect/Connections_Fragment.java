@@ -103,6 +103,8 @@ public class Connections_Fragment extends Fragment implements
                 mSuggestedAdapter.setData(result);
             }
         });
+        //ToDo: We want to wait until the connections are retrieved. Then we try and fetch at suggested
+        // list of users and then filter out the already connected users.
         mViewModel.loadConnections(mUserID);
         mViewModel.loadSuggestedConnections(mUserID);
     }
