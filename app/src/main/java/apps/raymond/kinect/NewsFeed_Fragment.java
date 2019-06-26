@@ -128,6 +128,7 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
                             Log.w("CoreFragment","Event: " + event.getName() + " check returned "+task.getResult());
                             if(task.getResult()){
                                 filteredEvents.add(event);
+                                mViewModel.getPopularFeed().postValue(filteredEvents);
                             }
                         });
                 }
