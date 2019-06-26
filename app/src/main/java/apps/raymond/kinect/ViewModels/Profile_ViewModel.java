@@ -17,13 +17,14 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class Profile_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo;
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
+    private MutableLiveData<List<User_Model>> mSuggestedConnections = new MutableLiveData<>();
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
 
     public Profile_ViewModel(){
         mRepo = new Core_FireBaseRepo();
     }
 
-    public void loadConnectionsList(String userID){
+    public void loadConnections(String userID){
         mRepo.getUserConnections(userID)
                 .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
                     @Override
@@ -37,6 +38,14 @@ public class Profile_ViewModel extends ViewModel {
 
     public MutableLiveData<List<User_Model>> getUserConnections(){
         return mConnections;
+    }
+
+    public void loadSuggestedConnections(String userID){
+        //Todo: Determine an algorithm to determine how to find suggested users to connect with.
+    }
+
+    public MutableLiveData<List<User_Model>> getSuggestedConnections(){
+        return mSuggestedConnections;
     }
 
     public Task<Void> createUserConnection(String userID, User_Model profileModel){

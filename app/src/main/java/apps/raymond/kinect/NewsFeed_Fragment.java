@@ -23,7 +23,7 @@ import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-public class Core_Fragment extends Fragment implements EventsNewsFeed_Adapter.EventClickListener {
+public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapter.EventClickListener {
     private Core_ViewModel mViewModel;
     private EventsNewsFeed_Adapter mNewAdapter, mPopularAdapter;
 

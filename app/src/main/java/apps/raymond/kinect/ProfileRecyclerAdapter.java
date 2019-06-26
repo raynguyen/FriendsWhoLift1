@@ -49,11 +49,11 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     public void setData(List<User_Model> newData){
         if(mDataSet==null){
             this.mDataSet = newData;
-            notifyItemRangeChanged(0,newData.size());
         } else {
-            //DIFFUTIL HERE.
+            mDataSet.clear();
+            mDataSet.addAll(newData);
         }
-
+        notifyItemRangeChanged(0,newData.size());
     }
 
     /**

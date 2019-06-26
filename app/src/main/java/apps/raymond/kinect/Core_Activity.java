@@ -120,8 +120,8 @@ public class Core_Activity extends AppCompatActivity implements
         setContentView(R.layout.activity_core);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
-        ProgressBar progressBar = findViewById(R.id.progress_bar);
-        TextView textNullEvents = findViewById(R.id.fragment_null_data_text);
+        ProgressBar progressBar = findViewById(R.id.progress_connections);
+        TextView textNullEvents = findViewById(R.id.text_null_connections);
         TextView textNumEvents = findViewById(R.id.text_events_count);
 
         final RecyclerView eventsRecycler = findViewById(R.id.events_Recycler);

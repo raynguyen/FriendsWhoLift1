@@ -1,6 +1,5 @@
 package apps.raymond.kinect;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,55 +44,67 @@ public class Connections_Fragment extends Fragment implements
         mUserID =mUserModel.getEmail();
     }
 
+    private RecyclerView recyclerConnections,recyclerSuggested;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_connections,container,false);
+        View v = inflater.inflate(R.layout.fragment_user_connections,container,false);
+        recyclerConnections = v.findViewById(R.id.recycler_connections);
+        recyclerSuggested = v.findViewById(R.id.recycler_suggest_connections);
+        return v;
     }
 
-    RecyclerView connectionsRecycler;
-    ProfileRecyclerAdapter mAdapter;
-    TextView nullDataText;
-    ProgressBar progressBar;
-    ImageButton btnReturn;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btnReturn = view.findViewById(R.id.button_return);
-        btnReturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
+        ImageButton btnReturn = view.findViewById(R.id.button_return);
+        btnReturn.setOnClickListener((View v)-> getFragmentManager().popBackStack());
+
+        ProfileRecyclerAdapter mConnectionsAdapter = new ProfileRecyclerAdapter(this);
+        ProfileRecyclerAdapter mSuggestedAdapter = new ProfileRecyclerAdapter(this);
+
+        recyclerConnections.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerSuggested.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        recyclerConnections.setAdapter(mConnectionsAdapter);
+        recyclerSuggested.setAdapter(mSuggestedAdapter);
+
+        TextView textNullConnections = view.findViewById(R.id.text_null_connections);
+        TextView textNullSuggested = view.findViewById(R.id.text_null_suggested_connections);
+        ProgressBar pbConnections = view.findViewById(R.id.progress_connections);
+        ProgressBar pbSuggested = view.findViewById(R.id.progress_suggested_connections);
+
+        mViewModel.getUserConnections().observe(this, (@Nullable List<User_Model> connections)-> {
+            if(connections!=null){
+                if(pbConnections.getVisibility()==View.VISIBLE){
+                    pbConnections.setVisibility(View.INVISIBLE);
+                }
+                if(connections.size()==0){
+                    textNullConnections.setVisibility(View.VISIBLE);
+                } else {
+                    textNullConnections.setVisibility(View.INVISIBLE);
+                }
+                mConnectionsAdapter.setData(connections);
             }
         });
 
-        nullDataText = view.findViewById(R.id.fragment_null_data_text);
-        progressBar = view.findViewById(R.id.progress_bar);
-
-        connectionsRecycler = view.findViewById(R.id.fragment_recycler);
-        connectionsRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mAdapter = new ProfileRecyclerAdapter(this);
-        connectionsRecycler.setAdapter(mAdapter);
-
-        mViewModel.getUserConnections().observe(this, new Observer<List<User_Model>>() {
-            @Override
-            public void onChanged(@Nullable List<User_Model> user_models) {
-                if(progressBar.getVisibility()==View.VISIBLE){
-                    progressBar.setVisibility(View.INVISIBLE);
+        mViewModel.getSuggestedConnections().observe(this,(@Nullable List<User_Model> result)->{
+            if(result!=null){
+                if(pbSuggested.getVisibility()==View.VISIBLE){
+                    pbSuggested.setVisibility(View.INVISIBLE);
                 }
-                if(user_models.size()==0 && nullDataText.getVisibility()==View.INVISIBLE){
-                    nullDataText.setVisibility(View.VISIBLE);
-                } else if(user_models.size()!=0 && nullDataText.getVisibility()==View.VISIBLE){
-                    nullDataText.setVisibility(View.INVISIBLE);
+                if(result.size()==0){
+                    textNullSuggested.setVisibility(View.VISIBLE);
+                } else {
+                    textNullSuggested.setVisibility(View.INVISIBLE);
                 }
-
-                mAdapter.setData(user_models);
+                mSuggestedAdapter.setData(result);
             }
         });
-
-        mViewModel.loadConnectionsList(mUserID);
+        mViewModel.loadConnections(mUserID);
+        mViewModel.loadSuggestedConnections(mUserID);
     }
 
     @Override

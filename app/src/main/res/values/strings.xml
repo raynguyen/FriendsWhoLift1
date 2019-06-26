@@ -7,11 +7,6 @@
     <string name="register">REGISTER</string>
     <string name="password_hint">Must be at minimum 6 characters long.</string>
 
-    <string name="new_type">Add New Type</string>
-    <string name="value">Add Value</string>
-
-    <string name="null_events">You have no upcoming events.</string>
-
     <!-- General Strings -->
     <string name="app_name">Kinect</string>
     <string name="discard">Discard</string>
@@ -40,6 +35,7 @@
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
     <string name="messages">Messages</string>
+    <string name="null_events">You have no upcoming events.</string>
     <string name="events_new_interested">New events you may be interested in!</string>
     <string name="events_popular_friends">Events popular with your connections.</string>
 
@@ -58,6 +54,8 @@
     <string name="logout">Logout</string>
     <string name="delete_acc">Delete Account</string>
     <string name="broadcast_range">Broadcast Range</string>
+    <string name="your_connections">Your Connections</string>
+    <string name="suggest_connections">Suggested Users</string>
 
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>
