@@ -65,33 +65,39 @@
 
         <fragment
             android:name="apps.raymond.kinect.Core_Fragment"
-            android:id="@+id/fragment_summary"
+            android:id="@+id/fragment_news_feed"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/layout_events_heading"
-            app:layout_constraintHeight_percent="0.3">
+            app:layout_constraintHeight_percent="0.35">
         </fragment>
-
-        <android.support.v7.widget.SearchView
-            android:id="@+id/searchview_events"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/fragment_summary">
-        </android.support.v7.widget.SearchView>
 
         <FrameLayout
             android:id="@+id/core_frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/searchview_events"
+            app:layout_constraintTop_toBottomOf="@id/fragment_news_feed"
             app:layout_constraintBottom_toBottomOf="parent"
             android:isScrollContainer="true">
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchview_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/fragment_news_feed"
+                android:background="@drawable/searchview_background"
+                android:elevation="2dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp">
+            </android.support.v7.widget.SearchView>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/events_Recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical">
+                android:scrollbars="vertical"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
             </android.support.v7.widget.RecyclerView>
 
             <android.support.constraint.Guideline

@@ -14,7 +14,7 @@
         <apps.raymond.kinect.UIResources.NewsFeed_ViewFlipper
             android:id="@+id/viewflipper_news"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <!--New events that contain tags you follow.-->
             <include

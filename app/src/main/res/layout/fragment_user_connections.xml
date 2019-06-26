@@ -18,10 +18,12 @@
             android:id="@+id/button_return"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+            android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
             android:background="@color/transparent"
             android:contentDescription="@string/return_button"
-            android:paddingTop="6dp"/>
+            android:paddingTop="6dp"
+            android:layout_gravity="center_vertical"
+            android:tint="@color/blueish"/>
 
         <android.support.v7.widget.SearchView
             android:id="@+id/search_view"
