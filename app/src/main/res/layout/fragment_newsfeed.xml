@@ -36,16 +36,5 @@
 
         </apps.raymond.kinect.UIResources.NewsFeed_ViewFlipper>
 
-        <!--Events based on locations you held events before.-->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </RelativeLayout>
-
-        <!--Events that are popular with your friends.-->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
