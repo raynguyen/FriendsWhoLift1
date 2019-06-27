@@ -188,13 +188,6 @@ public class Core_ViewModel extends ViewModel {
     public Task<Uri> uploadImage(Uri uri, String name){
         return mRepository.uploadImage(uri, name);
     }
-
-    //*-------------------------------------------USER-------------------------------------------*//
-    public Task<List<User_Model>> fetchUsers(String userID){
-        return mRepository.getAllUsers(userID);
-    }
-
-
 }
 
 

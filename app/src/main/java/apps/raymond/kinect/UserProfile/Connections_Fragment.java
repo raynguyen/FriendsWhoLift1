@@ -8,12 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +58,6 @@ public class Connections_Fragment extends Fragment implements
         return v;
     }
 
-    private ProfileRecyclerAdapter mSuggestedAdapter;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -67,7 +66,7 @@ public class Connections_Fragment extends Fragment implements
         btnReturn.setOnClickListener((View v)-> getFragmentManager().popBackStack());
 
         ProfileRecyclerAdapter mConnectionsAdapter = new ProfileRecyclerAdapter(this);
-        mSuggestedAdapter = new ProfileRecyclerAdapter(this);
+        ProfileRecyclerAdapter mSuggestedAdapter = new ProfileRecyclerAdapter(this);
 
         recyclerConnections.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerSuggested.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -95,12 +94,31 @@ public class Connections_Fragment extends Fragment implements
             filterSuggestedConnections();
         });
 
-        mViewModel.getSuggestedConnections().observe(this,(@Nullable List<User_Model> result)->filterSuggestedConnections());
+        mViewModel.getSuggestedConnections().observe(this,(@Nullable List<User_Model> result)->
+                filterSuggestedConnections());
+
+        mViewModel.getSuggestedFiltered().observe(this,(@Nullable List<User_Model> result) ->
+                mSuggestedAdapter.setData(result));
 
         //ToDo: We want to wait until the connections are retrieved. Then we try and fetch at suggested
         // list of users and then filter out the already connected users.
         mViewModel.loadConnections(mUserID);
         mViewModel.loadSuggestedConnections(mUserID);
+
+        SearchView searchView = view.findViewById(R.id.search_view_connections);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mConnectionsAdapter.getFilter().filter(newText);
+                mSuggestedAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     /**
@@ -110,7 +128,7 @@ public class Connections_Fragment extends Fragment implements
      * adapter and populate the recycler view.
      *
      * Note that the User_Model%class overrides its #equals method. We compare two User_Model objects
-     * via the User_Model%.getEmail() function currently.
+     * via the User_Model.getEmail() function currently.
      */
     private void filterSuggestedConnections(){
         List<User_Model> connections = mViewModel.getUserConnections().getValue();
@@ -127,7 +145,7 @@ public class Connections_Fragment extends Fragment implements
             } else {
                 textNullSuggested.setVisibility(View.INVISIBLE);
             }
-            mSuggestedAdapter.setData(suggestedUsers);
+            mViewModel.setSuggestedFiltered(suggestedUsers);
         }
     }
 

@@ -170,15 +170,6 @@ public class Core_Activity extends AppCompatActivity implements
             mViewModel.loadUserDocument(mUserID);
         }
 
-        FloatingActionButton btnExploreEvents = findViewById(R.id.button_explore_events);
-        btnExploreEvents.setOnClickListener((View v)->{
-            EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_core_full,searchFragment,"exploreevents")
-                    .addToBackStack("exploreevents")
-                    .commit();
-        });
-
         Toolbar toolbar = findViewById(R.id.toolbar_core);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));
@@ -189,6 +180,31 @@ public class Core_Activity extends AppCompatActivity implements
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }
+        });
+
+        SearchView searchView = findViewById(R.id.searchview_events);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //START FILTERING THE EVENTS ADAPTER FOR THE CONTENT.
+                mAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
+
+
+        FloatingActionButton btnExploreEvents = findViewById(R.id.button_explore_events);
+        btnExploreEvents.setOnClickListener((View v)->{
+            EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_core_full,searchFragment,"exploreevents")
+                    .addToBackStack("exploreevents")
+                    .commit();
         });
     }
 

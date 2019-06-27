@@ -79,6 +79,7 @@ public class Core_FireBaseRepo {
     private static final String ACCEPTED = "Accepted";
     private static final String INVITED = "Invited";
     private static final String DECLINED = "Declined";
+    private static final String LOCATIONS = "Locations";
     private static final String EVENT_INVITES = "EventInvites";
     private static final String EVENT_INVITED_FIELD = "invited";
 
@@ -397,22 +398,17 @@ public class Core_FireBaseRepo {
      * @return a list of all users in the application.
      */
     public Task<List<User_Model>> getAllUsers(final String userID) {
-        return userCollection.get().continueWith(new Continuation<QuerySnapshot, List<User_Model>>() {
-            @Override
-            public List<User_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                List<User_Model> userList = new ArrayList<>();
-                if (task.isSuccessful() && task.getResult() != null) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        User_Model model = document.toObject(User_Model.class);
-                        if(!model.getEmail().equals(userID)){
-                            userList.add(model);
-                        }
+        return userCollection.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
+            List<User_Model> userList = new ArrayList<>();
+            if (task.isSuccessful() && task.getResult() != null) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    User_Model model = document.toObject(User_Model.class);
+                    if(!model.getEmail().equals(userID)){
+                        userList.add(model);
                     }
-                } else if (task.getResult() == null) {
-                    Log.w(TAG, "There are no users to fetch.");
                 }
-                return userList;
             }
+            return userList;
         });
     }
 
@@ -420,15 +416,12 @@ public class Core_FireBaseRepo {
     public Task<Uri> uploadImage(Uri uri, String groupName) {
         final StorageReference childStorage = mStorageRef.child("images/" + groupName);
         return childStorage.putFile(uri)
-                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if (task.isSuccessful()) {
-                            Log.i(TAG, "Successfully uploaded image to storage.");
-                            return childStorage.getDownloadUrl();
-                        }
-                        return null;
+                .continueWithTask((@NonNull Task<UploadTask.TaskSnapshot> task)-> {
+                    if (task.isSuccessful()) {
+                        Log.i(TAG, "Successfully uploaded image to storage.");
+                        return childStorage.getDownloadUrl();
                     }
+                    return null;
                 });
     }
 
@@ -438,18 +431,15 @@ public class Core_FireBaseRepo {
     }
 
     public Task<List<Location_Model>> getUsersLocations(String userID){
-        return userCollection.document(userID).collection("Locations").get()
-                .continueWith(new Continuation<QuerySnapshot, List<Location_Model>>() {
-                    @Override
-                    public List<Location_Model> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Location_Model> results = new ArrayList<>();
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot document : task.getResult()){
-                                results.add(document.toObject(Location_Model.class));
-                            }
+        return userCollection.document(userID).collection(LOCATIONS).get()
+                .continueWith((@NonNull Task<QuerySnapshot> task)-> {
+                    List<Location_Model> results = new ArrayList<>();
+                    if(task.isSuccessful()){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            results.add(document.toObject(Location_Model.class));
                         }
-                        return results;
                     }
+                    return results;
                 });
     }
 

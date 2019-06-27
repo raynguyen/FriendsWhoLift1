@@ -2,9 +2,7 @@ package apps.raymond.kinect.Events;
 
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +31,13 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         void onEventClick(Event_Model event);
     }
 
-    private List<Event_Model> mListFull;
-    private List<Event_Model> mListFiltered;
-
+    /**
+     * mCompleteSet holds the complete list of accepted events. Although this list is not used to populate
+     * the recycler view, we require a complete copy so that we may present an unfiltered list to
+     * the user when required.
+     */
+    private List<Event_Model> mCompleteSet; //Copy of the complete data set.
+    private List<Event_Model> mDisplaySet; //The list to populate the recycler view.
     public EventsCore_Adapter(EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
     }
@@ -50,7 +52,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     @Override
     public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
-        final Event_Model currEvent = mListFiltered.get(position);
+        final Event_Model currEvent = mDisplaySet.get(position);
         if(currEvent.getLong1()!=0){
             long long1 = currEvent.getLong1();
             Calendar c = new GregorianCalendar();
@@ -105,18 +107,18 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
     @Override
     public int getItemCount() {
-        if(mListFull !=null){
-            return mListFiltered.size();
+        if(mDisplaySet != null){
+            return mDisplaySet.size();
         } else {
             return 0;
         }
     }
 
     /**
-     * Method to set the data for the RecyclerView. If mListFull is null, this adapter has not been
+     * Method to set the data for the RecyclerView. If mCompleteSet is null, this adapter has not been
      * passed data to populate the recycler view.
      *
-     * DiffUtil is used to determine the changes between the existing mListFull and eventsList.
+     * DiffUtil is used to determine the changes between the existing mCompleteSet and eventsList.
      * Using the change determined by DiffUtil, we can simply request the Adapter to create/delete
      * views as required by the change in data.
      *
@@ -125,15 +127,15 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
      * @param newList New data set to populate the RecyclerView
      */
     public void setData(final List<Event_Model> newList){
-        if(mListFull==null){
-            mListFull = new ArrayList<>(newList);
-            mListFiltered = new ArrayList<>(newList);
-            notifyItemRangeChanged(0,mListFiltered.size());
+        if(mCompleteSet ==null){
+            mCompleteSet = new ArrayList<>(newList);
+            mDisplaySet = new ArrayList<>(newList);
+            notifyItemRangeChanged(0, mDisplaySet.size());
         } else {
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                 @Override
                 public int getOldListSize() {
-                    return mListFull.size();
+                    return mCompleteSet.size();
                 }
 
                 @Override
@@ -143,7 +145,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
 
                 @Override
                 public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                    return mListFull.get(oldPosition).getName()
+                    return mCompleteSet.get(oldPosition).getName()
                             .equals(newList.get(newPosition).getName());
                 }
 
@@ -153,10 +155,10 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
                     return true;
                 }
             });
-            mListFull.clear();
-            mListFull.addAll(newList);
-            mListFiltered.clear();
-            mListFiltered.addAll(newList);
+            mCompleteSet.clear();
+            mCompleteSet.addAll(newList);
+            mDisplaySet.clear();
+            mDisplaySet.addAll(newList);
             result.dispatchUpdatesTo(this);
         }
     }
@@ -167,26 +169,26 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 if(constraint==null || constraint.length()==0){
-                    mListFiltered = mListFull;
+                    mDisplaySet = mCompleteSet;
                 } else {
                     List<Event_Model> filteredList = new ArrayList<>();
                     String string = constraint.toString().toLowerCase().trim();
-                    for(Event_Model event : mListFull){
+                    for(Event_Model event : mCompleteSet){
                         if(event.getName().toLowerCase().trim().contains(string)){
                             filteredList.add(event);
                         }
                     }
-                    mListFiltered = filteredList;
+                    mDisplaySet = filteredList;
                 }
 
                 FilterResults results = new FilterResults();
-                results.values = mListFiltered;
+                results.values = mDisplaySet;
                 return results;
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                mListFiltered = (ArrayList<Event_Model>) results.values;
+                mDisplaySet = (ArrayList<Event_Model>) results.values;
                 notifyDataSetChanged();
             }
         };

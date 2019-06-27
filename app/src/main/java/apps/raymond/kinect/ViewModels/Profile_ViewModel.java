@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -17,7 +16,8 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class Profile_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo;
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
-    private MutableLiveData<List<User_Model>> mSuggestedConnections = new MutableLiveData<>();
+    private MutableLiveData<List<User_Model>> mSuggestedUnfiltered = new MutableLiveData<>();
+    private MutableLiveData<List<User_Model>> mSuggestedFiltered = new MutableLiveData<>();
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
 
     public Profile_ViewModel(){
@@ -41,13 +41,21 @@ public class Profile_ViewModel extends ViewModel {
         //Currently returns the entire list of users for the application.
         mRepo.getAllUsers(userID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
             if(task.isSuccessful()){
-                mSuggestedConnections.setValue(task.getResult());
+                mSuggestedUnfiltered.setValue(task.getResult());
             }
         });
     }
 
     public MutableLiveData<List<User_Model>> getSuggestedConnections(){
-        return mSuggestedConnections;
+        return mSuggestedUnfiltered;
+    }
+
+    public void setSuggestedFiltered(List<User_Model> list){
+        mSuggestedFiltered.setValue(list);
+    }
+
+    public MutableLiveData<List<User_Model>> getSuggestedFiltered(){
+        return mSuggestedFiltered;
     }
 
     //ToDo: OnComplete, we want to update the list held by suggested users. We want to remove the
