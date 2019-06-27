@@ -16,8 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.VerticalTextView;
@@ -42,13 +42,15 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
         return inflater.inflate(R.layout.fragment_signup, container, false);
     }
 
-    private TextView txtUserID, txtPassword1, txtPassword2;
+    private EditText txtName, txtName2, txtEmail, txtPassword1, txtPassword2;
     private ProgressBar progressBar;
     private Button btnSignUp;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        txtUserID = view.findViewById(R.id.text_userid);
+        txtName = view.findViewById(R.id.text_name);
+        txtName2 = view.findViewById(R.id.text_surname);
+        txtEmail = view.findViewById(R.id.text_userid);
         txtPassword1 = view.findViewById(R.id.text_password1);
         txtPassword2 = view.findViewById(R.id.text_password2);
         progressBar = view.findViewById(R.id.progress_signup);
@@ -66,7 +68,7 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
             case R.id.button_signup:
                 progressBar.setVisibility(View.VISIBLE);
                 btnSignUp.setVisibility(View.GONE);
-                String userID = txtUserID.getText().toString();
+                String userID = txtEmail.getText().toString();
                 String p1 = txtPassword1.getText().toString();
                 String p2 = txtPassword2.getText().toString();
                 if(validateInput(userID, p1, p2)){
@@ -83,7 +85,7 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
     private boolean validateInput(String userID, String p1, String p2){
         boolean b = true;
         if(userID.length()==0){
-            txtUserID.setError("This must not be empty!");
+            txtEmail.setError("This must not be empty!");
             b=false;
         }
         if(p1.length()<6){

@@ -17,10 +17,15 @@ import android.support.annotation.Nullable;
  *
  */
 public class User_Model implements Parcelable {
+    public static final String PUBLIC = "public";//Any user can view your profile.
+    public static final String PRIVATE = "private";//Connections and associate connections can view your profile.
+    public static final String CLOSED = "closed";//Only connections can view your profile.
+
     //TODO: There should be a URL to FirebaseStorage where hte user profile picture is stored.
     private String email;
     private String visibility = "public";
     private String name;
+    private String name2;
     private int numconnections;
     private int numlocations;
     private int numinterests;
@@ -35,10 +40,12 @@ public class User_Model implements Parcelable {
     }
 
     public User_Model(Parcel in){
-        this.email = in.readString();
-        this.numconnections = in.readInt();
-        this.numlocations = in.readInt();
-        this.numinterests = in.readInt();
+        name = in.readString();
+        name2 = in.readString();
+        email = in.readString();
+        numconnections = in.readInt();
+        numlocations = in.readInt();
+        numinterests = in.readInt();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
@@ -60,18 +67,28 @@ public class User_Model implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.name2);
         dest.writeString(this.email);
         dest.writeInt(this.numconnections);
         dest.writeInt(this.numlocations);
         dest.writeInt(this.numinterests);
     }
 
-    public void setName(String name){
+    public void setname(String name){
         this.name = name;
     }
 
-    public String getName(){
+    public String getname(){
         return name;
+    }
+
+    public String getName2() {
+        return name2;
+    }
+
+    public void setName2(String name2) {
+        this.name2 = name2;
     }
 
     public void setEmail(String email){

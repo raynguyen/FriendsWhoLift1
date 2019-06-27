@@ -39,7 +39,9 @@
     <string name="events_new_interested">New events you may be interested in!</string>
     <string name="events_popular_friends">Events popular with your connections.</string>
 
-    <!--USER STRINGS-->
+    <!--PROFILE STRINGS-->
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
     <string name="profile_picture">Profile Picture</string>
     <string name="profile_display_name">Display Name</string>
     <string name="connections">Connections</string>
