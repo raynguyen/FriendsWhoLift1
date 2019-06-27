@@ -25,15 +25,11 @@ public class Profile_ViewModel extends ViewModel {
     }
 
     public void loadConnections(String userID){
-        mRepo.getUserConnections(userID)
-                .addOnCompleteListener(new OnCompleteListener<List<User_Model>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<User_Model>> task) {
-                        if(task.isSuccessful()){
-                            mConnections.setValue(task.getResult());
-                        }
-                    }
-                });
+        mRepo.getUserConnections(userID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
+            if(task.isSuccessful()){
+                mConnections.setValue(task.getResult());
+            }
+        });
     }
 
     public MutableLiveData<List<User_Model>> getUserConnections(){

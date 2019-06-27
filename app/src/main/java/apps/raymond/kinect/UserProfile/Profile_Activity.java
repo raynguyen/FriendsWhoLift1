@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import apps.raymond.kinect.Connections_Fragment;
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
@@ -94,11 +93,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
                     btnConnect.setVisibility(View.VISIBLE);
                 }
             });
+
             txtName.setText(mProfileModel.getEmail());
             txtConnectionsNum.setText(String.valueOf(mProfileModel.getNumconnections()));
             txtInterestsNum.setText(String.valueOf(mProfileModel.getNuminterests()));
             txtLocationsNum.setText(String.valueOf(mProfileModel.getNumlocations()));
 
+            //Fragment that holds details regarding a User's profile.
             ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profilefragment,viewFragment)
@@ -108,6 +109,8 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             txtConnectionsNum.setText(String.valueOf(mUserModel.getNumconnections()));
             txtInterestsNum.setText(String.valueOf(mUserModel.getNuminterests()));
             txtLocationsNum.setText(String.valueOf(mUserModel.getNumlocations()));
+
+            //Fragment that shows the User's current settings and preferences.
             ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profilefragment,profileFragment)

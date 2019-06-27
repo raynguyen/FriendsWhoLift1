@@ -115,7 +115,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/progress_guideline"
-                app:layout_constraintHeight_percent="0.5"
                 android:indeterminate="true"/>
 
             <TextView

@@ -98,7 +98,6 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
      * Method to filter out from the public events,
      */
     private void filterPopularEvents(){
-        String userID = mViewModel.getUserID().getValue();
         List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();
         List<User_Model> userConnections = mViewModel.getUserConnections().getValue();
         List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();

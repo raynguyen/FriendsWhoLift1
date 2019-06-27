@@ -11,6 +11,7 @@ package apps.raymond.kinect.UserProfile;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 /**
  *
@@ -112,5 +113,12 @@ public class User_Model implements Parcelable {
     public int getNuminterests(){
         return numinterests;
     }
-    
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(!(obj instanceof User_Model)){
+            return false;
+        }
+        return ((User_Model) obj).getEmail().equals(this.getEmail());
+    }
 }

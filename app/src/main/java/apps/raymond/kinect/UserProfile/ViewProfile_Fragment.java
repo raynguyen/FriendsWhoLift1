@@ -1,3 +1,8 @@
+/*
+ * ToDo: Determine what we want to show when viewing a user's profile.
+ *  Events they recently joined? Connections they've created? Common connections, Locaitons, EventS?
+ * Fragment class that holds the details for a user's profile.
+ */
 package apps.raymond.kinect.UserProfile;
 
 import android.os.Bundle;
