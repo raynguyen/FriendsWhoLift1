@@ -45,8 +45,8 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
  *  Add ability to create/delete a connection with the current profile.
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
-public class Profile_Activity extends AppCompatActivity implements View.OnClickListener,
-        YesNoDialog.YesNoCallback, Locations_MapFragment.MapCardViewClick {
+public class Profile_Activity extends AppCompatActivity implements YesNoDialog.YesNoCallback,
+        Locations_MapFragment.MapCardViewClick {
     public static final String CURRENT_USERMODEL = "current_user"; //Mandatory field to determine connection controls required.
     public static final String USER_PROFILEMODEL = "profile_model";
     public static final String FETCH_MODEL = "fetch_model";
@@ -58,7 +58,6 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
     private final static int REQUEST_PROFILE_PICTURE = 0;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
-    TextView txtName, txtConnectionsNum, txtInterestsNum, txtLocationsNum;
     Button btnConnections, btnLocations, btnInterests;
     ImageButton btnConnect, btnDeleteConnection;
     ImageView profilePic;
@@ -84,9 +83,14 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             //all instances of Profile_Activity start with the current user's User_Model.
         }
 
+        final TextView txtName = findViewById(R.id.text_profile_name);
+        final TextView txtConnectionsNum = findViewById(R.id.text_connections_count);
+        final TextView txtLocationsNum = findViewById(R.id.text_locations_count);
+        final TextView txtInterestsNum = findViewById(R.id.text_interests_count);
         ImageButton btnConnect = findViewById(R.id.button_connect);
         ImageButton btnDeleteConnection = findViewById(R.id.button_delete_connection);
         mViewModel.getProfileModel().observe(this,(User_Model profileModel)->{
+            Log.w(TAG,"There has been a change in the profile model: "+profileModel.getEmail());
             /*
              * When we detect a change in the profile model held by the ViewModel, we want to check
              * if the current user has already established a connection with the profile. Here we
@@ -126,13 +130,13 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             txtLocationsNum.setText(String.valueOf(profileModel.getNumlocations()));
         });
 
-
         if(getIntent().hasExtra(PROFILE_ID)){
             /*
              * Check to determine if we are required to fetch the document for the profile of which we
              * are viewing. The FETCH_MODEL extra is currently only passed with the intent via
              * EventDetail_Activity when a post is clicked.
              */
+            Log.w(TAG,"We have been given a PROFILE_ID");
             String profileID = getIntent().getStringExtra(PROFILE_ID);
             mViewModel.loadProfileModel(profileID);
         } else if(getIntent().hasExtra(USER_PROFILEMODEL)){
@@ -157,7 +161,12 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
              */
             User_Model userModel = mViewModel.getUserModel().getValue();
             String name = userModel.getname() + " " + userModel.getName2();
-            txtName.setText(name);
+            if(name!=null){
+                txtName.setText(name);
+            } else {
+                txtName.setText(userModel.getEmail());
+            }
+
             txtConnectionsNum.setText(String.valueOf(userModel.getNumconnections()));
             txtInterestsNum.setText(String.valueOf(userModel.getNuminterests()));
             txtLocationsNum.setText(String.valueOf(userModel.getNumlocations()));
@@ -179,73 +188,57 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
             });
         }
 
-        txtConnectionsNum = findViewById(R.id.text_connections_count);
-        txtInterestsNum = findViewById(R.id.text_interests_count);
-        txtLocationsNum = findViewById(R.id.text_locations_count);
-
         ImageButton btnReturn = findViewById(R.id.button_return);
         btnReturn.setOnClickListener((View v)->onBackPressed());
         btnConnections = findViewById(R.id.button_connections);
-        btnConnections.setOnClickListener(this);
+        btnConnections.setOnClickListener((View v)->{
+            Connections_Fragment fragment;
+            if(mViewModel.getProfileModel().getValue()!=null){
+                    /*
+                    There has been no profile model set to the view model and therefore we are viewing
+                    the current user's Profile Activity and want to pass the current user's model
+                    (perhaps the ID?) in order to load the current user's connections.
+                     */
+                User_Model profileModel = mViewModel.getProfileModel().getValue();
+                fragment = Connections_Fragment.newInstance(profileModel);
+            } else {
+                User_Model userModel = mViewModel.getUserModel().getValue();
+                fragment = Connections_Fragment.newInstance(userModel);
+            }
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
+                    .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
+                    .addToBackStack(CONNECTIONS_FRAG)
+                    .commit();
+        });
         btnLocations = findViewById(R.id.button_locations);
-        btnLocations.setOnClickListener(this);
+        btnLocations.setOnClickListener((View v)->{
+            Locations_MapFragment mapFragment;
+            if(mViewModel.getProfileModel().getValue()!=null){
+                    /*
+                    There has been no profile model set to the view model and therefore we are viewing
+                    the current user's Profile Activity and want to pass the current user's model
+                    (perhaps the ID?) in order to load the current user's connections.
+                     */
+                String profileID = mViewModel.getProfileModel().getValue().getEmail();
+                mapFragment = Locations_MapFragment.newInstance(profileID,Locations_MapFragment.EVENT_PROFILE);
+            } else {
+                String userID = mViewModel.getUserModel().getValue().getEmail();
+                mapFragment = Locations_MapFragment.newInstance(userID,Locations_MapFragment.EVENT_PROFILE);
+            }
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
+                    .replace(R.id.frame_profile,mapFragment,LOCATIONS_FRAG)
+                    .addToBackStack(LOCATIONS_FRAG)
+                    .commit();
+        });
         btnInterests = findViewById(R.id.button_interests);
-        btnInterests.setOnClickListener(this);
+        btnInterests.setOnClickListener((View v)->{
+            Toast.makeText(this,"This feature has not been implemented.", Toast.LENGTH_LONG).show();
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        switch (i){
-            case R.id.profile_pic:
-                //updateProfilePicture();
-                break;
-            case R.id.button_connections:
-                Connections_Fragment fragment;
-                if(mViewModel.getProfileModel().getValue()!=null){
-                    /*
-                    There has been no profile model set to the view model and therefore we are viewing
-                    the current user's Profile Activity and want to pass the current user's model
-                    (perhaps the ID?) in order to load the current user's connections.
-                     */
-                    User_Model userModel = mViewModel.getUserModel().getValue();
-                    fragment = Connections_Fragment.newInstance(userModel);
-                } else {
-                    User_Model profileModel = mViewModel.getProfileModel().getValue();
-                    fragment = Connections_Fragment.newInstance(profileModel);
-                }
-
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
-                        .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
-                        .addToBackStack(CONNECTIONS_FRAG)
-                        .commit();
-                break;
-            case R.id.button_locations:
-                Locations_MapFragment mapFragment;
-                if(mViewModel.getProfileModel().getValue()!=null){
-                    /*
-                    There has been no profile model set to the view model and therefore we are viewing
-                    the current user's Profile Activity and want to pass the current user's model
-                    (perhaps the ID?) in order to load the current user's connections.
-                     */
-                    String userID = mViewModel.getUserModel().getValue().getEmail();
-                    mapFragment = Locations_MapFragment.newInstance(userID,Locations_MapFragment.EVENT_PROFILE);
-                } else {
-                    String profileID = mViewModel.getProfileModel().getValue().getEmail();
-                    mapFragment = Locations_MapFragment.newInstance(profileID,Locations_MapFragment.EVENT_PROFILE);
-                }
-
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
-                        .replace(R.id.frame_profile,mapFragment,LOCATIONS_FRAG)
-                        .addToBackStack(LOCATIONS_FRAG)
-                        .commit();
-                break;
-            case R.id.button_interests:
-                break;
-        }
-    }
 
     /**
      * Interface implementation for when the user clicks the positive button on the DeleteConnection
@@ -361,12 +354,10 @@ public class Profile_Activity extends AppCompatActivity implements View.OnClickL
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-        File image = File.createTempFile(
+        return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        return image;
+                storageDir);      /* directory */
     }
 
     private void setProfilePic(){

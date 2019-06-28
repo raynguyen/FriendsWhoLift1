@@ -42,7 +42,7 @@ public class Connections_Fragment extends Fragment implements
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
         mUserModel = getArguments().getParcelable("user");
-        mUserID =mUserModel.getEmail();
+        mUserID = mUserModel.getEmail();
     }
 
     private RecyclerView recyclerConnections,recyclerSuggested;
