@@ -13,14 +13,23 @@ import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class EventDetail_ViewModel extends ViewModel {
+    private Core_FireBaseRepo mRepository;
+    private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<Event_Model> mEventModel = new MutableLiveData<>();
     private MutableLiveData<List<Message_Model>> mEventMessages = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mEventAcceptedList = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mEventInvitedList = new MutableLiveData<>();
 
-    private Core_FireBaseRepo mRepository;
     public EventDetail_ViewModel(){
         mRepository = new Core_FireBaseRepo();
+    }
+
+            public void setUserModel(User_Model user){
+        mUserModel.setValue(user);
+    }
+
+    public MutableLiveData<User_Model> getUserModel(){
+        return mUserModel;
     }
 
     public void loadEventModel(final String eventName){

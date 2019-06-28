@@ -49,8 +49,8 @@ ToDo: When searching the Locations_Model recycler, slide up to hide the MapView 
  */
 public class Locations_MapFragment extends BaseMap_Fragment implements OnMapReadyCallback,
         Locations_Adapter.LocationClickInterface {
-    public static final boolean EVENT_ACTIVITY = false;
-    public static final boolean EVENT_PROFILE = true;
+    public static final boolean EVENT_ACTIVITY = false; //Flag to determine of this map fragment instance is related to Event creation or detail.
+    public static final boolean EVENT_PROFILE = true; //Flag to determine of this map fragment instance is related to viewing a profile.
     private MapCardViewClick mPositiveCallback;
 
     public interface MapCardViewClick {

@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/blueish">
 
+    <!--The connections, locations, and interests fragments are inflated here.-->
     <FrameLayout
         android:id="@+id/frame_profile"
         android:layout_width="match_parent"
@@ -32,7 +33,8 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="12dp"
         android:scaleX="1.5"
-        android:scaleY="1.5"/>
+        android:scaleY="1.5"
+        android:visibility="gone"/>
 
     <ImageButton
         android:id="@+id/button_connect"
@@ -78,6 +80,7 @@
         android:textColor="@color/white"
         android:layout_marginTop="8dp"
         android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
         android:layout_below="@id/profile_pic"/>
 
     <FrameLayout

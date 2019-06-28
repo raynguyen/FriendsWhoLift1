@@ -4,10 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -21,7 +18,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  *
  * mUserField is set via two methods:
  * 1. loadExistingUser which is called when an existing user logs in and
- * 2. createNewUserDocument which is called when a new user registers to the application.
+ * 2. createUserDocument which is called when a new user registers to the application.
  *
  * Todo: This ViewModel is janky because we would ideally have no android imports with the exclusion
  *  of the arch.lifecycle components.
@@ -41,14 +38,18 @@ public class Login_ViewModel extends ViewModel {
         return mUserModel;
     }
 
+    public void setUserModel(User_Model user){
+        mUserModel.setValue(user);
+    }
+
     /**
      * Use the arguments provided to sign in the user via FirebaseAuth. If successful, this will
      * trigger loadExistingUser.
      * @param email User email credential
      * @param password User account password
      */
-    public Task<AuthResult> signInWithEmail(final String email, String password){
-        return FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password);
+    public Task<Boolean> signInWithEmail(final String email, String password){
+        return mRepository.signInViaEmail(email, password);
     }
 
     /**
@@ -57,13 +58,10 @@ public class Login_ViewModel extends ViewModel {
      * @param userID ID of the user to retrieve from the database.
      */
     public void loadExistingUser(String userID){
-        mRepository.getUserDocument(userID)
-                .addOnCompleteListener(new OnCompleteListener<User_Model>() {
-                    @Override
-                    public void onComplete(@NonNull Task<User_Model> task) {
-                        if(task.isSuccessful()){
-                            mUserModel.setValue(task.getResult());
-                        }
+        mRepository.getUserModel(userID)
+                .addOnCompleteListener((@NonNull Task<User_Model> task)-> {
+                    if(task.isSuccessful()){
+                        mUserModel.setValue(task.getResult());
                     }
                 });
     }
@@ -75,14 +73,12 @@ public class Login_ViewModel extends ViewModel {
      * @param userEmail Registration email
      * @param password Registration password
      */
-    void registerWithEmail(final String userEmail, final String password, final User_Model newUser){
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail,password)
-                .addOnCompleteListener((@NonNull Task<AuthResult> task)-> {
-                    if(task.isSuccessful()){
-                        FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail,password);
-                        createNewUserDocument(newUser);
-                    }
-                });
+    public Task<Boolean> registerWithEmail(String userEmail, String password){
+        return mRepository.registerViaEmail(userEmail, password);
+
+        /*
+        * FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail,password);
+                        createUserDocument(newUser);*/
     }
 
     /**
@@ -91,16 +87,8 @@ public class Login_ViewModel extends ViewModel {
      * the database does not contain a document for the user (i.e. new registration).
      * @param user Object to set LiveData mUserModel.
      */
-    private void createNewUserDocument(final User_Model user){
-        mRepository.createNewUserDocument(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            mUserModel.setValue(user);
-                        }
-                    }
-                });
+    public Task<Void> createUserDocument(final User_Model user){
+        return mRepository.createNewUserDocument(user);
     }
 
 }

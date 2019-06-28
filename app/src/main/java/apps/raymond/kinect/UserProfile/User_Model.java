@@ -23,20 +23,19 @@ public class User_Model implements Parcelable {
 
     //TODO: There should be a URL to FirebaseStorage where hte user profile picture is stored.
     private String email;
-    private String visibility = "public";
+    private String visibility = PUBLIC;
     private String name;
     private String name2;
-    private int numconnections;
-    private int numlocations;
-    private int numinterests;
+    private int numconnections = 0;
+    private int numlocations = 0;
+    private int numinterests = 0;
 
     public User_Model(){}
 
-    public User_Model(String email){
+    public User_Model(String name, String name2, String email){
+        this.name = name;
+        this.name2 = name2;
         this.email = email;
-        numinterests = 0;
-        numlocations = 0;
-        numconnections = 0;
     }
 
     public User_Model(Parcel in){

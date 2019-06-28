@@ -44,6 +44,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -101,7 +103,7 @@ public class Core_FireBaseRepo {
      * @param userID Index field used to retrieve the correct document.
      * @return User_Model POJO.
      */
-    public Task<User_Model> getUserDocument(String userID){
+    public Task<User_Model> getUserModel(String userID){
         return userCollection.document(userID).get().continueWith((Task<DocumentSnapshot> task)-> {
             if(task.getResult()!=null){
                 return task.getResult().toObject(User_Model.class);
@@ -452,6 +454,18 @@ public class Core_FireBaseRepo {
                     }
                     return null;
                 });
+    }
+
+
+    //REGISTRATION AND LOGIN
+    public Task<Boolean> signInViaEmail(String name, String pw){
+        return FirebaseAuth.getInstance().signInWithEmailAndPassword(name, pw)
+                .continueWith((@NonNull Task<AuthResult> task)-> task.isSuccessful());
+    }
+
+    public Task<Boolean> registerViaEmail(String name, String pw){
+        return FirebaseAuth.getInstance().createUserWithEmailAndPassword(name, pw)
+                .continueWith((@NonNull Task<AuthResult> task)-> task.isSuccessful());
     }
 
 }

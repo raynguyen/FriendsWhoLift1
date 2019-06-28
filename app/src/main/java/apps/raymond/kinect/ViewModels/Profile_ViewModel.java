@@ -15,6 +15,8 @@ import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Profile_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo;
+    private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
+    private MutableLiveData<User_Model> mProfileModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mSuggestedUnfiltered = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mSuggestedFiltered = new MutableLiveData<>();
@@ -23,6 +25,27 @@ public class Profile_ViewModel extends ViewModel {
     public Profile_ViewModel(){
         mRepo = new Core_FireBaseRepo();
     }
+
+    public void setUserModel(User_Model userModel){
+        mUserModel.setValue(userModel);
+    }
+
+    public MutableLiveData<User_Model> getUserModel(){
+        return mUserModel;
+    }
+
+    public Task<User_Model> loadProfileModel(String userID){
+        return mRepo.getUserModel(userID);
+    }
+
+    public void setProfileModel(User_Model model){
+        mProfileModel.setValue(model);
+    }
+
+    public MutableLiveData<User_Model> getProfileModel(){
+        return mProfileModel;
+    }
+
 
     public void loadConnections(String userID){
         mRepo.getUserConnections(userID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {

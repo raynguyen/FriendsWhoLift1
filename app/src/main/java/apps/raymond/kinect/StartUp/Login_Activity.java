@@ -19,8 +19,6 @@
 
 package apps.raymond.kinect.StartUp;
 
-import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,16 +28,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Login_Activity extends AppCompatActivity{
+public class Login_Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceStance){
@@ -52,11 +48,13 @@ public class Login_Activity extends AppCompatActivity{
 
         Login_ViewModel mViewModel = ViewModelProviders.of(this).get(Login_ViewModel.class);
         mViewModel.getCurrentUser().observe(this,(@Nullable User_Model user_model)-> {
-            Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
-            mainIntent.putExtra("user",user_model);
-            startActivity(mainIntent);
-            overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
-            finish();
+            if(user_model!=null){
+                Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
+                mainIntent.putExtra("user",user_model);
+                startActivity(mainIntent);
+                overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+                finish();
+            }
         });
 
     }

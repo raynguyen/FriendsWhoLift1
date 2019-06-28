@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
@@ -52,7 +51,7 @@ public class Core_ViewModel extends ViewModel {
     }
 
     public void loadUserDocument(String userID){
-        mRepository.getUserDocument(userID).addOnCompleteListener((Task<User_Model> task)->{
+        mRepository.getUserModel(userID).addOnCompleteListener((Task<User_Model> task)->{
             if(task.isSuccessful()){
                 mUserModel.setValue(task.getResult());
                 mUserID.setValue(task.getResult().getEmail());

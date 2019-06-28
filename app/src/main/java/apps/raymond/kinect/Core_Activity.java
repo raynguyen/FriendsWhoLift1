@@ -176,7 +176,7 @@ public class Core_Activity extends AppCompatActivity implements
         toolbar.setNavigationOnClickListener((View v)-> {
             if(mUserModel !=null){
                 Intent profileIntent = new Intent(this, Profile_Activity.class);
-                profileIntent.putExtra("user", mUserModel);
+                profileIntent.putExtra("current_user", mUserModel);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }
@@ -211,7 +211,7 @@ public class Core_Activity extends AppCompatActivity implements
     @Override
     public void onEventClick(Event_Model event) {
         Intent detailActivity = new Intent(this, EventDetail_Activity.class);
-        detailActivity.putExtra("userID",mUserModel.getEmail()).putExtra("name",event.getName());
+        detailActivity.putExtra("user",mUserModel).putExtra("event_name",event.getName());
         startActivity(detailActivity);
     }
 

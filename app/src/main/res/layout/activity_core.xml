@@ -55,14 +55,6 @@
                 android:textColor="@color/white"/>
         </LinearLayout>
 
-        <!--<FrameLayout
-            android:id="@+id/frame_newsfeed"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/layout_events_heading"
-            app:layout_constraintHeight_percent="0.3">
-        </FrameLayout>-->
-
         <fragment
             android:name="apps.raymond.kinect.NewsFeed_Fragment"
             android:id="@+id/fragment_news_feed"
@@ -121,7 +113,7 @@
                 android:id="@+id/text_null_connections"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:text="@string/null_events"
                 android:textSize="26sp"
                 android:visibility="gone" />

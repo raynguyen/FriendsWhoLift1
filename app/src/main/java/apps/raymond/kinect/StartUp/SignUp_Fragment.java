@@ -18,6 +18,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.VerticalTextView;
@@ -48,7 +51,7 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        txtName = view.findViewById(R.id.text_name);
+        txtName = view.findViewById(R.id.text_event_name);
         txtName2 = view.findViewById(R.id.text_surname);
         txtEmail = view.findViewById(R.id.text_userid);
         txtPassword1 = view.findViewById(R.id.text_password1);
@@ -68,11 +71,26 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
             case R.id.button_signup:
                 progressBar.setVisibility(View.VISIBLE);
                 btnSignUp.setVisibility(View.GONE);
-                String userID = txtEmail.getText().toString();
+                String name = txtName.getText().toString();
+                String name2 = txtName2.getText().toString();
+                String email = txtEmail.getText().toString();
                 String p1 = txtPassword1.getText().toString();
                 String p2 = txtPassword2.getText().toString();
-                if(validateInput(userID, p1, p2)){
-                    mViewModel.registerWithEmail(userID,p1, new User_Model(userID));
+                if(validateInput(p1, p2, email)){
+                    mViewModel.registerWithEmail(email,p1)
+                            .addOnCompleteListener((@NonNull Task<Boolean> task)-> {
+                                if(task.getResult()){
+                                    User_Model user = new User_Model(name, name2, email);
+                                    mViewModel.createUserDocument(user);
+                                    mViewModel.setUserModel(user);
+                                } else {
+                                    progressBar.setVisibility(View.GONE);
+                                    btnSignUp.setVisibility(View.VISIBLE);
+                                    Toast.makeText(getContext(),
+                                            "There was an error registering your account. Please try again in a moment.",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
                 }
                 break;
             case R.id.vtext_login:
@@ -82,7 +100,7 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private boolean validateInput(String userID, String p1, String p2){
+    private boolean validateInput(String p1, String p2, String userID){
         boolean b = true;
         if(userID.length()==0){
             txtEmail.setError("This must not be empty!");

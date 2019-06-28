@@ -3,10 +3,10 @@ package apps.raymond.kinect.EventDetail;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,7 +26,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.Task;
 
@@ -39,12 +36,13 @@ import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.UserProfile.Profile_Activity;
+import apps.raymond.kinect.UserProfile.User_Model;
 
 //Todo: On Scroll of messages, animate the information hover bar so that it is hidden and all that
 // remains is the information icon on the right panel.
 public class EventDetail_Activity extends AppCompatActivity implements
-        Messages_Adapter.ProfileClickListener {
-
+        Messages_Adapter.MessageClickListener {
     private SimpleDateFormat monthSDF = new SimpleDateFormat("MMM",Locale.getDefault());
     private SimpleDateFormat dateSDF = new SimpleDateFormat("dd",Locale.getDefault());
     private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
@@ -56,25 +54,39 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private String mUserID, mEventName;
     private EventMembers_Fragment membersFrag;
     private EventLocation_Fragment locationFrag;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
+        mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
 
-        mUserID = getIntent().getStringExtra("userID");
-        mEventName = getIntent().getStringExtra("name");
+        TextView textEventName = findViewById(R.id.text_event_name);
+        if(getIntent().hasExtra("event_name")){
+            mEventName = getIntent().getStringExtra("event_name");
+            textEventName.setText(mEventName);
+        } else {
+            //Some error pertaining to loading the event.
+        }
+
+        User_Model mUserModel = getIntent().getParcelableExtra("user");
+
+
+        if(mUserModel!=null){
+            mViewModel.setUserModel(mUserModel);
+            mUserID = mUserModel.getEmail();
+        }
 
         mSelectedIcon = ContextCompat.getDrawable(this,R.drawable.icon_selected_background);
         mBtnRipple = ContextCompat.getDrawable(this,R.drawable.button_ripple);
 
-        mViewModel = ViewModelProviders.of(this).get(EventDetail_ViewModel.class);
         Toolbar toolbar = findViewById(R.id.toolbar_event);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener((View v)->onBackPressed());
         Messages_Adapter mMessageAdapter = new Messages_Adapter(this);
 
-        TextView textName = findViewById(R.id.text_name);
+
         TextView textDesc = findViewById(R.id.text_description);
         ViewGroup viewDate = findViewById(R.id.layout_event_date);
         TextView textMonth = findViewById(R.id.text_event_month);
@@ -104,7 +116,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
         txtAttending.setOnClickListener(this::switchDetailFragment);
         txtInvited.setOnClickListener(this::switchDetailFragment);
 
-        textName.setText(mEventName);
+
         //Update the information views with the event model retrieved from the data base.
         mViewModel.getEventModel().observe(this,(Event_Model event)->{
             if(event!=null){
@@ -163,7 +175,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
         ImageButton btnPostMessage = findViewById(R.id.button_post_message);
         btnPostMessage.setOnClickListener((View v)->{
             if(editNewMessage.getText().toString().trim().length()>0){
-                createMessage(editNewMessage.getText().toString());
+                postMessage(editNewMessage.getText().toString());
                 editNewMessage.getText().clear();
                 try {
                     InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -214,24 +226,38 @@ public class EventDetail_Activity extends AppCompatActivity implements
      *
      * @param messageBody text of the message to be posted to the event.
      */
-    private void createMessage(String messageBody){
-        long timeStamp = System.currentTimeMillis();
-        final Message_Model newMessage = new Message_Model(mUserID,messageBody,timeStamp);
-        mViewModel.postNewMessage(mEventName, newMessage).addOnCompleteListener((Task<Void> task)->{
-            if(task.isSuccessful()){
-                List<Message_Model> list = mViewModel.getEventMessages().getValue();
-                if(list!=null){
-                    list.add(newMessage);
-                    mViewModel.setEventMessages(list);
+    private void postMessage(String messageBody){
+        User_Model userModel = mViewModel.getUserModel().getValue();
+        if(userModel!=null){
+            String userName = userModel.getname() + " " + userModel.getName2();
+            long timeStamp = System.currentTimeMillis();
+            final Message_Model newMessage = new Message_Model(userName, mUserID, messageBody, timeStamp);
+            mViewModel.postNewMessage(mEventName, newMessage).addOnCompleteListener((Task<Void> task)->{
+                if(task.isSuccessful()){
+                    List<Message_Model> list = mViewModel.getEventMessages().getValue();
+                    if(list!=null){
+                        list.add(newMessage);
+                        mViewModel.setEventMessages(list);
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     @Override
-    public void loadProfile(String author) {
+    public void loadAuthorProfile(String author) {
         //Called when clicking on a message to load the message author's profile.
-    }
+        Toast.makeText(this,"Clicked on " + author + "'s message.",Toast.LENGTH_LONG).show();
+        User_Model userModel = mViewModel.getUserModel().getValue();
+        if(userModel!=null){
+            Intent viewProfileIntent = new Intent(this, Profile_Activity.class);
+            viewProfileIntent.putExtra("current_user",userModel);
+            startActivity(viewProfileIntent);
+
+            //We need to pass a flag to tell the Profile_Activity to retrieve the author's document.
+        }
+            }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

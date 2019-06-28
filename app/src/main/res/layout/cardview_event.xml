@@ -43,7 +43,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/text_name"
+            android:id="@+id/text_event_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
@@ -60,18 +60,18 @@
             android:id="@+id/text_lookup"
             android:layout_width="0dp"
             android:layout_height="27dp"
-            android:layout_below="@+id/text_name"
+            android:layout_below="@+id/text_event_name"
             android:hint="@string/location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"
-            app:layout_constraintTop_toBottomOf="@id/text_name"
+            app:layout_constraintTop_toBottomOf="@id/text_event_name"
             style="@style/EventCardViewText"/>
 
         <TextView
             android:id="@+id/text_host"
             android:layout_width="0dp"
             android:layout_height="27dp"
-            android:layout_below="@+id/text_name"
+            android:layout_below="@+id/text_event_name"
             android:hint="@string/creator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/calendar_layout"

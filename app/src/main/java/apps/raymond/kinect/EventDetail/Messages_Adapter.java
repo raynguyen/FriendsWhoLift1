@@ -18,13 +18,13 @@ import apps.raymond.kinect.R;
 
 public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.MessageViewHolder> {
 
-    private ProfileClickListener listener;
-    public interface ProfileClickListener{
-        void loadProfile(String author);
+    private MessageClickListener listener;
+    public interface MessageClickListener {
+        void loadAuthorProfile(String author);
     }
 
     private List<Message_Model> mMessages;
-    public Messages_Adapter(ProfileClickListener listener){
+    public Messages_Adapter(MessageClickListener listener){
         this.listener = listener;
     }
 
@@ -39,14 +39,18 @@ public class Messages_Adapter extends RecyclerView.Adapter<Messages_Adapter.Mess
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder vh, int i) {
         final Message_Model message = mMessages.get(i);
-        vh.viewGroup.setOnClickListener((View v)->listener.loadProfile(message.getAuthor()));
-        vh.textAuthor.setText(message.getAuthor());
+        vh.viewGroup.setOnClickListener((View v)->listener.loadAuthorProfile(message.getAuthor()));
+        if(message.getAuthor().length()==0 || message.getAuthor()==null){
+            vh.textAuthor.setText(message.getAuthorID());
+        } else {
+            vh.textAuthor.setText(message.getAuthor());
+        }
+
         vh.textMessage.setText(message.getMessage());
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault());
         Date date = new Date(message.getTimestamp());
         String timeStamp = sdf.format(date);
         vh.textTimestamp.setText(timeStamp);
-
     }
 
     @Override

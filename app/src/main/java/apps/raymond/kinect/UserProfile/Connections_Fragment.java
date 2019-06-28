@@ -152,10 +152,10 @@ public class Connections_Fragment extends Fragment implements
     //ToDo: This should be converted to being called on LongClick, on normal click consider expanding the
     // user's card view to show more details and inflate an add connection button.
     @Override
-    public void onProfileClick(User_Model profileModel) {
-        Toast.makeText(getContext(),"Clicked on profile: "+profileModel.getEmail(),Toast.LENGTH_LONG).show();
+    public void onProfileClick(User_Model user) {
+        Toast.makeText(getContext(),"Clicked on profile: "+user.getEmail(),Toast.LENGTH_LONG).show();
         Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
-        viewProfileIntent.putExtra("profilemodel",profileModel).putExtra("user",mUserModel);
+        viewProfileIntent.putExtra("profile_model",user).putExtra("current_user",mUserModel);
         startActivity(viewProfileIntent);
     }
 }

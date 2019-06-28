@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/text_name"
+                    android:id="@+id/text_event_name"
                     android:layout_width="220dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"

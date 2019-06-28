@@ -199,7 +199,7 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
         private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag, concertTag;
         private EventViewHolder(View view){
             super(view);
-            txtName = view.findViewById(R.id.text_name);
+            txtName = view.findViewById(R.id.text_event_name);
             txtDate = view.findViewById(R.id.text_month_day);
             attendingTxt = view.findViewById(R.id.text_attending);
             invitedTxt = view.findViewById(R.id.text_invited);

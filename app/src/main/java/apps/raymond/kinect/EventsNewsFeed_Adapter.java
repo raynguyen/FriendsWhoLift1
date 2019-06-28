@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -100,7 +99,7 @@ public class EventsNewsFeed_Adapter extends RecyclerView.Adapter<EventsNewsFeed_
         private ImageView sportsTag, foodTag, drinksTag, moviesTag, chillTag, concertTag;
         private EventViewHolder(View view){
             super(view);
-            textName = view.findViewById(R.id.text_name);
+            textName = view.findViewById(R.id.text_event_name);
             textDate = view.findViewById(R.id.text_month_day);
             textTime = view.findViewById(R.id.text_time);
             sportsTag = view.findViewById(R.id.image_sport);

@@ -17,8 +17,6 @@ package apps.raymond.kinect.Events;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -44,7 +42,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -116,7 +113,7 @@ public class EventExplore_Fragment extends Fragment implements
         mMapView.getMapAsync(this);
 
         detailsCardView = view.findViewById(R.id.cardview_event_explore);
-        textEventName = view.findViewById(R.id.text_name);
+        textEventName = view.findViewById(R.id.text_event_name);
         textDesc = view.findViewById(R.id.text_description);
         textThoroughfare = view.findViewById(R.id.text_thoroughfare);
         textMonth = view.findViewById(R.id.text_month_day);
