@@ -23,41 +23,54 @@
         android:scaleX="1.5"
         android:scaleY="1.5"/>
 
-    <ImageButton
-        android:id="@+id/button_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_transfer_within_a_station_black_24dp"
-        android:background="@drawable/button_ripple"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:visibility="gone"/>
-
-    <ImageButton
-        android:id="@+id/button_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_person_add_black_24dp"
-        android:background="@drawable/button_ripple"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:visibility="gone"/>
-
-    <ImageButton
-        android:id="@+id/button_delete_connection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_delete_black_24dp"
-        android:background="@drawable/button_ripple"
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="4dp"
-        android:visibility="gone"/>
+        android:layout_marginEnd="4dp">
+
+        <ProgressBar
+            android:id="@+id/progress_profile_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/button_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_transfer_within_a_station_black_24dp"
+            android:background="@drawable/button_ripple"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/button_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_person_add_black_24dp"
+            android:background="@drawable/button_ripple"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/button_delete_connection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete_black_24dp"
+            android:background="@drawable/button_ripple"
+            android:tint="@color/white"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
 
     <ImageView
         android:id="@+id/profile_pic"

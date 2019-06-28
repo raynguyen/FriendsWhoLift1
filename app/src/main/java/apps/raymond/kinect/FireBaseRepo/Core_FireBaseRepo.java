@@ -153,17 +153,9 @@ public class Core_FireBaseRepo {
     public Task<Boolean> checkForConnection(String userID, String checkID){
         return userCollection.document(userID).collection("Connections")
                 .document(checkID).get()
-                .continueWith(new Continuation<DocumentSnapshot, Boolean>() {
-                    @Override
-                    public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        if(task.isSuccessful()){
-                            if(task.getResult().exists()){
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                });
+                .continueWith((@NonNull Task<DocumentSnapshot> task)->{
+                    return task.getResult().exists();
+            });
     }
 
     public void declineEventInvitation(String eventName, String userID,User_Model user){

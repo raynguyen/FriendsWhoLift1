@@ -31,7 +31,7 @@ public class YesNoDialog extends DialogFragment{
 
     private YesNoCallback callback;
     public interface YesNoCallback{
-        void onPositiveClick();
+        void onDialogPositive();
     }
 
     public static YesNoDialog newInstance(String title, String body){
@@ -65,7 +65,7 @@ public class YesNoDialog extends DialogFragment{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(getTargetFragment()==null){
-                            callback.onPositiveClick();
+                            callback.onDialogPositive();
                         } else {
                             getTargetFragment().onActivityResult(getTargetRequestCode(),POS_RESULT,getActivity().getIntent());
                         }

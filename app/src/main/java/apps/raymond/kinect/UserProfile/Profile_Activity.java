@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +60,8 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     Button btnConnections, btnLocations, btnInterests;
-    ImageButton btnConnect, btnDeleteConnection;
+    private ImageButton btnConnect, btnDeleteConnection;
+    private ProgressBar pbProfileAction;
     ImageView profilePic;
     private Profile_ViewModel mViewModel;
     @Override
@@ -83,51 +85,71 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
             //all instances of Profile_Activity start with the current user's User_Model.
         }
 
-        final TextView txtName = findViewById(R.id.text_profile_name);
+        TextView txtName = findViewById(R.id.text_profile_name);
         final TextView txtConnectionsNum = findViewById(R.id.text_connections_count);
         final TextView txtLocationsNum = findViewById(R.id.text_locations_count);
         final TextView txtInterestsNum = findViewById(R.id.text_interests_count);
-        ImageButton btnConnect = findViewById(R.id.button_connect);
-        ImageButton btnDeleteConnection = findViewById(R.id.button_delete_connection);
+
+        pbProfileAction = findViewById(R.id.progress_profile_action);
+        btnConnect = findViewById(R.id.button_connect);
+        btnConnect.setOnClickListener((View v)->{
+            v.setVisibility(View.GONE);
+            pbProfileAction.setVisibility(View.VISIBLE);
+            if(mViewModel.getProfileModel().getValue()!=null){
+                String userID = mViewModel.getUserModel().getValue().getEmail();
+                User_Model profileModel = mViewModel.getProfileModel().getValue();
+                mViewModel.createUserConnection(userID,profileModel)
+                        .addOnCompleteListener((Task<Void> task2)-> {
+                            pbProfileAction.setVisibility(View.INVISIBLE);
+                            if(task2.isSuccessful()){
+                                btnDeleteConnection.setVisibility(View.VISIBLE);
+                            } else {
+                                Toast.makeText(this,"Error. Please try again shortly.",Toast.LENGTH_LONG).show();
+                                btnConnect.setVisibility(View.VISIBLE);
+                            }
+                        });
+            }
+        });
+
+        btnDeleteConnection = findViewById(R.id.button_delete_connection);
+        btnDeleteConnection.setOnClickListener((View v)->{
+            if(mViewModel.getProfileModel()!=null){
+                String profileID = mViewModel.getProfileModel().getValue().getEmail();
+                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,
+                        YesNoDialog.DELETE_CONNECTION + " " + profileID + "?");
+                yesNoDialog.setCancelable(false);
+                yesNoDialog.show(getSupportFragmentManager(),null);
+            }
+        });
+
+
+        /*
+         * We bind an observer to the ViewModel's ProfileModel. Whenever the LiveData's value becomes
+         * non-null, we know we are viewing the profile of another user. We then query the database
+         * for a connection with the current user.
+         */
         mViewModel.getProfileModel().observe(this,(User_Model profileModel)->{
-            Log.w(TAG,"There has been a change in the profile model: "+profileModel.getEmail());
-            /*
-             * When we detect a change in the profile model held by the ViewModel, we want to check
-             * if the current user has already established a connection with the profile. Here we
-             * should also query the data base for relevant information to display to the Activity
-             * or the children fragments.
-             */
             String profileID = profileModel.getEmail();
+            if(profileModel.getname()!=null && profileModel.getName2()!=null){
+                String name = profileModel.getname() + " " + profileModel.getName2();
+                txtName.setText(name);
+            } else {
+                txtName.setText(profileID);
+            }
+
+            txtConnectionsNum.setText(String.valueOf(profileModel.getNumconnections()));
+            txtInterestsNum.setText(String.valueOf(profileModel.getNuminterests()));
+            txtLocationsNum.setText(String.valueOf(profileModel.getNumlocations()));
+
             String userID = mViewModel.getUserModel().getValue().getEmail();
             mViewModel.checkForConnection(userID,profileID).addOnCompleteListener((Task<Boolean> task)->{
                 if(task.getResult()){
                     btnDeleteConnection.setVisibility(View.VISIBLE);
-                    btnDeleteConnection.setOnClickListener((View v)->{
-
-                        YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,
-                                YesNoDialog.DELETE_CONNECTION + " " + profileID + "?");
-                        yesNoDialog.setCancelable(false);
-                        yesNoDialog.show(getSupportFragmentManager(),null);
-                    });
                 } else {
-                    //ToDo: Can't define the click listeners here. Should have an external method that
-                    // defines the on click listener method.
                     btnConnect.setVisibility(View.VISIBLE);
-                    btnConnect.setOnClickListener((View v)->{
-                        mViewModel.createUserConnection(userID,profileModel)
-                                .addOnCompleteListener((Task<Void> task2)-> {
-                                    btnConnect.setVisibility(View.GONE);
-                                    btnDeleteConnection.setVisibility(View.VISIBLE);
-                                });
-                    });
                 }
             });
 
-            String name = profileModel.getname() + " " + profileModel.getName2();
-            txtName.setText(name);
-            txtConnectionsNum.setText(String.valueOf(profileModel.getNumconnections()));
-            txtInterestsNum.setText(String.valueOf(profileModel.getNuminterests()));
-            txtLocationsNum.setText(String.valueOf(profileModel.getNumlocations()));
         });
 
         if(getIntent().hasExtra(PROFILE_ID)){
@@ -237,6 +259,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
         btnInterests.setOnClickListener((View v)->{
             Toast.makeText(this,"This feature has not been implemented.", Toast.LENGTH_LONG).show();
         });
+
     }
 
 
@@ -245,15 +268,18 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
      * dialog fragment.
      */
     @Override
-    public void onPositiveClick() {
+    public void onDialogPositive() {
+        pbProfileAction.setVisibility(View.VISIBLE);
+        btnDeleteConnection.setVisibility(View.GONE);
         String userID = mViewModel.getUserModel().getValue().getEmail();
         String profileID = mViewModel.getProfileModel().getValue().getEmail();
         mViewModel.deleteUserConnection(userID, profileID).addOnCompleteListener((Task<Void> task)-> {
+            pbProfileAction.setVisibility(View.INVISIBLE);
             if(task.isSuccessful()){
-                btnDeleteConnection.setVisibility(View.GONE);
                 btnConnect.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(this,"Error deleting user.",Toast.LENGTH_LONG).show();
+                btnDeleteConnection.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -283,14 +309,11 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK){
-            Log.w(TAG,"THE RESULT IS OK!");
-            switch (requestCode){
-                case REQUEST_PROFILE_PICTURE:
-                    Log.i(TAG,"Successfully fetched photo.");
-                    //setProfilePic();
-                    Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                    profilePic.setImageBitmap(imageBitmap);
-                    break;
+            if(requestCode == REQUEST_PROFILE_PICTURE){
+                Log.i(TAG,"Successfully fetched photo.");
+                //setProfilePic();
+                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                profilePic.setImageBitmap(imageBitmap);
             }
         }
     }

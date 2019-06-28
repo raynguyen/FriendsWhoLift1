@@ -155,7 +155,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
      * Called when the user confirms that they want to exit the event create activity.
      */
     @Override
-    public void onPositiveClick() {
+    public void onDialogPositive() {
         finish();
     }
 
