@@ -40,6 +40,7 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class Login_Activity extends AppCompatActivity{
+
     @Override
     protected void onCreate(Bundle savedInstanceStance){
         super.onCreate(savedInstanceStance);
@@ -50,15 +51,12 @@ public class Login_Activity extends AppCompatActivity{
         mViewPager.setAdapter(loginAdapter);
 
         Login_ViewModel mViewModel = ViewModelProviders.of(this).get(Login_ViewModel.class);
-        mViewModel.getCurrentUser().observe(this, new Observer<User_Model>() {
-            @Override
-            public void onChanged(@Nullable User_Model user_model) {
-                Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
-                mainIntent.putExtra("user",user_model);
-                startActivity(mainIntent);
-                overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
-                finish();
-            }
+        mViewModel.getCurrentUser().observe(this,(@Nullable User_Model user_model)-> {
+            Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
+            mainIntent.putExtra("user",user_model);
+            startActivity(mainIntent);
+            overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+            finish();
         });
 
     }
@@ -71,14 +69,14 @@ public class Login_Activity extends AppCompatActivity{
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(ev.getAction() == MotionEvent.ACTION_DOWN){
+        /*if(ev.getAction() == MotionEvent.ACTION_DOWN){
             View v = getCurrentFocus();
             if(v instanceof EditText){
                 v.clearFocus();
                 InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(),0);
             }
-        }
+        }*/
         return super.dispatchTouchEvent(ev);
     }
 

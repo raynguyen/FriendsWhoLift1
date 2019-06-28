@@ -77,13 +77,10 @@ public class Login_ViewModel extends ViewModel {
      */
     void registerWithEmail(final String userEmail, final String password, final User_Model newUser){
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail,password);
-                            createNewUserDocument(newUser);
-                        }
+                .addOnCompleteListener((@NonNull Task<AuthResult> task)-> {
+                    if(task.isSuccessful()){
+                        FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail,password);
+                        createNewUserDocument(newUser);
                     }
                 });
     }
