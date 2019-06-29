@@ -58,6 +58,7 @@
     <string name="broadcast_range">Broadcast Range</string>
     <string name="your_connections">Your Connections</string>
     <string name="suggest_connections">Suggested Users</string>
+    <string name="pending_connection">Connection Pending</string>
 
     <!--EVENTS FRAGMENT-->
     <string name="event_search">Find Events Near Me!</string>

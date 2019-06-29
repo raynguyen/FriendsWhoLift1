@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.File;
@@ -60,7 +62,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     Button btnConnections, btnLocations, btnInterests;
-    private ImageButton btnConnect, btnDeleteConnection;
+    private ImageButton btnConnect, btnPendingConnection, btnDeleteConnection;
     private ProgressBar pbProfileAction;
     ImageView profilePic;
     private Profile_ViewModel mViewModel;
@@ -92,26 +94,32 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
 
         pbProfileAction = findViewById(R.id.progress_profile_action);
         btnConnect = findViewById(R.id.button_connect);
+        btnPendingConnection = findViewById(R.id.button_pending_connection);
+        btnDeleteConnection = findViewById(R.id.button_delete_connection);
+
         btnConnect.setOnClickListener((View v)->{
             v.setVisibility(View.GONE);
             pbProfileAction.setVisibility(View.VISIBLE);
             if(mViewModel.getProfileModel().getValue()!=null){
-                String userID = mViewModel.getUserModel().getValue().getEmail();
+                User_Model userModel = mViewModel.getUserModel().getValue();
+                String userID = userModel.getEmail();
                 User_Model profileModel = mViewModel.getProfileModel().getValue();
-                mViewModel.createUserConnection(userID,profileModel)
-                        .addOnCompleteListener((Task<Void> task2)-> {
-                            pbProfileAction.setVisibility(View.INVISIBLE);
-                            if(task2.isSuccessful()){
-                                btnDeleteConnection.setVisibility(View.VISIBLE);
-                            } else {
-                                Toast.makeText(this,"Error. Please try again shortly.",Toast.LENGTH_LONG).show();
-                                btnConnect.setVisibility(View.VISIBLE);
-                            }
-                        });
+                String profileID = profileModel.getEmail();
+
+                mViewModel.requestUserConnection(userID, userModel, profileID,profileModel)
+                    .addOnCompleteListener((@NonNull Task<Void> task)-> {
+                        pbProfileAction.setVisibility(View.INVISIBLE);
+                        if(task.isSuccessful()){
+                            btnPendingConnection.setVisibility(View.VISIBLE);
+                        } else {
+                            Toast.makeText(this,"Error. Please try again shortly.",Toast.LENGTH_LONG).show();
+                            btnConnect.setVisibility(View.VISIBLE);
+                        }
+                    });
             }
         });
 
-        btnDeleteConnection = findViewById(R.id.button_delete_connection);
+
         btnDeleteConnection.setOnClickListener((View v)->{
             if(mViewModel.getProfileModel()!=null){
                 String profileID = mViewModel.getProfileModel().getValue().getEmail();
@@ -144,12 +152,25 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
             String userID = mViewModel.getUserModel().getValue().getEmail();
             mViewModel.checkForConnection(userID,profileID).addOnCompleteListener((Task<Boolean> task)->{
                 if(task.getResult()){
+                    Log.w(TAG,"WE ARE CONNECTED TO: "+profileID);
                     btnDeleteConnection.setVisibility(View.VISIBLE);
                 } else {
-                    btnConnect.setVisibility(View.VISIBLE);
+                    mViewModel.checkForPendingConnection(userID,profileID)
+                            .addOnCompleteListener((Task<Boolean> task2)->{
+                                if(task2.isSuccessful()){
+                                    if(task2.getResult()){
+                                        Log.w(TAG,"PENDING CONNECTION TO: "+profileID);
+                                        btnPendingConnection.setVisibility(View.VISIBLE);
+                                    } else {
+                                        Log.w(TAG,"NO PENDING CONNECTION TO: "+profileID);
+                                        btnConnect.setVisibility(View.VISIBLE);
+                                    }
+                                } else {
+                                    Log.w(TAG,"Unable to determine if the user has a connection or pending connection.");
+                                }
+                            });
                 }
             });
-
         });
 
         if(getIntent().hasExtra(PROFILE_ID)){

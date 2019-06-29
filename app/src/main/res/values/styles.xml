@@ -66,5 +66,15 @@
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
     </style>
+    
+    <style name="ProfileAction">
+        <item name="android:scaleX">1.5</item>
+        <item name="android:scaleY">1.5</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/button_ripple</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
 
 </resources>

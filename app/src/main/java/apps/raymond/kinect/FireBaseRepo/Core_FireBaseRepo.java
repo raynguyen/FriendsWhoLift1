@@ -84,6 +84,9 @@ public class Core_FireBaseRepo {
     private static final String LOCATIONS = "Locations";
     private static final String EVENT_INVITES = "EventInvites";
     private static final String EVENT_INVITED_FIELD = "invited";
+    private static final String PENDING_REQUESTS = "PendingRequests";
+    private static final String CONNECTIONS = "Connections";
+    private static final String CONNECTION_REQUESTS = "ConnectionRequests";
 
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
@@ -130,9 +133,23 @@ public class Core_FireBaseRepo {
         });
     }
 
+    /**
+     * Create a document to request for a connection with a profile.
+     * @param userID string identifier of user who is sending the request.
+     * @param userModel User_Model POJO of the user who is sending the request.
+     * @param profileID string identifier of the profile of which the user is trying to connect with.
+     * @return task to determine that is used by the application context to determine if successful
+     */
+    public Task<Void> requestUserConnection(String userID, User_Model userModel, String profileID, User_Model profileModel){
+        return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userID)
+                .set(userModel).continueWithTask((@NonNull Task<Void> task)->{
+                    return userCollection.document(userID).collection(PENDING_REQUESTS).document()
+                            .set(profileModel);
+                });
+    }
 
-    public Task<Void> addConnection(final String userID, final User_Model newUserConnection){
-        return userCollection.document(userID).collection("Connections")
+    public Task<Void> createUserConnection(final String userID, final User_Model newUserConnection){
+        return userCollection.document(userID).collection(CONNECTIONS)
                 .document(newUserConnection.getEmail())
                 .set(newUserConnection)
                 .continueWithTask((Task<Void> task)->{
@@ -150,12 +167,31 @@ public class Core_FireBaseRepo {
                     return userCollection.document(userID).update("numconnections", FieldValue.increment(-1));
                 });
     }
-    public Task<Boolean> checkForConnection(String userID, String checkID){
-        return userCollection.document(userID).collection("Connections")
-                .document(checkID).get()
+
+    /**
+     * Check a profile to determine if the current user is connected with the profile.
+     * @param userID current user's ID.
+     * @param profileID profile ID to check for a pending connection request.
+     * @return true if the task is completed and a connection exists, otherwise false.
+     */
+    public Task<Boolean> checkForConnection(String userID, String profileID){
+        return userCollection.document(userID).collection(CONNECTIONS).document(profileID).get()
                 .continueWith((@NonNull Task<DocumentSnapshot> task)->{
                     return task.getResult().exists();
-            });
+                });
+    }
+
+    /**
+     * Check a profile if the current user has a pending connection request with the profile.
+     * @param userID current user's ID.
+     * @param profileID profile ID to check for a pending connection request.
+     * @return true if the task is completed and the request exists, otherwise false.
+     */
+    public Task<Boolean> checkForPendingConnection(String userID, String profileID){
+        return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userID).get()
+                .continueWith((@NonNull Task<DocumentSnapshot> task)->{
+                    return task.getResult().exists();
+                });
     }
 
     public void declineEventInvitation(String eventName, String userID,User_Model user){

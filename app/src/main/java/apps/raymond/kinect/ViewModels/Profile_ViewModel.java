@@ -46,7 +46,6 @@ public class Profile_ViewModel extends ViewModel {
         return mProfileModel;
     }
 
-
     public void loadConnections(String userID){
         mRepo.getUserConnections(userID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
             if(task.isSuccessful()){
@@ -81,18 +80,25 @@ public class Profile_ViewModel extends ViewModel {
         return mSuggestedFiltered;
     }
 
+    public Task<Void> requestUserConnection(String userID, User_Model userModel, String profileID, User_Model profileModel){
+        return mRepo.requestUserConnection(userID, userModel, profileID, profileModel);
+    }
     //ToDo: OnComplete, we want to update the list held by suggested users. We want to remove the
     // suggested user should we create the connection.
     public Task<Void> createUserConnection(String userID, User_Model profileModel){
-        return mRepo.addConnection(userID,profileModel);
+        return mRepo.createUserConnection(userID,profileModel);
     }
 
     public Task<Void> deleteUserConnection(String userID, String connectionID){
         return mRepo.deleteUserConnection(userID, connectionID);
     }
 
-    public Task<Boolean> checkForConnection(String userID, String checkID){
-        return mRepo.checkForConnection(userID,checkID);
+    public Task<Boolean> checkForConnection(String userID, String profileID){
+        return mRepo.checkForConnection(userID, profileID);
+    }
+
+    public Task<Boolean> checkForPendingConnection(String userID, String profileID){
+        return mRepo.checkForPendingConnection(userID, profileID);
     }
 
     public void signOut(){

@@ -38,37 +38,30 @@
 
         <ImageButton
             android:id="@+id/button_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_transfer_within_a_station_black_24dp"
-            android:background="@drawable/button_ripple"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:visibility="gone"
-            android:layout_gravity="center"/>
+            style="@style/ProfileAction"
+            android:contentDescription="@string/logout"/>
 
         <ImageButton
             android:id="@+id/button_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_person_add_black_24dp"
-            android:background="@drawable/button_ripple"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:visibility="gone"
-            android:layout_gravity="center"/>
+            style="@style/ProfileAction"
+            android:contentDescription="@string/add_connection"
+            />
+
+        <ImageButton
+            android:id="@+id/button_pending_connection"
+            android:src="@drawable/fui_ic_mail_white_24dp"
+            style="@style/ProfileAction"
+            android:contentDescription="@string/pending_connection"/>
 
         <ImageButton
             android:id="@+id/button_delete_connection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:src="@drawable/ic_delete_black_24dp"
-            android:background="@drawable/button_ripple"
             android:tint="@color/white"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:visibility="gone"
-            android:layout_gravity="center"/>
+            style="@style/ProfileAction"
+            android:contentDescription="@string/delete_connection"/>
+
     </FrameLayout>
 
 
