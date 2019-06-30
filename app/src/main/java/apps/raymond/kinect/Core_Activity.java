@@ -72,6 +72,8 @@ import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Adapter;
 import apps.raymond.kinect.Interfaces.BackPressListener;
+import apps.raymond.kinect.Invitations.EventInvitations_Fragment;
+import apps.raymond.kinect.Invitations.PersonalMessages_Fragment;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -106,7 +108,7 @@ public class Core_Activity extends AppCompatActivity implements
         SearchView.OnQueryTextListener, EventsCore_Adapter.EventClickListener{
 
     private static final String TAG = "Core_Activity";
-    private static final String INV_FRAG = "ViewInvitations_Fragment";
+    private static final String INV_FRAG = "EventInvitations_Fragment";
     public static final int EVENTCREATE = 22;
 
     ViewPager viewPager;
@@ -225,7 +227,13 @@ public class Core_Activity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_invitations:
-                ViewInvitations_Fragment fragment = new ViewInvitations_Fragment();
+                /*EventInvitations_Fragment fragment = new EventInvitations_Fragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_core_full,fragment,INV_FRAG)
+                        .addToBackStack(INV_FRAG)
+                        .commit();*/
+
+                PersonalMessages_Fragment fragment = new PersonalMessages_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_core_full,fragment,INV_FRAG)
                         .addToBackStack(INV_FRAG)

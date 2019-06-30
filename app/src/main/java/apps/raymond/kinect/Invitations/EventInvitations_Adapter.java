@@ -1,4 +1,4 @@
-package apps.raymond.kinect.Events;
+package apps.raymond.kinect.Invitations;
 
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 
 /**
@@ -27,7 +28,7 @@ public class EventInvitations_Adapter extends
 
     public interface EventInvitationInterface {
         void onEventDetail(Event_Model event);
-        void onRespond(Event_Model event, int response);
+        void onResponseDetected(Event_Model event, int response);
     }
 
     public EventInvitations_Adapter(EventInvitationInterface callback){
@@ -57,7 +58,7 @@ public class EventInvitations_Adapter extends
                 @Override
                 public void onClick(View v) {
                     removeItem(viewHolder.getAdapterPosition());
-                    callback.onRespond(event, ACCEPT);
+                    callback.onResponseDetected(event, ACCEPT);
                 }
             });
 
@@ -65,7 +66,7 @@ public class EventInvitations_Adapter extends
                 @Override
                 public void onClick(View v) {
                     removeItem(viewHolder.getAdapterPosition());
-                    callback.onRespond(event,DECLINE);
+                    callback.onResponseDetected(event,DECLINE);
                 }
             });
         }
