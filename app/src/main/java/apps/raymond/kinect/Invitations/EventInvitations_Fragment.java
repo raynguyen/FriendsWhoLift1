@@ -1,6 +1,5 @@
 package apps.raymond.kinect.Invitations;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +54,7 @@ public class EventInvitations_Fragment extends Fragment implements
         eventInviteRecycler.setAdapter(mAdapter);
 
         mViewModel.getEventInvitations().observe(requireActivity(), (@Nullable List<Event_Model> events)->{
+            progressBar.setVisibility(View.INVISIBLE);
             if(events!=null && events.size()>0){
                 mAdapter.setData(events);
             } else {
@@ -67,7 +68,7 @@ public class EventInvitations_Fragment extends Fragment implements
     }
 
     @Override
-    public void onResponseDetected(Event_Model event, int response) {
+    public void onInvitationResponse(Event_Model event, int response) {
         List<Event_Model> eventInvitations = mViewModel.getEventInvitations().getValue();
         if(eventInvitations.contains(event)){
             eventInvitations.remove(event);

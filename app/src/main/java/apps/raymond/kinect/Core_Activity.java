@@ -111,7 +111,6 @@ public class Core_Activity extends AppCompatActivity implements
     private static final String INV_FRAG = "EventInvitations_Fragment";
     public static final int EVENTCREATE = 22;
 
-    ViewPager viewPager;
     private User_Model mUserModel;
     private String mUserID;
     private Core_ViewModel mViewModel;
@@ -155,6 +154,7 @@ public class Core_Activity extends AppCompatActivity implements
                 mUserID = mUserModel.getEmail();
                 mViewModel.loadAcceptedEvents(mUserID);
                 mViewModel.loadEventInvitations(mUserID);
+                mViewModel.loadConnectionRequests(mUserID);
                 mViewModel.loadPublicEvents();
                 mViewModel.loadUserConnections(mUserID);
             } else {
@@ -227,12 +227,6 @@ public class Core_Activity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_invitations:
-                /*EventInvitations_Fragment fragment = new EventInvitations_Fragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_core_full,fragment,INV_FRAG)
-                        .addToBackStack(INV_FRAG)
-                        .commit();*/
-
                 PersonalMessages_Fragment fragment = new PersonalMessages_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_core_full,fragment,INV_FRAG)
@@ -262,28 +256,6 @@ public class Core_Activity extends AppCompatActivity implements
                 List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
                 acceptedEvents.add(event);
                 mViewModel.setAcceptedEvents(acceptedEvents);
-            }
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Log.i(TAG,"List of fragments: \n " + getSupportFragmentManager().getFragments().toString());
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-        if(count==0){
-            Log.i(TAG,"There is nothing in the back stack");
-            if(viewPager.getCurrentItem() == 0){
-                super.onBackPressed();
-            } else if (viewPager.getCurrentItem() == 1){
-                viewPager.setCurrentItem(0);
-            }
-        } else {
-            String fragmentTag = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
-            Fragment topFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-            if(topFragment instanceof BackPressListener){
-                ((BackPressListener)topFragment).onBackPress();
-            } else {
-                super.onBackPressed();
             }
         }
     }

@@ -1,5 +1,6 @@
 package apps.raymond.kinect.Invitations;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,17 +8,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.List;
+
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-public class ConnectionRequests_Fragment extends Fragment {
+public class ConnectionRequests_Fragment extends Fragment implements
+        ConnectionRequests_Adapter.ConnectionRequestListener {
 
     private Core_ViewModel mViewModel;
     @Override
@@ -26,41 +33,42 @@ public class ConnectionRequests_Fragment extends Fragment {
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
     }
 
-    private RecyclerView mRecycler;
-    private TextView txtNullData;
-    private ProgressBar pbLoading;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_simple_recycler,container,false);
-        mRecycler = v.findViewById(R.id.recycler_invitations);
-        pbLoading = v.findViewById(R.id.progress_invitations);
-        return v;
+        return inflater.inflate(R.layout.fragment_simple_recycler,container,false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        txtNullData = view.findViewById(R.id.text_null_data);
-        txtNullData.setVisibility(View.VISIBLE);
+
+        ProgressBar progressBar = view.findViewById(R.id.progress_invitations);
+        TextView txtNullData = view.findViewById(R.id.text_null_data);
+
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_invitations);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        ConnectionRequests_Adapter adapter = new ConnectionRequests_Adapter(this);
+        recyclerView.setAdapter(adapter);
+
+        mViewModel.getConnectionRequests().observe(this,(@Nullable List<User_Model> requests)-> {
+            progressBar.setVisibility(View.GONE);
+            if(requests!=null && requests.size()>0) {
+                adapter.setData(requests);
+            } else {
+                txtNullData.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
+    @Override
+    public void onRequestResponse(User_Model profile) {
 
-    private class ConnectionRequests_Adapter extends FragmentPagerAdapter{
+    }
 
-        private ConnectionRequests_Adapter (FragmentManager fm){
-            super(fm);
-        }
+    @Override
+    public void onProfileDetail(User_Model profile) {
 
-        @Override
-        public Fragment getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 0;
-        }
     }
 }

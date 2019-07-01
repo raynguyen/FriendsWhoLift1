@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
+    private MutableLiveData<List<User_Model>> mConnectionRequests = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mNewEventsFeed = new MutableLiveData<>();
@@ -93,6 +95,19 @@ public class Core_ViewModel extends ViewModel {
 
     public MutableLiveData<List<Event_Model>> getEventInvitations(){
         return mEventInvitations;
+    }
+
+    public void loadConnectionRequests(String userID){
+        mRepository.getConnectionRequests(userID)
+                .addOnCompleteListener((@NonNull Task<List<User_Model>> task)-> {
+                    if(task.isSuccessful()){
+                        mConnectionRequests.setValue(task.getResult());
+                    }
+                });
+    }
+
+    public MutableLiveData<List<User_Model>> getConnectionRequests(){
+        return mConnectionRequests;
     }
 
     public void setEventInvitations(List<Event_Model> newList){

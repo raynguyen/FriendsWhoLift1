@@ -133,6 +133,19 @@ public class Core_FireBaseRepo {
         });
     }
 
+    public Task<List<User_Model>> getConnectionRequests(String userID){
+        return userCollection.document(userID).collection(CONNECTION_REQUESTS).get()
+                .continueWith((@NonNull Task<QuerySnapshot> task)-> {
+                    List<User_Model> connectionRequests = new ArrayList<>();
+                    if(task.isSuccessful()&& task.getResult()!=null){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            connectionRequests.add(document.toObject(User_Model.class));
+                        }
+                    }
+                    return connectionRequests;
+                });
+    }
+
     /**
      * Create a document to request for a connection with a profile.
      * @param userID string identifier of user who is sending the request.

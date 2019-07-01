@@ -28,7 +28,7 @@ public class EventInvitations_Adapter extends
 
     public interface EventInvitationInterface {
         void onEventDetail(Event_Model event);
-        void onResponseDetected(Event_Model event, int response);
+        void onInvitationResponse(Event_Model event, int response);
     }
 
     public EventInvitations_Adapter(EventInvitationInterface callback){
@@ -58,7 +58,7 @@ public class EventInvitations_Adapter extends
                 @Override
                 public void onClick(View v) {
                     removeItem(viewHolder.getAdapterPosition());
-                    callback.onResponseDetected(event, ACCEPT);
+                    callback.onInvitationResponse(event, ACCEPT);
                 }
             });
 
@@ -66,7 +66,7 @@ public class EventInvitations_Adapter extends
                 @Override
                 public void onClick(View v) {
                     removeItem(viewHolder.getAdapterPosition());
-                    callback.onResponseDetected(event,DECLINE);
+                    callback.onInvitationResponse(event,DECLINE);
                 }
             });
         }
