@@ -74,11 +74,11 @@ public class User_Model implements Parcelable {
         dest.writeInt(this.numinterests);
     }
 
-    public void setname(String name){
+    public void setName(String name){
         this.name = name;
     }
 
-    public String getname(){
+    public String getName(){
         return name;
     }
 

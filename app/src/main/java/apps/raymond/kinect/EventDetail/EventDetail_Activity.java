@@ -229,7 +229,7 @@ public class EventDetail_Activity extends AppCompatActivity implements
     private void postMessage(String messageBody){
         User_Model userModel = mViewModel.getUserModel().getValue();
         if(userModel!=null){
-            String userName = userModel.getname() + " " + userModel.getName2();
+            String userName = userModel.getName() + " " + userModel.getName2();
             long timeStamp = System.currentTimeMillis();
             final Message_Model newMessage = new Message_Model(userName, mUserID, messageBody, timeStamp);
             mViewModel.postNewMessage(mEventName, newMessage).addOnCompleteListener((Task<Void> task)->{

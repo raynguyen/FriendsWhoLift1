@@ -83,11 +83,6 @@ public class Profile_ViewModel extends ViewModel {
     public Task<Void> requestUserConnection(String userID, User_Model userModel, String profileID, User_Model profileModel){
         return mRepo.requestUserConnection(userID, userModel, profileID, profileModel);
     }
-    //ToDo: OnComplete, we want to update the list held by suggested users. We want to remove the
-    // suggested user should we create the connection.
-    public Task<Void> createUserConnection(String userID, User_Model profileModel){
-        return mRepo.createUserConnection(userID,profileModel);
-    }
 
     public Task<Void> deleteUserConnection(String userID, String connectionID){
         return mRepo.deleteUserConnection(userID, connectionID);

@@ -147,24 +147,46 @@ public class Core_FireBaseRepo {
     }
 
     /**
+     * Check a profile if the current user has a pending connection request with the profile.
+     * @param userID current user's ID.
+     * @param profileID profile ID to check for a pending connection request.
+     * @return true if the task is completed and the request exists, otherwise false.
+     */
+    public Task<Boolean> checkForPendingConnection(String userID, String profileID){
+        return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userID).get()
+                .continueWith((@NonNull Task<DocumentSnapshot> task)->{
+                    return task.getResult().exists();
+                });
+    }
+
+    public Task<Void> deleteConnectionRequest(String userId, String profileID){
+        return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userId).delete();
+    }
+
+    public Task<Void> deletePendingRequest(String userID, String profileID){
+        return userCollection.document(userID).collection(PENDING_REQUESTS).document(profileID).delete();
+    }
+
+    /**
      * Create a document to request for a connection with a profile.
      * @param userID string identifier of user who is sending the request.
      * @param userModel User_Model POJO of the user who is sending the request.
      * @param profileID string identifier of the profile of which the user is trying to connect with.
      * @return task to determine that is used by the application context to determine if successful
      */
-    public Task<Void> requestUserConnection(String userID, User_Model userModel, String profileID, User_Model profileModel){
+    public Task<Void> requestUserConnection(String userID, User_Model userModel, String profileID,
+                                            User_Model profileModel){
         return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userID)
                 .set(userModel).continueWithTask((@NonNull Task<Void> task)->{
-                    return userCollection.document(userID).collection(PENDING_REQUESTS).document()
+                    return userCollection.document(userID).collection(PENDING_REQUESTS).document(profileID)
                             .set(profileModel);
                 });
     }
 
-    public Task<Void> createUserConnection(final String userID, final User_Model newUserConnection){
+    public Task<Void> createUserConnection(final String userID, final User_Model profile){
         return userCollection.document(userID).collection(CONNECTIONS)
-                .document(newUserConnection.getEmail())
-                .set(newUserConnection)
+                .document(profile.getEmail())
+                .set(profile)
                 .continueWithTask((Task<Void> task)->{
                     if(task.isSuccessful()){
                         return userCollection.document(userID).update("numconnections", FieldValue.increment(1));
@@ -189,19 +211,6 @@ public class Core_FireBaseRepo {
      */
     public Task<Boolean> checkForConnection(String userID, String profileID){
         return userCollection.document(userID).collection(CONNECTIONS).document(profileID).get()
-                .continueWith((@NonNull Task<DocumentSnapshot> task)->{
-                    return task.getResult().exists();
-                });
-    }
-
-    /**
-     * Check a profile if the current user has a pending connection request with the profile.
-     * @param userID current user's ID.
-     * @param profileID profile ID to check for a pending connection request.
-     * @return true if the task is completed and the request exists, otherwise false.
-     */
-    public Task<Boolean> checkForPendingConnection(String userID, String profileID){
-        return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userID).get()
                 .continueWith((@NonNull Task<DocumentSnapshot> task)->{
                     return task.getResult().exists();
                 });
@@ -240,7 +249,6 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    /*------------------------------------------EVENTS---------------------------------------------*
     /**
      * Creates a document in Events using the event POJO.
      * @param event The created Event POJO.
@@ -410,18 +418,6 @@ public class Core_FireBaseRepo {
         });
     }
 
-    /**
-     * Prior to calling this method we want to ensure that we have a List<String> of all the user's
-     * connections. We will then query for all public events
-     * We first query the Events collection for public events. Within this first subset of events,
-     * we then filter for
-     * @return
-     */
-    public Task<List<Event_Model>> loadPopularEvents(){
-        //Query query = eventCollection.
-        return null;
-    }
-
     public Task<Boolean> checkForUser(String userID, String eventName){
         return eventCollection.document(eventName).collection(ACCEPTED).document(userID).get()
                 .continueWith((@NonNull Task<DocumentSnapshot> task)->{
@@ -496,7 +492,6 @@ public class Core_FireBaseRepo {
                     return null;
                 });
     }
-
 
     //REGISTRATION AND LOGIN
     public Task<Boolean> signInViaEmail(String name, String pw){

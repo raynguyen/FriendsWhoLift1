@@ -37,7 +37,7 @@ public class EventInvitations_Adapter extends
 
     @NonNull
     @Override
-    public EventInvitations_Adapter.InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public InviteMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_invite_item,viewGroup,false);
         return new InviteMessagesViewHolder(view);
     }

@@ -33,7 +33,6 @@ import apps.raymond.kinect.UserProfile.User_Model;
  */
 public class Core_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepository;
-    private MutableLiveData<String> mUserID = new MutableLiveData<>();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
@@ -49,24 +48,18 @@ public class Core_ViewModel extends ViewModel {
 
     public void setUserDocument(User_Model user_model){
         mUserModel.setValue(user_model);
-        mUserID.setValue(user_model.getEmail());
     }
 
     public void loadUserDocument(String userID){
         mRepository.getUserModel(userID).addOnCompleteListener((Task<User_Model> task)->{
             if(task.isSuccessful()){
                 mUserModel.setValue(task.getResult());
-                mUserID.setValue(task.getResult().getEmail());
             }
         });
     }
 
     public MutableLiveData<User_Model> getUserModel(){
         return mUserModel;
-    }
-
-    public MutableLiveData<String> getUserID(){
-        return mUserID;
     }
 
     public void loadUserConnections(String userID){
@@ -195,6 +188,28 @@ public class Core_ViewModel extends ViewModel {
     public Task<Boolean> checkForUser(String userID, String eventName){
         return mRepository.checkForUser(userID, eventName);
     }
+
+    public Task<Void> createUserConnection(String userID, User_Model profile){
+        return mRepository.createUserConnection(userID, profile)
+                .addOnCompleteListener((@NonNull Task<Void> task)->{
+                    List<User_Model> connections = mConnections.getValue();
+                    if(connections!=null){
+                        connections.add(profile);
+                    }
+                    String profileID = profile.getEmail();
+                    deletePendingRequest(userID, profileID);
+                    deleteConnectionRequest(userID, profileID);
+                });
+    }
+
+    public Task<Void> deleteConnectionRequest(String userID, String profileID){
+        return mRepository.deleteConnectionRequest(userID, profileID);
+    }
+
+    public Task<Void> deletePendingRequest(String userID, String profileID){
+        return mRepository.deletePendingRequest(userID, profileID);
+    }
+
     //*-------------------------------------------ETC--------------------------------------------*//
     public Task<byte[]> getImage(String uri){
         return mRepository.getImage(uri);

@@ -87,8 +87,4 @@ public class EventDetail_ViewModel extends ViewModel {
         mEventMessages.setValue(messages);
     }
 
-    public Task<Void> addUserConnection(String userID,User_Model user){
-        return mRepository.createUserConnection(userID,user);
-    }
-
 }

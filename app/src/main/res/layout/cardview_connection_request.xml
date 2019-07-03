@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/image_profile_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_face_black_24dp"
+            android:tint="@color/blueish"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/text_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/image_profile_pic"
+            android:hint="@string/first_name"/>
+
+        <Button
+            android:id="@+id/button_request_decline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_name"
+            android:layout_toStartOf="@id/button_request_accept"
+            android:text="@string/decline"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+
+        <Button
+            android:id="@+id/button_request_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_name"
+            android:layout_alignParentEnd="true"
+            android:text="@string/accept"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:textColor="@color/blueish"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.File;
@@ -138,8 +137,8 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
          */
         mViewModel.getProfileModel().observe(this,(User_Model profileModel)->{
             String profileID = profileModel.getEmail();
-            if(profileModel.getname()!=null && profileModel.getName2()!=null){
-                String name = profileModel.getname() + " " + profileModel.getName2();
+            if(profileModel.getName()!=null && profileModel.getName2()!=null){
+                String name = profileModel.getName() + " " + profileModel.getName2();
                 txtName.setText(name);
             } else {
                 txtName.setText(profileID);
@@ -203,7 +202,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
              * and therefore can inflate the settings fragment.
              */
             User_Model userModel = mViewModel.getUserModel().getValue();
-            String name = userModel.getname() + " " + userModel.getName2();
+            String name = userModel.getName() + " " + userModel.getName2();
             if(name!=null){
                 txtName.setText(name);
             } else {

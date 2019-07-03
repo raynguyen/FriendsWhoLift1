@@ -16,6 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -63,12 +67,26 @@ public class ConnectionRequests_Fragment extends Fragment implements
     }
 
     @Override
-    public void onRequestResponse(User_Model profile) {
+    public void onRequestResponse(User_Model profile, boolean response) {
+        if(mViewModel.getUserModel().getValue()!=null){
+            String userID = mViewModel.getUserModel().getValue().getEmail();
+            String profileID = profile.getEmail();
 
+            if(response){
+                mViewModel.createUserConnection(userID, profile)
+                        .addOnCompleteListener((@NonNull Task<Void> task)->
+                                Toast.makeText(getContext(),"Connected to "+userID,Toast.LENGTH_LONG).show());
+            } else {
+                mViewModel.deleteConnectionRequest(userID, profileID)
+                        .addOnCompleteListener((@NonNull Task<Void> task)->{
+                            mViewModel.deletePendingRequest(userID, profileID);
+                        });
+            }
+        }
     }
 
     @Override
     public void onProfileDetail(User_Model profile) {
-
+        Log.w("ConnRequest","INFLATE DETAIL FOR profile: "+profile.getEmail());
     }
 }
