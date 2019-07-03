@@ -65,6 +65,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     private ProgressBar pbProfileAction;
     ImageView profilePic;
     private Profile_ViewModel mViewModel;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +106,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
                 User_Model profileModel = mViewModel.getProfileModel().getValue();
                 String profileID = profileModel.getEmail();
 
-                mViewModel.requestUserConnection(userID, userModel, profileID,profileModel)
+                mViewModel.requestUserConnection(userID, userModel, profileID, profileModel)
                     .addOnCompleteListener((@NonNull Task<Void> task)-> {
                         pbProfileAction.setVisibility(View.INVISIBLE);
                         if(task.isSuccessful()){
@@ -157,10 +158,8 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
                             .addOnCompleteListener((Task<Boolean> task2)->{
                                 if(task2.isSuccessful()){
                                     if(task2.getResult()){
-                                        Log.w(TAG,"PENDING CONNECTION TO: "+profileID);
                                         btnPendingConnection.setVisibility(View.VISIBLE);
                                     } else {
-                                        Log.w(TAG,"NO PENDING CONNECTION TO: "+profileID);
                                         btnConnect.setVisibility(View.VISIBLE);
                                     }
                                 } else {
@@ -177,7 +176,6 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
              * are viewing. The FETCH_MODEL extra is currently only passed with the intent via
              * EventDetail_Activity when a post is clicked.
              */
-            Log.w(TAG,"We have been given a PROFILE_ID");
             String profileID = getIntent().getStringExtra(PROFILE_ID);
             mViewModel.loadProfileModel(profileID);
         } else if(getIntent().hasExtra(USER_PROFILEMODEL)){
@@ -202,7 +200,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
              */
             User_Model userModel = mViewModel.getUserModel().getValue();
             String name = userModel.getName() + " " + userModel.getName2();
-            if(name!=null){
+            if(userModel.getName()!=null){
                 txtName.setText(name);
             } else {
                 txtName.setText(userModel.getEmail());
@@ -235,11 +233,11 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
         btnConnections.setOnClickListener((View v)->{
             Connections_Fragment fragment;
             if(mViewModel.getProfileModel().getValue()!=null){
-                    /*
-                    There has been no profile model set to the view model and therefore we are viewing
-                    the current user's Profile Activity and want to pass the current user's model
-                    (perhaps the ID?) in order to load the current user's connections.
-                     */
+                /*
+                There has been no profile model set to the view model and therefore we are viewing
+                the current user's Profile Activity and want to pass the current user's model
+                (perhaps the ID?) in order to load the current user's connections.
+                 */
                 User_Model profileModel = mViewModel.getProfileModel().getValue();
                 fragment = Connections_Fragment.newInstance(profileModel);
             } else {
@@ -257,11 +255,11 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
         btnLocations.setOnClickListener((View v)->{
             Locations_MapFragment mapFragment;
             if(mViewModel.getProfileModel().getValue()!=null){
-                    /*
-                    There has been no profile model set to the view model and therefore we are viewing
-                    the current user's Profile Activity and want to pass the current user's model
-                    (perhaps the ID?) in order to load the current user's connections.
-                     */
+                /*
+                There has been no profile model set to the view model and therefore we are viewing
+                the current user's Profile Activity and want to pass the current user's model
+                (perhaps the ID?) in order to load the current user's connections.
+                 */
                 String profileID = mViewModel.getProfileModel().getValue().getEmail();
                 mapFragment = Locations_MapFragment.newInstance(profileID,Locations_MapFragment.EVENT_PROFILE);
             } else {

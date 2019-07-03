@@ -18,13 +18,13 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ProfileViewHolder>
     implements Filterable {
 
+    private List<User_Model> mCompleteSet;
+    private List<User_Model> mDisplaySet;
     private ProfileClickListener listener;
+
     public interface ProfileClickListener {
         void onProfileClick(User_Model userModel);
     }
-
-    private List<User_Model> mCompleteSet;
-    private List<User_Model> mDisplaySet;
 
     public ProfileRecyclerAdapter(ProfileClickListener profileClickListener){
         this.listener = profileClickListener;

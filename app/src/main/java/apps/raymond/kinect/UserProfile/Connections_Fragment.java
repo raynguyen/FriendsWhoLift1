@@ -23,6 +23,10 @@ import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
+/**
+ * Fragment that displays the suggested connections and current connections. There is a search view
+ * that filters both the recycler views for users that match the constraint inputted by the user.
+ */
 public class Connections_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener {
 
