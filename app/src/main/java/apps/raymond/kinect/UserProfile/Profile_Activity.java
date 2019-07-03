@@ -151,7 +151,6 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
             String userID = mViewModel.getUserModel().getValue().getEmail();
             mViewModel.checkForConnection(userID,profileID).addOnCompleteListener((Task<Boolean> task)->{
                 if(task.getResult()){
-                    Log.w(TAG,"WE ARE CONNECTED TO: "+profileID);
                     btnDeleteConnection.setVisibility(View.VISIBLE);
                 } else {
                     mViewModel.checkForPendingConnection(userID,profileID)

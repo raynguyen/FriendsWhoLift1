@@ -53,9 +53,8 @@ public class ConnectionRequests_Fragment extends Fragment implements
         recyclerView.setAdapter(adapter);
 
         mViewModel.getConnectionRequests().observe(this,(@Nullable List<User_Model> requests)-> {
-            Log.w("ConReqFrag","There was a change in connection request!");
             progressBar.setVisibility(View.GONE);
-            if(requests!=null && requests.size()>0) {
+            if(requests!=null) {
                 adapter.setData(requests);
             } else {
                 txtNullData.setVisibility(View.VISIBLE);

@@ -78,10 +78,6 @@ public class ConnectionRequests_Adapter extends RecyclerView.Adapter<ConnectionR
 
                 @Override
                 public boolean areItemsTheSame(int oldPosition, int newPosition) {
-                    Log.w("ConnReqAdapter","Comparing the items: "+
-                            mDataSet.get(oldPosition).getEmail()+ " " +
-                            newData.get(newPosition).getEmail());
-                    Log.w("ConnReqAdapter","Returning: "+mDataSet.get(oldPosition).equals(newData.get(newPosition)) );
                     return mDataSet.get(oldPosition).equals(newData.get(newPosition));
                 }
 
