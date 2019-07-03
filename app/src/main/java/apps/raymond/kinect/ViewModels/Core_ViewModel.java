@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -196,6 +197,7 @@ public class Core_ViewModel extends ViewModel {
                     if(connections!=null){
                         connections.add(profile);
                     }
+
                     String profileID = profile.getEmail();
                     deletePendingRequest(userID, profileID);
                     deleteConnectionRequest(userID, profileID);
@@ -203,7 +205,19 @@ public class Core_ViewModel extends ViewModel {
     }
 
     public Task<Void> deleteConnectionRequest(String userID, String profileID){
-        return mRepository.deleteConnectionRequest(userID, profileID);
+        return mRepository.deleteConnectionRequest(userID, profileID)
+                .addOnCompleteListener((@NonNull Task<Void> task)-> {
+                    List<User_Model> requests = mConnectionRequests.getValue();
+                    if(requests!=null){
+                        for(User_Model user : requests){
+                            if(user.getEmail().equals(profileID)){
+                                requests.remove(user);
+                                break;
+                            };
+                        }
+                        mConnectionRequests.setValue(requests);
+                    }
+                });
     }
 
     public Task<Void> deletePendingRequest(String userID, String profileID){

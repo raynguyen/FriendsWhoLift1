@@ -1,13 +1,10 @@
 package apps.raymond.kinect.Invitations;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
@@ -57,6 +53,7 @@ public class ConnectionRequests_Fragment extends Fragment implements
         recyclerView.setAdapter(adapter);
 
         mViewModel.getConnectionRequests().observe(this,(@Nullable List<User_Model> requests)-> {
+            Log.w("ConReqFrag","There was a change in connection request!");
             progressBar.setVisibility(View.GONE);
             if(requests!=null && requests.size()>0) {
                 adapter.setData(requests);
@@ -68,6 +65,7 @@ public class ConnectionRequests_Fragment extends Fragment implements
 
     @Override
     public void onRequestResponse(User_Model profile, boolean response) {
+        Log.w("ConReqFrag","Clicked to respond to a request!");
         if(mViewModel.getUserModel().getValue()!=null){
             String userID = mViewModel.getUserModel().getValue().getEmail();
             String profileID = profile.getEmail();
@@ -75,12 +73,11 @@ public class ConnectionRequests_Fragment extends Fragment implements
             if(response){
                 mViewModel.createUserConnection(userID, profile)
                         .addOnCompleteListener((@NonNull Task<Void> task)->
-                                Toast.makeText(getContext(),"Connected to "+userID,Toast.LENGTH_LONG).show());
+                                Toast.makeText(getContext(),"Connected to "+profileID,Toast.LENGTH_LONG).show());
             } else {
                 mViewModel.deleteConnectionRequest(userID, profileID)
-                        .addOnCompleteListener((@NonNull Task<Void> task)->{
-                            mViewModel.deletePendingRequest(userID, profileID);
-                        });
+                        .addOnCompleteListener((@NonNull Task<Void> task)->
+                            mViewModel.deletePendingRequest(userID, profileID));
             }
         }
     }

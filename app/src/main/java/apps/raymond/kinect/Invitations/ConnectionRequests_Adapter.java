@@ -1,7 +1,9 @@
 package apps.raymond.kinect.Invitations;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,9 +65,35 @@ public class ConnectionRequests_Adapter extends RecyclerView.Adapter<ConnectionR
         if(mDataSet==null){
             mDataSet = new ArrayList<>(newData);
         } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return mDataSet.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return newData.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                    Log.w("ConnReqAdapter","Comparing the items: "+
+                            mDataSet.get(oldPosition).getEmail()+ " " +
+                            newData.get(newPosition).getEmail());
+                    Log.w("ConnReqAdapter","Returning: "+mDataSet.get(oldPosition).equals(newData.get(newPosition)) );
+                    return mDataSet.get(oldPosition).equals(newData.get(newPosition));
+                }
+
+                //Disabled currently
+                @Override
+                public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                    return true;
+                }
+            });
             mDataSet.clear();
             mDataSet.addAll(newData);
-            notifyItemRangeChanged(0, mDataSet.size());
+            result.dispatchUpdatesTo(this);
         }
     }
 

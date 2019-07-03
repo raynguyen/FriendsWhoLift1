@@ -159,12 +159,24 @@ public class Core_FireBaseRepo {
                 });
     }
 
+    /**
+     * Delete a connection request from a user's ConnectionRequest collection.
+     * @param userId the ID of which we are deleting a ConnectionRequest.
+     * @param profileID the ID of the user who sent the connection request.
+     * @return a task that contains information regarding the CRUD operation.
+     */
     public Task<Void> deleteConnectionRequest(String userId, String profileID){
-        return userCollection.document(profileID).collection(CONNECTION_REQUESTS).document(userId).delete();
+        return userCollection.document(userId).collection(CONNECTION_REQUESTS).document(profileID).delete();
     }
 
+    /**
+     * Delete a pending connection document from the requester's PendingConnection collection.
+     * @param userID the ID of the user of which we are deleting the pending connection request.
+     * @param profileID the ID of the profile who sent the connection request.
+     * @return a task containing information on the CRUD operation.
+     */
     public Task<Void> deletePendingRequest(String userID, String profileID){
-        return userCollection.document(userID).collection(PENDING_REQUESTS).document(profileID).delete();
+        return userCollection.document(profileID).collection(PENDING_REQUESTS).document(userID).delete();
     }
 
     /**
