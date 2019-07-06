@@ -44,7 +44,7 @@ public class ConnectionRequests_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ProgressBar progressBar = view.findViewById(R.id.progress_invitations);
+        ProgressBar progressBar = view.findViewById(R.id.progress_loading_recycler);
         TextView txtNullData = view.findViewById(R.id.text_null_data);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_invitations);
@@ -54,7 +54,7 @@ public class ConnectionRequests_Fragment extends Fragment implements
 
         mViewModel.getConnectionRequests().observe(this,(@Nullable List<User_Model> requests)-> {
             progressBar.setVisibility(View.GONE);
-            if(requests!=null) {
+            if(requests!=null && requests.size()>0) {
                 adapter.setData(requests);
             } else {
                 txtNullData.setVisibility(View.VISIBLE);

@@ -34,7 +34,10 @@ import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.StartUp.Login_Activity;
-import apps.raymond.kinect.ViewModels.Profile_ViewModel;
+import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+/**
+ * activity_profile.xml is being deprecated.
+ */
 
 /**
  * Activity class that is loaded when we want to view a User's profile. If the activity is loaded
@@ -48,10 +51,9 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
 public class Profile_Activity extends AppCompatActivity implements YesNoDialog.YesNoCallback,
-        Locations_MapFragment.MapCardViewClick {
+        Locations_MapFragment.MapCardViewClick, Profile_Fragment.ViewProfileInterace {
     public static final String CURRENT_USERMODEL = "current_user"; //Mandatory field to determine connection controls required.
     public static final String USER_PROFILEMODEL = "profile_model";
-    public static final String FETCH_MODEL = "fetch_model";
     public static final String PROFILE_ID = "profile_id";
 
     private static final String TAG = "ProfileActivity";
@@ -64,13 +66,12 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     private ImageButton btnConnect, btnPendingConnection, btnDeleteConnection;
     private ProgressBar pbProfileAction;
     ImageView profilePic;
-    private Profile_ViewModel mViewModel;
-
+    private ProfileActivity_ViewModel mViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(ProfileActivity_ViewModel.class);
 
         /*
          * We will always require the current user's model when viewing any profile. The model is
@@ -279,6 +280,10 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
 
     }
 
+    @Override
+    public void inflateProfileFragment(User_Model profileModel) {
+        Log.w(TAG,"Inflate a new fragment for a profile.");
+    }
 
     /**
      * Interface implementation for when the user clicks the positive button on the DeleteConnection
@@ -311,7 +316,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
         //ToDo:CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE
         //If the prompt returns a positive click, increment the Text on locations button after we
         //increment number of locations in the user document.
-        //In the activity result, use the ViewModel held by THIS ACTIVITY (Profile_ViewModel)
+        //In the activity result, use the ViewModel held by THIS ACTIVITY (ProfileActivity_ViewModel)
         Log.w(TAG,"PROMPT TO ADD A LOOKUP NAME");
         location.setLookup("TEMPLOOKUP");
         User_Model userModel = mViewModel.getUserModel().getValue();

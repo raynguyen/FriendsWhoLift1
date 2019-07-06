@@ -3,7 +3,6 @@ package apps.raymond.kinect.MapsPackage;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +26,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,11 +33,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.Profile_ViewModel;
+import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
 
 /*
 ToDo: When searching the Locations_Model recycler, slide up to hide the MapView and only show recycler.
@@ -81,12 +76,12 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
     }
 
     private String mUserID;
-    private Profile_ViewModel mViewModel;
+    private ProfileActivity_ViewModel mViewModel;
     private boolean mFlagProfile;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(ProfileActivity_ViewModel.class);
         if(getArguments()!=null){
             mUserID = getArguments().getString("userid");
             mFlagProfile = getArguments().getBoolean("flag");

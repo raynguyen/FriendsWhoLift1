@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.List;
 
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.Profile_ViewModel;
+import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
 
 /**
  * Fragment that displays the suggested connections and current connections. There is a search view
@@ -38,13 +39,13 @@ public class Connections_Fragment extends Fragment implements
         return fragment;
     }
 
-    private Profile_ViewModel mViewModel;
+    private ProfileActivity_ViewModel mViewModel;
     private User_Model mUserModel;
     private String mUserID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
+        mViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
         mUserModel = getArguments().getParcelable("user");
         mUserID = mUserModel.getEmail();
     }
@@ -157,6 +158,11 @@ public class Connections_Fragment extends Fragment implements
     // user's card view to show more details and inflate an add connection button.
     @Override
     public void onProfileClick(User_Model user) {
+        Log.w("ConnFragment","should inflate some floating buttons to add user or send message.");
+    }
+
+    @Override
+    public void onProfileLongClick(User_Model user) {
         Toast.makeText(getContext(),"Clicked on profile: "+user.getEmail(),Toast.LENGTH_LONG).show();
         Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
         viewProfileIntent.putExtra("profile_model",user).putExtra("current_user",mUserModel);

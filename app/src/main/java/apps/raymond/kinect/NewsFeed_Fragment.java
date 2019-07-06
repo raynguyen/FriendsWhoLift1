@@ -84,7 +84,6 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
         //Needed to determine events that are popular with friends.
         mViewModel.getPopularFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
             mPopularAdapter.setData(event_models);
-            Log.w("CoreFragment","Got a list of event models that your friends joined: " + event_models.size());
         });
 
         //Needed to determine events held at locations where you have previously been to.
@@ -113,19 +112,13 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
                     }
                 }
                 publicEvents.removeAll(tempList);
-                Log.w("CoreFragment","Size of public events after filter = "+publicEvents.size());
-                //mViewModel.setPublicEvents(publicEvents); //SET THE PUBLIC EVENTS WITH THE FILTERED LIST. THIS SHOULD GO SOMEWHERE
-                //Have a filteredPublicEvents and call this above method in the core?
             }
             //For each connection, check each event in the filtered public events to see if there is a connected user attending the event.
             for(User_Model connection : userConnections){
-                Log.w("CoreFragment","Iterating through connection "+connection.getEmail());
                 for(Event_Model event : publicEvents){
-                    Log.w("CoreFragment","Checking for connection in event: " + event.getName());
                     mViewModel.checkForUser(connection.getEmail(),event.getName())
                         .addOnCompleteListener((@NonNull Task<Boolean> task)->{
-                            Log.w("CoreFragment","Event: " + event.getName() + " check returned "+task.getResult());
-                            if(task.getResult()){
+                            if(task.getResult()!=null && task.getResult()){
                                 filteredEvents.add(event);
                                 mViewModel.getPopularFeed().postValue(filteredEvents);
                             }

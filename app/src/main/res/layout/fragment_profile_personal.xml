@@ -2,12 +2,19 @@
 <ScrollView
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/tab_gradient">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <include
+            android:id="@+id/layout_details"
+            app:layout_constraintTop_toTopOf="parent"
+            layout="@layout/layout_profile_details">
+        </include>
 
         <LinearLayout
             android:id="@+id/social_settings"
@@ -17,7 +24,7 @@
             android:background="@drawable/settings_section_bg"
             android:orientation="vertical"
             android:padding="12dp"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/layout_details">
 
             <LinearLayout
                 android:layout_width="match_parent"

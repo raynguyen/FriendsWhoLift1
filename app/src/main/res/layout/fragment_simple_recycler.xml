@@ -6,7 +6,7 @@
     android:clickable="true">
 
     <ProgressBar
-        android:id="@+id/progress_invitations"
+        android:id="@+id/progress_loading_recycler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

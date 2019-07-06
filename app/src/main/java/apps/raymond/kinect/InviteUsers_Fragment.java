@@ -61,4 +61,9 @@ public class InviteUsers_Fragment extends Fragment implements ProfileRecyclerAda
     public void onProfileClick(User_Model userModel) {
         Log.i(TAG,"hello you clicked on a profile!");
     }
+
+    @Override
+    public void onProfileLongClick(User_Model userModel) {
+
+    }
 }

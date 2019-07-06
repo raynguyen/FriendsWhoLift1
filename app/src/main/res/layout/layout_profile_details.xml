@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!--The connections, locations, and interests fragments are inflated here.-->
-    <FrameLayout
-        android:id="@+id/frame_profile"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="2dp">
-    </FrameLayout>
 
     <ImageButton
         android:id="@+id/button_return"
@@ -20,7 +13,8 @@
         android:layout_marginTop="12dp"
         android:layout_marginStart="12dp"
         android:scaleX="1.5"
-        android:scaleY="1.5"/>
+        android:scaleY="1.5"
+        android:contentDescription="@string/profile_picture"/>
 
     <FrameLayout
         android:layout_width="48dp"
@@ -172,13 +166,4 @@
                 android:textColor="@color/colorAccent"/>
         </LinearLayout>
     </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/frame_profilefragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@id/connections_frame"
-        android:layout_alignParentBottom="true">
-    </FrameLayout>
-
 </RelativeLayout>

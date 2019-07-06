@@ -24,6 +24,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     public interface ProfileClickListener {
         void onProfileClick(User_Model userModel);
+        void onProfileLongClick(User_Model userModel);
     }
 
     public ProfileRecyclerAdapter(ProfileClickListener profileClickListener){
@@ -42,6 +43,10 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         final User_Model currUser = mDisplaySet.get(i);
         vh.name.setText(currUser.getEmail());
         vh.itemView.setOnClickListener((View v)-> listener.onProfileClick(currUser));
+        vh.itemView.setOnLongClickListener((View v)->{
+            listener.onProfileLongClick(currUser);
+            return true;
+        });
     }
 
     @Override

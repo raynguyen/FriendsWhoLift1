@@ -15,7 +15,7 @@ import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Profile_ViewModel extends ViewModel {
+public class ProfileActivity_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<User_Model> mProfileModel = new MutableLiveData<>();
@@ -24,7 +24,7 @@ public class Profile_ViewModel extends ViewModel {
     private MutableLiveData<List<User_Model>> mFilteredPublicUsers = new MutableLiveData<>(); //List of public users that are not connected with current user.
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
 
-    public Profile_ViewModel(){}
+    public ProfileActivity_ViewModel(){}
 
     public void setUserModel(User_Model userModel){
         mUserModel.setValue(userModel);

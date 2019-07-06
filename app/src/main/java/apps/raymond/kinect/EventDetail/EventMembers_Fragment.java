@@ -100,4 +100,9 @@ public class EventMembers_Fragment extends Fragment implements
         viewProfileIntent.putExtra("profile_model",user).putExtra("current_user",myUserModel);
         startActivity(viewProfileIntent);
     }
+
+    @Override
+    public void onProfileLongClick(User_Model userModel) {
+
+    }
 }

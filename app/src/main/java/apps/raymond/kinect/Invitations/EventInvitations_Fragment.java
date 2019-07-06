@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,7 @@ public class EventInvitations_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ProgressBar progressBar = view.findViewById(R.id.progress_invitations);
+        ProgressBar progressBar = view.findViewById(R.id.progress_loading_recycler);
         TextView txtNullData = view.findViewById(R.id.text_null_data);
         RecyclerView eventInviteRecycler = view.findViewById(R.id.recycler_invitations);
         eventInviteRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
