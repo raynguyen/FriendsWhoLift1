@@ -55,7 +55,6 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     public static final String CURRENT_USERMODEL = "current_user"; //Mandatory field to determine connection controls required.
     public static final String USER_PROFILEMODEL = "profile_model";
     public static final String PROFILE_ID = "profile_id";
-
     private static final String TAG = "ProfileActivity";
     private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
     private static final String LOCATIONS_FRAG = "LocationsFrag";
@@ -189,9 +188,9 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
             User_Model profileModel = getIntent().getParcelableExtra(USER_PROFILEMODEL);
             mViewModel.setProfileModel(profileModel);
             //Fragment that holds details regarding a User's profile.
-            ViewProfile_Fragment viewFragment = ViewProfile_Fragment.newInstance(profileModel);
+            Profile_Fragment fragment = Profile_Fragment.newInstance(profileModel);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_profilefragment,viewFragment)
+                    .replace(R.id.frame_profile,fragment)
                     .commit();
         } else {
             /*
@@ -214,7 +213,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
             //Fragment that shows the User's current settings and preferences.
             ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(userModel);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_profilefragment,profileFragment)
+                    .replace(R.id.frame_profile,profileFragment)
                     .commit();
 
             ImageButton btnLogout = findViewById(R.id.button_logout);
@@ -228,8 +227,6 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
             });
         }
 
-        ImageButton btnReturn = findViewById(R.id.button_return);
-        btnReturn.setOnClickListener((View v)->onBackPressed());
         btnConnections = findViewById(R.id.button_connections);
         btnConnections.setOnClickListener((View v)->{
             Connections_Fragment fragment;
@@ -277,7 +274,6 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
         btnInterests.setOnClickListener((View v)->{
             Toast.makeText(this,"This feature has not been implemented.", Toast.LENGTH_LONG).show();
         });
-
     }
 
     @Override

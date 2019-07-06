@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
@@ -58,6 +59,9 @@ public class Profile_Fragment extends Fragment implements ProfileRecyclerAdapter
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ImageButton btnReturn = view.findViewById(R.id.button_return);
+        btnReturn.setOnClickListener((View v) -> requireActivity().onBackPressed());
     }
 
     /**
