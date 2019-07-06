@@ -23,7 +23,6 @@ public class YesNoDialog extends DialogFragment{
     public static final String DISCARD_CHANGES = "Leaving now will discard any changes you have made. \nAre you sure you want to cancel?";
     public static final String DELETE_CONNECTION = "Delete connection with";
     public static final String WARNING = "WARNING!";
-    public static final String CONFIRM_GROUP = "Are you sure you want to create this Group?";
     public static final String TITLE = "title";
     public static final String BODY = "body";
     public static final int POS_RESULT = 21;

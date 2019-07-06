@@ -16,6 +16,17 @@
             layout="@layout/layout_profile_details">
         </include>
 
+        <ImageButton
+            android:id="@+id/button_logout"
+            android:src="@drawable/ic_transfer_within_a_station_black_24dp"
+            style="@style/ProfileAction"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/logout"/>
+
         <LinearLayout
             android:id="@+id/social_settings"
             android:layout_width="match_parent"

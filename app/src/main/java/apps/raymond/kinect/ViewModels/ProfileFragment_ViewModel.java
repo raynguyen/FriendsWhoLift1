@@ -11,6 +11,9 @@ import java.util.List;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+/**
+ * ViewModel class that holds information regarding a given profile.
+ */
 public class ProfileFragment_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
     private MutableLiveData<User_Model> mProfileModel = new MutableLiveData<>();
@@ -21,6 +24,10 @@ public class ProfileFragment_ViewModel extends ViewModel {
 
     public void setProfileModel(User_Model profileModel){
         mProfileModel.setValue(profileModel);
+    }
+
+    public MutableLiveData<User_Model> getProfileModel(){
+        return mProfileModel;
     }
 
     public int getConnectionsCount(){

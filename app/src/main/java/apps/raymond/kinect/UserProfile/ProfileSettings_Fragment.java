@@ -1,5 +1,7 @@
 package apps.raymond.kinect.UserProfile;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,9 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.StartUp.Login_Activity;
+import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 public class ProfileSettings_Fragment extends Fragment {
-    private User_Model mUserModel;
+    private ProfileActivity_ViewModel mViewModel;
+
     public static ProfileSettings_Fragment newInstance(User_Model user){
         ProfileSettings_Fragment fragment = new ProfileSettings_Fragment();
         Bundle args = new Bundle();
@@ -24,7 +30,8 @@ public class ProfileSettings_Fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUserModel = getArguments().getParcelable("user");
+        User_Model userModel = getArguments().getParcelable("user");
+        mViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
     }
 
     @Nullable
@@ -40,5 +47,15 @@ public class ProfileSettings_Fragment extends Fragment {
 
         ImageButton btnReturn = view.findViewById(R.id.button_return);
         btnReturn.setOnClickListener((View v) -> requireActivity().onBackPressed());
+
+        ImageButton btnLogout = view.findViewById(R.id.button_logout);
+        btnLogout.setVisibility(View.VISIBLE);
+        btnLogout.setOnClickListener((View v)->{
+            mViewModel.signOut();
+            Intent loginIntent = new Intent(getContext(), Login_Activity.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            requireActivity().overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
+        });
     }
 }

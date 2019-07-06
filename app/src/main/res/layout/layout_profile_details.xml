@@ -30,12 +30,6 @@
             android:visibility="gone"/>
 
         <ImageButton
-            android:id="@+id/button_logout"
-            android:src="@drawable/ic_transfer_within_a_station_black_24dp"
-            style="@style/ProfileAction"
-            android:contentDescription="@string/logout"/>
-
-        <ImageButton
             android:id="@+id/button_connect"
             android:src="@drawable/ic_person_add_black_24dp"
             style="@style/ProfileAction"

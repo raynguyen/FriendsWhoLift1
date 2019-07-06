@@ -8,16 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
@@ -28,16 +22,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.StartUp.Login_Activity;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
-/**
- * activity_profile.xml is being deprecated.
- */
 
 /**
  * Activity class that is loaded when we want to view a User's profile. If the activity is loaded
@@ -50,22 +39,18 @@ import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
  *  Add ability to create/delete a connection with the current profile.
  *  Edit the profile picture if the current profile is the currently logged in user.
  */
-public class Profile_Activity extends AppCompatActivity implements YesNoDialog.YesNoCallback,
-        Locations_MapFragment.MapCardViewClick, Profile_Fragment.ViewProfileInterace {
+public class Profile_Activity extends AppCompatActivity implements
+        Locations_MapFragment.MapCardViewClick, Profile_Fragment.ViewProfileInterface {
     public static final String CURRENT_USERMODEL = "current_user"; //Mandatory field to determine connection controls required.
     public static final String USER_PROFILEMODEL = "profile_model";
     public static final String PROFILE_ID = "profile_id";
     private static final String TAG = "ProfileActivity";
-    private static final String CONNECTIONS_FRAG = "ConnectionsFrag";
-    private static final String LOCATIONS_FRAG = "LocationsFrag";
     private final static int REQUEST_PROFILE_PICTURE = 0;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
-    Button btnConnections, btnLocations, btnInterests;
-    private ImageButton btnConnect, btnPendingConnection, btnDeleteConnection;
-    private ProgressBar pbProfileAction;
-    ImageView profilePic;
+    private ImageView profilePic;
     private ProfileActivity_ViewModel mViewModel;
+    private User_Model mUserModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,97 +63,14 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
          * connection to the profile we are viewing, or enabling modification of the user's settings).
          */
         try{
-            User_Model userModel = getIntent().getExtras().getParcelable(CURRENT_USERMODEL);
-            mViewModel.setUserModel(userModel);
+            mUserModel = getIntent().getExtras().getParcelable(CURRENT_USERMODEL);
+            mViewModel.setUserModel(mUserModel);
         } catch (NullPointerException npe){
             Log.w(TAG,"SOME ERROR WHEN TRYING TO GET CURRENT USER MODEL.");
             //Immediately show some error?
             //Consider a static newInstance method that takes a User_Model parameter to ensure that
             //all instances of Profile_Activity start with the current user's User_Model.
         }
-
-        TextView txtName = findViewById(R.id.text_profile_name);
-        final TextView txtConnectionsNum = findViewById(R.id.text_connections_count);
-        final TextView txtLocationsNum = findViewById(R.id.text_locations_count);
-        final TextView txtInterestsNum = findViewById(R.id.text_interests_count);
-
-        pbProfileAction = findViewById(R.id.progress_profile_action);
-        btnConnect = findViewById(R.id.button_connect);
-        btnPendingConnection = findViewById(R.id.button_pending_connection);
-        btnDeleteConnection = findViewById(R.id.button_delete_connection);
-
-        btnConnect.setOnClickListener((View v)->{
-            v.setVisibility(View.GONE);
-            pbProfileAction.setVisibility(View.VISIBLE);
-            if(mViewModel.getProfileModel().getValue()!=null){
-                User_Model userModel = mViewModel.getUserModel().getValue();
-                String userID = userModel.getEmail();
-                User_Model profileModel = mViewModel.getProfileModel().getValue();
-                String profileID = profileModel.getEmail();
-
-                mViewModel.requestUserConnection(userID, userModel, profileID, profileModel)
-                    .addOnCompleteListener((@NonNull Task<Void> task)-> {
-                        pbProfileAction.setVisibility(View.INVISIBLE);
-                        if(task.isSuccessful()){
-                            btnPendingConnection.setVisibility(View.VISIBLE);
-                        } else {
-                            Toast.makeText(this,"Error. Please try again shortly.",Toast.LENGTH_LONG).show();
-                            btnConnect.setVisibility(View.VISIBLE);
-                        }
-                    });
-            }
-        });
-
-
-        btnDeleteConnection.setOnClickListener((View v)->{
-            if(mViewModel.getProfileModel()!=null){
-                String profileID = mViewModel.getProfileModel().getValue().getEmail();
-                YesNoDialog yesNoDialog = YesNoDialog.newInstance(YesNoDialog.WARNING,
-                        YesNoDialog.DELETE_CONNECTION + " " + profileID + "?");
-                yesNoDialog.setCancelable(false);
-                yesNoDialog.show(getSupportFragmentManager(),null);
-            }
-        });
-
-
-        /*
-         * We bind an observer to the ViewModel's ProfileModel. Whenever the LiveData's value becomes
-         * non-null, we know we are viewing the profile of another user. We then query the database
-         * for a connection with the current user.
-         */
-        mViewModel.getProfileModel().observe(this,(User_Model profileModel)->{
-            String profileID = profileModel.getEmail();
-            if(profileModel.getName()!=null && profileModel.getName2()!=null){
-                String name = profileModel.getName() + " " + profileModel.getName2();
-                txtName.setText(name);
-            } else {
-                txtName.setText(profileID);
-            }
-
-            txtConnectionsNum.setText(String.valueOf(profileModel.getNumconnections()));
-            txtInterestsNum.setText(String.valueOf(profileModel.getNuminterests()));
-            txtLocationsNum.setText(String.valueOf(profileModel.getNumlocations()));
-
-            String userID = mViewModel.getUserModel().getValue().getEmail();
-            mViewModel.checkForConnection(userID,profileID).addOnCompleteListener((Task<Boolean> task)->{
-                if(task.getResult()){
-                    btnDeleteConnection.setVisibility(View.VISIBLE);
-                } else {
-                    mViewModel.checkForPendingConnection(userID,profileID)
-                            .addOnCompleteListener((Task<Boolean> task2)->{
-                                if(task2.isSuccessful()){
-                                    if(task2.getResult()){
-                                        btnPendingConnection.setVisibility(View.VISIBLE);
-                                    } else {
-                                        btnConnect.setVisibility(View.VISIBLE);
-                                    }
-                                } else {
-                                    Log.w(TAG,"Unable to determine if the user has a connection or pending connection.");
-                                }
-                            });
-                }
-            });
-        });
 
         if(getIntent().hasExtra(PROFILE_ID)){
             /*
@@ -198,108 +100,16 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
              * or profile id. This means that we have only been given the current user's User_Model
              * and therefore can inflate the settings fragment.
              */
-            User_Model userModel = mViewModel.getUserModel().getValue();
-            String name = userModel.getName() + " " + userModel.getName2();
-            if(userModel.getName()!=null){
-                txtName.setText(name);
-            } else {
-                txtName.setText(userModel.getEmail());
-            }
-
-            txtConnectionsNum.setText(String.valueOf(userModel.getNumconnections()));
-            txtInterestsNum.setText(String.valueOf(userModel.getNuminterests()));
-            txtLocationsNum.setText(String.valueOf(userModel.getNumlocations()));
-
-            //Fragment that shows the User's current settings and preferences.
-            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(userModel);
+            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profile,profileFragment)
                     .commit();
-
-            ImageButton btnLogout = findViewById(R.id.button_logout);
-            btnLogout.setVisibility(View.VISIBLE);
-            btnLogout.setOnClickListener((View v)->{
-                mViewModel.signOut();
-                Intent loginIntent = new Intent(this, Login_Activity.class);
-                loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(loginIntent);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
-            });
         }
-
-        btnConnections = findViewById(R.id.button_connections);
-        btnConnections.setOnClickListener((View v)->{
-            Connections_Fragment fragment;
-            if(mViewModel.getProfileModel().getValue()!=null){
-                /*
-                There has been no profile model set to the view model and therefore we are viewing
-                the current user's Profile Activity and want to pass the current user's model
-                (perhaps the ID?) in order to load the current user's connections.
-                 */
-                User_Model profileModel = mViewModel.getProfileModel().getValue();
-                fragment = Connections_Fragment.newInstance(profileModel);
-            } else {
-                User_Model userModel = mViewModel.getUserModel().getValue();
-                fragment = Connections_Fragment.newInstance(userModel);
-            }
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
-                    .replace(R.id.frame_profile,fragment,CONNECTIONS_FRAG)
-                    .addToBackStack(CONNECTIONS_FRAG)
-                    .commit();
-        });
-        btnLocations = findViewById(R.id.button_locations);
-        btnLocations.setOnClickListener((View v)->{
-            Locations_MapFragment mapFragment;
-            if(mViewModel.getProfileModel().getValue()!=null){
-                /*
-                There has been no profile model set to the view model and therefore we are viewing
-                the current user's Profile Activity and want to pass the current user's model
-                (perhaps the ID?) in order to load the current user's connections.
-                 */
-                String profileID = mViewModel.getProfileModel().getValue().getEmail();
-                mapFragment = Locations_MapFragment.newInstance(profileID,Locations_MapFragment.EVENT_PROFILE);
-            } else {
-                String userID = mViewModel.getUserModel().getValue().getEmail();
-                mapFragment = Locations_MapFragment.newInstance(userID,Locations_MapFragment.EVENT_PROFILE);
-            }
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_down,R.anim.slide_out_up,R.anim.slide_in_down,R.anim.slide_out_up)
-                    .replace(R.id.frame_profile,mapFragment,LOCATIONS_FRAG)
-                    .addToBackStack(LOCATIONS_FRAG)
-                    .commit();
-        });
-        btnInterests = findViewById(R.id.button_interests);
-        btnInterests.setOnClickListener((View v)->{
-            Toast.makeText(this,"This feature has not been implemented.", Toast.LENGTH_LONG).show();
-        });
     }
 
     @Override
     public void inflateProfileFragment(User_Model profileModel) {
         Log.w(TAG,"Inflate a new fragment for a profile.");
-    }
-
-    /**
-     * Interface implementation for when the user clicks the positive button on the DeleteConnection
-     * dialog fragment.
-     */
-    @Override
-    public void onDialogPositive() {
-        pbProfileAction.setVisibility(View.VISIBLE);
-        btnDeleteConnection.setVisibility(View.GONE);
-        String userID = mViewModel.getUserModel().getValue().getEmail();
-        String profileID = mViewModel.getProfileModel().getValue().getEmail();
-        mViewModel.deleteUserConnection(userID, profileID).addOnCompleteListener((Task<Void> task)-> {
-            pbProfileAction.setVisibility(View.INVISIBLE);
-            if(task.isSuccessful()){
-                btnConnect.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(this,"Error deleting user.",Toast.LENGTH_LONG).show();
-                btnDeleteConnection.setVisibility(View.VISIBLE);
-            }
-        });
     }
 
     /**
@@ -339,7 +149,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
 
     /*
@@ -348,7 +158,7 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
         -Potential solution is to simply create file regardless of the choice but then we have to delete
         the file if the mUser does not take a photo > how do we determine if mUser selects the gallery option?
          */
-    Uri photoUri;
+    private Uri photoUri;
     private void updateProfilePicture(){
         Intent receiver = new Intent(this, ImageBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
@@ -415,33 +225,3 @@ public class Profile_Activity extends AppCompatActivity implements YesNoDialog.Y
     }
 
 }
-
-/*
-*     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //if mProfileModel is null we should inflate the logout button.
-        //Use a ViewModel to store the clicked UserModel/Location depending on the inflated fragment and determine what MenuItems need to be inflated.
-        getMenuInflater().inflate(R.menu.menu_profile_activity,menu);
-        if(mProfileModel==null){
-            menu.findItem(R.id.action_connect).setEnabled(false).setVisible(false);
-            menu.findItem(R.id.action_delete_connection).setEnabled(false).setVisible(false);
-        } else {
-            menu.findItem(R.id.action_logout).setEnabled(false).setVisible(false);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_logout:
-                return true;
-            case R.id.action_add_location:
-                return true;
-            case R.id.action_connect:
-                return true;
-            case R.id.action_delete_connection:
-                return true;
-        }
-        return false;
-    }*/

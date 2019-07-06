@@ -7,6 +7,4 @@
     <include
         layout="@layout/layout_profile_details">
     </include>
-
-
 </RelativeLayout>

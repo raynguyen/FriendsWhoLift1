@@ -15,6 +15,9 @@ import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
+/**
+ * ViewModel class that handles database transactions for the current user's profile.
+ */
 public class ProfileActivity_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
