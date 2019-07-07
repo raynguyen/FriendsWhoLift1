@@ -249,15 +249,10 @@ public class EventDetail_Activity extends AppCompatActivity implements
     public void loadAuthorProfile(String author) {
         //Called when clicking on a message to load the message author's profile.
         Toast.makeText(this,"Clicked on " + author + "'s message.",Toast.LENGTH_LONG).show();
-        User_Model userModel = mViewModel.getUserModel().getValue();
-        if(userModel!=null){
-            Intent viewProfileIntent = new Intent(this, Profile_Activity.class);
-            viewProfileIntent.putExtra("current_user",userModel);
-            startActivity(viewProfileIntent);
-
-            //We need to pass a flag to tell the Profile_Activity to retrieve the author's document.
-        }
-            }
+        Intent viewProfileIntent = new Intent(this, Profile_Activity.class);
+        viewProfileIntent.putExtra(Profile_Activity.PROFILE_ID, author);
+        startActivity(viewProfileIntent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -42,7 +42,7 @@ import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
 public class Profile_Activity extends AppCompatActivity implements
         Locations_MapFragment.MapCardViewClick, Profile_Fragment.ViewProfileInterface {
     public static final String CURRENT_USERMODEL = "current_user"; //Mandatory field to determine connection controls required.
-    public static final String USER_PROFILEMODEL = "profile_model";
+    public static final String PROFILE_MODEL = "profile_model";
     public static final String PROFILE_ID = "profile_id";
     private static final String TAG = "ProfileActivity";
     private final static int REQUEST_PROFILE_PICTURE = 0;
@@ -57,50 +57,52 @@ public class Profile_Activity extends AppCompatActivity implements
         setContentView(R.layout.activity_profile);
         mViewModel = ViewModelProviders.of(this).get(ProfileActivity_ViewModel.class);
 
-        /*
-         * We will always require the current user's model when viewing any profile. The model is
-         * used to determine what functionality is required of this activity (i.e. removing/adding a
-         * connection to the profile we are viewing, or enabling modification of the user's settings).
-         */
-        try{
+        try {
+            /*
+             * We will always require the current user's model when viewing any profile. The model is
+             * used to determine what functionality is required of this activity (i.e. removing/adding a
+             * connection to the profile we are viewing, or enabling modification of the user's settings).
+             */
             mUserModel = getIntent().getExtras().getParcelable(CURRENT_USERMODEL);
             mViewModel.setUserModel(mUserModel);
-        } catch (NullPointerException npe){
-            Log.w(TAG,"SOME ERROR WHEN TRYING TO GET CURRENT USER MODEL.");
-            //Immediately show some error?
-            //Consider a static newInstance method that takes a User_Model parameter to ensure that
-            //all instances of Profile_Activity start with the current user's User_Model.
+        } catch (NullPointerException npe) {
+            Log.w(TAG, "SOME ERROR WHEN TRYING TO GET CURRENT USER MODEL.");
         }
 
-        if(getIntent().hasExtra(PROFILE_ID)){
+        if (getIntent().hasExtra(PROFILE_ID)){
             /*
-             * Check to determine if we are required to fetch the document for the profile of which we
-             * are viewing. The FETCH_MODEL extra is currently only passed with the intent via
-             * EventDetail_Activity when a post is clicked.
+            We have been passed an intent with a String representing a User's ID. Check to see
+            if the ID matches the current user, if yes we want to inflate the Fragment to handle
+            profile settings. Otherwise inflate the Fragment to view another user's profile.
              */
             String profileID = getIntent().getStringExtra(PROFILE_ID);
-            mViewModel.loadProfileModel(profileID);
-        } else if(getIntent().hasExtra(USER_PROFILEMODEL)){
+            String userID = mUserModel.getEmail();
+            if(profileID.equals(userID)){
+                PersonalProfile_Fragment fragment = PersonalProfile_Fragment.newInstance(mUserModel);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_profile, fragment)
+                        .commit();
+            } else {
+                Profile_Fragment fragment = Profile_Fragment.newInstance(null, profileID);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_profile, fragment)
+                        .commit();
+            }
+        }else if(getIntent().hasExtra(PROFILE_MODEL)){
             /*
-             * We call execute the following code if the ProfileActivity is started with a Profile
-             * User_Model. We then set the User_Model extra to this activity's ViewModel and trigger
-             * the observer defined above to determine which views must be inflated for this instance
-             * of the activity.
+             * If this activity instance if created with the PROFILE_MODEL extra, we have the model
+             * required to inflate the Profile_Fragment for the provided User_Model extra.
              */
-            User_Model profileModel = getIntent().getParcelableExtra(USER_PROFILEMODEL);
-            mViewModel.setProfileModel(profileModel);
-            //Fragment that holds details regarding a User's profile.
-            Profile_Fragment fragment = Profile_Fragment.newInstance(profileModel);
+            User_Model profileModel = getIntent().getParcelableExtra(PROFILE_MODEL);
+            Profile_Fragment fragment = Profile_Fragment.newInstance(profileModel, null);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profile,fragment)
                     .commit();
-        } else {
+        } else if (getIntent().hasExtra(CURRENT_USERMODEL)){
             /*
-             * We execute the code below when the Profile_Activity is passed neither a profile model
-             * or profile id. This means that we have only been given the current user's User_Model
-             * and therefore can inflate the settings fragment.
+             * Execute the code below when the Profile_Activity is passed the current user's model.
              */
-            ProfileSettings_Fragment profileFragment = ProfileSettings_Fragment.newInstance(mUserModel);
+            PersonalProfile_Fragment profileFragment = PersonalProfile_Fragment.newInstance(mUserModel);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profile,profileFragment)
                     .commit();

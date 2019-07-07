@@ -178,7 +178,7 @@ public class Core_Activity extends AppCompatActivity implements
         toolbar.setNavigationOnClickListener((View v)-> {
             if(mUserModel !=null){
                 Intent profileIntent = new Intent(this, Profile_Activity.class);
-                profileIntent.putExtra("current_user", mUserModel);
+                profileIntent.putExtra(Profile_Activity.CURRENT_USERMODEL, mUserModel);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }

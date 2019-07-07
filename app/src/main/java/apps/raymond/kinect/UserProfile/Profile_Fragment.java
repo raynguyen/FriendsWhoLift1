@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
@@ -27,7 +26,9 @@ import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 public class Profile_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener, YesNoDialog.YesNoCallback{
-    private static final String USERMODEL = "user"; //Key to retrieve the User_Model for this fragment
+    private static final String PROFILE_MODEL = "user"; //Key to retrieve the User_Model for this fragment
+    private static final String PROFILE_ID = "profileID";
+    private static final String YESNO_DIALOG = "dialog";
     private ProfileFragment_ViewModel mFragViewModel;
     private ProfileActivity_ViewModel mActivityViewModel;
     private ViewProfileInterface mInterface;
@@ -46,10 +47,16 @@ public class Profile_Fragment extends Fragment implements
         }
     }
 
-    public static Profile_Fragment newInstance(User_Model profileModel){
+    public static Profile_Fragment newInstance(@Nullable User_Model profileModel, @Nullable String profileID){
         Profile_Fragment fragment = new Profile_Fragment();
         Bundle args = new Bundle();
-        args.putParcelable(USERMODEL, profileModel);
+        if(profileID!=null){
+            args.putString(PROFILE_ID, profileID);
+        }
+        if(profileModel!=null){
+            args.putParcelable(PROFILE_MODEL, profileModel);
+        }
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -58,8 +65,22 @@ public class Profile_Fragment extends Fragment implements
         super.onCreate(savedInstanceState);
         mFragViewModel = ViewModelProviders.of(this).get(ProfileFragment_ViewModel.class);
         mActivityViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
-        User_Model profileModel = (User_Model) getArguments().get(USERMODEL);
-        mFragViewModel.setProfileModel(profileModel);
+        try{
+            User_Model profileModel = (User_Model) getArguments().get(PROFILE_MODEL);
+            mFragViewModel.setProfileModel(profileModel);
+        } catch (NullPointerException e){
+            Log.w("ProfileFragment",e.toString());
+        }
+
+        if(getArguments().containsKey(PROFILE_MODEL)){
+            User_Model profileModel = (User_Model) getArguments().get(PROFILE_MODEL);
+            mFragViewModel.setProfileModel(profileModel);
+        } else if (getArguments().containsKey(PROFILE_ID)){
+            //Have to fetch the Model from database.
+            String profileID = getArguments().getString(PROFILE_ID);
+            mFragViewModel.loadProfileModel(profileID);
+        }
+
     }
 
     private ProgressBar progressAction;
@@ -105,6 +126,7 @@ public class Profile_Fragment extends Fragment implements
 
         btnDeleteConnection.setOnClickListener((View v)->{
             YesNoDialog dialog = YesNoDialog.newInstance(YesNoDialog.WARNING,getResources().getString(R.string.delete_connection));
+            dialog.show(getFragmentManager(),YESNO_DIALOG);
         });
 
         TextView txtName = view.findViewById(R.id.text_profile_name);

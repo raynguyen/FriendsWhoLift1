@@ -22,6 +22,10 @@ public class ProfileFragment_ViewModel extends ViewModel {
     public ProfileFragment_ViewModel(){
     }
 
+    public void loadProfileModel(String profileID) {
+
+    }
+
     public void setProfileModel(User_Model profileModel){
         mProfileModel.setValue(profileModel);
     }

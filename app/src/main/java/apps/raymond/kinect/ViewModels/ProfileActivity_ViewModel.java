@@ -21,7 +21,6 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class ProfileActivity_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
-    private MutableLiveData<User_Model> mProfileModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mAllPublicUsers = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mFilteredPublicUsers = new MutableLiveData<>(); //List of public users that are not connected with current user.
@@ -35,18 +34,6 @@ public class ProfileActivity_ViewModel extends ViewModel {
 
     public MutableLiveData<User_Model> getUserModel(){
         return mUserModel;
-    }
-
-    public Task<User_Model> loadProfileModel(String userID){
-        return mRepo.getUserModel(userID);
-    }
-
-    public void setProfileModel(User_Model model){
-        mProfileModel.setValue(model);
-    }
-
-    public MutableLiveData<User_Model> getProfileModel(){
-        return mProfileModel;
     }
 
     public void loadConnections(String userID){
