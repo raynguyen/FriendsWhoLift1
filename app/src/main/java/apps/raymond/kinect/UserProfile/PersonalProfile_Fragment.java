@@ -86,4 +86,6 @@ public class PersonalProfile_Fragment extends Fragment {
             Connections_Fragment fragment = Connections_Fragment.newInstance(user);
         });
     }
+
+
 }
