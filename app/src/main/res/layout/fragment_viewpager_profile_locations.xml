@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_profile_locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+    </android.support.v7.widget.SearchView>
+
+    <FrameLayout
+        android:id="@+id/frame_profile_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_profile_locations">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_profile_locations"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/null_data"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapview_profile"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/frame_profile_recycler"
+        android:layout_alignParentBottom="true">
+    </com.google.android.gms.maps.MapView>
+</RelativeLayout>

@@ -4,11 +4,13 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
+import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 /**
@@ -18,6 +20,7 @@ public class ProfileFragment_ViewModel extends ViewModel {
     private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
     private MutableLiveData<User_Model> mProfileModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mProfileConnections = new MutableLiveData<>();
+    private MutableLiveData<List<Location_Model>> mProfileLocations = new MutableLiveData<>();
 
     public ProfileFragment_ViewModel(){
     }
@@ -42,6 +45,17 @@ public class ProfileFragment_ViewModel extends ViewModel {
         return mProfileModel.getValue().getNumlocations();
     }
 
+    public void loadUserLocations(){
+        String profileID = mProfileModel.getValue().getEmail();
+        mRepo.getUsersLocations(profileID).addOnCompleteListener((Task<List<Location_Model>> task)->
+                mProfileLocations.setValue(task.getResult())
+        );
+    }
+
+    public MutableLiveData<List<Location_Model>> getLocations(){
+        return mProfileLocations;
+    }
+
     public void loadProfileConnections(String profileID){
         mRepo.getUserConnections(profileID).addOnCompleteListener((@NonNull Task<List<User_Model>> task)->{
             if (task.isSuccessful()) {
@@ -50,7 +64,7 @@ public class ProfileFragment_ViewModel extends ViewModel {
         });
     }
 
-    public MutableLiveData<List<User_Model>> getProfileConnections(){
+    public MutableLiveData<List<User_Model>> getConnections(){
         return mProfileConnections;
     }
 

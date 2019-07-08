@@ -111,9 +111,11 @@ public class ProfileActivity_ViewModel extends ViewModel {
         FirebaseAuth.getInstance().signOut();
     }
 
-    public void loadUserLocations(String userID){
+    public void loadUserLocations(){
+        String userID = mUserModel.getValue().getEmail();
         mRepo.getUsersLocations(userID).addOnCompleteListener((Task<List<Location_Model>> task)->
-            mLocations.setValue(task.getResult()));
+            mLocations.setValue(task.getResult())
+        );
     }
 
     public MutableLiveData<List<Location_Model>> getLocations(){

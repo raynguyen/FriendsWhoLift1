@@ -41,7 +41,7 @@ import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
  */
 public class Profile_Activity extends AppCompatActivity implements
         Locations_MapFragment.MapCardViewClick, Profile_Fragment.ViewProfileInterface {
-    public static final String CURRENT_USERMODEL = "current_user"; //Mandatory field to determine connection controls required.
+    public static final String CURRENT_USER = "current_user"; //Mandatory field to determine connection controls required.
     public static final String PROFILE_MODEL = "profile_model";
     public static final String PROFILE_ID = "profile_id";
     private static final String TAG = "ProfileActivity";
@@ -63,7 +63,7 @@ public class Profile_Activity extends AppCompatActivity implements
              * used to determine what functionality is required of this activity (i.e. removing/adding a
              * connection to the profile we are viewing, or enabling modification of the user's settings).
              */
-            mUserModel = getIntent().getExtras().getParcelable(CURRENT_USERMODEL);
+            mUserModel = getIntent().getExtras().getParcelable(CURRENT_USER);
             mViewModel.setUserModel(mUserModel);
         } catch (NullPointerException npe) {
             Log.w(TAG, "SOME ERROR WHEN TRYING TO GET CURRENT USER MODEL.");
@@ -74,11 +74,13 @@ public class Profile_Activity extends AppCompatActivity implements
             We have been passed an intent with a String representing a User's ID. Check to see
             if the ID matches the current user, if yes we want to inflate the Fragment to handle
             profile settings. Otherwise inflate the Fragment to view another user's profile.
+
+            This situation comes from clicking on a user from an EventDetail_Activity.
              */
             String profileID = getIntent().getStringExtra(PROFILE_ID);
             String userID = mUserModel.getEmail();
             if(profileID.equals(userID)){
-                PersonalProfile_Fragment fragment = PersonalProfile_Fragment.newInstance(mUserModel);
+                PersonalProfile_Fragment fragment = new PersonalProfile_Fragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_profile, fragment)
                         .commit();
@@ -98,11 +100,13 @@ public class Profile_Activity extends AppCompatActivity implements
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profile,fragment)
                     .commit();
-        } else if (getIntent().hasExtra(CURRENT_USERMODEL)){
+        } else if (getIntent().hasExtra(CURRENT_USER)){
             /*
              * Execute the code below when the Profile_Activity is passed the current user's model.
+             *
+             * This occurs when we are inflating the Profile_Activity from the Core_Activity.
              */
-            PersonalProfile_Fragment profileFragment = PersonalProfile_Fragment.newInstance(mUserModel);
+            PersonalProfile_Fragment profileFragment = new PersonalProfile_Fragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_profile,profileFragment)
                     .commit();

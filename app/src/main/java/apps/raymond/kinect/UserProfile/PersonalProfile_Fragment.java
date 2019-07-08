@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,16 +24,7 @@ import apps.raymond.kinect.StartUp.Login_Activity;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
 
 public class PersonalProfile_Fragment extends Fragment {
-    private static final String USER_MODEL = "user";
     private ProfileActivity_ViewModel mActivityViewModel;
-
-    public static PersonalProfile_Fragment newInstance(@NonNull User_Model user){
-        PersonalProfile_Fragment fragment = new PersonalProfile_Fragment();
-        Bundle args = new Bundle();
-        args.putParcelable(USER_MODEL, user);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,8 +43,8 @@ public class PersonalProfile_Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        User_Model userModel = (User_Model) getArguments().get(USER_MODEL);
-
+        //User_Model userModel = (User_Model) getArguments().get(USER_MODEL);
+        User_Model userModel = mActivityViewModel.getUserModel().getValue();
         //Views that display information pertaining to the profile.
         TextView txtName = view.findViewById(R.id.text_profile_name);
 
@@ -76,17 +68,22 @@ public class PersonalProfile_Fragment extends Fragment {
         });
 
         TabLayout tabs = view.findViewById(R.id.tab_layout_profile);
-
-        //Set the Icon for the first tab to be the settings drawable.
-        TabLayout.Tab tab1 = tabs.getTabAt(0);
-        if(tab1!=null){
-            tab1.setIcon(R.drawable.ic_settings_black_24dp);
-        }
-
         ViewPager viewPager = view.findViewById(R.id.viewpager_profile_details);
         ProfilePersonalAdapter adapter = new ProfilePersonalAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
         tabs.setupWithViewPager(viewPager);
+        setTabIcons(tabs);
+
+    }
+
+    private void setTabIcons(TabLayout tabLayout){
+        int[] test = new int[]{R.drawable.ic_settings_black_24dp, R.drawable.ic_group_black_24dp,
+                R.drawable.ic_map_black_24dp, R.drawable.ic_favorite_black_24dp};
+
+        for(int i =0; i < tabLayout.getTabCount(); i++ ){
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            tab.setIcon(test[i]);
+        }
     }
 
     private class ProfilePersonalAdapter extends FragmentStatePagerAdapter{
@@ -105,10 +102,8 @@ public class PersonalProfile_Fragment extends Fragment {
                     ProfileConnections_Fragment connectionsFragment = new ProfileConnections_Fragment();
                     return connectionsFragment;
                 case 2:
-                    //Locations_MapFragment mapFragment = new Locations_MapFragment();
-                    //return mapFragment;
-                    ProfileConnections_Fragment test1 = new ProfileConnections_Fragment();
-                    return test1;
+                    ProfileLocations_Fragment mapFragment = new ProfileLocations_Fragment();
+                    return mapFragment;
                 case 3:
                     ProfileConnections_Fragment test2 = new ProfileConnections_Fragment();
                     return test2;

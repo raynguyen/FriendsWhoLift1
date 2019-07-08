@@ -49,14 +49,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,8 +68,6 @@ import apps.raymond.kinect.EventDetail.EventDetail_Activity;
 import apps.raymond.kinect.Events.EventExplore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.EventsCore_Adapter;
-import apps.raymond.kinect.Interfaces.BackPressListener;
-import apps.raymond.kinect.Invitations.EventInvitations_Fragment;
 import apps.raymond.kinect.Invitations.PersonalMessages_Fragment;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
@@ -176,9 +171,10 @@ public class Core_Activity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         toolbar.setNavigationOnClickListener((View v)-> {
-            if(mUserModel !=null){
+            User_Model userModel = mViewModel.getUserModel().getValue();
+            if(userModel !=null){
                 Intent profileIntent = new Intent(this, Profile_Activity.class);
-                profileIntent.putExtra(Profile_Activity.CURRENT_USERMODEL, mUserModel);
+                profileIntent.putExtra(Profile_Activity.CURRENT_USER, userModel);
                 startActivity(profileIntent);
                 overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
             }

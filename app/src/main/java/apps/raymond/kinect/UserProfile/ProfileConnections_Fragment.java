@@ -1,7 +1,6 @@
 package apps.raymond.kinect.UserProfile;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +22,7 @@ import java.util.List;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 /**
  * Fragment that displays the suggested connections and current connections. There is a search view
@@ -30,36 +30,25 @@ import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
  */
 public class ProfileConnections_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener {
-    private static final String USER = "user";
 
-    public static ProfileConnections_Fragment newInstance(User_Model userModel){
-        ProfileConnections_Fragment fragment = new ProfileConnections_Fragment();
-        Bundle args = new Bundle();
-        args.putParcelable(USER, userModel);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    private ProfileActivity_ViewModel mViewModel;
+    private ProfileActivity_ViewModel mActViewModel;
+    private ProfileFragment_ViewModel mFragViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
-       // mUserModel = getArguments().getParcelable("user");
-        //mUserID = mUserModel.getEmail();
+        mActViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
+        if(getParentFragment()!=null){
+            mFragViewModel = ViewModelProviders.of(getParentFragment()).get(ProfileFragment_ViewModel.class);
+        }
     }
 
-    private RecyclerView recyclerConnections,recyclerSuggested;
     private TextView textNullSuggested;
     private ProgressBar pbSuggested;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_user_connections,container,false);
-        recyclerConnections = v.findViewById(R.id.recycler_connections);
-        recyclerSuggested = v.findViewById(R.id.recycler_suggest_connections);
-        return v;
+        return inflater.inflate(R.layout.fragment_user_connections,container,false);
     }
 
     @Override
@@ -68,6 +57,9 @@ public class ProfileConnections_Fragment extends Fragment implements
 
         ImageButton btnReturn = view.findViewById(R.id.button_return);
         btnReturn.setOnClickListener((View v)-> getFragmentManager().popBackStack());
+
+        RecyclerView recyclerConnections = view.findViewById(R.id.recycler_connections);
+        RecyclerView recyclerSuggested = view.findViewById(R.id.recycler_suggest_connections);
 
         ProfileRecyclerAdapter mConnectionsAdapter = new ProfileRecyclerAdapter(this);
         ProfileRecyclerAdapter mSuggestedAdapter = new ProfileRecyclerAdapter(this);
@@ -83,7 +75,7 @@ public class ProfileConnections_Fragment extends Fragment implements
         textNullSuggested = view.findViewById(R.id.text_null_suggested_connections);
         pbSuggested = view.findViewById(R.id.progress_suggested_connections);
 
-        mViewModel.getUserConnections().observe(this, (@Nullable List<User_Model> connections)-> {
+        mActViewModel.getUserConnections().observe(this, (@Nullable List<User_Model> connections)-> {
             if(connections!=null){
                 if(pbConnections.getVisibility()==View.VISIBLE){
                     pbConnections.setVisibility(View.INVISIBLE);
@@ -98,16 +90,27 @@ public class ProfileConnections_Fragment extends Fragment implements
             filterSuggestedConnections();
         });
 
-        mViewModel.getSuggestedConnections().observe(this,(@Nullable List<User_Model> result)->
+        mActViewModel.getSuggestedConnections().observe(this,(@Nullable List<User_Model> result)->
                 filterSuggestedConnections());
 
-        mViewModel.getSuggestedFiltered().observe(this,(@Nullable List<User_Model> result) ->
+        mActViewModel.getSuggestedFiltered().observe(this,(@Nullable List<User_Model> result) ->
                 mSuggestedAdapter.setData(result));
 
         //ToDo: We want to wait until the connections are retrieved. Then we try and fetch at suggested
         // list of users and then filter out the already connected users.
-        //mViewModel.loadConnections(mUserID);
-        //mViewModel.loadSuggestedConnections(mUserID);
+        if(getParentFragment() instanceof PersonalProfile_Fragment){
+            Log.w("ProfileConnectionsFrag","Personal Profile Fragment!");
+            User_Model userModel = mActViewModel.getUserModel().getValue();
+            String userID = userModel.getEmail();
+            mActViewModel.loadConnections(userID);
+            mActViewModel.loadSuggestedConnections(userID);
+        } else if(getParentFragment() instanceof Profile_Fragment){
+            Log.w("ProfileConnectionsFrag","ProfileFragment!");
+            User_Model profileModel = mFragViewModel.getProfileModel().getValue();
+            String profileID = profileModel.getEmail();
+            mActViewModel.loadConnections(profileID);
+            mActViewModel.loadSuggestedConnections(profileID);
+        }
 
         SearchView searchView = view.findViewById(R.id.search_view_connections);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -135,8 +138,8 @@ public class ProfileConnections_Fragment extends Fragment implements
      * via the User_Model.getEmail() function currently.
      */
     private void filterSuggestedConnections(){
-        List<User_Model> connections = mViewModel.getUserConnections().getValue();
-        List<User_Model> suggestedUsers = mViewModel.getSuggestedConnections().getValue();
+        List<User_Model> connections = mActViewModel.getUserConnections().getValue();
+        List<User_Model> suggestedUsers = mActViewModel.getSuggestedConnections().getValue();
         if(connections!=null && suggestedUsers!=null){
             for(User_Model user : connections){
                 suggestedUsers.remove(user);
@@ -149,7 +152,7 @@ public class ProfileConnections_Fragment extends Fragment implements
             } else {
                 textNullSuggested.setVisibility(View.INVISIBLE);
             }
-            mViewModel.setSuggestedFiltered(suggestedUsers);
+            mActViewModel.setSuggestedFiltered(suggestedUsers);
         }
     }
 
@@ -163,8 +166,9 @@ public class ProfileConnections_Fragment extends Fragment implements
     @Override
     public void onProfileLongClick(User_Model user) {
         Toast.makeText(getContext(),"Clicked on profile: "+user.getEmail(),Toast.LENGTH_LONG).show();
-        Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
+        //ToDo: this will now be a fragment instantiation and not stacked activities.
+        /*Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
         //viewProfileIntent.putExtra("profile_model",user).putExtra("current_user",mUserModel);
-        startActivity(viewProfileIntent);
+        startActivity(viewProfileIntent);*/
     }
 }

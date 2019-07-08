@@ -19,14 +19,14 @@ import java.util.List;
 import apps.raymond.kinect.R;
 
 public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.LocationViewHolder> {
-    private List<Location_Model> mLocationSet = new ArrayList<>();
+    private List<Location_Model> mLocationSet;
     private LocationClickInterface mClickInterface;
 
     public interface LocationClickInterface{
         void onLocationClick(Location_Model location);
     }
 
-    Locations_Adapter(LocationClickInterface clickInterface){
+    public Locations_Adapter(LocationClickInterface clickInterface){
         mClickInterface = clickInterface;
     }
 
@@ -48,13 +48,22 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
 
     @Override
     public int getItemCount() {
-        return mLocationSet.size();
+        if(mLocationSet!=null){
+            return mLocationSet.size();
+        }
+        return 0;
     }
 
     public void setData(List<Location_Model> locationSet){
-        mLocationSet.clear();
-        mLocationSet.addAll(locationSet);
-        notifyItemRangeChanged(0,mLocationSet.size());
+        if(mLocationSet==null){
+            mLocationSet = new ArrayList<>(locationSet);
+            notifyItemRangeChanged(0,locationSet.size());
+        } else {
+            mLocationSet.clear();
+            mLocationSet.addAll(locationSet);
+            notifyItemRangeChanged(0,mLocationSet.size());
+        }
+
     }
 
     static class LocationViewHolder extends RecyclerView.ViewHolder{

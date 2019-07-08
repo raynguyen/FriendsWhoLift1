@@ -10,6 +10,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,19 +72,20 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
         try{
             mPositiveCallback = (MapCardViewClick) context;
         }catch (ClassCastException e){
+            Log.w("LocationsMapFragment","The parent context does not implement the interface.");
             //Some error
         }
     }
 
-    private String mUserID;
+    //private String mUserID;
     private ProfileActivity_ViewModel mViewModel;
     private boolean mFlagProfile;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(ProfileActivity_ViewModel.class);
+        mViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
         if(getArguments()!=null){
-            mUserID = getArguments().getString("userid");
+            //mUserID = getArguments().getString("userid");
             mFlagProfile = getArguments().getBoolean("flag");
         }
     }
@@ -227,7 +229,7 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
                 }
             }
         });
-        mViewModel.loadUserLocations(mUserID);
+        //mViewModel.loadUserLocations(mUserID);
 
     }
 

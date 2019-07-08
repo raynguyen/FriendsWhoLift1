@@ -80,13 +80,13 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
         mMap = googleMap;
         try{
             googleMap.setMyLocationEnabled(true);
-            //getDeviceLocation();
+            getDeviceLocation();
         } catch (SecurityException e){
             //Some error
         }
     }
 
-    public void geoLocate(String query){
+    protected void geoLocate(String query){
         Geocoder geocoder = new Geocoder(getContext());
         List<Address> queryResults = new ArrayList<>(1);
         try{
