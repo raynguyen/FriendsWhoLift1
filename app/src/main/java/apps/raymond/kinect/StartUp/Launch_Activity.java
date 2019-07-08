@@ -40,7 +40,7 @@ public class Launch_Activity extends AppCompatActivity {
                     Intent coreIntent = new Intent(Launch_Activity.this, Core_Activity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            .putExtra("userID",currUser.getEmail());
+                            .putExtra(Core_Activity.USER_ID,currUser.getEmail());
                     startActivity(coreIntent);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 }

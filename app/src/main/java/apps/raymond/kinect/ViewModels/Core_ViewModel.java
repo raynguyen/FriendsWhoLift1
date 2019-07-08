@@ -33,7 +33,9 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ToDo: The ViewModel should expose LiveData objects to it's observers, not the Mutable form.
  */
 public class Core_ViewModel extends ViewModel {
+    private static final String TAG = "Core_ViewModel";
     private Core_FireBaseRepo mRepository;
+    private MutableLiveData<String> mUserID = new MutableLiveData<>();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
@@ -47,11 +49,17 @@ public class Core_ViewModel extends ViewModel {
         mRepository = new Core_FireBaseRepo();
     }
 
+    public void setUserID(String userID){
+        Log.w(TAG,"We are setting the userID for this view model instance");
+        mUserID.setValue(userID);
+    }
     public void setUserDocument(User_Model user_model){
+        Log.w(TAG,"We have set a user document for this view model instance.");
         mUserModel.setValue(user_model);
     }
 
     public void loadUserDocument(String userID){
+        Log.w(TAG,"We have to load a user document for this view model instance.");
         mRepository.getUserModel(userID).addOnCompleteListener((Task<User_Model> task)->{
             if(task.isSuccessful()){
                 mUserModel.setValue(task.getResult());
@@ -116,14 +124,17 @@ public class Core_ViewModel extends ViewModel {
     /**
      * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
      * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
-     * @param userID Document parameter to query to correct collection.
      */
-    public void loadAcceptedEvents(String userID){
-        mRepository.getAcceptedEvents(userID).addOnCompleteListener((Task<List<Event_Model>> task)->{
-            if(task.isSuccessful()&& task.getResult()!=null){
-                mAcceptedEvents.setValue(task.getResult());
-            }
-        });
+    public void loadEvents(){
+        String userID = mUserID.getValue();
+        if(userID != null){
+            mRepository.getAcceptedEvents(userID).addOnCompleteListener((Task<List<Event_Model>> task)->{
+                if(task.isSuccessful()&& task.getResult()!=null){
+                    mAcceptedEvents.setValue(task.getResult());
+                }
+            });
+        }
+
     }
     public void setAcceptedEvents(List<Event_Model> newList) {
         mAcceptedEvents.setValue(newList);
@@ -153,7 +164,7 @@ public class Core_ViewModel extends ViewModel {
         });
     }
 
-    public MutableLiveData<List<Event_Model>> getPublicEvents(){
+    public MutableLiveData<List<Event_Model>> getEvents(){
         return mPublicEvents;
     }
 

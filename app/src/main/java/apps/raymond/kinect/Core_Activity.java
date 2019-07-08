@@ -50,28 +50,20 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.EventCreate.EventCreate_Activity;
-import apps.raymond.kinect.EventDetail.EventDetail_Activity;
-import apps.raymond.kinect.Events.EventExplore_Fragment;
+import apps.raymond.kinect.CoreFragments.Create_Fragment;
+import apps.raymond.kinect.CoreFragments.Events_Fragment;
+import apps.raymond.kinect.CoreFragments.Explore_Fragment;
 import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Events.EventsCore_Adapter;
 import apps.raymond.kinect.Invitations.PersonalMessages_Fragment;
-import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
@@ -101,98 +93,32 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  3.Upcoming events that your friends are interested/attending.
  *
  */
-public class Core_Activity extends AppCompatActivity implements
-        SearchView.OnQueryTextListener, EventsCore_Adapter.EventClickListener{
-
+public class Core_Activity extends AppCompatActivity{
     private static final String TAG = "Core_Activity";
+    public static final String USER = "user";
+    public static final String USER_ID = "userID";
     private static final String INV_FRAG = "EventInvitations_Fragment";
     public static final int EVENTCREATE = 22;
-
-    private User_Model mUserModel;
-    private String mUserID;
     private Core_ViewModel mViewModel;
-    private EventsCore_Adapter mAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        ProgressBar progressBar = findViewById(R.id.progress_connections);
-        TextView textNullEvents = findViewById(R.id.text_null_connections);
-        TextView textNumEvents = findViewById(R.id.text_events_count);
-
-        final RecyclerView eventsRecycler = findViewById(R.id.events_Recycler);
-        mAdapter = new EventsCore_Adapter(this);
-        eventsRecycler.setAdapter(mAdapter);
-        eventsRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
-        eventsRecycler.setLayoutManager(new LinearLayoutManager(this));
-
-        mViewModel.getAcceptedEvents().observe(this, (List<Event_Model> events)-> {
-            if(events!=null){
-                textNumEvents.setText(String.valueOf(events.size()));
-                progressBar.setVisibility(View.GONE);
-                if(!events.isEmpty()){
-                    if(textNullEvents.getVisibility()==View.VISIBLE){
-                        textNullEvents.setVisibility(View.GONE);
-                    }
-                    mAdapter.setData(events);
-                } else {
-                    textNullEvents.setVisibility(View.VISIBLE);
-                }
-            } else {
-                textNumEvents.setText("??");
-            }
-        });
-
-        mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
-            if(user_model!=null){
-                mUserModel = user_model;
-                mUserID = mUserModel.getEmail();
-                mViewModel.loadAcceptedEvents(mUserID);
-                mViewModel.loadEventInvitations(mUserID);
-                mViewModel.loadConnectionRequests(mUserID);
-                mViewModel.loadPublicEvents();
-                mViewModel.loadUserConnections(mUserID);
-            } else {
-                //Todo: add safety prevention?
-            }
-        });
-
-        if(getIntent().hasExtra("user")){
-            //User signed in from login and we have retrieved document.
-            mUserModel = getIntent().getExtras().getParcelable("user");
-            mViewModel.setUserDocument(mUserModel);
-        } else if(getIntent().hasExtra("userID")){
-            //Called if previous user is detected. We must then fetch the user document from DB.
-            mUserID = getIntent().getExtras().getString("userID");
-            mViewModel.loadUserDocument(mUserID);
+        /*
+        Setup the Core_ViewModel with the data retrieved during application launch. We can either
+        start this activity with a User_Model (calling activity was Login_Activity) or this instance
+        could have been started from a previously logged in user which gives us the userID.
+         */
+        if(getIntent().hasExtra(USER)){
+            User_Model userModel = getIntent().getExtras().getParcelable("user");
+            mViewModel.setUserDocument(userModel);
+        } else if(getIntent().hasExtra(USER_ID)){
+            String userID = getIntent().getExtras().getString("userID");
+            mViewModel.setUserID(userID);
+            mViewModel.loadUserDocument(userID);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar_core);
@@ -208,35 +134,44 @@ public class Core_Activity extends AppCompatActivity implements
             }
         });
 
-        SearchView searchView = findViewById(R.id.searchview_events);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                //START FILTERING THE EVENTS ADAPTER FOR THE CONTENT.
-                mAdapter.getFilter().filter(s);
-                return false;
+
+        final Create_Fragment createFrag = new Create_Fragment();
+        final Explore_Fragment exploreFrag = new Explore_Fragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.frame_core_container, createFrag, "create").hide(createFrag).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.frame_core_container, exploreFrag, "explore").hide(exploreFrag).commit();
+        final Events_Fragment eventsFrag = new Events_Fragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.frame_core_container,eventsFrag,"events").commit();
+        Fragment activeFrag = eventsFrag;
+
+
+
+
+        mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
+            if(user_model!=null){
+                String userID = user_model.getEmail();
+                mViewModel.loadEventInvitations(userID);
+                mViewModel.loadConnectionRequests(userID);
+                mViewModel.loadPublicEvents();
+                mViewModel.loadUserConnections(userID);
+            } else {
+                //Todo: add safety prevention?
             }
         });
 
         BottomNavigationView navView = findViewById(R.id.bottom_nav_view);
-        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                return false;
+        navView.setOnNavigationItemSelectedListener((@NonNull MenuItem menuItem) -> {
+            switch (menuItem.getItemId()){
+                case R.id.nav_events:
+                    return true;
+                case R.id.nav_explore:
+                    return true;
+                case R.id.nav_create:
+                    return true;
             }
+            return false;
         });
-    }
 
-    @Override
-    public void onEventClick(Event_Model event) {
-        Intent detailActivity = new Intent(this, EventDetail_Activity.class);
-        detailActivity.putExtra("user",mUserModel).putExtra("event_name",event.getName());
-        startActivity(detailActivity);
     }
 
     @Override
@@ -256,7 +191,7 @@ public class Core_Activity extends AppCompatActivity implements
                         .commit();
                 return true;
             case R.id.action_create_event_launch:
-                ArrayList<Event_Model> mEventList = new ArrayList<>();
+                /*ArrayList<Event_Model> mEventList = new ArrayList<>();
                 Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
                 eventCreateIntent.putExtra("user",mUserModel);
                 if(mViewModel.getAcceptedEvents().getValue()!=null){
@@ -264,7 +199,7 @@ public class Core_Activity extends AppCompatActivity implements
                     eventCreateIntent.putExtra("events",mEventList);
                 }
                 startActivityForResult(eventCreateIntent,EVENTCREATE);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
+                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);*/
                 return true;
         }
         return false;
@@ -282,14 +217,4 @@ public class Core_Activity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-        mAdapter.getFilter().filter(s);
-        return true;
-    }
 }

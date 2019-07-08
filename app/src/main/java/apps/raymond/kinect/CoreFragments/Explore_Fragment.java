@@ -1,6 +1,6 @@
 /*
  * ToDo:
- * Consider consolidating this Activity with the EventExplore_Fragment. Set the architecture such that
+ * Consider consolidating this Activity with the Explore_Fragment. Set the architecture such that
  * the Maps_Activity loads the map and requests permissions as required, but also overlay one of two
  * fragments depending on the startActivity intent.
  *
@@ -12,7 +12,7 @@
  * ToDo:
  * Filter out events that the user is already in attendance or invited to.
  */
-package apps.raymond.kinect.Events;
+package apps.raymond.kinect.CoreFragments;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
@@ -49,19 +49,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class EventExplore_Fragment extends Fragment implements
+public class Explore_Fragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final String USER = "User";
     private static final int LOCATION_REQUEST_CODE = 1;
 
-    public static EventExplore_Fragment newInstance(User_Model userModel){
-        EventExplore_Fragment fragment = new EventExplore_Fragment();
+    public static Explore_Fragment newInstance(User_Model userModel){
+        Explore_Fragment fragment = new Explore_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(USER,userModel);
         fragment.setArguments(args);
@@ -154,12 +155,12 @@ public class EventExplore_Fragment extends Fragment implements
             }
         });
 
-        mViewModel.getPublicEvents().observe(this, (List<Event_Model> publicEvents)-> addEventsToMap(publicEvents));
+        mViewModel.getEvents().observe(this, (List<Event_Model> publicEvents)-> addEventsToMap(publicEvents));
 
-        if(mViewModel.getPublicEvents().getValue()!=null){
+        if(mViewModel.getEvents().getValue()!=null){
             //If the list of public events is not null when the fragment is first instantiated, we
             //simply want to populate the map with the public events.
-            List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();
+            List<Event_Model> publicEvents = mViewModel.getEvents().getValue();
             addEventsToMap(publicEvents);
         } else {
             //Else, we want to call on the repository to load the public events to our view model.

@@ -13,113 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="42dp"
         app:navigationIcon="@drawable/ic_face_black_24dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_alignParentTop="true">
     </android.support.v7.widget.Toolbar>
 
-    <android.support.constraint.ConstraintLayout
+    <!--<android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar_core"
+        android:layout_below="@id/layout_events_heading"
         android:layout_above="@id/bottom_nav_view"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/layout_events_heading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="4dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:gravity="center_horizontal"
-            android:background="@color/colorAccent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="0dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="TOTAL ATTENDING EVENTS:"
-                android:layout_gravity="end"
-                android:textColor="@color/white"/>
-
-            <TextView
-                android:id="@+id/text_events_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_gravity="start"
-                android:hint="@string/null_dashes"
-                android:paddingStart="12dp"
-                android:textColor="@color/white"/>
-        </LinearLayout>
 
         <fragment
             android:name="apps.raymond.kinect.NewsFeed_Fragment"
             android:id="@+id/fragment_news_feed"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/layout_events_heading"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHeight_percent="0.35">
         </fragment>
-
-        <FrameLayout
-            android:id="@+id/core_frame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/fragment_news_feed"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:isScrollContainer="true">
-
-            <android.support.v7.widget.SearchView
-                android:id="@+id/searchview_events"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/fragment_news_feed"
-                android:background="@drawable/searchview_background"
-                android:elevation="2dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp">
-            </android.support.v7.widget.SearchView>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/events_Recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp">
-            </android.support.v7.widget.RecyclerView>
-
-            <android.support.constraint.Guideline
-                android:id="@+id/progress_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.4"/>
-
-            <ProgressBar
-                android:id="@+id/progress_connections"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/progress_guideline"
-                android:indeterminate="true"/>
-
-            <TextView
-                android:id="@+id/text_null_connections"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/null_events"
-                android:textSize="26sp"
-                android:visibility="gone" />
-        </FrameLayout>
-    </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>-->
 
     <FrameLayout
         android:id="@+id/frame_core_container"

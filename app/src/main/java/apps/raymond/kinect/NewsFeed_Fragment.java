@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
 
 
         //Needed to determine events that are popular with friends.
-        mViewModel.getPublicEvents().observe(requireActivity(),(@Nullable List<Event_Model> publicEvents)->{
+        mViewModel.getEvents().observe(requireActivity(),(@Nullable List<Event_Model> publicEvents)->{
             //We want a list of public events so that we can check to see if the user is attending
             //the event. If not, check if
             filterPopularEvents();
@@ -97,7 +96,7 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
      * Method to filter out from the public events,
      */
     private void filterPopularEvents(){
-        List<Event_Model> publicEvents = mViewModel.getPublicEvents().getValue();
+        List<Event_Model> publicEvents = mViewModel.getEvents().getValue();
         List<User_Model> userConnections = mViewModel.getUserConnections().getValue();
         List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
         List<Event_Model> filteredEvents = new ArrayList<>(); //List containing events after filtering for public without user and with connections.

@@ -50,7 +50,7 @@ public class Login_Activity extends AppCompatActivity {
         mViewModel.getCurrentUser().observe(this,(@Nullable User_Model user_model)-> {
             if(user_model!=null){
                 Intent mainIntent = new Intent(Login_Activity.this, Core_Activity.class);
-                mainIntent.putExtra("user",user_model);
+                mainIntent.putExtra(Core_Activity.USER,user_model);
                 startActivity(mainIntent);
                 overridePendingTransition(R.anim.slide_in_up,R.anim.slide_out_up);
                 finish();

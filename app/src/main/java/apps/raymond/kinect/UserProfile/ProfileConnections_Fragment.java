@@ -71,7 +71,7 @@ public class ProfileConnections_Fragment extends Fragment implements
         recyclerSuggested.setAdapter(mSuggestedAdapter);
 
         TextView textNullConnections = view.findViewById(R.id.text_null_connections);
-        ProgressBar pbConnections = view.findViewById(R.id.progress_connections);
+        ProgressBar pbConnections = view.findViewById(R.id.progress_events);
         textNullSuggested = view.findViewById(R.id.text_null_suggested_connections);
         pbSuggested = view.findViewById(R.id.progress_suggested_connections);
 

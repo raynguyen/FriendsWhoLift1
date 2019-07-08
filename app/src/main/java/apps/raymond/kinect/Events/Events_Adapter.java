@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import apps.raymond.kinect.R;
 
-public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.EventViewHolder>
+public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventViewHolder>
     implements Filterable {
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd",Locale.getDefault());
     private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
@@ -38,20 +38,20 @@ public class EventsCore_Adapter extends RecyclerView.Adapter<EventsCore_Adapter.
      */
     private List<Event_Model> mCompleteSet; //Copy of the complete data set.
     private List<Event_Model> mDisplaySet; //The list to populate the recycler view.
-    public EventsCore_Adapter(EventClickListener eventClickListener){
+    public Events_Adapter(EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
     }
 
     @NonNull
     @Override
-    public EventsCore_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+    public Events_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.cardview_event,viewGroup,false);
         return new EventViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final EventsCore_Adapter.EventViewHolder vh, int position) {
+    public void onBindViewHolder(@NonNull final Events_Adapter.EventViewHolder vh, int position) {
         final Event_Model currEvent = mDisplaySet.get(position);
         if(currEvent.getLong1()!=0){
             long long1 = currEvent.getLong1();
