@@ -47,7 +47,9 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -115,6 +117,32 @@ public class Core_Activity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         ProgressBar progressBar = findViewById(R.id.progress_connections);
         TextView textNullEvents = findViewById(R.id.text_null_connections);
@@ -195,14 +223,12 @@ public class Core_Activity extends AppCompatActivity implements
             }
         });
 
-
-        FloatingActionButton btnExploreEvents = findViewById(R.id.button_explore_events);
-        btnExploreEvents.setOnClickListener((View v)->{
-            EventExplore_Fragment searchFragment = EventExplore_Fragment.newInstance(mUserModel);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_core_full,searchFragment,"exploreevents")
-                    .addToBackStack("exploreevents")
-                    .commit();
+        BottomNavigationView navView = findViewById(R.id.bottom_nav_view);
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                return false;
+            }
         });
     }
 
@@ -225,7 +251,7 @@ public class Core_Activity extends AppCompatActivity implements
             case R.id.action_invitations:
                 PersonalMessages_Fragment fragment = new PersonalMessages_Fragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_core_full,fragment,INV_FRAG)
+                        .replace(R.id.frame_core_container,fragment,INV_FRAG)
                         .addToBackStack(INV_FRAG)
                         .commit();
                 return true;

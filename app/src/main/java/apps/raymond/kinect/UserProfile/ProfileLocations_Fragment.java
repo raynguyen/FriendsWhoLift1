@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -66,7 +67,6 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
                     } else {
                         txtNullData.setVisibility(View.VISIBLE);
                     }
-
                 }
             });
             mActViewModel.loadUserLocations();
@@ -79,6 +79,10 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
 
     @Override
     public void onLocationClick(Location_Model location) {
-
+        if(!(mMapView.getHeight() > 0)){
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,0,1.0f);
+            mMapView.setLayoutParams(params);
+        }
     }
 }

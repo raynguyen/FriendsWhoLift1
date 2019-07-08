@@ -9,6 +9,9 @@
 
     <!-- General Strings -->
     <string name="app_name">Kinect</string>
+    <string name="events">Events</string>
+    <string name="explore">Explore</string>
+    <string name="create">Create</string>
     <string name="discard">Discard</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>

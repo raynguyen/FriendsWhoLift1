@@ -34,7 +34,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
     @Override
     public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.cardview_location,viewGroup,false);
+                .inflate(R.layout.layout_recycler_location,viewGroup,false);
         return new LocationViewHolder(view);
     }
 

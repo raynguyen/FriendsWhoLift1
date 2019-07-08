@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
 
     <android.support.v7.widget.SearchView
         android:id="@+id/search_profile_locations"
@@ -14,7 +16,8 @@
     <FrameLayout
         android:id="@+id/frame_profile_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_below="@id/search_profile_locations">
 
         <android.support.v7.widget.RecyclerView
@@ -41,7 +44,6 @@
         android:id="@+id/mapview_profile"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/frame_profile_recycler"
-        android:layout_alignParentBottom="true">
+        android:layout_weight="0">
     </com.google.android.gms.maps.MapView>
-</RelativeLayout>
+</LinearLayout>

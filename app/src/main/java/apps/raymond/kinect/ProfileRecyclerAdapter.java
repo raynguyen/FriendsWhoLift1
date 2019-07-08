@@ -59,7 +59,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     }
 
     public void setData(List<User_Model> newList){
-        if(mCompleteSet ==null){
+        if(mCompleteSet == null){
             mCompleteSet = new ArrayList<>(newList);
             mDisplaySet = new ArrayList<>(newList);
         } else {
@@ -87,10 +87,17 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
                 }
             });
 
-            mCompleteSet.clear();
-            mCompleteSet.addAll(newList);
-            mDisplaySet.clear();
-            mDisplaySet.addAll(newList);
+            /*
+            NullPointerException was thrown coming to clearing the set. This should not have
+            occurred but for whatever reason it did. The following if is a preventative until
+            further investigation.
+            */
+            if(mCompleteSet !=null && mDisplaySet != null){
+                mCompleteSet.clear();
+                mCompleteSet.addAll(newList);
+                mDisplaySet.clear();
+                mDisplaySet.addAll(newList);
+            }
             result.dispatchUpdatesTo(this);
         }
         notifyItemRangeChanged(0,newList.size());
