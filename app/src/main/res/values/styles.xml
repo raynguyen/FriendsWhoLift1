@@ -68,13 +68,18 @@
     </style>
     
     <style name="ProfileAction">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
         <item name="android:scaleX">1.5</item>
         <item name="android:scaleY">1.5</item>
         <item name="android:visibility">gone</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:background">@drawable/button_ripple</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentEnd">true</item>
+
     </style>
 
 </resources>

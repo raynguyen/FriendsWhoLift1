@@ -28,26 +28,25 @@ import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
  * Fragment that displays the suggested connections and current connections. There is a search view
  * that filters both the recycler views for users that match the constraint inputted by the user.
  */
-public class Connections_Fragment extends Fragment implements
+public class ProfileConnections_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener {
+    private static final String USER = "user";
 
-    public static Connections_Fragment newInstance(User_Model userID){
-        Connections_Fragment fragment = new Connections_Fragment();
+    public static ProfileConnections_Fragment newInstance(User_Model userModel){
+        ProfileConnections_Fragment fragment = new ProfileConnections_Fragment();
         Bundle args = new Bundle();
-        args.putParcelable("user",userID);
+        args.putParcelable(USER, userModel);
         fragment.setArguments(args);
         return fragment;
     }
 
     private ProfileActivity_ViewModel mViewModel;
-    private User_Model mUserModel;
-    private String mUserID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
-        mUserModel = getArguments().getParcelable("user");
-        mUserID = mUserModel.getEmail();
+       // mUserModel = getArguments().getParcelable("user");
+        //mUserID = mUserModel.getEmail();
     }
 
     private RecyclerView recyclerConnections,recyclerSuggested;
@@ -107,8 +106,8 @@ public class Connections_Fragment extends Fragment implements
 
         //ToDo: We want to wait until the connections are retrieved. Then we try and fetch at suggested
         // list of users and then filter out the already connected users.
-        mViewModel.loadConnections(mUserID);
-        mViewModel.loadSuggestedConnections(mUserID);
+        //mViewModel.loadConnections(mUserID);
+        //mViewModel.loadSuggestedConnections(mUserID);
 
         SearchView searchView = view.findViewById(R.id.search_view_connections);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -165,7 +164,7 @@ public class Connections_Fragment extends Fragment implements
     public void onProfileLongClick(User_Model user) {
         Toast.makeText(getContext(),"Clicked on profile: "+user.getEmail(),Toast.LENGTH_LONG).show();
         Intent viewProfileIntent = new Intent(getContext(), Profile_Activity.class);
-        viewProfileIntent.putExtra("profile_model",user).putExtra("current_user",mUserModel);
+        //viewProfileIntent.putExtra("profile_model",user).putExtra("current_user",mUserModel);
         startActivity(viewProfileIntent);
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blueish">
+
+    <include
+        layout="@layout/layout_profile_details_test">
+    </include>
+
+    <ProgressBar
+        android:id="@+id/progress_profile_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/button_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ProfileAction"
+        android:src="@drawable/ic_person_add_black_24dp"/>
+
+    <ImageButton
+        android:id="@+id/button_pending_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ProfileAction"
+        android:contentDescription="@string/pending_connection"
+        android:src="@drawable/ic_email_white_24dp"/>
+
+    <ImageButton
+        android:id="@+id/button_delete_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ProfileAction"
+        android:src="@drawable/ic_delete_black_24dp"
+        android:tint="@color/white"/>
+
+</RelativeLayout>

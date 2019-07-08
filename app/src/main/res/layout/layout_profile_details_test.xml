@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/button_return"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+        android:background="@drawable/button_ripple"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:contentDescription="@string/profile_picture"/>
+
+    <ImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="48dp"
+        android:contentDescription="@string/profile_picture"
+        android:background="#0000"
+        android:src="@drawable/ic_face_black_24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/text_profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/profile_display_name"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/profile_pic"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_profile_name"
+        android:layout_marginTop="8dp">
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/ic_group_black_24dp"/>
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/ic_map_black_24dp"/>
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/ic_favorite_black_24dp"/>
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_profile_details"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/tab_layout_profile"
+        android:layout_alignParentBottom="true"
+        android:padding="2dp">
+    </android.support.v4.view.ViewPager>
+</RelativeLayout>
