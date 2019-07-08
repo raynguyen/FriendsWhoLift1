@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -51,13 +53,20 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 
-
+        ProgressBar progressBar = view.findViewById(R.id.progress_profile_locations);
+        TextView txtNullData = view.findViewById(R.id.text_profile_locations_null);
 
         if(getParentFragment() instanceof PersonalProfile_Fragment){
             mActViewModel.getLocations().observe(getParentFragment(),
                     (@Nullable List<Location_Model> locations) -> {
+                progressBar.setVisibility(View.GONE);
                 if(locations!= null){
-                    adapter.setData(locations);
+                    if(locations.size()>0){
+                        adapter.setData(locations);
+                    } else {
+                        txtNullData.setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
             mActViewModel.loadUserLocations();
