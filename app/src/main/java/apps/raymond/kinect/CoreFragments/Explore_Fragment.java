@@ -58,26 +58,12 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     private Marker focusedMarker; //Marker object the user most recently focused.
     private Event_Model focusedEvent; //Event retrieved from the tag of a marker the user clicked.
 
-   /* public static Explore_Fragment newInstance(User_Model userModel){
-        Explore_Fragment fragment = new Explore_Fragment();
-        Bundle args = new Bundle();
-        args.putParcelable(USER,userModel);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
-
     private Core_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
 
-        /*try{
-            mUserModel = getArguments().getParcelable(USER);
-            mUserID = mUserModel.getEmail();
-        } catch (NullPointerException npe) {
-            Log.w(TAG, "Error.", npe);
-        }*/
     }
 
     @Nullable

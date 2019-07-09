@@ -124,7 +124,7 @@ public class Core_Activity extends AppCompatActivity{
 
         Toolbar toolbar = findViewById(R.id.toolbar_core);
         setSupportActionBar(toolbar);
-        toolbar.setBackgroundColor(getColor(R.color.colorAccent));
+        //toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         toolbar.setNavigationOnClickListener((View v)-> {
             User_Model userModel = mViewModel.getUserModel().getValue();
             if(userModel !=null){

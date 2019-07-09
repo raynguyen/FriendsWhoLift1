@@ -39,6 +39,7 @@
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
     <string name="messages">Messages</string>
+    <string name="events_count_header">Events you have accepted: </string>
     <string name="null_events">You have no upcoming events.</string>
     <string name="events_new_interested">New events you may be interested in!</string>
     <string name="events_popular_friends">Events popular with your connections.</string>

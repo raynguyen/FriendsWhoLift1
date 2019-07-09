@@ -8,7 +8,8 @@
     app:layout_constraintTop_toTopOf="parent"
     android:background="@drawable/event_cardview_bgd"
     android:foreground="?android:attr/selectableItemBackground"
-    android:clickable="true">
+    android:clickable="true"
+    app:cardElevation="4dp">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_body_layout"

@@ -6,12 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,10 +25,12 @@ import apps.raymond.kinect.EventDetail.EventDetail_Activity;
 import apps.raymond.kinect.Events.Event_Model;
 import apps.raymond.kinect.Events.Events_Adapter;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Events_Fragment extends Fragment implements Events_Adapter.EventClickListener{
+    private static final String TAG = "Events_Fragment:";
     private Core_ViewModel mViewModel;
 
     @Override
@@ -47,9 +53,13 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         TextView textNull = view.findViewById(R.id.text_events_null);
         SearchView searchView = view.findViewById(R.id.search_events);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
-        TextView textEventsCount = view.findViewById(R.id.text_events_count);
+        ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         Events_Adapter adapter = new Events_Adapter(this);
+        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView();
+
+        searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(dividerDecoration);
         recyclerView.setAdapter(adapter);
 
         mViewModel.getEvents().observe(requireActivity(), (@Nullable List<Event_Model> events) -> {
@@ -57,11 +67,11 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
             if(events != null){
                 if(events.size() != 0){
                     adapter.setData(events);
-                    textEventsCount.setText(String.valueOf(events.size()));
+                    //textEventsCount.setText(String.valueOf(events.size()));
                 } else {
                     textNull.setVisibility(View.VISIBLE);
                 }
-            }
+        }
         });
         mViewModel.loadEvents();
 
