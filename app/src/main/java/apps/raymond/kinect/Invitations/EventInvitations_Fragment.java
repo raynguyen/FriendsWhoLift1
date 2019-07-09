@@ -81,9 +81,9 @@ public class EventInvitations_Fragment extends Fragment implements
             mViewModel.addEventToUser(mUserID,event);//Add the event to User's Event collection.
 
             //Notify the core Recycler of new event.
-            List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+            List<Event_Model> acceptedEvents = mViewModel.getMyEvents().getValue();
             acceptedEvents.add(event);
-            mViewModel.setAcceptedEvents(acceptedEvents);
+            mViewModel.setMyEvents(acceptedEvents);
         } else if (response == EventInvitations_Adapter.DECLINE) {
             mViewModel.updateEventInviteDeclined(event.getName(),mUserID,mUserModel);//Move the user to the declined invitation list.
         }

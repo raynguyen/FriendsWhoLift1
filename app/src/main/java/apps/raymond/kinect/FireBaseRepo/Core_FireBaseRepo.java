@@ -416,9 +416,14 @@ public class Core_FireBaseRepo {
         //Delete the event from user's accepted events.
     }
 
+    //ToDo: The query needs to be conjuncted with some filter to personalize the list of public
+    // events.
+    /**
+     * Query the Events Collection for a List of Event_Models whose privacy field is public.
+     * @return list of Event_Models held be a task's result.
+     */
     public Task<List<Event_Model>> loadNewEvents(){
-        Query query = eventCollection.whereEqualTo("privacy",Event_Model.PUBLIC)
-                .whereArrayContains("primes",Event_Model.SPORTS).limit(3);
+        Query query = eventCollection.whereEqualTo("privacy",Event_Model.PUBLIC).limit(50);//.whereArrayContains("primes",Event_Model.SPORTS).limit(3);
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
             List<Event_Model> result = new ArrayList<>();
             if(task.isSuccessful() && task.getResult()!=null){

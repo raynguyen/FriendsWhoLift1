@@ -127,7 +127,11 @@ public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventVie
      * @param newList New data set to populate the RecyclerView
      */
     public void setData(final List<Event_Model> newList){
-        if(mCompleteSet ==null){
+        if(newList == null) {
+            return;
+        }
+
+        if(mCompleteSet == null){
             mCompleteSet = new ArrayList<>(newList);
             mDisplaySet = new ArrayList<>(newList);
             notifyItemRangeChanged(0, mDisplaySet.size());

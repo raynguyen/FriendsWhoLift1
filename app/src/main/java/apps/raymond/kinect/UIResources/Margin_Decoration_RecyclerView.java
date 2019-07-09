@@ -6,8 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public class Margin_Decoration_RecyclerView extends RecyclerView.ItemDecoration {
+    private int mTopMargin;
 
-    public Margin_Decoration_RecyclerView(){
+    public Margin_Decoration_RecyclerView(int topMargin){
+        mTopMargin = topMargin;
     }
 
     @Override
@@ -15,7 +17,7 @@ public class Margin_Decoration_RecyclerView extends RecyclerView.ItemDecoration 
                                @NonNull RecyclerView.State state) {
 
         if(parent.getChildAdapterPosition(view) == 0){
-            outRect.top = 126;
+            outRect.top = mTopMargin;
         }
         if (parent.getChildAdapterPosition(view) == parent.getAdapter().getItemCount() - 1) {
             outRect.bottom = 24;

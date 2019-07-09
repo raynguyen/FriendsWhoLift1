@@ -59,11 +59,11 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
         recyclerPopularFriends.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //Needed to show new events in area.
-        mViewModel.getNewEventsFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
+        mViewModel.getNewEvents().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
             mNewAdapter.setData(event_models);
             Log.w("CoreFragment","Got some events to load into the new events feed! " + event_models.size());
         });
-        mViewModel.loadNewEventsFeed();
+        mViewModel.loadNewEvents();
 
         //Needed to determine events that are popular with friends.
         mViewModel.getUserConnections().observe(requireActivity(),(@Nullable List<User_Model> connections)->{
@@ -73,12 +73,12 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
         });
 
 
-        //Needed to determine events that are popular with friends.
+        /*//Needed to determine events that are popular with friends.
         mViewModel.getEvents().observe(requireActivity(),(@Nullable List<Event_Model> publicEvents)->{
             //We want a list of public events so that we can check to see if the user is attending
             //the event. If not, check if
             filterPopularEvents();
-        });
+        });*/
 
         //Needed to determine events that are popular with friends.
         mViewModel.getPopularFeed().observe(requireActivity(),(@Nullable List<Event_Model> event_models)->{
@@ -96,9 +96,9 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
      * Method to filter out from the public events,
      */
     private void filterPopularEvents(){
-        List<Event_Model> publicEvents = mViewModel.getEvents().getValue();
+        List<Event_Model> publicEvents = mViewModel.getNewEvents().getValue();
         List<User_Model> userConnections = mViewModel.getUserConnections().getValue();
-        List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+        List<Event_Model> acceptedEvents = mViewModel.getMyEvents().getValue();
         List<Event_Model> filteredEvents = new ArrayList<>(); //List containing events after filtering for public without user and with connections.
         if(publicEvents!=null && userConnections!=null){
             Log.w("CoreFragment","Size of public events before filter = "+publicEvents.size());

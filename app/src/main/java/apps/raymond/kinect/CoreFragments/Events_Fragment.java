@@ -10,11 +10,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,14 +53,14 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
         ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         Events_Adapter adapter = new Events_Adapter(this);
-        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView();
+        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView(0);
 
         searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(dividerDecoration);
         recyclerView.setAdapter(adapter);
 
-        mViewModel.getEvents().observe(requireActivity(), (@Nullable List<Event_Model> events) -> {
+        mViewModel.getMyEvents().observe(requireActivity(), (@Nullable List<Event_Model> events) -> {
             progressBar.setVisibility(View.GONE);
             if(events != null){
                 if(events.size() != 0){
@@ -71,9 +69,9 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
                 } else {
                     textNull.setVisibility(View.VISIBLE);
                 }
-        }
+            }
         });
-        mViewModel.loadEvents();
+        mViewModel.loadMyEvents();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

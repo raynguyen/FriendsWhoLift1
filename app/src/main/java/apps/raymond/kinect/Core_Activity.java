@@ -108,6 +108,15 @@ public class Core_Activity extends AppCompatActivity{
         setContentView(R.layout.activity_core);
         mViewModel = ViewModelProviders.of(this).get(Core_ViewModel.class);
 
+        //Create an observer protocol to detect when the Core_ViewModel has a User_Model set.
+        mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
+            if(user_model!=null){
+                String userID = user_model.getEmail();
+                mViewModel.loadEventInvitations(userID);
+                mViewModel.loadConnectionRequests(userID);
+            }
+        });
+
         /*
         Setup the Core_ViewModel with the data retrieved during application launch. We can either
         start this activity with a User_Model (calling activity was Login_Activity) or this instance
@@ -124,7 +133,6 @@ public class Core_Activity extends AppCompatActivity{
 
         Toolbar toolbar = findViewById(R.id.toolbar_core);
         setSupportActionBar(toolbar);
-        //toolbar.setBackgroundColor(getColor(R.color.colorAccent));
         toolbar.setNavigationOnClickListener((View v)-> {
             User_Model userModel = mViewModel.getUserModel().getValue();
             if(userModel !=null){
@@ -135,7 +143,6 @@ public class Core_Activity extends AppCompatActivity{
             }
         });
 
-
         final Events_Fragment eventsFrag = new Events_Fragment();
         final Create_Fragment createFrag = new Create_Fragment();
         final Explore_Fragment exploreFrag = new Explore_Fragment();
@@ -144,18 +151,6 @@ public class Core_Activity extends AppCompatActivity{
         fm.beginTransaction().add(R.id.frame_core_container, exploreFrag, "explore").hide(exploreFrag).commit();
         fm.beginTransaction().add(R.id.frame_core_container,eventsFrag,"events").commit();
         activeFragment = eventsFrag;
-
-        mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
-            if(user_model!=null){
-                String userID = user_model.getEmail();
-                mViewModel.loadEventInvitations(userID);
-                mViewModel.loadConnectionRequests(userID);
-                mViewModel.loadPublicEvents();
-                mViewModel.loadUserConnections(userID);
-            } else {
-                //Todo: add safety prevention?
-            }
-        });
 
         BottomNavigationView navView = findViewById(R.id.bottom_nav_view);
         navView.setOnNavigationItemSelectedListener((@NonNull MenuItem menuItem) -> {
@@ -203,8 +198,8 @@ public class Core_Activity extends AppCompatActivity{
                 /*ArrayList<Event_Model> mEventList = new ArrayList<>();
                 Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
                 eventCreateIntent.putExtra("user",mUserModel);
-                if(mViewModel.getAcceptedEvents().getValue()!=null){
-                    mEventList.addAll(mViewModel.getAcceptedEvents().getValue());
+                if(mViewModel.getMyEvents().getValue()!=null){
+                    mEventList.addAll(mViewModel.getMyEvents().getValue());
                     eventCreateIntent.putExtra("events",mEventList);
                 }
                 startActivityForResult(eventCreateIntent,EVENTCREATE);
@@ -219,9 +214,9 @@ public class Core_Activity extends AppCompatActivity{
         if(resultCode==Activity.RESULT_OK){
             if(requestCode==EVENTCREATE){
                 Event_Model event = data.getParcelableExtra("event");
-                List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
+                List<Event_Model> acceptedEvents = mViewModel.getMyEvents().getValue();
                 acceptedEvents.add(event);
-                mViewModel.setAcceptedEvents(acceptedEvents);
+                mViewModel.setMyEvents(acceptedEvents);
             }
         }
     }

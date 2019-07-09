@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
@@ -40,10 +39,9 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnectionRequests = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mAcceptedEvents = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>();
+    private MutableLiveData<List<Event_Model>> mMyEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mNewEventsFeed = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mPopFriendsFeed = new MutableLiveData<>();
+    private MutableLiveData<List<Event_Model>> mPopularFeed = new MutableLiveData<>();
 
     public Core_ViewModel(){
         mRepository = new Core_FireBaseRepo();
@@ -122,26 +120,26 @@ public class Core_ViewModel extends ViewModel {
 
     //*------------------------------------------EVENTS------------------------------------------*//
     /**
-     * Fetch the user's Event collection from the database and set the result to mAcceptedEvents.
+     * Fetch the user's Event collection from the database and set the result to mMyEvents.
      * Ideally, we would be able to remove the onCompleteListener via Transformations in the Repo.
      */
-    public void loadEvents(){
+    public void loadMyEvents(){
         String userID = mUserID.getValue();
         if(userID != null){
             mRepository.getAcceptedEvents(userID).addOnCompleteListener((Task<List<Event_Model>> task)->{
                 if(task.isSuccessful()&& task.getResult()!=null){
-                    mAcceptedEvents.setValue(task.getResult());
+                    mMyEvents.setValue(task.getResult());
                 }
             });
         }
-
-    }
-    public void setAcceptedEvents(List<Event_Model> newList) {
-        mAcceptedEvents.setValue(newList);
     }
 
-    public MutableLiveData<List<Event_Model>> getAcceptedEvents(){
-        return mAcceptedEvents;
+    public void setMyEvents(List<Event_Model> newList) {
+        mMyEvents.setValue(newList);
+    }
+
+    public MutableLiveData<List<Event_Model>> getMyEvents(){
+        return mMyEvents;
     }
 
     public Task<Void> addEventToUser(String userID, Event_Model event){
@@ -156,7 +154,7 @@ public class Core_ViewModel extends ViewModel {
         mRepository.deleteEventInvitation(userID, eventName);
     }
 
-    public void loadPublicEvents(){
+    /*public void loadPublicEvents(){
         mRepository.getPublicEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)-> {
             if(task.isSuccessful()){
                 mPublicEvents.setValue(task.getResult());
@@ -166,10 +164,13 @@ public class Core_ViewModel extends ViewModel {
 
     public MutableLiveData<List<Event_Model>> getEvents(){
         return mPublicEvents;
-    }
+    }*/
 
-    //This should load all the relevant recycler data.
-    public void loadNewEventsFeed(){
+    /**
+     * Query the database for a list of public events (limit currently set to 50). Upon successful
+     * retrieval, the View_Model instance sets the mNewEventsFeed with the query's result.
+     */
+    public void loadNewEvents(){
         mRepository.loadNewEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
                 mNewEventsFeed.setValue(task.getResult());
@@ -177,24 +178,12 @@ public class Core_ViewModel extends ViewModel {
         });
     }
 
-    public void loadPopularEventsFeed(){
-        /*mRepository.loadPopularEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
-            if(task.getResult()!=null){
-                mPopFriendsFeed.setValue(task.getResult());
-            }
-        });*/
-    }
-
-    public void loadLocationEventsFeed(){
-
-    }
-
-    public MutableLiveData<List<Event_Model>> getNewEventsFeed(){
+    public MutableLiveData<List<Event_Model>> getNewEvents(){
         return mNewEventsFeed;
     }
 
     public MutableLiveData<List<Event_Model>> getPopularFeed(){
-        return mPopFriendsFeed;
+        return mPopularFeed;
     }
 
     public Task<Boolean> checkForUser(String userID, String eventName){

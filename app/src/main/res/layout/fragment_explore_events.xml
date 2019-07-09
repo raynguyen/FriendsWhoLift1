@@ -7,17 +7,18 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true">
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/search_events_explore"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="2dp">
-    </android.support.v7.widget.SearchView>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="0"
+        android:layout_marginBottom="8dp">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_events_explore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="2dp">
+        </android.support.v7.widget.SearchView>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_events_explore"
@@ -29,14 +30,14 @@
         </android.support.v7.widget.RecyclerView>
 
         <ProgressBar
-            android:id="@+id/progress_events"
+            android:id="@+id/progress_events_explore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:layout_gravity="center"/>
 
         <TextView
-            android:id="@+id/text_events_null"
+            android:id="@+id/text_events_explore_null"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/null_events"
@@ -58,13 +59,13 @@
             android:paddingEnd="4dp"/>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/cardview_event_explore"
+            android:id="@+id/card_event_explore"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardElevation="4dp"
             android:layout_gravity="bottom"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"
