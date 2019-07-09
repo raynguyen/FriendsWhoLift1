@@ -36,18 +36,17 @@ import apps.raymond.kinect.R;
 
 public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
     private static final int LOCATION_REQUEST_CODE = 0;
-    protected GoogleMap mMap;
     protected FusedLocationProviderClient mFusedLocationClient;
     protected Location mLastLocation;
     protected Marker mResultMarker;
     protected Address mResultAddress;
     protected Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
     protected MapView mMapView;
+    protected GoogleMap mMap;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         if (ActivityCompat.checkSelfPermission(requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

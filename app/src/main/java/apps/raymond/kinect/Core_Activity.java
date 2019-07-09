@@ -51,6 +51,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -100,7 +101,7 @@ public class Core_Activity extends AppCompatActivity{
     private static final String INV_FRAG = "EventInvitations_Fragment";
     public static final int EVENTCREATE = 22;
     private Core_ViewModel mViewModel;
-
+    private Fragment activeFragment;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,17 +136,14 @@ public class Core_Activity extends AppCompatActivity{
         });
 
 
-
+        final Events_Fragment eventsFrag = new Events_Fragment();
         final Create_Fragment createFrag = new Create_Fragment();
         final Explore_Fragment exploreFrag = new Explore_Fragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.frame_core_container, createFrag, "create").hide(createFrag).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.frame_core_container, exploreFrag, "explore").hide(exploreFrag).commit();
-        final Events_Fragment eventsFrag = new Events_Fragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.frame_core_container,eventsFrag,"events").commit();
-        Fragment activeFrag = eventsFrag;
-
-
-
+        final FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().add(R.id.frame_core_container, createFrag, "create").hide(createFrag).commit();
+        fm.beginTransaction().add(R.id.frame_core_container, exploreFrag, "explore").hide(exploreFrag).commit();
+        fm.beginTransaction().add(R.id.frame_core_container,eventsFrag,"events").commit();
+        activeFragment = eventsFrag;
 
         mViewModel.getUserModel().observe(this,(@Nullable User_Model user_model)-> {
             if(user_model!=null){
@@ -163,15 +161,26 @@ public class Core_Activity extends AppCompatActivity{
         navView.setOnNavigationItemSelectedListener((@NonNull MenuItem menuItem) -> {
             switch (menuItem.getItemId()){
                 case R.id.nav_events:
+                    if(!( activeFragment instanceof Events_Fragment)) {
+                        fm.beginTransaction().hide(activeFragment).show(eventsFrag).commit();
+                        activeFragment = eventsFrag;
+                    }
                     return true;
                 case R.id.nav_explore:
+                    if(!(activeFragment instanceof Explore_Fragment)){
+                        fm.beginTransaction().hide(activeFragment).show(exploreFrag).commit();
+                        activeFragment = exploreFrag;
+                    }
                     return true;
                 case R.id.nav_create:
+                    if(!(activeFragment instanceof Create_Fragment)){
+                        fm.beginTransaction().hide(activeFragment).show(createFrag).commit();
+                        activeFragment = createFrag;
+                    }
                     return true;
             }
             return false;
         });
-
     }
 
     @Override

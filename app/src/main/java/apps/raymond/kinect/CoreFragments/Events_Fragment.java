@@ -47,6 +47,7 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         TextView textNull = view.findViewById(R.id.text_events_null);
         SearchView searchView = view.findViewById(R.id.search_events);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
+        TextView textEventsCount = view.findViewById(R.id.text_events_count);
         Events_Adapter adapter = new Events_Adapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -56,6 +57,7 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
             if(events != null){
                 if(events.size() != 0){
                     adapter.setData(events);
+                    textEventsCount.setText(String.valueOf(events.size()));
                 } else {
                     textNull.setVisibility(View.VISIBLE);
                 }

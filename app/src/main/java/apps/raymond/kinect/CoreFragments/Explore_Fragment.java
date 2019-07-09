@@ -17,12 +17,10 @@ package apps.raymond.kinect.CoreFragments;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +33,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -50,68 +47,53 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.UserProfile.User_Model;
 
-public class Explore_Fragment extends Fragment implements
+public class Explore_Fragment extends BaseMap_Fragment implements
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "EventsSearchFragment";
-    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private static final String USER = "User";
-    private static final int LOCATION_REQUEST_CODE = 1;
+    private Marker focusedMarker; //Marker object the user most recently focused.
+    private Event_Model focusedEvent; //Event retrieved from the tag of a marker the user clicked.
 
-    public static Explore_Fragment newInstance(User_Model userModel){
+   /* public static Explore_Fragment newInstance(User_Model userModel){
         Explore_Fragment fragment = new Explore_Fragment();
         Bundle args = new Bundle();
         args.putParcelable(USER,userModel);
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 
-    FusedLocationProviderClient mFusedLocationClient;
-    Core_ViewModel mViewModel;
-    private User_Model mUserModel;
-    private String mUserID;
-    private boolean mLocationPermission = false;
-    private List<Event_Model> mEventInvitations;
+    private Core_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
-        mEventInvitations = mViewModel.getEventInvitations().getValue();
-        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
-        } else {
-            mLocationPermission = true;
-        }
 
-        try{
+        /*try{
             mUserModel = getArguments().getParcelable(USER);
             mUserID = mUserModel.getEmail();
         } catch (NullPointerException npe) {
             Log.w(TAG, "Error.", npe);
-        }
+        }*/
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_explore_events,container,false);
+        View view = inflater.inflate(R.layout.fragment_explore_events,container,false);
+        mMapView = view.findViewById(R.id.map_explore_fragment);
+        return view;
     }
 
     private ViewGroup detailsCardView;
     private TextView textEventName, textDesc, textThoroughfare, textMonth, textDate, textTime;
-    private MapView mMapView;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mMapView = view.findViewById(R.id.events_list_map);
-        mMapView.onCreate(savedInstanceState);
-        mMapView.getMapAsync(this);
 
         detailsCardView = view.findViewById(R.id.cardview_event_explore);
         textEventName = view.findViewById(R.id.text_event_name);
@@ -125,7 +107,7 @@ public class Explore_Fragment extends Fragment implements
         btnAttend.setOnClickListener((View v)->{
             detailsCardView.setVisibility(View.GONE);
             if(focusedEvent!=null){
-                if(mEventInvitations.contains(focusedEvent)){
+                /*if(mEventInvitations.contains(focusedEvent)){
                     mEventInvitations.remove(focusedEvent);
                     mViewModel.setEventInvitations(mEventInvitations); //Remove the invitation from the ViewModel set and increment attending count.
                     mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
@@ -138,16 +120,14 @@ public class Explore_Fragment extends Fragment implements
                     acceptedEvents.add(focusedEvent);
                     mViewModel.setAcceptedEvents(acceptedEvents);
                     focusedMarker.remove();
-                }
+                }*/
             }
         });
     }
 
-    private GoogleMap mMap;
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setPadding(0,0,0,0);
-        mMap = googleMap;
+        super.onMapReady(googleMap);
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener((LatLng latlng)->{
             if(detailsCardView.getVisibility()==View.VISIBLE){
@@ -155,25 +135,7 @@ public class Explore_Fragment extends Fragment implements
             }
         });
 
-        mViewModel.getEvents().observe(this, (List<Event_Model> publicEvents)-> addEventsToMap(publicEvents));
-
-        if(mViewModel.getEvents().getValue()!=null){
-            //If the list of public events is not null when the fragment is first instantiated, we
-            //simply want to populate the map with the public events.
-            List<Event_Model> publicEvents = mViewModel.getEvents().getValue();
-            addEventsToMap(publicEvents);
-        } else {
-            //Else, we want to call on the repository to load the public events to our view model.
-            mViewModel.loadPublicEvents();
-        }
-
-        if(mLocationPermission){
-            getDeviceLocation();
-            try{
-                googleMap.setMyLocationEnabled(true);
-            } catch (SecurityException e){
-                Log.w(TAG,"SecurityException.",e); }
-        }
+        mViewModel.getEvents().observe(this, (List<Event_Model> publicEvents) -> addEventsToMap());
     }
 
     /**
@@ -182,9 +144,9 @@ public class Explore_Fragment extends Fragment implements
      * event is not already in the list of accepted events for the current user. If there is a match,
      * we skip creating a marker on the map for the respective event.
      */
-    private void addEventsToMap(List<Event_Model> publicEvents){
+    private void addEventsToMap(){
         List<Event_Model> acceptedEvents = mViewModel.getAcceptedEvents().getValue();
-        if(publicEvents!=null && acceptedEvents!=null){
+        /*if(publicEvents!=null && acceptedEvents!=null){
             //For each event in public events, if the event is not also held by the acceptedEvents list, add the event to the map.
             for(Event_Model event: publicEvents){
                 if(!acceptedEvents.contains(event)){
@@ -195,11 +157,9 @@ public class Explore_Fragment extends Fragment implements
                     marker.setTag(event);
                 }
             }
-        }
+        }*/
     }
 
-    private Event_Model focusedEvent;
-    private Marker focusedMarker;
     @Override
     public boolean onMarkerClick(Marker marker) {
         detailsCardView.setVisibility(View.VISIBLE);
@@ -226,39 +186,7 @@ public class Explore_Fragment extends Fragment implements
         return true;
     }
 
-    private void getDeviceLocation(){
-        try{
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(requireActivity(), (Location location) -> {
-                        if(location!=null){
-                            mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(new LatLng(location.getLatitude(),
-                                            location.getLongitude()),17.0f));
-                        }
-                    });
-        } catch (SecurityException e){
-            Log.w(TAG,"There was an error retrieving the device location.",e);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==LOCATION_REQUEST_CODE){
-            if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                mLocationPermission = true;
-                getDeviceLocation();
-                try{
-                mMap.setMyLocationEnabled(true);
-                }
-                catch (SecurityException se){
-                }
-            }
-        }
-    }
-
-    @Override
+    /*@Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
@@ -267,42 +195,5 @@ public class Explore_Fragment extends Fragment implements
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
         mMapView.onSaveInstanceState(mapViewBundle);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMapView.onResume();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mMapView.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mMapView.onStop();
-    }
-
-    @Override
-    public void onPause() {
-        mMapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy(){
-        mMapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mMapView.onLowMemory();
-    }
-
+    }*/
 }
