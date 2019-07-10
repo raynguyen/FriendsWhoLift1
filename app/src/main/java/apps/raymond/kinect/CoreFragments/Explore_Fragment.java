@@ -18,6 +18,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -78,9 +84,15 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ProgressBar progressBar = view.findViewById(R.id.progress_events_explore);
-        TextView textNullEvents = view.findViewById(R.id.text_events_explore_null);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_events_explore);
+        TabLayout tabLayout = view.findViewById(R.id.tab_explore_events);
+        ViewPager viewPager = view.findViewById(R.id.viewpager_explore);
+
+
+
+
+        ProgressBar progressBar = view.findViewById(R.id.progress_explore_interests);
+        TextView textNullEvents = view.findViewById(R.id.text_explore_interests_null);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_explore_interests);
         Events_Adapter adapter = new Events_Adapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -201,4 +213,31 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         detailsCardView.setVisibility(View.VISIBLE);
         return true;
     }
+
+    private class ExplorePagerAdapter extends PagerAdapter {
+
+        public ExplorePagerAdapter() {
+            super();
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            View view = null;
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+
+    }
+
 }
