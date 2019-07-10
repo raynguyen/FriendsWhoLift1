@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.kinect.Events.Event_Model;
-
 public class EventsNewsFeed_Adapter extends RecyclerView.Adapter<EventsNewsFeed_Adapter.EventViewHolder> {
     private List<Event_Model> mDataSet;
     private EventClickListener listener;

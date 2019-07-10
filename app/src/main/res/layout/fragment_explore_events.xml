@@ -13,13 +13,6 @@
         android:layout_weight="1"
         android:layout_marginBottom="8dp">
 
-        <android.support.v7.widget.SearchView
-            android:id="@+id/search_events_explore"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="2dp">
-        </android.support.v7.widget.SearchView>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_events_explore"
             android:layout_width="match_parent"
@@ -65,7 +58,7 @@
             android:layout_margin="16dp"
             app:cardElevation="4dp"
             android:layout_gravity="bottom"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -200,8 +193,18 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignBottom="@id/layout_primes"
                     android:text="@string/attend"
+                    android:elevation="2dp"
                     style="?android:attr/borderlessButtonStyle"
                     android:textColor="@color/blueish"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_event_attend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/button_attend"
+                    android:layout_alignStart="@id/button_attend"
+                    android:layout_alignEnd="@id/button_attend"
+                    android:visibility="invisible"/>
             </RelativeLayout>
         </android.support.v7.widget.CardView>
     </FrameLayout>

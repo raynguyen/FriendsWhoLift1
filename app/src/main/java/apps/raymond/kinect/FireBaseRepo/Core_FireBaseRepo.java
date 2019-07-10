@@ -63,7 +63,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.EventDetail.Message_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -82,12 +82,14 @@ public class Core_FireBaseRepo {
     private static final String INVITED = "Invited";
     private static final String DECLINED = "Declined";
     private static final String LOCATIONS = "Locations";
-    private static final String EVENT_INVITES = "EventInvites";
+    private static final String INVITATIONS = "EventInvites"; //todo change to Invitations
     private static final String EVENT_INVITED_FIELD = "Invited";
     private static final String ATTENDING = "Attending";
     private static final String PENDING_REQUESTS = "PendingRequests";
     private static final String CONNECTIONS = "Connections";
     private static final String CONNECTION_REQUESTS = "ConnectionRequests";
+    private static final String PRIVACY = "privacy";//todo cap
+    private static final String CREATION_DATE = "create";//todo cap
 
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
@@ -103,11 +105,17 @@ public class Core_FireBaseRepo {
     //GOOD
     /**
      * Creates a user document in Events->Accepted.
-     * @param eventName The event the user is attending.
+     * @param eventID The event the user is attending.
      */
-    public Task<Void> addUserToEvent(String userID, User_Model userModel, String eventName) {
-        eventCollection.document(eventName).update(ATTENDING, FieldValue.increment(1));
-        return eventCollection.document(eventName).collection(ACCEPTED).document(userID).set(userModel);
+    public Task<Void> addUserToEvent(String userID, User_Model userModel, String eventID, Event_Model event_model) {
+        DocumentReference eventDocument = eventCollection.document(eventID);
+        return eventDocument.collection(ACCEPTED).document(userID).set(userModel)
+                .continueWithTask((@NonNull Task<Void> task) -> {
+                    return eventDocument.update(ATTENDING, FieldValue.increment(1));
+                })
+                .continueWithTask((@NonNull Task<Void> task) -> {
+                    return addEventToUser(userID, event_model);
+                });
     }
     //*------------------------------------------USER-------------------------------------------*//
 
@@ -131,7 +139,7 @@ public class Core_FireBaseRepo {
     }
 
     public Task<List<Event_Model>> getEventInvitations(String userID) {
-        return mStore.collection(USERS).document(userID).collection(EVENT_INVITES).get()
+        return mStore.collection(USERS).document(userID).collection(INVITATIONS).get()
                 .continueWith((Task<QuerySnapshot> task)->{
                     List<Event_Model> eventInvites = new ArrayList<>();
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -243,14 +251,23 @@ public class Core_FireBaseRepo {
     }
 
     /**
-     * Removes an Event invitation from Users->EventInvites and updates the value of Events->Event->
-     * invited.
-     * @param eventName The name of the event being modified.
+     * Deletes an event invitation document from the database for a particular user and event. The
+     * CRUD operations proceed in the following order:
+     *  1. Delete the event invitation document from the user's Invitations collection.
+     *  2. Delete the user document from the event's Invited collection.
+     *  3. Decrement the Invited field from the event's document.
+     * @param eventID The name of the event being modified.
      */
-    public void deleteEventInvitation(String userID, String eventName){
-        userCollection.document(userID).collection(EVENT_INVITES).document(eventName).delete();
-        eventCollection.document(eventName).update("invited", FieldValue.increment(-1));
-        eventCollection.document(eventName).collection(INVITED).document(userID).delete();
+    public Task<Void> deleteEventInvitation(String userID, String eventID){
+        DocumentReference userDocument = userCollection.document(userID);
+        DocumentReference eventDocument = eventCollection.document(eventID);
+        return userDocument.collection(INVITATIONS).document(eventID).delete()
+                .continueWithTask((@NonNull Task<Void> task) -> {
+                    return eventDocument.collection(INVITED).document(userID).delete();
+                })
+                .continueWithTask((@NonNull Task<Void> task) -> {
+                    return eventDocument.update(INVITED, FieldValue.increment(-1));
+                });
     }
 
     /**
@@ -301,7 +318,7 @@ public class Core_FireBaseRepo {
         final List<Task<Void>> sendInvites = new ArrayList<>();
 
         for (final User_Model user : userList) {
-            sendInvites.add(userCollection.document(user.getEmail()).collection(EVENT_INVITES)
+            sendInvites.add(userCollection.document(user.getEmail()).collection(INVITATIONS)
                     .document(event.getName()).set(event, SetOptions.merge())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -392,25 +409,6 @@ public class Core_FireBaseRepo {
                 });
     }
 
-    /**
-     * Fetch a list of public events and order by most recently created (i.e. largest value for the
-     * 'create' field.
-     * @return a list of all public events from the database.
-     */
-    public Task<List<Event_Model>> getPublicEvents(){
-        CollectionReference eventsRef = mStore.collection(EVENTS);
-        return eventsRef.whereEqualTo("privacy",Event_Model.PUBLIC).orderBy(Event_Model.CREATE).get()
-                .continueWith((@NonNull Task<QuerySnapshot> task)-> {
-                    List<Event_Model> publicEvents = new ArrayList<>();
-                    if(task.isSuccessful() && task.getResult()!=null){
-                        for(QueryDocumentSnapshot document : task.getResult()){
-                            publicEvents.add(document.toObject(Event_Model.class));
-                        }
-                    }
-                    return publicEvents;
-                });
-    }
-
     public void leaveEvent(String userID, String eventName){
         //TODO: Delete the user model from event attending.
         //--Decrement attending count.
@@ -424,7 +422,7 @@ public class Core_FireBaseRepo {
      * @return list of Event_Models held be a task's result.
      */
     public Task<List<Event_Model>> loadNewEvents(){
-        Query query = eventCollection.whereEqualTo("privacy",Event_Model.PUBLIC).limit(50);//.whereArrayContains("primes",Event_Model.SPORTS).limit(3);
+        Query query = eventCollection.whereEqualTo(PRIVACY,Event_Model.PUBLIC).orderBy(CREATION_DATE).limit(50);//.whereArrayContains("primes",Event_Model.SPORTS).limit(3);
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
             List<Event_Model> result = new ArrayList<>();
             if(task.isSuccessful() && task.getResult()!=null){

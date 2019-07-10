@@ -8,7 +8,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.UserProfile.User_Model;
 

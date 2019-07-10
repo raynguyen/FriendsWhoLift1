@@ -8,7 +8,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -91,7 +91,7 @@ public class EventCreate_ViewModel extends ViewModel {
         return mInviteList;
     }
 
-    Task<List<User_Model>> getInvitableUsers(String userID){
+    Task<List<User_Model>> getUsersToInvite(String userID){
         return mRepo.getAllUsers(userID);
     }
 
@@ -106,8 +106,9 @@ public class EventCreate_ViewModel extends ViewModel {
     void addEventToUser(String userID, Event_Model event){
         mRepo.addEventToUser(userID, event);
     }
-    void addUserToEvent(String userID,User_Model user, String eventName){
-        mRepo.addUserToEvent(userID,user,eventName);
+
+    void addUserToEvent(String userID,User_Model user, String eventName, Event_Model eventModel){
+        mRepo.addUserToEvent(userID,user,eventName,eventModel);
     }
 
     void sendEventInvites(Event_Model event, List<User_Model> inviteList){

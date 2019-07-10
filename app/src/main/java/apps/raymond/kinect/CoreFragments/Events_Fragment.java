@@ -20,8 +20,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import apps.raymond.kinect.EventDetail.EventDetail_Activity;
-import apps.raymond.kinect.Events.Event_Model;
-import apps.raymond.kinect.Events.Events_Adapter;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
@@ -53,7 +52,7 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
         ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         Events_Adapter adapter = new Events_Adapter(this);
-        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView(0);
+        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView();
 
         searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

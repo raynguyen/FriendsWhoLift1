@@ -23,11 +23,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.R;

@@ -1,4 +1,4 @@
-package apps.raymond.kinect.Events;
+package apps.raymond.kinect.CoreFragments;
 
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
@@ -19,6 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
 
 public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventViewHolder>

@@ -34,13 +34,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import apps.raymond.kinect.R;
 
+/**
+ * Base fragment that controls the UI for a MapView.
+ */
 public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
     private static final int LOCATION_REQUEST_CODE = 0;
     protected FusedLocationProviderClient mFusedLocationClient;
     protected Location mLastLocation;
     protected Marker mResultMarker;
     protected Address mResultAddress;
-    protected Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>();
+    protected Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>(); //Concurrent hashmap allows multiple threads to access the data should it not be accessing the same keys.
     protected MapView mMapView;
     protected GoogleMap mMap;
 

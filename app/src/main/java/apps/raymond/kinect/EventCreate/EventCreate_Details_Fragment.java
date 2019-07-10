@@ -10,7 +10,6 @@
 
 package apps.raymond.kinect.EventCreate;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,26 +31,22 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.AddUsers_Adapter;
-import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -101,14 +96,9 @@ public class EventCreate_Details_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Switch switchDates = view.findViewById(R.id.switch_date_suggest);
         TextView txtYear = view.findViewById(R.id.text_year);
         TextView txtDateStart = view.findViewById(R.id.text_date_start);
         TextView txtTimeStart = view.findViewById(R.id.text_time_start);
-
-        switchDates.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked)-> {
-            mViewModel.getEventModel().setTimesuggest(isChecked);
-        });
 
         viewFlipper = view.findViewById(R.id.viewflipper_start);
         ImageButton btnCloseFlipper = view.findViewById(R.id.button_close_flipper);
@@ -246,7 +236,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
         final AddUsers_Adapter mUserAdapter = new AddUsers_Adapter(this);
         recyclerUsers.setAdapter(mUserAdapter);
 
-        mViewModel.getInvitableUsers(mUserID)
+        mViewModel.getUsersToInvite(mUserID)
                 .addOnCompleteListener((Task<List<User_Model>> task) -> {
                     if(task.isSuccessful()){
                         mUserAdapter.setData(task.getResult());

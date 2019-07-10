@@ -9,10 +9,9 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Events.Event_Model;
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
 import apps.raymond.kinect.UserProfile.User_Model;
 
@@ -153,10 +152,7 @@ public class Core_ViewModel extends ViewModel {
         User_Model userModel = mUserModel.getValue();
         String userID = userModel.getEmail();
         String eventID = event.getName();
-        return mRepository.addUserToEvent(userID, userModel, eventID)
-                .addOnCompleteListener((@NonNull Task<Void> task) ->
-                        mRepository.addEventToUser(userID, event));
-
+        return mRepository.addUserToEvent(userID, userModel, eventID, event);
     }
 
     public void deleteEventInvitation(String userID, String eventName){
@@ -171,15 +167,9 @@ public class Core_ViewModel extends ViewModel {
         mRepository.loadNewEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
                 List<Event_Model> acceptedEvents = mMyEvents.getValue();
-                List<Event_Model> invitedEvents = mEventInvitations.getValue();
                 if(acceptedEvents !=null){
                     new FilterEventsTask(task.getResult(), acceptedEvents).execute();
                 }
-
-                if(invitedEvents !=null){
-                    //Have to delete an event invitation if the user joins it from explore.
-                }
-
             }
         });
     }
@@ -226,8 +216,8 @@ public class Core_ViewModel extends ViewModel {
                 });
     }
 
-    public void deletePendingRequest(String userID, String profileID){
-        mRepository.deletePendingRequest(userID, profileID);
+    public Task<Void> deletePendingRequest(String userID, String profileID){
+        return mRepository.deletePendingRequest(userID, profileID);
     }
 
     //*-------------------------------------------ETC--------------------------------------------*//
@@ -255,10 +245,7 @@ public class Core_ViewModel extends ViewModel {
         @Override
         protected List<Event_Model> doInBackground(Void... v) {
             for(Event_Model event : mFilter){
-                if(mInput.contains(event)){
-                    Log.w(TAG,"Found an event in both the input and filter: "+event.getName());
-                    mInput.remove(event);
-                }
+                mInput.remove(event);
             }
             return mInput;
         }
@@ -269,7 +256,6 @@ public class Core_ViewModel extends ViewModel {
             mNewEvents.setValue(result);
         }
     }
-
 
 }
 

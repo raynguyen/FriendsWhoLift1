@@ -1,5 +1,5 @@
 
-package apps.raymond.kinect.Events;
+package apps.raymond.kinect;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -19,11 +19,9 @@ public class Event_Model implements Parcelable{
     public static final String MOVIE = "movies";
     public static final String CHILL = "chill";
     public static final String CONCERT = "concert";
-
     public static final int EXCLUSIVE = 0; //Invitation only. Not visible on map.
     public static final int PRIVATE = 1; //Invitation only. Can request to attend.
     public static final int PUBLIC = 2; //Open to all users.
-    public static final String CREATE = "create";
     private String creator, name, desc;
     private double lat, lng;
     private int privacy;
@@ -33,7 +31,6 @@ public class Event_Model implements Parcelable{
     private int invited;
     private long long1;
     private long create;
-    private boolean timesuggest = false;
 
     public static final Parcelable.Creator<Event_Model> CREATOR = new Parcelable.Creator<Event_Model>(){
         @Override
@@ -211,14 +208,6 @@ public class Event_Model implements Parcelable{
 
     public void setCreate(long create) {
         this.create = create;
-    }
-
-    public boolean isTimesuggest() {
-        return timesuggest;
-    }
-
-    public void setTimesuggest(boolean timesuggest) {
-        this.timesuggest = timesuggest;
     }
 
     @Override
