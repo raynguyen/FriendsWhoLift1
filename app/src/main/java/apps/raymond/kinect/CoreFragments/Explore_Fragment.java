@@ -88,6 +88,9 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new Margin_Decoration_RecyclerView(126)); //126 is the size returned by getHeight of a search view.
 
+        /*
+        Observes the NewEvents list held by the ViewModel.
+         */
         mViewModel.getNewEvents().observe(requireActivity(), (List<Event_Model> events) -> {
             progressBar.setVisibility(View.GONE);
             if(events != null) {
@@ -143,8 +146,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
                 detailsCardView.setVisibility(View.GONE);
             }
         });
-
-        /*mViewModel.getEvents().observe(this, (List<Event_Model> publicEvents) -> addEventsToMap());*/
     }
 
     /**

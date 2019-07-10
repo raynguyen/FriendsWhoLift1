@@ -3,11 +3,13 @@ package apps.raymond.kinect.ViewModels;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Events.Event_Model;
@@ -40,7 +42,7 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnectionRequests = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mMyEvents = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mNewEvents = new MutableLiveData<>();
+    private static MutableLiveData<List<Event_Model>> mNewEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mPopularFeed = new MutableLiveData<>();
 
     public Core_ViewModel(){
@@ -170,19 +172,14 @@ public class Core_ViewModel extends ViewModel {
             if(task.getResult()!=null){
                 List<Event_Model> acceptedEvents = mMyEvents.getValue();
                 List<Event_Model> invitedEvents = mEventInvitations.getValue();
-                //DO THIS IN A SEPARATE THREAD?
                 if(acceptedEvents !=null){
-                    //FOR EACH EVENT IN ACCEPTED EVENTS, CHECK IF THE EVENT EXISTS IN THE TASK.GETRESULT
-                    // IF YES, REMOVE IT FROM THE TASK.GETRESULT SET.
-                    //DO SAME FOR INVITATIONS.
+                    new FilterEventsTask(task.getResult(), acceptedEvents).execute();
                 }
 
+                if(invitedEvents !=null){
+                    //Have to delete an event invitation if the user joins it from explore.
+                }
 
-
-
-
-
-                //mNewEvents.setValue(task.getResult());
             }
         });
     }
@@ -229,8 +226,8 @@ public class Core_ViewModel extends ViewModel {
                 });
     }
 
-    public Task<Void> deletePendingRequest(String userID, String profileID){
-        return mRepository.deletePendingRequest(userID, profileID);
+    public void deletePendingRequest(String userID, String profileID){
+        mRepository.deletePendingRequest(userID, profileID);
     }
 
     //*-------------------------------------------ETC--------------------------------------------*//
@@ -240,6 +237,40 @@ public class Core_ViewModel extends ViewModel {
     public Task<Uri> uploadImage(Uri uri, String name){
         return mRepository.uploadImage(uri, name);
     }
+
+    protected static class FilterEventsTask extends AsyncTask<Void, Void, List<Event_Model>>{
+        private List<Event_Model> mInput;
+        private List<Event_Model> mFilter;
+
+        /**
+         * Creates an AsyncTask to filter two lists of events against each other.
+         * @param input list that we want to filter.
+         * @param filter the list used to filter our input.
+         */
+        FilterEventsTask(List<Event_Model> input, List<Event_Model> filter){
+            mInput = input;
+            mFilter = filter;
+        }
+
+        @Override
+        protected List<Event_Model> doInBackground(Void... v) {
+            for(Event_Model event : mFilter){
+                if(mInput.contains(event)){
+                    Log.w(TAG,"Found an event in both the input and filter: "+event.getName());
+                    mInput.remove(event);
+                }
+            }
+            return mInput;
+        }
+
+        @Override
+        protected void onPostExecute(List<Event_Model> result) {
+            super.onPostExecute(result);
+            mNewEvents.setValue(result);
+        }
+    }
+
+
 }
 
 
