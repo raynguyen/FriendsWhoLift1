@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -107,8 +109,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
             }
         });
 
-
-
         detailsCardView = view.findViewById(R.id.card_event_explore);
         textEventName = view.findViewById(R.id.text_event_name);
         textDesc = view.findViewById(R.id.text_description);
@@ -121,20 +121,10 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         btnAttend.setOnClickListener((View v)->{
             detailsCardView.setVisibility(View.GONE);
             if(focusedEvent!=null){
-                /*if(mEventInvitations.contains(focusedEvent)){
-                    mEventInvitations.remove(focusedEvent);
-                    mViewModel.setEventInvitations(mEventInvitations); //Remove the invitation from the ViewModel set and increment attending count.
-                    mViewModel.deleteEventInvitation(mUserID,focusedEvent.getName()); //Delete the invitation doc and decrement invited count.
-                } else {
-                    mViewModel.addUserToEvent(mUserID,mUserModel,focusedEvent.getName())
-                            .addOnCompleteListener((Task<Void> task)->
-                                    Toast.makeText(getContext(),"You are now attending: "+focusedEvent.getName(),Toast.LENGTH_LONG).show());
-                    mViewModel.addEventToUser(mUserID,focusedEvent);//Add the event to User's Event collection.
-                    List<Event_Model> acceptedEvents = mViewModel.getMyEvents().getValue();
-                    acceptedEvents.add(focusedEvent);
-                    mViewModel.setMyEvents(acceptedEvents);
-                    focusedMarker.remove();
-                }*/
+                Log.w(TAG,"Attempting to write new event to the data base");
+                mViewModel.addUserToEvent(focusedEvent).addOnCompleteListener((Task<Void> task)->{
+                    Toast.makeText(getContext(),"Attending "+ focusedEvent.getName(),Toast.LENGTH_LONG).show();
+                });
             }
         });
     }

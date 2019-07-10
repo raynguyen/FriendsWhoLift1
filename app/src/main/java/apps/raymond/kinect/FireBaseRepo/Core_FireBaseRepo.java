@@ -83,7 +83,8 @@ public class Core_FireBaseRepo {
     private static final String DECLINED = "Declined";
     private static final String LOCATIONS = "Locations";
     private static final String EVENT_INVITES = "EventInvites";
-    private static final String EVENT_INVITED_FIELD = "invited";
+    private static final String EVENT_INVITED_FIELD = "Invited";
+    private static final String ATTENDING = "Attending";
     private static final String PENDING_REQUESTS = "PendingRequests";
     private static final String CONNECTIONS = "Connections";
     private static final String CONNECTION_REQUESTS = "ConnectionRequests";
@@ -99,6 +100,15 @@ public class Core_FireBaseRepo {
     public Core_FireBaseRepo() {
     }
 
+    //GOOD
+    /**
+     * Creates a user document in Events->Accepted.
+     * @param eventName The event the user is attending.
+     */
+    public Task<Void> addUserToEvent(String userID, User_Model userModel, String eventName) {
+        eventCollection.document(eventName).update(ATTENDING, FieldValue.increment(1));
+        return eventCollection.document(eventName).collection(ACCEPTED).document(userID).set(userModel);
+    }
     //*------------------------------------------USER-------------------------------------------*//
 
     /**
@@ -281,16 +291,7 @@ public class Core_FireBaseRepo {
                 .document(event.getName()).set(event);
     }
 
-    /**
-     * Creates a user document in Events->Accepted.
-     * @param eventName The event the user is attending.
-     */
-    public Task<Void> addUserToEvent(final String userID,final User_Model userModel,
-                                     final String eventName) {
-        eventCollection.document(eventName).update("attending",FieldValue.increment(1));
-        return eventCollection.document(eventName)
-                .collection("Accepted").document(userID).set(userModel);
-    }
+
 
     //Todo: Revisit this method to invite users to an event.
     public void sendEventInvites(final Event_Model event, final List<User_Model> userList) {

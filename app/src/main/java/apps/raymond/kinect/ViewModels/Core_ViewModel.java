@@ -40,7 +40,7 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnectionRequests = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mMyEvents = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mNewEventsFeed = new MutableLiveData<>();
+    private MutableLiveData<List<Event_Model>> mNewEvents = new MutableLiveData<>();
     private MutableLiveData<List<Event_Model>> mPopularFeed = new MutableLiveData<>();
 
     public Core_ViewModel(){
@@ -142,44 +142,53 @@ public class Core_ViewModel extends ViewModel {
         return mMyEvents;
     }
 
-    public Task<Void> addEventToUser(String userID, Event_Model event){
-        return mRepository.addEventToUser(userID, event);
-    }
+    /**
+     * Add a user to an event document.
+     * @param event The name of the event in which a user is being added to.
+     * @return a task to determine if the CRUD operation was successful.
+     */
+    public Task<Void> addUserToEvent(Event_Model event){
+        User_Model userModel = mUserModel.getValue();
+        String userID = userModel.getEmail();
+        String eventID = event.getName();
+        return mRepository.addUserToEvent(userID, userModel, eventID)
+                .addOnCompleteListener((@NonNull Task<Void> task) ->
+                        mRepository.addEventToUser(userID, event));
 
-    public Task<Void> addUserToEvent(String userID,User_Model user, String eventName){
-        return mRepository.addUserToEvent(userID,user,eventName);
     }
 
     public void deleteEventInvitation(String userID, String eventName){
         mRepository.deleteEventInvitation(userID, eventName);
     }
 
-    /*public void loadPublicEvents(){
-        mRepository.getPublicEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)-> {
-            if(task.isSuccessful()){
-                mPublicEvents.setValue(task.getResult());
-            }
-        });
-    }
-
-    public MutableLiveData<List<Event_Model>> getEvents(){
-        return mPublicEvents;
-    }*/
-
     /**
      * Query the database for a list of public events (limit currently set to 50). Upon successful
-     * retrieval, the View_Model instance sets the mNewEventsFeed with the query's result.
+     * retrieval, the View_Model instance sets the mNewEvents with the query's result.
      */
     public void loadNewEvents(){
         mRepository.loadNewEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
-                mNewEventsFeed.setValue(task.getResult());
+                List<Event_Model> acceptedEvents = mMyEvents.getValue();
+                List<Event_Model> invitedEvents = mEventInvitations.getValue();
+                //DO THIS IN A SEPARATE THREAD?
+                if(acceptedEvents !=null){
+                    //FOR EACH EVENT IN ACCEPTED EVENTS, CHECK IF THE EVENT EXISTS IN THE TASK.GETRESULT
+                    // IF YES, REMOVE IT FROM THE TASK.GETRESULT SET.
+                    //DO SAME FOR INVITATIONS.
+                }
+
+
+
+
+
+
+                //mNewEvents.setValue(task.getResult());
             }
         });
     }
 
     public MutableLiveData<List<Event_Model>> getNewEvents(){
-        return mNewEventsFeed;
+        return mNewEvents;
     }
 
     public MutableLiveData<List<Event_Model>> getPopularFeed(){

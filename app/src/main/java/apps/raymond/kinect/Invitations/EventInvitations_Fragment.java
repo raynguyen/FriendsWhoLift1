@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -77,8 +80,9 @@ public class EventInvitations_Fragment extends Fragment implements
         if (response == EventInvitations_Adapter.ACCEPT) {
             event.setAttending(event.getAttending()+1);
             event.setInvited(event.getInvited()-1);
-            mViewModel.addUserToEvent(mUserID,mUserModel,event.getName());//Add user to event's Accepted collection and increment attending count.
-            mViewModel.addEventToUser(mUserID,event);//Add the event to User's Event collection.
+            mViewModel.addUserToEvent(event).addOnCompleteListener((Task<Void> task)->{
+                Toast.makeText(getContext(),"Attending "+ event.getName(),Toast.LENGTH_LONG).show();
+            });//Add user to event's Accepted collection and increment attending count.
 
             //Notify the core Recycler of new event.
             List<Event_Model> acceptedEvents = mViewModel.getMyEvents().getValue();
