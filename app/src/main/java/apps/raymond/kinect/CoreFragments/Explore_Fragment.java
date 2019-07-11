@@ -88,8 +88,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         ViewPager viewPager = view.findViewById(R.id.viewpager_explore);
 
 
-
-
         ProgressBar progressBar = view.findViewById(R.id.progress_explore_interests);
         TextView textNullEvents = view.findViewById(R.id.text_explore_interests_null);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_explore_interests);
