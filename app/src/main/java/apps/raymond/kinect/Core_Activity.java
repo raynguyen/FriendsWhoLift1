@@ -54,6 +54,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -194,6 +195,8 @@ public class Core_Activity extends AppCompatActivity{
                         .commit();
                 return true;
             case R.id.action_create_event_launch:
+                Log.w(TAG,"The fragments held by the core acitivty are: ");
+                Log.w(TAG,getSupportFragmentManager().getFragments().toString());
                 /*ArrayList<Event_Model> mEventList = new ArrayList<>();
                 Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
                 eventCreateIntent.putExtra("user",mUserModel);

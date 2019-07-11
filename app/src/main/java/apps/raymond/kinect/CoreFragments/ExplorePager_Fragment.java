@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class ExplorePager_Fragment extends Fragment implements Events_Adapter.EventClickListener{
+    private static final String TAG = "ExplorePagerFrag";
     private static final String INSTANCE = "instance";
     public static final int SUGGESTED = 0;
     public static final int POPULAR = 1;
@@ -46,7 +48,9 @@ public class ExplorePager_Fragment extends Fragment implements Events_Adapter.Ev
         Fragment mParentFragment = getParentFragment();
         try{
             mEventClickListener = (ExploreEventListener) mParentFragment;
-        } catch (ClassCastException e){}
+        } catch (ClassCastException e){
+            Log.w(TAG,e.toString());
+        }
     }
 
     @Nullable
@@ -64,13 +68,13 @@ public class ExplorePager_Fragment extends Fragment implements Events_Adapter.Ev
         TextView textNullData = view.findViewById(R.id.text_explore_suggested_null);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_explore_suggested);
         Events_Adapter adapter = new Events_Adapter(this);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new Margin_Decoration_RecyclerView());
-
         int instanceType = getArguments().getInt(INSTANCE);
         if(instanceType == SUGGESTED){
-            mViewModel.getNewEvents().observe(requireActivity(), (List<Event_Model> events) -> {
+            mViewModel.getSuggestedEvents().observe(requireActivity(), (List<Event_Model> events) -> {
                 progressBar.setVisibility(View.GONE);
                 if(events != null){
                     adapter.setData(events);
@@ -82,15 +86,12 @@ public class ExplorePager_Fragment extends Fragment implements Events_Adapter.Ev
                 }
             });
         } else if (instanceType == POPULAR){
-            mViewModel.getPopularFeed().observe(requireActivity(), (List<Event_Model> events) -> {
+            mViewModel.getPopularEvents().observe(requireActivity(), (List<Event_Model> events) -> {
                 progressBar.setVisibility(View.GONE);
-                if(events != null){
+                if(events != null && events.size() !=0){
                     adapter.setData(events);
-                    if(events.size()==0){
-                        textNullData.setVisibility(View.VISIBLE);
-                    } else {
-                        textNullData.setVisibility(View.GONE);
-                    }
+                } else {
+                    textNullData.setVisibility(View.GONE);
                 }
             });
         }

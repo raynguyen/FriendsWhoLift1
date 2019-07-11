@@ -1,5 +1,19 @@
+/*
+RESEARCH:
+Consider adding LiveData objects in the Repository class. On changes, we want to observe the repo
+LiveData and trigger transformations on changes. This way, the repository can fetch information via
+a DAO from the backend and filter as required. This way we separate the ViewModel to simply holding
+the data for the View's to observe (rather than having the ViewModel do both).
+
+By moving the filtering of data to the Repository class, we are closer to following the MVVM architecture
+as we would ideally be able to perform those queries on our database as opposed to extracting all
+relevant information and filtering.
+ */
+
+
 package apps.raymond.kinect.ViewModels;
 
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
@@ -7,8 +21,10 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.Event_Model;
@@ -38,20 +54,28 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<String> mUserID = new MutableLiveData<>();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
+
     private MutableLiveData<List<Event_Model>> mEventInvitations = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnectionRequests = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mMyEvents = new MutableLiveData<>();
-    private static MutableLiveData<List<Event_Model>> mNewEvents = new MutableLiveData<>();
-    private MutableLiveData<List<Event_Model>> mPopularFeed = new MutableLiveData<>();
+
+    private MutableLiveData<List<Event_Model>> mMyEvents = new MutableLiveData<>(); //AcceptedEvents
+    private MutableLiveData<List<Event_Model>> mPublicEvents = new MutableLiveData<>(); //50 public events
+    private MediatorLiveData<List<Event_Model>> mPopularEvents = new MediatorLiveData<>(); //Public events filtered to only contain events your connections are attending.
+    private static MutableLiveData<List<Event_Model>> mSuggestedEvents = new MutableLiveData<>(); //Public events Todo: Filter events to only contain events that primes/tags you're following.
 
     public Core_ViewModel(){
         mRepository = new Core_FireBaseRepo();
+
+        //MediatorLiveData should be moved to the Repository class.
+        mPopularEvents.addSource(mPublicEvents, (List<Event_Model> events) -> checkListForUser());
+        mPopularEvents.addSource(mConnections, (List<User_Model> connections) -> checkListForUser());
     }
 
     public void setUserID(String userID){
         Log.w(TAG,"We are setting the userID for this view model instance");
         mUserID.setValue(userID);
     }
+
     public void setUserDocument(User_Model user_model){
         Log.w(TAG,"We have set a user document for this view model instance.");
         mUserModel.setValue(user_model);
@@ -161,11 +185,12 @@ public class Core_ViewModel extends ViewModel {
 
     /**
      * Query the database for a list of public events (limit currently set to 50). Upon successful
-     * retrieval, the View_Model instance sets the mNewEvents with the query's result.
+     * retrieval, the View_Model instance sets the mSuggestedEvents with the query's result.
      */
-    public void loadSuggestedEvents(){
+    public void loadPublicEvents(){
         mRepository.getPublicEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
+                mPublicEvents.setValue(task.getResult());
                 List<Event_Model> acceptedEvents = mMyEvents.getValue();
                 if(acceptedEvents !=null){
                     new FilterEventsTask(task.getResult(), acceptedEvents).execute();
@@ -174,12 +199,12 @@ public class Core_ViewModel extends ViewModel {
         });
     }
 
-    public MutableLiveData<List<Event_Model>> getNewEvents(){
-        return mNewEvents;
+    public MutableLiveData<List<Event_Model>> getSuggestedEvents(){
+        return mSuggestedEvents;
     }
 
-    public MutableLiveData<List<Event_Model>> getPopularFeed(){
-        return mPopularFeed;
+    public MutableLiveData<List<Event_Model>> getPopularEvents(){
+        return mPopularEvents;
     }
 
     public Task<Boolean> checkForUser(String userID, String eventName){
@@ -228,6 +253,29 @@ public class Core_ViewModel extends ViewModel {
         return mRepository.uploadImage(uri, name);
     }
 
+    private void checkListForUser(){
+        if(mPublicEvents.getValue() == null || mConnections.getValue() == null){
+            return;
+        }
+
+        List<Event_Model> results = new ArrayList<>();
+        for(Event_Model event : mPublicEvents.getValue()){
+            String eventID = event.getName();
+            for(User_Model profileModel : mConnections.getValue()){
+                String profileID = profileModel.getEmail();
+                checkForUser(profileID, eventID).addOnCompleteListener((@NonNull Task<Boolean> task) -> {
+                    if(task.getResult()){
+                        results.add(event);
+                        mPopularEvents.postValue(results);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     *
+     */
     protected static class FilterEventsTask extends AsyncTask<Void, Void, List<Event_Model>>{
         private List<Event_Model> mInput;
         private List<Event_Model> mFilter;
@@ -253,7 +301,7 @@ public class Core_ViewModel extends ViewModel {
         @Override
         protected void onPostExecute(List<Event_Model> result) {
             super.onPostExecute(result);
-            mNewEvents.setValue(result);
+            mSuggestedEvents.setValue(result);
         }
     }
 

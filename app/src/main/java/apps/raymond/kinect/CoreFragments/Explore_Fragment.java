@@ -29,12 +29,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -85,28 +87,29 @@ public class Explore_Fragment extends BaseMap_Fragment implements
 
         TabLayout tabLayout = view.findViewById(R.id.tab_explore_events);
         ViewPager viewPager = view.findViewById(R.id.viewpager_explore);
+        tabLayout.setupWithViewPager(viewPager);
         ExplorePagerAdapter adapter = new ExplorePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
 
 
         mViewModel.getUserModel().observe(requireActivity(), (@Nullable User_Model userModel) -> {
             if(userModel !=null ){
                 String userID = userModel.getEmail();
                 mViewModel.loadUserConnections(userID); //Will need to determine events that are popular with friends.
-                mViewModel.loadSuggestedEvents();
+                mViewModel.loadPublicEvents();
+                //mViewModel.loadPopularEvents();
             }
         });
 
-        mViewModel.getNewEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
+        mViewModel.getSuggestedEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
             if(event_models != null){
-                addEventsToMap(event_models);
+                addEventsToMap(event_models, BitmapDescriptorFactory.HUE_AZURE);
             }
         });
 
-        mViewModel.getPopularFeed().observe(this,(@Nullable List<Event_Model> event_models)->{
+        mViewModel.getPopularEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
             if(event_models != null){
-                addEventsToMap(event_models);
+                addEventsToMap(event_models, BitmapDescriptorFactory.HUE_MAGENTA);
             }
         });
 
@@ -136,6 +139,17 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
+
+        View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent())
+                .findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) btnLocation.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_END,0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_START,0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        rlp.setMargins(0, 0, 0, 40);
+
+
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener((LatLng latlng)->{
             if(detailsCardView.getVisibility()==View.VISIBLE){
@@ -149,18 +163,19 @@ public class Explore_Fragment extends BaseMap_Fragment implements
      * to the event of which it was created for.
      * @param events list of events that require a marker be created and placed on the map.
      */
-    private void addEventsToMap(List<Event_Model> events){
+    private void addEventsToMap(List<Event_Model> events, float markerColor){
         if(events != null){
-            mMarkersMap.clear();
-            //For each event in public events, if the event is not also held by the acceptedEvents
-            // list, add the event to the map.
             for(Event_Model event: events){
                 LatLng latLng = new LatLng(event.getLat(), event.getLng());
-                Marker marker=  mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(event.getName()));
-                marker.setTag(event);
-                mMarkersMap.put(latLng, marker);
+                if(!mMarkersMap.containsKey(latLng)){
+                    Log.w(TAG,"Making a marker for event: "+event.getName());
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+                            .title(event.getName()));
+                    marker.setTag(event);
+                    mMarkersMap.put(latLng, marker);
+                }
             }
         }
     }
@@ -178,6 +193,8 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     @Override
     public void onEventDetails(Event_Model event) {
         Log.w(TAG,"Clicked on an event from one of the view pager fragments.");
+        LatLng latLng = new LatLng(event.getLat(), event.getLng());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
     }
 
     @Override
@@ -226,6 +243,18 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position){
+                case 0:
+                    return "Suggested";
+                case 1:
+                    return "Popular w/ Connections";
+            }
+            return null;
         }
     }
 

@@ -35,6 +35,7 @@
 
 package apps.raymond.kinect.FireBaseRepo;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -95,6 +96,8 @@ public class Core_FireBaseRepo {
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
     private CollectionReference userCollection = mStore.collection(USERS);
     private CollectionReference eventCollection = mStore.collection(EVENTS);
+
+    private MutableLiveData<QuerySnapshot> mPubLicEvents = new MutableLiveData<>();
 
     /*ToDo: There should be no Java code in the Repository class.
         This method should not hold the mUserEmail or curUserMode, these should be passed as required to repository calls.
@@ -415,8 +418,8 @@ public class Core_FireBaseRepo {
         //Delete the event from user's accepted events.
     }
 
-    //ToDo: The query needs to be conjuncted with some filter to personalize the list of public
-    // events.
+    //ToDo: This needs to be changed such that one completion, we set the result to a LiveData object
+    // held by this class. The ViewModels will then observe this LiveData and changes to it trigger transformations.
     /**
      * Query the Events Collection for a List of Event_Models whose privacy field is public.
      * @return list of Event_Models held be a task's result.
@@ -426,6 +429,7 @@ public class Core_FireBaseRepo {
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
             List<Event_Model> result = new ArrayList<>();
             if(task.isSuccessful() && task.getResult()!=null){
+                mPubLicEvents.setValue(task.getResult());
                 for(QueryDocumentSnapshot document: task.getResult()){
                     result.add(document.toObject(Event_Model.class));
                 }
