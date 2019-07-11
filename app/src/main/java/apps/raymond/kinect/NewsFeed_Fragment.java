@@ -62,7 +62,7 @@ public class NewsFeed_Fragment extends Fragment implements EventsNewsFeed_Adapte
             mNewAdapter.setData(event_models);
             Log.w("CoreFragment","Got some events to load into the new events feed! " + event_models.size());
         });
-        mViewModel.loadNewEvents();
+        mViewModel.loadSuggestedEvents();
 
         //Needed to determine events that are popular with friends.
         mViewModel.getUserConnections().observe(requireActivity(),(@Nullable List<User_Model> connections)->{

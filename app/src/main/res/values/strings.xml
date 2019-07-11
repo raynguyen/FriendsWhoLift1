@@ -43,6 +43,9 @@
     <string name="null_events">You have no upcoming events.</string>
     <string name="events_new_interested">New events you may be interested in!</string>
     <string name="events_popular_friends">Events popular with your connections.</string>
+    
+    <string name="monitoring">Monitoring</string>
+    <string name="accepted_header">Accepted:</string>
 
     <!--PROFILE STRINGS-->
     <string name="first_name">First Name</string>

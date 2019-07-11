@@ -46,6 +46,7 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        TextView textAcceptedCount = view.findViewById(R.id.text_accepted_count);
         ProgressBar progressBar = view.findViewById(R.id.progress_events);
         TextView textNull = view.findViewById(R.id.text_events_null);
         SearchView searchView = view.findViewById(R.id.search_events);
@@ -62,9 +63,9 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         mViewModel.getMyEvents().observe(requireActivity(), (@Nullable List<Event_Model> events) -> {
             progressBar.setVisibility(View.GONE);
             if(events != null){
+                textAcceptedCount.setText(String.valueOf(events.size()));
                 if(events.size() != 0){
                     adapter.setData(events);
-                    //textEventsCount.setText(String.valueOf(events.size()));
                 } else {
                     textNull.setVisibility(View.VISIBLE);
                 }

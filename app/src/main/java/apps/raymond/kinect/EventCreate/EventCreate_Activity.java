@@ -73,6 +73,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
             mEventDesc = s;
             checkFields();
         });
+
     }
 
     boolean mCreateOptionFlag = false;
@@ -140,7 +141,7 @@ public class EventCreate_Activity extends AppCompatActivity implements
                 finish();
 
                 mViewModel.createEvent(event).addOnCompleteListener((Task<Void> task)->
-                        mViewModel.addUserToEvent(mUserID,mUserModel,event.getName()));
+                        mViewModel.addUserToEvent(mUserID,mUserModel,event.getName(),event));
                 mViewModel.addEventToUser(mUserID,event);
                 mViewModel.sendEventInvites(event, mViewModel.getInviteList());
             } else {

@@ -421,7 +421,7 @@ public class Core_FireBaseRepo {
      * Query the Events Collection for a List of Event_Models whose privacy field is public.
      * @return list of Event_Models held be a task's result.
      */
-    public Task<List<Event_Model>> loadNewEvents(){
+    public Task<List<Event_Model>> getPublicEvents(){
         Query query = eventCollection.whereEqualTo(PRIVACY,Event_Model.PUBLIC).orderBy(CREATION_DATE).limit(50);//.whereArrayContains("primes",Event_Model.SPORTS).limit(3);
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
             List<Event_Model> result = new ArrayList<>();

@@ -163,8 +163,8 @@ public class Core_ViewModel extends ViewModel {
      * Query the database for a list of public events (limit currently set to 50). Upon successful
      * retrieval, the View_Model instance sets the mNewEvents with the query's result.
      */
-    public void loadNewEvents(){
-        mRepository.loadNewEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
+    public void loadSuggestedEvents(){
+        mRepository.getPublicEvents().addOnCompleteListener((@NonNull Task<List<Event_Model>> task)->{
             if(task.getResult()!=null){
                 List<Event_Model> acceptedEvents = mMyEvents.getValue();
                 if(acceptedEvents !=null){

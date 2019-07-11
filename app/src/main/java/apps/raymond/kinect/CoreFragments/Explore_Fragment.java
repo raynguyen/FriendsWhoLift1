@@ -22,10 +22,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,13 +50,15 @@ import java.util.Locale;
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Explore_Fragment extends BaseMap_Fragment implements
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Events_Adapter.EventClickListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Events_Adapter.EventClickListener,
+        ExplorePager_Fragment.ExploreEventListener {
     private static final String TAG = "EventsSearchFragment";
+    private static final int NUM_PAGES = 2;
+
     private Core_ViewModel mViewModel;
     private Event_Model focusedEvent; //Event retrieved from the tag of a marker the user clicked.
 
@@ -86,38 +85,28 @@ public class Explore_Fragment extends BaseMap_Fragment implements
 
         TabLayout tabLayout = view.findViewById(R.id.tab_explore_events);
         ViewPager viewPager = view.findViewById(R.id.viewpager_explore);
+        ExplorePagerAdapter adapter = new ExplorePagerAdapter(getChildFragmentManager());
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
 
-
-        ProgressBar progressBar = view.findViewById(R.id.progress_explore_interests);
-        TextView textNullEvents = view.findViewById(R.id.text_explore_interests_null);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_explore_interests);
-        Events_Adapter adapter = new Events_Adapter(this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new Margin_Decoration_RecyclerView());
-
-        /*
-        Observes the NewEvents list held by the ViewModel. On change, we want to create markers for
-        each event and place them on our map.
-         */
-        mViewModel.getNewEvents().observe(requireActivity(), (List<Event_Model> events) -> {
-            progressBar.setVisibility(View.GONE);
-            if(events != null) {
-                if (events.size() != 0) {
-                    adapter.setData(events);
-                    addEventsToMap(events); //ToDo: Consider running this method on a background thread.
-                } else {
-                    textNullEvents.setVisibility(View.VISIBLE);
-                }
-            }
-        });
 
         mViewModel.getUserModel().observe(requireActivity(), (@Nullable User_Model userModel) -> {
             if(userModel !=null ){
-                Log.w(TAG,"We noticed a change in the user model in this fragment!");
                 String userID = userModel.getEmail();
                 mViewModel.loadUserConnections(userID); //Will need to determine events that are popular with friends.
-                mViewModel.loadNewEvents();
+                mViewModel.loadSuggestedEvents();
+            }
+        });
+
+        mViewModel.getNewEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
+            if(event_models != null){
+                addEventsToMap(event_models);
+            }
+        });
+
+        mViewModel.getPopularFeed().observe(this,(@Nullable List<Event_Model> event_models)->{
+            if(event_models != null){
+                addEventsToMap(event_models);
             }
         });
 
@@ -187,6 +176,11 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     }
 
     @Override
+    public void onEventDetails(Event_Model event) {
+        Log.w(TAG,"Clicked on an event from one of the view pager fragments.");
+    }
+
+    @Override
     public boolean onMarkerClick(Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
 
@@ -212,30 +206,27 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         return true;
     }
 
-    private class ExplorePagerAdapter extends PagerAdapter {
+    private class ExplorePagerAdapter extends FragmentStatePagerAdapter {
 
-        public ExplorePagerAdapter() {
-            super();
+        private ExplorePagerAdapter(FragmentManager fm){
+            super(fm);
         }
 
         @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            View view = null;
-            return view;
+        public Fragment getItem(int i) {
+            switch (i){
+                case 0:
+                    return ExplorePager_Fragment.newInstance(ExplorePager_Fragment.SUGGESTED);
+                case 1:
+                    return ExplorePager_Fragment.newInstance(ExplorePager_Fragment.POPULAR);
+            }
+            return null;
         }
 
         @Override
         public int getCount() {
-            return 0;
+            return NUM_PAGES;
         }
-
-
     }
 
 }
