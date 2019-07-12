@@ -13,7 +13,7 @@
  * Filter out events that the user is already in attendance or invited to.
  */
 package apps.raymond.kinect.CoreFragments;
-
+//https://github.com/google/android-transition-examples/tree/master/GridToPager
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
