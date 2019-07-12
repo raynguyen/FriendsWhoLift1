@@ -18,20 +18,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,14 +32,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.Task;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
@@ -57,12 +43,13 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Explore_Fragment extends BaseMap_Fragment implements
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Events_Adapter.EventClickListener,
-        ExplorePager_Fragment.ExploreEventListener {
+        ExplorePager_FragmentOLD.ExploreEventListener, ExplorePager_Fragment.PagerFragmentInterface {
     private static final String TAG = "EventsSearchFragment";
-    private static final int NUM_PAGES = 2;
+    public static int currentPos;
 
     private Core_ViewModel mViewModel;
     private Event_Model focusedEvent; //Event retrieved from the tag of a marker the user clicked.
+    private RecyclerView recyclerView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,21 +63,19 @@ public class Explore_Fragment extends BaseMap_Fragment implements
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore_events,container,false);
         mMapView = view.findViewById(R.id.map_explore_fragment);
+        recyclerView = view.findViewById(R.id.recycler_explore_suggested);
         return view;
     }
 
-    private ViewGroup detailsCardView;
-    private TextView textEventName, textDesc, textThoroughfare, textMonth, textDate, textTime;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TabLayout tabLayout = view.findViewById(R.id.tab_explore_events);
+        /*TabLayout tabLayout = view.findViewById(R.id.tab_explore_events);
         ViewPager viewPager = view.findViewById(R.id.viewpager_explore);
         tabLayout.setupWithViewPager(viewPager);
         ExplorePagerAdapter adapter = new ExplorePagerAdapter(getChildFragmentManager());
-        viewPager.setAdapter(adapter);
-
+        viewPager.setAdapter(adapter);*/
 
         mViewModel.getUserModel().observe(requireActivity(), (@Nullable User_Model userModel) -> {
             if(userModel !=null ){
@@ -113,7 +98,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements
             }
         });
 
-        detailsCardView = view.findViewById(R.id.card_event_explore);
+        /*detailsCardView = view.findViewById(R.id.card_event_explore);
         textEventName = view.findViewById(R.id.text_event_name);
         textDesc = view.findViewById(R.id.text_description);
         textThoroughfare = view.findViewById(R.id.text_thoroughfare);
@@ -121,7 +106,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         textDate = view.findViewById(R.id.text_date);
         textTime = view.findViewById(R.id.text_time);
         ProgressBar progressAttendBtn = view.findViewById(R.id.progress_event_attend);
-
         Button btnAttend = view.findViewById(R.id.button_attend);
         btnAttend.setOnClickListener((View v)->{
             progressAttendBtn.setVisibility(View.VISIBLE);
@@ -133,7 +117,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements
                             Toast.LENGTH_LONG).show();
                 });
             }
-        });
+        });*/
     }
 
     @Override
@@ -152,9 +136,10 @@ public class Explore_Fragment extends BaseMap_Fragment implements
 
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener((LatLng latlng)->{
-            if(detailsCardView.getVisibility()==View.VISIBLE){
+            //NOTHING ATM
+            /*if(detailsCardView.getVisibility()==View.VISIBLE){
                 detailsCardView.setVisibility(View.GONE);
-            }
+            }*/
         });
     }
 
@@ -203,7 +188,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements
 
         focusedEvent = (Event_Model) marker.getTag();
 
-        textEventName.setText(focusedEvent.getName());
+        /*textEventName.setText(focusedEvent.getName());
         textDesc.setText(focusedEvent.getDesc());
 
         if(focusedEvent.getAddress()!=null){
@@ -219,10 +204,21 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         textDate.setText(String.valueOf(c.get(Calendar.DATE)));
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
         textTime.setText(sdf.format(date));
-        detailsCardView.setVisibility(View.VISIBLE);
+        detailsCardView.setVisibility(View.VISIBLE);*/
         return true;
     }
 
+    @Override
+    public void setCurrentPosition(int position) {
+        currentPos = position;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return currentPos;
+    }
+
+    /*
     private class ExplorePagerAdapter extends FragmentStatePagerAdapter {
 
         private ExplorePagerAdapter(FragmentManager fm){
@@ -233,9 +229,9 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         public Fragment getItem(int i) {
             switch (i){
                 case 0:
-                    return ExplorePager_Fragment.newInstance(ExplorePager_Fragment.SUGGESTED);
+                    return ExplorePager_FragmentOLD.newInstance(ExplorePager_FragmentOLD.SUGGESTED);
                 case 1:
-                    return ExplorePager_Fragment.newInstance(ExplorePager_Fragment.POPULAR);
+                    return ExplorePager_FragmentOLD.newInstance(ExplorePager_FragmentOLD.POPULAR);
             }
             return null;
         }
@@ -256,6 +252,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
             }
             return null;
         }
-    }
+    }*/
 
 }
