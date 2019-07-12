@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import apps.raymond.kinect.R;
 
 
 public class ExplorePager_Fragment extends Fragment {
+    private static final String TAG = ExplorePager_Fragment.class.getSimpleName();
 
     public interface PagerFragmentInterface{
         int getCurrentPosition();
@@ -26,19 +28,14 @@ public class ExplorePager_Fragment extends Fragment {
     }
 
     private PagerFragmentInterface pagerFragmentInterface;
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(context instanceof PagerFragmentInterface){
-            pagerFragmentInterface = (PagerFragmentInterface) context;
-        }
-    }
-
     private ViewPager viewPager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getParentFragment() != null){
+            Log.w(TAG,"Parent fragment !=null");
+            pagerFragmentInterface = (PagerFragmentInterface) getParentFragment();
+        }
     }
 
     @Nullable
@@ -48,18 +45,20 @@ public class ExplorePager_Fragment extends Fragment {
         viewPager = (ViewPager) inflater.inflate(R.layout.fragment_pager_explore, container,
                 false);
         viewPager.setAdapter(new ExplorePager_Adapter(this));
+
         if(pagerFragmentInterface != null){
             viewPager.setCurrentItem(pagerFragmentInterface.getCurrentPosition());
+            //Page change listener added so that we can reflect user scrolling in the parent recycler.
             viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-
                 @Override
                 public void onPageSelected(int i) {
                     pagerFragmentInterface.setCurrentPosition(i);
                 }
-
             });
         }
         return viewPager;
+
+        //return inflater.inflate(R.layout.fragment_pager_explore, container, false);
     }
 
 

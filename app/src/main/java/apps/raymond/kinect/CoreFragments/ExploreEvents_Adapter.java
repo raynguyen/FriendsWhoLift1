@@ -16,17 +16,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
 
+/**
+ * Adapter class designed to create views for a set of events of which the user is able to opt in
+ * via the Explore_Fragment.
+ */
 public class ExploreEvents_Adapter extends RecyclerView.Adapter<ExploreEvents_Adapter.EventViewHolder> {
     private static final String TAG = "ExploreEvents_Adapter";
 
-    private interface ViewHolderListener{
-        void onItemClicked(View view, int adapterPosition);
+    /**
+     * Interface to trigger MapView animations and events when required.
+     */
+    public interface ExploreAdapterInterface{
+        void onItemViewClick(Event_Model event, int position, View transitionView);
+
     }
 
-    private ViewHolderListener viewHolderListener;
+    private ExploreAdapterInterface mAdapterInterface;
     private List<Event_Model> mDataSet;
     ExploreEvents_Adapter(Fragment fragment){
-        this.viewHolderListener = new ViewHolderListenerImpl(fragment);
+        try{
+            mAdapterInterface = (ExploreAdapterInterface) fragment;
+        } catch (ClassCastException e){}
     }
 
     @NonNull
@@ -34,7 +44,7 @@ public class ExploreEvents_Adapter extends RecyclerView.Adapter<ExploreEvents_Ad
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.cardview_explore_event, viewGroup, false);
-        return new EventViewHolder(view, viewHolderListener);
+        return new EventViewHolder(view, mAdapterInterface);
     }
 
     @Override
@@ -66,52 +76,26 @@ public class ExploreEvents_Adapter extends RecyclerView.Adapter<ExploreEvents_Ad
      */
     static class EventViewHolder extends RecyclerView.ViewHolder{
 
-        TextView textEventName;
-        EventViewHolder(View itemView, ViewHolderListener listener){
+        private ExploreAdapterInterface mAdapterInterface;
+        private TextView textEventName;
+        EventViewHolder(View itemView, ExploreAdapterInterface adapterInterface){
             super(itemView);
             textEventName = itemView.findViewById(R.id.text_event_name);
-
-            /*
-            The ViewHolderListener passed to each ViewModel is the listener of the adapter. All
-            ViewHolders created for the ViewPager are held by the same adapter.
-            */
-            itemView.findViewById(R.id.cardview_event).setOnClickListener((View v) ->
-                    listener.onItemClicked(v, getAdapterPosition()));
+            mAdapterInterface = adapterInterface;
         }
 
         /**
-         * Method which is called by the ViewHolder's adapter. This method will bind the Event with
-         * a ViewHolder so that the ViewHolder displays the proper information.
+         * Method responsible for populating the ViewHolder's views with the proper content.
+         *
          * @param event Event_Model that will be bound to the respective ViewHolder.
          */
         void onBind(Event_Model event){
             String eventName = event.getName();
+            String transitionName = "transition_name_" + getAdapterPosition();
             textEventName.setText(eventName);
+            textEventName.setTransitionName(transitionName);
+            itemView.setOnClickListener((View v) -> mAdapterInterface.onItemViewClick(event,
+                    getAdapterPosition(), textEventName));
         }
-
-
-    }
-
-    /**
-     *
-     * Note: By having the ViewHolderListener implementation class a subclass of the ExploreEvents
-     * Adapter class, we can separate the Fragment from the interface should we require the fragment
-     * without the interface.
-     */
-    private static class ViewHolderListenerImpl implements ViewHolderListener{
-
-        private Fragment fragment;
-        private AtomicBoolean enterTransitionStarted;
-
-        ViewHolderListenerImpl(Fragment fragment){
-            this.fragment = fragment;
-            this.enterTransitionStarted = new AtomicBoolean();
-        }
-
-        @Override
-        public void onItemClicked(View view, int adapterPosition) {
-            Log.w(TAG,"Clicked on an event: ");
-        }
-
     }
 }

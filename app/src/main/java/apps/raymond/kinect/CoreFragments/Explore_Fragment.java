@@ -41,14 +41,14 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
-//ExplorePager_FragmentOLD.ExploreEventListener,
-public class Explore_Fragment extends BaseMap_Fragment implements
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Events_Adapter.EventClickListener,
-         ExplorePager_Fragment.PagerFragmentInterface {
+
+public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCallback,
+        ExploreEvents_Adapter.ExploreAdapterInterface, ExplorePager_Fragment.PagerFragmentInterface {
     private static final String TAG = "EventsSearchFragment";
-    public static int currentPos;
+    public static int mItemPosition;
 
     private Core_ViewModel mViewModel;
+    private RecyclerView recyclerView;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +61,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore_events,container,false);
         mMapView = view.findViewById(R.id.map_explore_fragment);
+        recyclerView = view.findViewById(R.id.recycler_suggested_events);
         return view;
     }
 
@@ -68,7 +69,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_suggested_events);
         ExploreEvents_Adapter adapter = new ExploreEvents_Adapter(this);
         Margin_Decoration_RecyclerView decorationItem = new Margin_Decoration_RecyclerView();
         recyclerView.addItemDecoration(decorationItem);
@@ -103,8 +103,12 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         rlp.setMargins(0, 0, 0, 40);
 
-
-        mMap.setOnMarkerClickListener(this);
+        mMap.setOnMarkerClickListener((Marker marker)->{
+            Event_Model event = (Event_Model) marker.getTag();
+            LatLng latLng = new LatLng(event.getLat(), event.getLng());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
+            return true;
+        });
         mMap.setOnMapClickListener((LatLng latlng)->{
             //NOTHING ATM
             /*if(detailsCardView.getVisibility()==View.VISIBLE){
@@ -136,91 +140,29 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     }
 
     @Override
-    public void onEventClick(Event_Model event) {
-        Log.w(TAG,"Equivalent of clicking on an event marker?");
-        LatLng eventLatLng = new LatLng(event.getLat(),event.getLng());
-        Marker eventMarker = mMarkersMap.get(eventLatLng);
-        if(eventMarker != null){
-            onMarkerClick(eventMarker);
-        }
-    }
-
-    /*@Override
-    public void onEventDetails(Event_Model event) {
-        Log.w(TAG,"Clicked on an event from one of the view pager fragments.");
+    public void onItemViewClick(Event_Model event, int position, View transitionView) {
+        mItemPosition = position;
         LatLng latLng = new LatLng(event.getLat(), event.getLng());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
-    }*/
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
+        recyclerView.setVisibility(View.GONE);
 
-        //focusedEvent = (Event_Model) marker.getTag();
-        /*textEventName.setText(focusedEvent.getName());
-        textDesc.setText(focusedEvent.getDesc());
-
-        if(focusedEvent.getAddress()!=null){
-            textThoroughfare.setText(focusedEvent.getAddress());
-        } else {
-            textThoroughfare.setText("HUH");
-        }
-
-        Calendar c = Calendar.getInstance();
-        Date date = new Date(focusedEvent.getLong1());
-        c.setTimeInMillis(focusedEvent.getLong1());
-        textMonth.setText(new DateFormatSymbols().getMonths()[c.get(Calendar.MONTH)]);
-        textDate.setText(String.valueOf(c.get(Calendar.DATE)));
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",Locale.getDefault());
-        textTime.setText(sdf.format(date));
-        detailsCardView.setVisibility(View.VISIBLE);*/
-        return true;
+        getChildFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .addSharedElement(transitionView, transitionView.getTransitionName())
+                .replace(R.id.container_explore_fragments, new ExplorePager_Fragment(),
+                        ExplorePager_Fragment.class.getSimpleName())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
     public void setCurrentPosition(int position) {
-        currentPos = position;
+        mItemPosition = position;
     }
 
     @Override
     public int getCurrentPosition() {
-        return currentPos;
+        return mItemPosition;
     }
-
-    /*
-    private class ExplorePagerAdapter extends FragmentStatePagerAdapter {
-
-        private ExplorePagerAdapter(FragmentManager fm){
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i){
-                case 0:
-                    return ExplorePager_FragmentOLD.newInstance(ExplorePager_FragmentOLD.SUGGESTED);
-                case 1:
-                    return ExplorePager_FragmentOLD.newInstance(ExplorePager_FragmentOLD.POPULAR);
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position){
-                case 0:
-                    return "Suggested";
-                case 1:
-                    return "Popular w/ Connections";
-            }
-            return null;
-        }
-    }*/
-
 }
