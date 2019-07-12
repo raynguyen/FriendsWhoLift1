@@ -57,7 +57,7 @@ public class ExplorePager_FragmentOLD extends Fragment implements Events_Adapter
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_explore_pagerOLD, container, false);
+        return inflater.inflate(R.layout.fragment_explore_pager_old, container, false);
     }
 
     @Override

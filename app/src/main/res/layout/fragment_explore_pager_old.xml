@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh_explore_suggested"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,7 +11,8 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:paddingStart="4dp"
-        android:paddingEnd="4dp">
+        android:paddingEnd="4dp"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager">
     </android.support.v7.widget.RecyclerView>
 
     <ProgressBar

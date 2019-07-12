@@ -38,19 +38,17 @@ import java.util.List;
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
-
+//ExplorePager_FragmentOLD.ExploreEventListener,
 public class Explore_Fragment extends BaseMap_Fragment implements
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Events_Adapter.EventClickListener,
-        ExplorePager_FragmentOLD.ExploreEventListener, ExplorePager_Fragment.PagerFragmentInterface {
+         ExplorePager_Fragment.PagerFragmentInterface {
     private static final String TAG = "EventsSearchFragment";
     public static int currentPos;
 
     private Core_ViewModel mViewModel;
-    private Event_Model focusedEvent; //Event retrieved from the tag of a marker the user clicked.
-    private RecyclerView recyclerView;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +61,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore_events,container,false);
         mMapView = view.findViewById(R.id.map_explore_fragment);
-        recyclerView = view.findViewById(R.id.recycler_explore_suggested);
         return view;
     }
 
@@ -71,53 +68,26 @@ public class Explore_Fragment extends BaseMap_Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        /*TabLayout tabLayout = view.findViewById(R.id.tab_explore_events);
-        ViewPager viewPager = view.findViewById(R.id.viewpager_explore);
-        tabLayout.setupWithViewPager(viewPager);
-        ExplorePagerAdapter adapter = new ExplorePagerAdapter(getChildFragmentManager());
-        viewPager.setAdapter(adapter);*/
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_suggested_events);
+        ExploreEvents_Adapter adapter = new ExploreEvents_Adapter(this);
+        Margin_Decoration_RecyclerView decorationItem = new Margin_Decoration_RecyclerView();
+        recyclerView.addItemDecoration(decorationItem);
+        recyclerView.setAdapter(adapter);
 
         mViewModel.getUserModel().observe(requireActivity(), (@Nullable User_Model userModel) -> {
             if(userModel !=null ){
                 String userID = userModel.getEmail();
                 mViewModel.loadUserConnections(userID); //Will need to determine events that are popular with friends.
                 mViewModel.loadPublicEvents();
-                //mViewModel.loadPopularEvents();
             }
         });
 
         mViewModel.getSuggestedEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
             if(event_models != null){
-                addEventsToMap(event_models, BitmapDescriptorFactory.HUE_AZURE);
+                addEventsToMap(event_models);
+                adapter.setData(event_models);
             }
         });
-
-        mViewModel.getPopularEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
-            if(event_models != null){
-                addEventsToMap(event_models, BitmapDescriptorFactory.HUE_MAGENTA);
-            }
-        });
-
-        /*detailsCardView = view.findViewById(R.id.card_event_explore);
-        textEventName = view.findViewById(R.id.text_event_name);
-        textDesc = view.findViewById(R.id.text_description);
-        textThoroughfare = view.findViewById(R.id.text_thoroughfare);
-        textMonth = view.findViewById(R.id.text_month_day);
-        textDate = view.findViewById(R.id.text_date);
-        textTime = view.findViewById(R.id.text_time);
-        ProgressBar progressAttendBtn = view.findViewById(R.id.progress_event_attend);
-        Button btnAttend = view.findViewById(R.id.button_attend);
-        btnAttend.setOnClickListener((View v)->{
-            progressAttendBtn.setVisibility(View.VISIBLE);
-            btnAttend.setEnabled(false);
-            if(focusedEvent!=null){
-                mViewModel.addUserToEvent(focusedEvent).addOnCompleteListener((Task<Void> task)->{
-                    detailsCardView.setVisibility(View.GONE);
-                    Toast.makeText(getContext(),"Attending "+ focusedEvent.getName(),
-                            Toast.LENGTH_LONG).show();
-                });
-            }
-        });*/
     }
 
     @Override
@@ -148,7 +118,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements
      * to the event of which it was created for.
      * @param events list of events that require a marker be created and placed on the map.
      */
-    private void addEventsToMap(List<Event_Model> events, float markerColor){
+    private void addEventsToMap(List<Event_Model> events){
         if(events != null){
             for(Event_Model event: events){
                 LatLng latLng = new LatLng(event.getLat(), event.getLng());
@@ -156,7 +126,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements
                     Log.w(TAG,"Making a marker for event: "+event.getName());
                     Marker marker = mMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                             .title(event.getName()));
                     marker.setTag(event);
                     mMarkersMap.put(latLng, marker);
@@ -175,19 +145,18 @@ public class Explore_Fragment extends BaseMap_Fragment implements
         }
     }
 
-    @Override
+    /*@Override
     public void onEventDetails(Event_Model event) {
         Log.w(TAG,"Clicked on an event from one of the view pager fragments.");
         LatLng latLng = new LatLng(event.getLat(), event.getLng());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17.0f));
-    }
+    }*/
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),17.0f));
 
-        focusedEvent = (Event_Model) marker.getTag();
-
+        //focusedEvent = (Event_Model) marker.getTag();
         /*textEventName.setText(focusedEvent.getName());
         textDesc.setText(focusedEvent.getDesc());
 
