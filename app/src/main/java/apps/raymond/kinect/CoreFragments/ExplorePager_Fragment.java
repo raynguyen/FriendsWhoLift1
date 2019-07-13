@@ -1,5 +1,6 @@
 package apps.raymond.kinect.CoreFragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 
 public class ExplorePager_Fragment extends Fragment {
@@ -27,14 +29,16 @@ public class ExplorePager_Fragment extends Fragment {
         void setCurrentPosition(int position);
     }
 
+
     private PagerFragmentInterface pagerFragmentInterface;
     private ViewPager viewPager;
+    private Core_ViewModel mViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getParentFragment() != null){
-            Log.w(TAG,"Parent fragment !=null");
             pagerFragmentInterface = (PagerFragmentInterface) getParentFragment();
+            mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         }
     }
 
@@ -44,7 +48,10 @@ public class ExplorePager_Fragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         viewPager = (ViewPager) inflater.inflate(R.layout.fragment_pager_explore, container,
                 false);
+
+        ExplorePager_Adapter adapter = new ExplorePager_Adapter(this);
         viewPager.setAdapter(new ExplorePager_Adapter(this));
+        adapter.setData(mViewModel.getSuggestedEvents().getValue());
 
         if(pagerFragmentInterface != null){
             viewPager.setCurrentItem(pagerFragmentInterface.getCurrentPosition());
@@ -86,6 +93,7 @@ public class ExplorePager_Fragment extends Fragment {
 
         @Override
         public Fragment getItem(int i) {
+            Log.w(TAG,"DOES THIS SHIT GET CALLED/: "+ eventSet.size());
             return PagerEvent_Fragment.newInstance(eventSet.get(i));
         }
 
