@@ -3,7 +3,6 @@ package apps.raymond.kinect.CoreFragments;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
@@ -20,8 +18,8 @@ import apps.raymond.kinect.R;
  * Adapter class designed to create views for a set of events of which the user is able to opt in
  * via the Explore_Fragment.
  */
-public class ExploreEvents_Adapter extends RecyclerView.Adapter<ExploreEvents_Adapter.EventViewHolder> {
-    private static final String TAG = "ExploreEvents_Adapter";
+public class ExploreRecycler_Adapter extends RecyclerView.Adapter<ExploreRecycler_Adapter.EventViewHolder> {
+    private static final String TAG = "ExploreRecycler_Adapter";
 
     /**
      * Interface to trigger MapView animations and events when required.
@@ -33,7 +31,7 @@ public class ExploreEvents_Adapter extends RecyclerView.Adapter<ExploreEvents_Ad
 
     private ExploreAdapterInterface mAdapterInterface;
     private List<Event_Model> mDataSet;
-    ExploreEvents_Adapter(Fragment fragment){
+    ExploreRecycler_Adapter(Fragment fragment){
         try{
             mAdapterInterface = (ExploreAdapterInterface) fragment;
         } catch (ClassCastException e){}

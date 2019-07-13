@@ -18,6 +18,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
@@ -43,12 +45,11 @@ import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCallback,
-        ExploreEvents_Adapter.ExploreAdapterInterface, ExplorePager_Fragment.PagerFragmentInterface {
+        ExploreEventsInterface {
     private static final String TAG = "EventsSearchFragment";
     public static int mItemPosition;
 
     private Core_ViewModel mViewModel;
-    private RecyclerView recyclerView;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,19 +62,17 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore_events,container,false);
         mMapView = view.findViewById(R.id.map_explore_fragment);
-        recyclerView = view.findViewById(R.id.recycler_suggested_events);
+
+        Fragment recyclerFragment = new ExploreRecycler_Fragment();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.container_explore_fragments, recyclerFragment, null)
+                .commit();
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ExploreEvents_Adapter adapter = new ExploreEvents_Adapter(this);
-        Margin_Decoration_RecyclerView decorationItem = new Margin_Decoration_RecyclerView();
-        recyclerView.addItemDecoration(decorationItem);
-        recyclerView.setAdapter(adapter);
-
         mViewModel.getUserModel().observe(requireActivity(), (@Nullable User_Model userModel) -> {
             if(userModel !=null ){
                 String userID = userModel.getEmail();
@@ -85,7 +84,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
         mViewModel.getSuggestedEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
             if(event_models != null){
                 addEventsToMap(event_models);
-                adapter.setData(event_models);
             }
         });
     }
@@ -140,29 +138,17 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
     }
 
     @Override
-    public void onItemViewClick(Event_Model event, int position, View transitionView) {
-        mItemPosition = position;
-        LatLng latLng = new LatLng(event.getLat(), event.getLng());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
-
-        recyclerView.setVisibility(View.GONE);
-
-        getChildFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .addSharedElement(transitionView, transitionView.getTransitionName())
-                .replace(R.id.container_explore_fragments, new ExplorePager_Fragment(),
-                        ExplorePager_Fragment.class.getSimpleName())
-                .addToBackStack(null)
-                .commit();
+    public void setItemPosition(int pos) {
+        mItemPosition = pos;
     }
 
     @Override
-    public void setCurrentPosition(int position) {
-        mItemPosition = position;
-    }
-
-    @Override
-    public int getCurrentPosition() {
+    public int getItemPosition() {
         return mItemPosition;
+    }
+
+    @Override
+    public void animateMap(LatLng latLng) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
     }
 }

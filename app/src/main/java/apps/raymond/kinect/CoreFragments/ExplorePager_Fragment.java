@@ -7,38 +7,38 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 
 public class ExplorePager_Fragment extends Fragment {
     private static final String TAG = ExplorePager_Fragment.class.getSimpleName();
-
-    public interface PagerFragmentInterface{
-        int getCurrentPosition();
-        void setCurrentPosition(int position);
-    }
-
-
-    private PagerFragmentInterface pagerFragmentInterface;
+    private ExploreEventsInterface mInterface;
     private ViewPager viewPager;
     private Core_ViewModel mViewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getParentFragment() != null){
-            pagerFragmentInterface = (PagerFragmentInterface) getParentFragment();
             mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
+            mInterface = (ExploreEventsInterface) getParentFragment();
         }
     }
 
@@ -46,28 +46,55 @@ public class ExplorePager_Fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        viewPager = (ViewPager) inflater.inflate(R.layout.fragment_pager_explore, container,
-                false);
+        View view = inflater.inflate(R.layout.fragment_pager_explore, container, false);
+        viewPager = view.findViewById(R.id.pager_explore);
 
         ExplorePager_Adapter adapter = new ExplorePager_Adapter(this);
-        viewPager.setAdapter(new ExplorePager_Adapter(this));
+        viewPager.setAdapter(adapter);
         adapter.setData(mViewModel.getSuggestedEvents().getValue());
 
-        if(pagerFragmentInterface != null){
-            viewPager.setCurrentItem(pagerFragmentInterface.getCurrentPosition());
+        if(mInterface != null){
+            viewPager.setCurrentItem(mInterface.getItemPosition());
             //Page change listener added so that we can reflect user scrolling in the parent recycler.
             viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int i) {
-                    pagerFragmentInterface.setCurrentPosition(i);
+                    mInterface.setItemPosition(i);
                 }
             });
         }
-        return viewPager;
 
-        //return inflater.inflate(R.layout.fragment_pager_explore, container, false);
+        prepareTransition();
+
+        // Avoid a postponeEnterTransition on orientation change, and postpone only of first creation.
+        /*if (savedInstanceState == null) {
+            postponeEnterTransition();
+        }*/
+
+        return view;
     }
 
+    private void prepareTransition(){
+        Transition transition = TransitionInflater.from(getContext())
+                .inflateTransition(R.transition.shared_element_transition);
+        setSharedElementEnterTransition(transition);
+
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                if(viewPager.getAdapter() != null){
+                    Fragment currentFragment = (Fragment) viewPager.getAdapter()
+                            .instantiateItem(viewPager, mInterface.getItemPosition());
+
+                    View view = currentFragment.getView();
+                    if(view == null){
+                        return;
+                    }
+                    sharedElements.put(names.get(0), view.findViewById(R.id.text_event_name));
+                }
+            }
+        });
+    }
 
     /**
      * Adapter class that binds to the ExplorePager_Fragment's ViewPager. This adapter is responsible
@@ -87,14 +114,16 @@ public class ExplorePager_Fragment extends Fragment {
             if(eventSet == null){
                 eventSet = new ArrayList<>(newDataSet);
             } else {
-                //DIFFUTIL SHIT
+                eventSet.clear();
+                eventSet.addAll(newDataSet);
             }
+            notifyDataSetChanged();
         }
 
         @Override
         public Fragment getItem(int i) {
-            Log.w(TAG,"DOES THIS SHIT GET CALLED/: "+ eventSet.size());
-            return PagerEvent_Fragment.newInstance(eventSet.get(i));
+            return PagerEvent_Fragment.newInstance(eventSet.get(i),
+                    mInterface.getItemPosition());
         }
 
         @Override
