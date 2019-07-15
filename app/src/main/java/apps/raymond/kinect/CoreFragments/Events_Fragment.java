@@ -26,7 +26,7 @@ import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
-public class Events_Fragment extends Fragment implements Events_Adapter.EventClickListener{
+public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.EventClickListener{
     private static final String TAG = "Events_Fragment:";
     private Core_ViewModel mViewModel;
 
@@ -52,8 +52,8 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         SearchView searchView = view.findViewById(R.id.search_events);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
         ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
-        Events_Adapter adapter = new Events_Adapter(this);
-        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView();
+        EventsRecycler_Adapter adapter = new EventsRecycler_Adapter(this);
+        Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView(requireActivity());
 
         searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -94,5 +94,7 @@ public class Events_Fragment extends Fragment implements Events_Adapter.EventCli
         User_Model userModel = mViewModel.getUserModel().getValue();
         detailActivity.putExtra("user",userModel).putExtra("event_name",event.getName());
         startActivity(detailActivity);
+        requireActivity().overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
+        //Todo: shared element transition.
     }
 }

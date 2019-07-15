@@ -22,10 +22,10 @@ import java.util.Locale;
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
 
-public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventViewHolder>
+public class EventsRecycler_Adapter extends RecyclerView.Adapter<EventsRecycler_Adapter.EventViewHolder>
     implements Filterable {
-    private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd",Locale.getDefault());
-    private SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
+    private static SimpleDateFormat sdf = new SimpleDateFormat("MMM dd",Locale.getDefault());
+    private static SimpleDateFormat timeSDF = new SimpleDateFormat("h:mm a",Locale.getDefault());
     private EventClickListener eventClickListener;
 
     public interface EventClickListener {
@@ -39,71 +39,23 @@ public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventVie
      */
     private List<Event_Model> mCompleteSet; //Copy of the complete data set.
     private List<Event_Model> mDisplaySet; //The list to populate the recycler view.
-    public Events_Adapter(EventClickListener eventClickListener){
+    EventsRecycler_Adapter(EventClickListener eventClickListener){
         this.eventClickListener = eventClickListener;
     }
 
     @NonNull
     @Override
-    public Events_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+    public EventsRecycler_Adapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.cardview_event,viewGroup,false);
         return new EventViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final Events_Adapter.EventViewHolder vh, int position) {
-        final Event_Model currEvent = mDisplaySet.get(position);
-        if(currEvent.getLong1()!=0){
-            long long1 = currEvent.getLong1();
-            Calendar c = new GregorianCalendar();
-            c.setTimeInMillis(long1);
-            vh.txtDate.setText(sdf.format(c.getTime()));
-            vh.timeTxt.setText(timeSDF.format(new Date(long1)));
-            if(vh.timeTxt.getVisibility()==View.GONE){
-                vh.timeTxt.setVisibility(View.VISIBLE);
-            }
-        } else {
-            vh.txtDate.setText(R.string.date_tbd);
-            vh.timeTxt.setVisibility(View.GONE);
-        }
-        vh.txtName.setText(currEvent.getName());
-        vh.attendingTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getAttending()));
-        vh.invitedTxt.setText(String.format(Locale.getDefault(),"%s",currEvent.getInvited()));
-        vh.hostTxt.setText(currEvent.getCreator());
-        if(currEvent.getAddress()!=null){
-            vh.locationTxt.setText(currEvent.getAddress());
-        } else {
-            vh.locationTxt.setText(R.string.location_tbd);
-        }
-
-        List<String> primes = currEvent.getPrimes();
-        if(primes!=null){
-            for(String prime : primes){
-                switch (prime){
-                    case Event_Model.SPORTS:
-                        vh.sportsTag.setVisibility(View.VISIBLE);
-                        break;
-                    case Event_Model.FOOD:
-                        vh.foodTag.setVisibility(View.VISIBLE);
-                        break;
-                    case Event_Model.DRINKS:
-                        vh.drinksTag.setVisibility(View.VISIBLE);
-                        break;
-                    case Event_Model.MOVIE:
-                        vh.moviesTag.setVisibility(View.VISIBLE);
-                        break;
-                    case Event_Model.CHILL:
-                        vh.chillTag.setVisibility(View.VISIBLE);
-                        break;
-                    case Event_Model.CONCERT:
-                        vh.concertTag.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-        }
-
-        vh.itemView.setOnClickListener((View v)-> eventClickListener.onEventClick(currEvent));
+    public void onBindViewHolder(@NonNull final EventsRecycler_Adapter.EventViewHolder vh, int position) {
+        Event_Model event = mDisplaySet.get(position);
+        vh.onBind(event);
+        vh.itemView.setOnClickListener((View v)-> eventClickListener.onEventClick(event));
     }
 
     @Override
@@ -116,14 +68,8 @@ public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventVie
     }
 
     /**
-     * Method to set the data for the RecyclerView. If mCompleteSet is null, this adapter has not been
-     * passed data to populate the recycler view.
-     *
-     * DiffUtil is used to determine the changes between the existing mCompleteSet and eventsList.
-     * Using the change determined by DiffUtil, we can simply request the Adapter to create/delete
-     * views as required by the change in data.
-     *
-     * Note that notifyItemRangeChanged is preferred over notifyDataSetChanged.
+     * Method to set the data for the RecyclerView. If mCompleteSet is null, this adapter has not
+     * been passed data to populate the recycler view.
      *
      * @param newList New data set to populate the RecyclerView
      */
@@ -217,6 +163,58 @@ public class Events_Adapter extends RecyclerView.Adapter<Events_Adapter.EventVie
             moviesTag = view.findViewById(R.id.image_movie);
             chillTag = view.findViewById(R.id.image_chill);
             concertTag = view.findViewById(R.id.image_concert);
+        }
+
+        private void onBind(Event_Model event){
+            if(event.getLong1()!=0){
+                long long1 = event.getLong1();
+                Calendar c = new GregorianCalendar();
+                c.setTimeInMillis(long1);
+                txtDate.setText(sdf.format(c.getTime()));
+                timeTxt.setText(timeSDF.format(new Date(long1)));
+                if(timeTxt.getVisibility()==View.GONE){
+                    timeTxt.setVisibility(View.VISIBLE);
+                }
+            } else {
+                txtDate.setText(R.string.date_tbd);
+                timeTxt.setVisibility(View.GONE);
+            }
+            txtName.setText(event.getName());
+            attendingTxt.setText(String.format(Locale.getDefault(),"%s",event.getAttending()));
+            invitedTxt.setText(String.format(Locale.getDefault(),"%s",event.getInvited()));
+            hostTxt.setText(event.getCreator());
+            if(event.getAddress()!=null){
+                locationTxt.setText(event.getAddress());
+            } else {
+                locationTxt.setText(R.string.location_tbd);
+            }
+
+            List<String> primes = event.getPrimes();
+            if(primes!=null){
+                for(String prime : primes){
+                    switch (prime){
+                        case Event_Model.SPORTS:
+                            sportsTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.FOOD:
+                            foodTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.DRINKS:
+                            drinksTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.MOVIE:
+                            moviesTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.CHILL:
+                            chillTag.setVisibility(View.VISIBLE);
+                            break;
+                        case Event_Model.CONCERT:
+                            concertTag.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                }
+            }
+
         }
     }
 }

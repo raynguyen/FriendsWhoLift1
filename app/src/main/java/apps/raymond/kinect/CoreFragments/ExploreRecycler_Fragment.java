@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
+import java.util.Map;
 
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
@@ -44,9 +47,11 @@ public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycle
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mRecycler = (RecyclerView) inflater.inflate(R.layout.fragment_explore_recycler, container, false);
-        mRecycler.addItemDecoration(new Margin_Decoration_RecyclerView());
+        mRecycler.addItemDecoration(new Margin_Decoration_RecyclerView(requireActivity()));
         mAdapter = new ExploreRecycler_Adapter(this);
         mRecycler.setAdapter(mAdapter);
+
+        setExitTransitionAnimation();
         return mRecycler;
     }
 
@@ -63,12 +68,10 @@ public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycle
 
     @Override
     public void onItemViewClick(Event_Model event, int position, View transitionView) {
-        Log.w(TAG,"test for click call back");
         mInterface.setItemPosition(position);
         LatLng latLng = new LatLng(event.getLat(), event.getLng());
 
         mInterface.animateMap(latLng);
-
         getFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .addSharedElement(transitionView, transitionView.getTransitionName())
@@ -76,5 +79,38 @@ public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycle
                         ExplorePager_Fragment.class.getSimpleName())
                 .addToBackStack(null)
                 .commit();
+    }
+
+    /**
+     * Prepares the exit and the reenter transition animation for the this fragment (i.e. we set
+     * the animations for exiting this fragment when a recycler view holder item is clicked).
+     *
+     */
+    private void setExitTransitionAnimation(){
+        setExitTransition(TransitionInflater.from(getContext())
+                .inflateTransition(R.transition.recycler_to_pager));
+
+        setExitSharedElementCallback(new SharedElementCallback() {
+
+            /**
+             * Method called when an exit shared transition is required?
+             *
+             * @param names list containing the transition names of each view added to the map.
+             * @param sharedElements mapping of views that we want to animate during the transition
+             */
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                //Grab a handle on the view that we want to animate when transitioning to the pager.
+                RecyclerView.ViewHolder selectedViewHolder = mRecycler
+                        .findViewHolderForAdapterPosition(mInterface.getItemPosition());
+
+                if(selectedViewHolder == null){
+                    return;
+                }
+
+                sharedElements.put(names.get(0),
+                        selectedViewHolder.itemView.findViewById(R.id.text_event_name));
+            }
+        });
     }
 }

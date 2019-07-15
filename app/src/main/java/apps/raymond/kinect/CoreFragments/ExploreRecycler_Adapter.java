@@ -26,7 +26,6 @@ public class ExploreRecycler_Adapter extends RecyclerView.Adapter<ExploreRecycle
      */
     public interface ExploreAdapterInterface{
         void onItemViewClick(Event_Model event, int position, View transitionView);
-
     }
 
     private ExploreAdapterInterface mAdapterInterface;

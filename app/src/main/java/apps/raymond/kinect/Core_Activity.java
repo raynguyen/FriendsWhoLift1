@@ -94,7 +94,7 @@ import apps.raymond.kinect.ViewModels.Core_ViewModel;
  *  3.Upcoming events that your friends are interested/attending.
  *
  */
-public class Core_Activity extends AppCompatActivity{
+public class Core_Activity extends AppCompatActivity {
     private static final String TAG = "Core_Activity";
     public static final String USER = "user";
     public static final String USER_ID = "userID";
@@ -102,6 +102,7 @@ public class Core_Activity extends AppCompatActivity{
     public static final int EVENTCREATE = 22;
     private Core_ViewModel mViewModel;
     private Fragment activeFragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,19 +195,6 @@ public class Core_Activity extends AppCompatActivity{
                         .addToBackStack(INV_FRAG)
                         .commit();
                 return true;
-            case R.id.action_create_event_launch:
-                Log.w(TAG,"The fragments held by the core acitivty are: ");
-                Log.w(TAG,getSupportFragmentManager().getFragments().toString());
-                /*ArrayList<Event_Model> mEventList = new ArrayList<>();
-                Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
-                eventCreateIntent.putExtra("user",mUserModel);
-                if(mViewModel.getMyEvents().getValue()!=null){
-                    mEventList.addAll(mViewModel.getMyEvents().getValue());
-                    eventCreateIntent.putExtra("events",mEventList);
-                }
-                startActivityForResult(eventCreateIntent,EVENTCREATE);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);*/
-                return true;
         }
         return false;
     }
@@ -223,4 +211,13 @@ public class Core_Activity extends AppCompatActivity{
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(activeFragment instanceof Explore_Fragment){
+            FragmentManager fm = activeFragment.getChildFragmentManager();
+            fm.popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

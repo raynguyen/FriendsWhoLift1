@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +39,6 @@ import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
@@ -60,7 +58,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_explore_events,container,false);
+        View view = inflater.inflate(R.layout.fragment_explore,container,false);
         mMapView = view.findViewById(R.id.map_explore_fragment);
 
         Fragment recyclerFragment = new ExploreRecycler_Fragment();
@@ -125,7 +123,8 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
             for(Event_Model event: events){
                 LatLng latLng = new LatLng(event.getLat(), event.getLng());
                 if(!mMarkersMap.containsKey(latLng)){
-                    Log.w(TAG,"Making a marker for event: "+event.getName());
+
+                    //Todo: Some error occurs here when the app is minimized and restarted.
                     Marker marker = mMap.addMarker(new MarkerOptions()
                             .position(latLng)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))

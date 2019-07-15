@@ -1,7 +1,6 @@
 package apps.raymond.kinect.CoreFragments;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,11 +10,11 @@ import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,11 @@ public class ExplorePager_Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pager_explore, container, false);
         viewPager = view.findViewById(R.id.pager_explore);
 
+        DisplayMetrics metrics = new DisplayMetrics();
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int padding = (int) Math.ceil(4 * metrics.density);
+        viewPager.setPadding(padding, 0, padding, 0);
+
         ExplorePager_Adapter adapter = new ExplorePager_Adapter(this);
         viewPager.setAdapter(adapter);
         adapter.setData(mViewModel.getSuggestedEvents().getValue());
@@ -64,7 +68,7 @@ public class ExplorePager_Fragment extends Fragment {
             });
         }
 
-        prepareTransition();
+        setEnterTransitionAnimation();
 
         // Avoid a postponeEnterTransition on orientation change, and postpone only of first creation.
         /*if (savedInstanceState == null) {
@@ -74,7 +78,7 @@ public class ExplorePager_Fragment extends Fragment {
         return view;
     }
 
-    private void prepareTransition(){
+    private void setEnterTransitionAnimation(){
         Transition transition = TransitionInflater.from(getContext())
                 .inflateTransition(R.transition.shared_element_transition);
         setSharedElementEnterTransition(transition);
@@ -122,8 +126,7 @@ public class ExplorePager_Fragment extends Fragment {
 
         @Override
         public Fragment getItem(int i) {
-            return PagerEvent_Fragment.newInstance(eventSet.get(i),
-                    mInterface.getItemPosition());
+            return PagerEvent_Fragment.newInstance(eventSet.get(i), i);
         }
 
         @Override

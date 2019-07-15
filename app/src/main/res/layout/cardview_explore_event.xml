@@ -2,18 +2,21 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardview_event"
+    android:id="@+id/card_explore_event_detail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent"
     android:foreground="?android:attr/selectableItemBackground"
+    android:background="@color/colorAccentLight"
     android:clickable="true"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    >
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_body_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/blueish"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
