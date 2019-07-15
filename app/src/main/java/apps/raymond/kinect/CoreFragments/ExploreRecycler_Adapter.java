@@ -40,7 +40,7 @@ public class ExploreRecycler_Adapter extends RecyclerView.Adapter<ExploreRecycle
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.cardview_explore_event, viewGroup, false);
+                .inflate(R.layout.card_event_explore_condensed, viewGroup, false);
         return new EventViewHolder(view, mAdapterInterface);
     }
 
