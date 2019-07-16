@@ -2,10 +2,9 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_explore_event_detail"
+    android:id="@+id/card_explore_event"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent"
     android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
     app:cardElevation="4dp">
@@ -22,96 +21,38 @@
             android:layout_height="wrap_content"
             android:hint="@string/event_name"
             android:layout_alignParentTop="true"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             style="@style/EventCardViewText" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/text_host"
-            android:baselineAligned="false"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:weightSum="1">
+            android:text="@string/suggested_because"
+            android:layout_below="@id/text_event_name"
+            android:layout_centerHorizontal="true"/>
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="6dp"
+            android:layout_margin="8dp"
+            android:background="@color/blueish">
+
+            <TextView
+                android:id="@+id/text_day1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:hint="@string/date"/>
 
-                <TextView
-                    android:id="@+id/text_attending"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/null_dashes"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="4dp"
-                    android:textAlignment="gravity"
-                    android:textSize="20sp"
-                    android:drawableStart="@drawable/ic_person_black_24dp" />
-
-                <TextView
-                    android:id="@+id/text_invited"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/null_dashes"
-                    android:gravity="center_vertical"
-                    android:textAlignment="gravity"
-                    android:textSize="20sp"
-                    android:drawablePadding="4dp"
-                    android:drawableStart="@drawable/ic_email_black_24dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/text_date1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_weight="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:gravity="center_horizontal">
-
-                <ImageView
-                    android:id="@+id/image_sport"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_fitness_center_black_24dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_food"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_local_dining_black_24dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_drinks"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_local_bar_black_24dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_movie"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_movie_black_24dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_chill"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_weekend_black_24dp"
-                    style="@style/CardPrimaryTags"/>
-                <ImageView
-                    android:id="@+id/image_concert"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_music_note_black_24dp"
-                    style="@style/CardPrimaryTags"/>
-            </LinearLayout>
-
+                android:hint="@string/date"/>
         </LinearLayout>
+
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

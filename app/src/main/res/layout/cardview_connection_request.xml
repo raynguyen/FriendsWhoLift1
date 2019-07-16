@@ -20,7 +20,7 @@
             android:layout_centerVertical="true"/>
 
         <TextView
-            android:id="@+id/text_name"
+            android:id="@+id/text_event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/image_profile_pic"
@@ -30,7 +30,7 @@
             android:id="@+id/button_request_decline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_name"
+            android:layout_below="@id/text_event_name"
             android:layout_toStartOf="@id/button_request_accept"
             android:text="@string/decline"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
@@ -39,7 +39,7 @@
             android:id="@+id/button_request_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_name"
+            android:layout_below="@id/text_event_name"
             android:layout_alignParentEnd="true"
             android:text="@string/accept"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"

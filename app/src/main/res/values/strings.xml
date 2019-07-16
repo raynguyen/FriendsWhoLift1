@@ -35,6 +35,8 @@
     <string name="invite_users">INVITE USERS</string>
     <string name="members">MEMBERS</string>
     <string name="close">Close</string>
+    <string name="suggested_because">Suggested because:</string>
+    <string name="num_pages">page -/-</string>
 
     <!--CORE ACTIVITY-->
     <string name="profile">Profile</string>
@@ -43,7 +45,6 @@
     <string name="null_events">You have no upcoming events.</string>
     <string name="events_new_interested">New events you may be interested in!</string>
     <string name="events_popular_friends">Events popular with your connections.</string>
-    
     <string name="monitoring">Monitoring</string>
     <string name="accepted_header">Accepted:</string>
 

@@ -3,7 +3,6 @@ package apps.raymond.kinect.Invitations;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +100,7 @@ public class ConnectionRequests_Adapter extends RecyclerView.Adapter<ConnectionR
         private RequestViewHolder(@NonNull View view){
             super(view);
             imgProfile = view.findViewById(R.id.image_profile_pic);
-            txtName = view.findViewById(R.id.text_name);
+            txtName = view.findViewById(R.id.text_event_name);
             btnAccept = view.findViewById(R.id.button_request_accept);
             btnDecline = view.findViewById(R.id.button_request_decline);
         }
