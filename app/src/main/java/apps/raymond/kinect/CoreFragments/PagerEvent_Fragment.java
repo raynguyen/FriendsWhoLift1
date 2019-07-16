@@ -1,15 +1,19 @@
 package apps.raymond.kinect.CoreFragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import apps.raymond.kinect.EventDetail.EventDetail_Activity;
 import apps.raymond.kinect.Event_Model;
@@ -27,6 +31,12 @@ public class PagerEvent_Fragment extends Fragment {
     private static final String EVENT_MODEL = "event_model";
     private static final String POSITION = "position"; //Adapter position of this fragment.
 
+    public interface PagerEventInterface{
+        void attendEvent();
+        void ignoreEvent();
+        void observeEvent();
+    }
+
     public static PagerEvent_Fragment newInstance(Event_Model event, int position){
         PagerEvent_Fragment fragment = new PagerEvent_Fragment();
         Bundle args = new Bundle();
@@ -37,6 +47,15 @@ public class PagerEvent_Fragment extends Fragment {
     }
 
     private Core_ViewModel mViewModel;
+    private PagerEventInterface mInterface;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mInterface = (PagerEventInterface) getParentFragment();
+        } catch (ClassCastException e){}
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,14 +75,6 @@ public class PagerEvent_Fragment extends Fragment {
         Event_Model event = getArguments().getParcelable(EVENT_MODEL);
         int position = getArguments().getInt(POSITION);
 
-        view.setOnClickListener((View v) -> {
-            Intent detailActivity = new Intent(getContext(), EventDetail_Activity.class);
-            User_Model userModel = mViewModel.getUserModel().getValue();
-            detailActivity.putExtra("user",userModel).putExtra("event_name",event.getName());
-            startActivity(detailActivity);
-            //Todo: shared element transition.
-        });
-
         TextView textName = view.findViewById(R.id.text_event_name);
         textName.setText(event.getName());
         String transitionName = "transition_name_" + position;
@@ -81,6 +92,22 @@ public class PagerEvent_Fragment extends Fragment {
 
         textDesc.setText(event.getDesc());
         //GRAB HOLD OF VIEWS AND SET THE RELEVANT CONTENT HERE
+
+        Button btnAttend = view.findViewById(R.id.button_attend_event);
+        Button btnIgnore = view.findViewById(R.id.button_ignore_event);
+        btnAttend.setOnClickListener((View v) -> mInterface.attendEvent());
+
+        btnIgnore.setOnClickListener((View v)->{
+            Toast.makeText(getContext(), "Not yet implemented.", Toast.LENGTH_LONG).show();
+        });
+
+        view.setOnClickListener((View v) -> {
+            Intent detailActivity = new Intent(getContext(), EventDetail_Activity.class);
+            User_Model userModel = mViewModel.getUserModel().getValue();
+            detailActivity.putExtra("user",userModel).putExtra("event_name",event.getName());
+            startActivity(detailActivity);
+            //Todo: shared element transition.
+        });
 
         /*
         ToDo: Interface when clicking on mapview icon. We want to also transition from the Recycler Fragment to the Pager Fragment.

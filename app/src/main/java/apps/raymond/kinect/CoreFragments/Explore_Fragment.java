@@ -147,7 +147,16 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
     }
 
     @Override
-    public void animateMap(LatLng latLng) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
+    public void animateMapToLocation() {
+        if(mViewModel.getSuggestedEvents() != null){
+            Event_Model event = mViewModel.getSuggestedEvents().getValue().get(mItemPosition);
+            LatLng latLng = new LatLng(event.getLat(), event.getLng());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
+        }
+    }
+
+    @Override
+    public void attendEvent() {
+        Log.w(TAG,"Run code to attend event in position: " +mItemPosition);
     }
 }

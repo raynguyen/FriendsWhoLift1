@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,9 +68,8 @@ public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycle
     @Override
     public void onItemViewClick(Event_Model event, int position, View transitionView) {
         mInterface.setItemPosition(position);
-        LatLng latLng = new LatLng(event.getLat(), event.getLng());
+        mInterface.animateMapToLocation();
 
-        mInterface.animateMap(latLng);
         getFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .addSharedElement(transitionView, transitionView.getTransitionName())

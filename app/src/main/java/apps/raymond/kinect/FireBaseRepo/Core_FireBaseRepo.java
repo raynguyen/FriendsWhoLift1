@@ -107,7 +107,10 @@ public class Core_FireBaseRepo {
 
     //GOOD
     /**
-     * Creates a user document in Events->Accepted.
+     * Create a user document in the Event's attending collection. Upon successful write, we update
+     * the ATTENDING field in the Event document which will then add the Event document to the user's
+     * Events collection.
+     *
      * @param eventID The event the user is attending.
      */
     public Task<Void> addUserToEvent(String userID, User_Model userModel, String eventID, Event_Model event_model) {

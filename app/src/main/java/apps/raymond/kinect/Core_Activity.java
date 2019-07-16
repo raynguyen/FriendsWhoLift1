@@ -148,9 +148,12 @@ public class Core_Activity extends AppCompatActivity {
         final Create_Fragment createFrag = new Create_Fragment();
         final Explore_Fragment exploreFrag = new Explore_Fragment();
         final FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().add(R.id.frame_core_container, createFrag, "create").hide(createFrag).commit();
-        fm.beginTransaction().add(R.id.frame_core_container, exploreFrag, "explore").hide(exploreFrag).commit();
-        fm.beginTransaction().add(R.id.frame_core_container,eventsFrag,"events").commit();
+        fm.beginTransaction()
+                .add(R.id.frame_core_container, createFrag, "create").hide(createFrag).commit();
+        fm.beginTransaction()
+                .add(R.id.frame_core_container, exploreFrag, "explore").hide(exploreFrag).commit();
+        fm.beginTransaction()
+                .add(R.id.frame_core_container,eventsFrag,"events").commit();
         activeFragment = eventsFrag;
 
         BottomNavigationView navView = findViewById(R.id.bottom_nav_view);
@@ -158,19 +161,32 @@ public class Core_Activity extends AppCompatActivity {
             switch (menuItem.getItemId()){
                 case R.id.nav_events:
                     if(!( activeFragment instanceof Events_Fragment)) {
-                        fm.beginTransaction().hide(activeFragment).show(eventsFrag).commit();
+                        fm.beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
+                                .hide(activeFragment).show(eventsFrag).commit();
                         activeFragment = eventsFrag;
                     }
                     return true;
                 case R.id.nav_explore:
-                    if(!(activeFragment instanceof Explore_Fragment)){
-                        fm.beginTransaction().hide(activeFragment).show(exploreFrag).commit();
-                        activeFragment = exploreFrag;
+                    if(activeFragment instanceof Explore_Fragment){
+                        return true;
+                    } else if (activeFragment instanceof  Events_Fragment){
+                        fm.beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                                .hide(activeFragment).show(exploreFrag).commit();
+                    } else if (activeFragment instanceof Create_Fragment){
+                        fm.beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
+                                .hide(activeFragment).show(exploreFrag).commit();
                     }
+                    activeFragment = exploreFrag;
                     return true;
+
                 case R.id.nav_create:
                     if(!(activeFragment instanceof Create_Fragment)){
-                        fm.beginTransaction().hide(activeFragment).show(createFrag).commit();
+                        fm.beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                                .hide(activeFragment).show(createFrag).commit();
                         activeFragment = createFrag;
                     }
                     return true;

@@ -7,12 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.SharedElementCallback;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +26,15 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 
-public class ExplorePager_Fragment extends Fragment {
+public class ExplorePager_Fragment extends Fragment implements
+        PagerEvent_Fragment.PagerEventInterface {
     private static final String TAG = ExplorePager_Fragment.class.getSimpleName();
     private ExploreEventsInterface mInterface;
     private ViewPager viewPager;
     private TextView textFooter;
     private Core_ViewModel mViewModel;
     private ExplorePager_Adapter mPagerAdapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +73,7 @@ public class ExplorePager_Fragment extends Fragment {
             @Override
             public void onPageSelected(int i) {
                 mInterface.setItemPosition(i);
+                mInterface.animateMapToLocation();
                 setFooter();
             }
         });
@@ -119,6 +120,21 @@ public class ExplorePager_Fragment extends Fragment {
         int size = mViewModel.getSuggestedEvents().getValue().size();
         String footer = position + "/" + size;
         textFooter.setText(footer);
+    }
+
+    @Override
+    public void attendEvent() {
+        mInterface.attendEvent();
+    }
+
+    @Override
+    public void ignoreEvent() {
+
+    }
+
+    @Override
+    public void observeEvent() {
+
     }
 
     /**
