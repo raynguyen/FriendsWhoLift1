@@ -64,11 +64,27 @@ public class PagerEvent_Fragment extends Fragment {
             //Todo: shared element transition.
         });
 
-
         TextView textName = view.findViewById(R.id.text_event_name);
         textName.setText(event.getName());
         String transitionName = "transition_name_" + position;
         textName.setTransitionName(transitionName);
+
+        TextView textAddress = view.findViewById(R.id.text_lookup);
+        TextView textHost = view.findViewById(R.id.text_host);
+        TextView textDate = view.findViewById(R.id.text_month_day);
+        TextView textTime = view.findViewById(R.id.text_time);
+        TextView textDesc = view.findViewById(R.id.text_event_description);
+
+
+        textAddress.setText(event.getAddress());
+        textHost.setText(event.getCreator());
+
+        textDesc.setText(event.getDesc());
         //GRAB HOLD OF VIEWS AND SET THE RELEVANT CONTENT HERE
+
+        /*
+        ToDo: Interface when clicking on mapview icon. We want to also transition from the Recycler Fragment to the Pager Fragment.
+        Add the buttons to the layout.
+         */
     }
 }

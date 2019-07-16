@@ -6,4 +6,5 @@ public interface ExploreEventsInterface {
     void setItemPosition(int pos);
     int getItemPosition();
     void animateMap(LatLng latLng);
+
 }
