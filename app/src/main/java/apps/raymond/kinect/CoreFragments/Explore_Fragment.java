@@ -32,6 +32,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -42,10 +44,18 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
+/*
+ToDo: Test changes when deleting the suggested event from the list held by the view model. We want
+ to ensure that the RecyclerFragment and the PagerFragment behave properly.
+ Update the views pertaining to the information of public events.
+ *We do not need to animate the map when attending the event. Consider moving back to the RecyclerFragment
+ *after the user hits the Attend button (should scroll to the item in the position below the accepted
+ * event).
+ */
 public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCallback,
         ExploreEventsInterface {
     private static final String TAG = "EventsSearchFragment";
-    public static int mItemPosition;
+    public static int mCurrentPosition;
 
     private Core_ViewModel mViewModel;
     @Override
@@ -80,6 +90,7 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
         });
 
         mViewModel.getSuggestedEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
+            Log.w(TAG,"Change in suggested events.");
             if(event_models != null){
                 addEventsToMap(event_models);
             }
@@ -104,12 +115,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
             LatLng latLng = new LatLng(event.getLat(), event.getLng());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
             return true;
-        });
-        mMap.setOnMapClickListener((LatLng latlng)->{
-            //NOTHING ATM
-            /*if(detailsCardView.getVisibility()==View.VISIBLE){
-                detailsCardView.setVisibility(View.GONE);
-            }*/
         });
     }
 
@@ -138,18 +143,18 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
 
     @Override
     public void setItemPosition(int pos) {
-        mItemPosition = pos;
+        mCurrentPosition = pos;
     }
 
     @Override
     public int getItemPosition() {
-        return mItemPosition;
+        return mCurrentPosition;
     }
 
     @Override
     public void animateMapToLocation() {
         if(mViewModel.getSuggestedEvents() != null){
-            Event_Model event = mViewModel.getSuggestedEvents().getValue().get(mItemPosition);
+            Event_Model event = mViewModel.getSuggestedEvents().getValue().get(mCurrentPosition);
             LatLng latLng = new LatLng(event.getLat(), event.getLng());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
         }
@@ -157,6 +162,10 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
 
     @Override
     public void attendEvent() {
-        Log.w(TAG,"Run code to attend event in position: " +mItemPosition);
+        Log.w(TAG,"Run code to attend event in position: " + mCurrentPosition);
+        Event_Model event = mViewModel.getSuggestedEvents().getValue().get(mCurrentPosition);
+        mViewModel.addUserToEvent(event).addOnCompleteListener((@NonNull Task<Void> task) -> {
+            mViewModel.deleteSuggestedEvent(mCurrentPosition);
+        });
     }
 }

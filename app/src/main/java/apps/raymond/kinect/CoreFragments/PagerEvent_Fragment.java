@@ -91,7 +91,6 @@ public class PagerEvent_Fragment extends Fragment {
         textHost.setText(event.getCreator());
 
         textDesc.setText(event.getDesc());
-        //GRAB HOLD OF VIEWS AND SET THE RELEVANT CONTENT HERE
 
         Button btnAttend = view.findViewById(R.id.button_attend_event);
         Button btnIgnore = view.findViewById(R.id.button_ignore_event);
@@ -109,9 +108,5 @@ public class PagerEvent_Fragment extends Fragment {
             //Todo: shared element transition.
         });
 
-        /*
-        ToDo: Interface when clicking on mapview icon. We want to also transition from the Recycler Fragment to the Pager Fragment.
-        Add the buttons to the layout.
-         */
     }
 }

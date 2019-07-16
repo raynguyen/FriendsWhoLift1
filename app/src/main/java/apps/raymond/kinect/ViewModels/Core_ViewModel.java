@@ -203,9 +203,14 @@ public class Core_ViewModel extends ViewModel {
         return mSuggestedEvents;
     }
 
-    public MutableLiveData<List<Event_Model>> getPopularEvents(){
-        return mPopularEvents;
+    public void deleteSuggestedEvent(int position){
+        List<Event_Model> suggestedEvents = mSuggestedEvents.getValue();
+        if(suggestedEvents != null){
+            suggestedEvents.remove(position);
+        }
+        mSuggestedEvents.setValue(suggestedEvents);
     }
+
 
     public Task<Boolean> checkForUser(String userID, String eventName){
         return mRepository.checkForUser(userID, eventName);

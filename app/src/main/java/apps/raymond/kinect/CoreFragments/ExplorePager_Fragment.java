@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.SharedElementCallback;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -162,7 +163,15 @@ public class ExplorePager_Fragment extends Fragment implements
         }
 
         @Override
+        public int getItemPosition(@NonNull Object object) {
+            return PagerAdapter.POSITION_NONE;
+        }
+
+        @Override
         public Fragment getItem(int i) {
+            if(eventSet.size() == 0 ){
+                return null;
+            }
             return PagerEvent_Fragment.newInstance(eventSet.get(i), i);
         }
 
