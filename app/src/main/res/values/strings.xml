@@ -32,7 +32,6 @@
     <string name="delete_connection">Delete Connection</string>
     <string name="add_location">Add Location</string>
     <string name="time_holder">HH:MM AA</string>
-    <string name="invite_users">INVITE USERS</string>
     <string name="members">MEMBERS</string>
     <string name="close">Close</string>
     <string name="suggested_because">Suggested because:</string>
@@ -92,10 +91,19 @@
     <!--EVENT CREATION FRAGMENT-->
     <string name="event_name">EVENT NAME*</string>
     <string name="event_desc">DESCRIPTION*</string>
-    <string name="empty_tags">NO TAGS TIED TO EVENT</string>
-    <string name="event_public">Public</string>
-    <string name="event_discoverable">Discoverable</string>
+    <string name="event_details">EVENT DETAILS</string>
+    <string name="invite_users">INVITE USERS</string>
+    <string name="event_privacy">Event Privacy</string>
     <string name="event_exclusive">Exclusive</string>
+    <string name="event_private">Private</string>
+    <string name="event_public">Public</string>
+
+
+
+    <string name="empty_tags">NO TAGS TIED TO EVENT</string>
+    <string name="primary_tags">Primary Tags</string>
+    <string name="event_discoverable">Discoverable</string>
+
     <string name="event_month">MONTH</string>
     <string name="event_day">DAY</string>
     <string name="start_date">Start Date</string>

@@ -1,123 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:isScrollContainer="true">
 
-    <!--
-    Collapsable sections that give the option to move onto next section if the previous
-    or current is adequately completed.-->
-
-    <RelativeLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/textlayout_event_name"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/event_name">
+            android:paddingHorizontal="4dp">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/text_event_create_name"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/layout_event_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_alignParentTop="true"
+                android:hint="@string/event_name">
 
-        <TextView
-            android:id="@+id/text_header1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="EVENT DETAILS"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:background="@color/colorAccent"
-            android:paddingStart="4dp"/>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_event_create_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp" />
+            </android.support.design.widget.TextInputLayout>
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/text_header1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_event_name"
+                android:text="@string/event_details"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/colorAccent"
+                android:paddingHorizontal="4dp"/>
+
+            <RelativeLayout
+                android:id="@+id/layout_create_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_header1"
+                android:paddingHorizontal="4dp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/layout_create_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="@string/event_desc">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/text_event_create_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minLines="2"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/text_primary_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layout_create_desc"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/primary_tags"
+                    android:drawableEnd="@drawable/ic_info_outline_black_24dp"
+                    android:drawableTint="@color/blueish"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="12dp"/>
+
+                <LinearLayout
+                    android:id="@+id/layout_primary_tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/text_primary_header"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:weightSum="6">
+
+                    <ToggleButton
+                        android:id="@+id/toggle_sports"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_fitness"
+                        style="@style/PrimaryToggle"/>
+                    <ToggleButton
+                        android:id="@+id/toggle_food"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_food"
+                        style="@style/PrimaryToggle"/>
+                    <ToggleButton
+                        android:id="@+id/toggle_drinks"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_drinks"
+                        style="@style/PrimaryToggle"/>
+                    <ToggleButton
+                        android:id="@+id/toggle_movie"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_movie"
+                        style="@style/PrimaryToggle"/>
+                    <ToggleButton
+                        android:id="@+id/toggle_chill"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_chill"
+                        style="@style/PrimaryToggle"/>
+                    <ToggleButton
+                        android:id="@+id/toggle_concert"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_concert"
+                        style="@style/PrimaryToggle"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_privacy_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layout_primary_tags"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/event_privacy"
+                    android:drawableEnd="@drawable/ic_info_outline_black_24dp"
+                    android:drawableTint="@color/blueish"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="12dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/layout_create_privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/text_privacy_header"
+                    android:gravity="center_horizontal">
+
+                    <ToggleButton
+                        android:id="@+id/button_privacy_exclusive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textOff="@string/event_exclusive" />
+                    <ToggleButton
+                        android:id="@+id/button_privacy_private"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/button_privacy_exclusive"
+                        android:textOff="@string/event_private"/>
+                    <ToggleButton
+                        android:id="@+id/button_privacy_public"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/button_privacy_private"
+                        android:textOff="@string/event_public"/>
 
 
+                </RelativeLayout>
 
+                <ViewFlipper
+                    android:id="@+id/viewflipper_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layout_create_privacy"
+                    android:measureAllChildren="false"
+                    android:visibility="visible">
 
-    <LinearLayout
+                    <CalendarView
+                        android:id="@+id/calendar_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_gravity="center">
+                    </CalendarView>
+
+                    <TimePicker
+                        android:id="@+id/time_picker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:timePickerMode="spinner"
+                        android:layout_gravity="center">
+                    </TimePicker>
+                </ViewFlipper>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_header2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_create_details"
+                android:background="@color/colorAccent"
+                android:clickable="true"
+                android:paddingHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/text_invite_users_heading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/invite_users"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/text_create_invited_count"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/text_invite_users_heading"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="end"
+                    android:text="@string/null_dashes"
+                    android:textColor="@color/white"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_create_invitations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_header2"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:orientation="vertical"
         android:padding="4dp">
-
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/event_desc_txt_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="8dp"
-            android:hint="@string/event_desc">
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/text_event_create_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_primarytags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:weightSum="6">
-
-            <ToggleButton
-                android:id="@+id/toggle_sports"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_fitness"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_food"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_food"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_drinks"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_drinks"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_movie"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_movie"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_chill"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_chill"
-                style="@style/PrimaryToggle"/>
-            <ToggleButton
-                android:id="@+id/toggle_concert"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/toggle_concert"
-                style="@style/PrimaryToggle"/>
-        </LinearLayout>
 
         <Switch
             android:id="@+id/switch_date_suggest"
@@ -172,30 +296,7 @@
                     android:text="@string/default_time" />
             </LinearLayout>
 
-            <ViewFlipper
-                android:id="@+id/viewflipper_start"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/linear_date_text"
-                android:measureAllChildren="false"
-                android:visibility="gone">
 
-                <CalendarView
-                    android:id="@+id/calendar_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:layout_gravity="center">
-                </CalendarView>
-
-                <TimePicker
-                    android:id="@+id/time_picker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:timePickerMode="spinner"
-                    android:layout_gravity="center">
-                </TimePicker>
-            </ViewFlipper>
 
             <ImageButton
                 android:id="@+id/button_close_flipper"
@@ -208,33 +309,6 @@
                 android:visibility="gone"/>
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_privacy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/image_privacy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_email_black_24dp"
-                android:contentDescription="@string/messages"/>
-
-            <Spinner
-                android:id="@+id/spinner_event_privacy"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:spinnerMode="dropdown"
-                android:overlapAnchor="false"
-                android:padding="2dp"
-                android:layout_weight="1">
-            </Spinner>
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_tags"
@@ -301,5 +375,5 @@
             android:layout_weight="1">
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
-
-</ScrollView>
+-->
+</android.support.design.widget.CoordinatorLayout>

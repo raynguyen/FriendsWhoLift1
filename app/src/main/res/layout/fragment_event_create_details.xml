@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textlayout_event_name"
+            android:id="@+id/layout_event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:boxCornerRadiusBottomEnd="8dp"
@@ -31,7 +31,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/event_desc_txt_layout"
+            android:id="@+id/layout_create_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -44,7 +44,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
-            android:id="@+id/layout_primarytags"
+            android:id="@+id/layout_primary_tags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
