@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -177,6 +178,19 @@ public class Core_ViewModel extends ViewModel {
         String userID = userModel.getEmail();
         String eventID = event.getName();
         return mRepository.addUserToEvent(userID, userModel, eventID, event);
+    }
+
+    /**
+     * Temporary method call to add a single event object to the mMyEvents LiveData. Ideally, we
+     * would simply add the event to the database and observe a change which gets emitted to this
+     * view model class from the repository class.
+     *
+     * @param event an event being added to the user's event list.
+     */
+    public void addEventLiveData(Event_Model event){
+        List<Event_Model> myEvents = mMyEvents.getValue();
+        myEvents.add(event);
+        mMyEvents.setValue(myEvents);
     }
 
     public void deleteEventInvitation(String userID, String eventName){

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.
         recyclerView.setAdapter(adapter);
 
         mViewModel.getMyEvents().observe(requireActivity(), (@Nullable List<Event_Model> events) -> {
+            Log.w(TAG,"Change in my events detected.");
             progressBar.setVisibility(View.GONE);
             if(events != null){
                 textAcceptedCount.setText(String.valueOf(events.size()));
