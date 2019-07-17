@@ -8,29 +8,48 @@
     <!--
     Collapsable sections that give the option to move onto next section if the previous
     or current is adequately completed.-->
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/textlayout_event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp"
-            android:hint="@string/event_name"
-            android:layout_marginTop="4dp">
+            android:hint="@string/event_name">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/text_event_create_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="26sp" />
+                android:textSize="22sp" />
         </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/text_header1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EVENT DETAILS"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@color/colorAccent"
+            android:paddingStart="4dp"/>
+
+    </RelativeLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/event_desc_txt_layout"
