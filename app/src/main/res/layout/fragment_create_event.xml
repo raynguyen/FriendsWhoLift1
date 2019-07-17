@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!--
+    Collapsable sections that give the option to move onto next section if the previous
+    or current is adequately completed.-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
