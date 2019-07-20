@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:isScrollContainer="true">
 
     <android.support.v4.widget.NestedScrollView
@@ -165,215 +165,85 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/button_privacy_private"
                         android:textOff="@string/event_public"/>
-
-
                 </RelativeLayout>
 
-                <ViewFlipper
-                    android:id="@+id/viewflipper_start"
+                <CalendarView
+                    android:id="@+id/calendar_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/layout_create_privacy"
-                    android:measureAllChildren="false"
-                    android:visibility="visible">
+                    android:layout_gravity="center">
+                </CalendarView>
 
-                    <CalendarView
-                        android:id="@+id/calendar_view"
-                        android:layout_width="match_parent"
+                <!--
+                    <LinearLayout
+                    android:id="@+id/layout_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="12dp">
+
+                    <EditText
+                        android:id="@+id/text_event_tags"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:layout_gravity="center">
-                    </CalendarView>
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:hint="@string/event_tags"
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        android:autofillHints="no"/>
 
-                    <TimePicker
-                        android:id="@+id/time_picker"
+                    <ImageButton
+                        android:id="@+id/event_tag_add_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:timePickerMode="spinner"
-                        android:layout_gravity="center">
-                    </TimePicker>
-                </ViewFlipper>
+                        android:layout_gravity="center_vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/text_event_tags"
+                        app:layout_constraintBottom_toBottomOf="@id/text_event_tags"
+                        android:src="@drawable/ic_add_black_24dp"
+                        android:background="@color/transparent"
+                        android:contentDescription="@string/Temp"/>
+                </LinearLayout>-->
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/layout_header2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_create_details"
+                android:orientation="horizontal"
                 android:background="@color/colorAccent"
                 android:clickable="true"
                 android:paddingHorizontal="4dp">
 
                 <TextView
-                    android:id="@+id/text_invite_users_heading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
                     android:text="@string/invite_users"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:textColor="@color/white" />
+
                 <TextView
                     android:id="@+id/text_create_invited_count"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/text_invite_users_heading"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
+                    android:layout_weight="1"
                     android:gravity="end"
                     android:text="@string/null_dashes"
                     android:textColor="@color/white"/>
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/layout_create_invitations"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_create_invite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_header2"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp">
-            </RelativeLayout>
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager">
+            </android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
-    <!--<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical"
-        android:padding="4dp">
-
-        <Switch
-            android:id="@+id/switch_date_suggest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="@string/event_time_suggest"
-            android:textSize="20sp"/>
-
-        <RelativeLayout
-            android:id="@+id/linear_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccentLight"
-            android:layout_margin="4dp"
-            android:padding="4dp"
-            android:clickable="true"
-            android:focusable="true">
-
-            <TextView
-                android:id="@+id/text_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/gray"
-                android:textSize="18sp" />
-
-            <LinearLayout
-                android:id="@+id/linear_date_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_below="@id/text_year">
-
-                <TextView
-                    android:id="@+id/text_date_start"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="26sp"
-                    android:textColor="@color/gray"
-                    android:textStyle="bold"
-                    android:layout_weight="1"
-                    />
-
-                <TextView
-                    android:id="@+id/text_time_start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="26sp"
-                    android:textColor="@color/gray"
-                    android:textStyle="bold"
-                    android:gravity="end"
-                    android:text="@string/default_time" />
-            </LinearLayout>
-
-
-
-            <ImageButton
-                android:id="@+id/button_close_flipper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/viewflipper_start"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
-                android:background="@color/transparent"
-                android:visibility="gone"/>
-        </RelativeLayout>
-
-
-        <LinearLayout
-            android:id="@+id/layout_tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="12dp">
-
-            <EditText
-                android:id="@+id/text_event_tags"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1"
-                android:hint="@string/event_tags"
-                android:textSize="18sp"
-                android:layout_weight="1"
-                android:autofillHints="no"/>
-
-            <ImageButton
-                android:id="@+id/event_tag_add_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/text_event_tags"
-                app:layout_constraintBottom_toBottomOf="@id/text_event_tags"
-                android:src="@drawable/ic_add_black_24dp"
-                android:background="@color/transparent"
-                android:contentDescription="@string/Temp"/>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/text_tags_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/empty_tags"
-            android:maxLines="3"
-            android:lineSpacingExtra="8sp"
-            android:background="@drawable/edit_text_border"
-            android:padding="8dp"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/text_invite_users"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="26sp"
-            android:paddingTop="12dp"
-            android:text="@string/invite_users"
-            android:clickable="false"
-            android:focusable="false"/>
-
-        <android.support.v7.widget.SearchView
-            android:id="@+id/search_add_users"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.SearchView>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_invite_users"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
--->
 </android.support.design.widget.CoordinatorLayout>
