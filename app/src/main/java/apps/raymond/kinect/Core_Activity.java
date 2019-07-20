@@ -116,6 +116,7 @@ public class Core_Activity extends AppCompatActivity {
                 String userID = user_model.getEmail();
                 mViewModel.loadEventInvitations(userID);
                 mViewModel.loadConnectionRequests(userID);
+                mViewModel.loadPublicUsers(userID);
             }
         });
 

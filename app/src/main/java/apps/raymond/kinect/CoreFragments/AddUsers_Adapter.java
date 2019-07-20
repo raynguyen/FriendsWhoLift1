@@ -1,4 +1,4 @@
-package apps.raymond.kinect;
+package apps.raymond.kinect.CoreFragments;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 
 public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.UserViewHolder> {

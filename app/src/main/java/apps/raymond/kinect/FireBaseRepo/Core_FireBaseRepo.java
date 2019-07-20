@@ -77,6 +77,8 @@ import apps.raymond.kinect.UserProfile.User_Model;
 public class Core_FireBaseRepo {
     private static final String TAG = "Core_FireBaseRepo";
     private static final String USERS = "Users";
+    private static final String VISIBILITY = "visibility";
+    private static final String PUBLIC = "public";
     private static final String EVENTS = "Events";
     private static final String MESSAGES = "Messages";
     private static final String ACCEPTED = "Accepted";
@@ -314,8 +316,6 @@ public class Core_FireBaseRepo {
                 .document(event.getName()).set(event);
     }
 
-
-
     //Todo: Revisit this method to invite users to an event.
     public void sendEventInvites(final Event_Model event, final List<User_Model> userList) {
         final DocumentReference eventDoc = eventCollection.document(event.getName());
@@ -471,6 +471,25 @@ public class Core_FireBaseRepo {
                 }
             }
             return userList;
+        });
+    }
+
+    /**
+     * Query database for a List of user's who have set their Privacy field to "PUBLIC".
+     *
+     * @return list of user models with public privacy fields.
+     */
+    public Task<List<User_Model>> getPublicUsers(String userID){
+        Query publicUsersQuery = userCollection.whereEqualTo(VISIBILITY, PUBLIC);
+        return publicUsersQuery.get().continueWith((@NonNull Task<QuerySnapshot> task) -> {
+            List<User_Model> result = new ArrayList<>();
+            if(task.isSuccessful()){
+                for(QueryDocumentSnapshot document : task.getResult()){
+                    User_Model user = document.toObject(User_Model.class);
+                    result.add(user);
+                }
+            }
+            return result;
         });
     }
 

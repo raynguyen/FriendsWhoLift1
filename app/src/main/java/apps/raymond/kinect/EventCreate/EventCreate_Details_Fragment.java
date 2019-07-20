@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.kinect.AddUsers_Adapter;
+import apps.raymond.kinect.CoreFragments.AddUsers_Adapter;
 import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;

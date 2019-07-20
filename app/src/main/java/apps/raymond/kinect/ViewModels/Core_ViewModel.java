@@ -64,6 +64,8 @@ public class Core_ViewModel extends ViewModel {
     private MediatorLiveData<List<Event_Model>> mPopularEvents = new MediatorLiveData<>(); //Public events filtered to only contain events your connections are attending.
     private static MutableLiveData<List<Event_Model>> mSuggestedEvents = new MutableLiveData<>(); //Public events Todo: Filter events to only contain events that primes/tags you're following.
 
+    private MutableLiveData<List<User_Model>> mPublicUsers = new MutableLiveData<>();
+
     public Core_ViewModel(){
         mRepository = new Core_FireBaseRepo();
 
@@ -78,7 +80,6 @@ public class Core_ViewModel extends ViewModel {
     }
 
     public void setUserDocument(User_Model user_model){
-        Log.w(TAG,"We have set a user document for this view model instance.");
         mUserModel.setValue(user_model);
     }
 
@@ -225,6 +226,17 @@ public class Core_ViewModel extends ViewModel {
         mSuggestedEvents.setValue(suggestedEvents);
     }
 
+    public void loadPublicUsers(String userID){
+        mRepository.getPublicUsers(userID).addOnCompleteListener((Task<List<User_Model>> task) -> {
+            if(task.isSuccessful()){
+                mPublicUsers.setValue(task.getResult());
+            }
+        });
+    }
+
+    public MutableLiveData<List<User_Model>> getPublicUsers(){
+        return mPublicUsers;
+    }
 
     public Task<Boolean> checkForUser(String userID, String eventName){
         return mRepository.checkForUser(userID, eventName);
