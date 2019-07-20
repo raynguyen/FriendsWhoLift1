@@ -44,10 +44,10 @@ public class ConnectionRequests_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ProgressBar progressBar = view.findViewById(R.id.progress_loading_recycler);
-        TextView txtNullData = view.findViewById(R.id.text_null_data);
+        ProgressBar progressBar = view.findViewById(R.id.progress_simple);
+        TextView txtNullData = view.findViewById(R.id.text_null_simple);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_invitations);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_simple);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ConnectionRequests_Adapter adapter = new ConnectionRequests_Adapter(this);
         recyclerView.setAdapter(adapter);

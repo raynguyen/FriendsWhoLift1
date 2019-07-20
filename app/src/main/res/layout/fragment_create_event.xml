@@ -290,12 +290,20 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_header3">
 
-                <com.google.android.gms.maps.MapView
-                    android:id="@+id/map_create"
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs_create_locations"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </com.google.android.gms.maps.MapView>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true">
+                </android.support.design.widget.TabLayout>
 
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pager_create_locations"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_below="@id/tabs_create_locations"
+                    android:padding="4dp">
+                </android.support.v4.view.ViewPager>
             </RelativeLayout>
 
         </RelativeLayout>

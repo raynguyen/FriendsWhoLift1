@@ -27,18 +27,6 @@ public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.User
         this.checkedInterface = checkedInterface;
     }
 
-    static class UserViewHolder extends RecyclerView.ViewHolder{
-
-        private TextView nameTxt;
-        private CheckBox checkBox;
-
-        private UserViewHolder(View view){
-            super(view);
-            nameTxt = view.findViewById(R.id.user_name_txt);
-            checkBox = view.findViewById(R.id.invite_user_checkbox);
-        }
-    }
-
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -78,5 +66,17 @@ public class AddUsers_Adapter extends RecyclerView.Adapter<AddUsers_Adapter.User
     public void setData(List<User_Model> userModels){
         this.mUserList = userModels;
         notifyItemRangeChanged(0,mUserList.size());
+    }
+
+    static class UserViewHolder extends RecyclerView.ViewHolder{
+
+        private TextView nameTxt;
+        private CheckBox checkBox;
+
+        private UserViewHolder(View view){
+            super(view);
+            nameTxt = view.findViewById(R.id.user_name_txt);
+            checkBox = view.findViewById(R.id.invite_user_checkbox);
+        }
     }
 }
