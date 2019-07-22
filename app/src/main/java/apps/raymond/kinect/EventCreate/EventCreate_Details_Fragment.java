@@ -159,7 +159,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
         });
 
         EditText txtEventName = view.findViewById(R.id.text_event_create_name);
-        EditText txtEventDesc = view.findViewById(R.id.text_event_create_desc);
+        EditText txtEventDesc = view.findViewById(R.id.text_create_description);
         txtEventName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

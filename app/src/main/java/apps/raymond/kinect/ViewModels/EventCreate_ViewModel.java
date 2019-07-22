@@ -12,10 +12,37 @@ import apps.raymond.kinect.UserProfile.User_Model;
  * ViewModel class that holds the information pertaining to a new Event the user is creating.
  */
 public class EventCreate_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
+    private Core_FireBaseRepo mRepo;
     private MutableLiveData<List<User_Model>> mPublicUsers = new MutableLiveData<>();
+    private String eventName;
+    private String eventDesc;
+    private int eventPrivacy;
+    private List<String> eventPrimes;
+    private List<User_Model> invitedUsers;
 
-    //TodO: figure out how to bind the user input to these fields.
-    //These variables pertain to the user input that is updated via the views.
+    public EventCreate_ViewModel(){
+        mRepo = new Core_FireBaseRepo();
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public void setEventDesc(String eventDesc) {
+        this.eventDesc = eventDesc;
+    }
+
+    public void setEventPrivacy(int eventPrivacy) {
+        this.eventPrivacy = eventPrivacy;
+    }
+
+    public void setEventPrimes(List<String> eventPrimes) {
+        this.eventPrimes = eventPrimes;
+    }
+
+    public void setInvitedUsers(List<User_Model> invitedUsers) {
+        this.invitedUsers = invitedUsers;
+    }
+
 
 }

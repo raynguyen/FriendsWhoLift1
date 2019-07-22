@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,30 +16,40 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.List;
 
+import apps.raymond.kinect.Event_Model;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.ViewModels.EventCreate_ViewModel;
 
+//ToDo: We do not bind user input to a ViewModel or something that observes life cycles. Consider
+// implementing this in the future.
 public class Create_Fragment extends Fragment implements
-    AddUsers_Adapter.CheckProfileInterface{
+    AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "CreateFragment: ";
     private Core_ViewModel mViewModel;
+    private EventCreate_ViewModel mCreateViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
+        mCreateViewModel = ViewModelProviders.of(this).get(EventCreate_ViewModel.class);
     }
 
+    //UI animations are set in the onCreateView callback whereas input control is set in onViewCreated.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
+
         ViewPager viewPager = view.findViewById(R.id.pager_create_locations);
         CreateFragmentAdapter pagerAdapter = new CreateFragmentAdapter(getChildFragmentManager());
         viewPager.setAdapter(pagerAdapter);
@@ -88,6 +99,18 @@ public class Create_Fragment extends Fragment implements
                 adapter.setData(publicUsers);
             }
         });
+
+        TextInputEditText editName = view.findViewById(R.id.text_create_name);
+        TextInputEditText editDescription = view.findViewById(R.id.text_create_description);
+        ToggleButton tglSports = view.findViewById(R.id.toggle_sports);
+        ToggleButton tglDrinks = view.findViewById(R.id.toggle_drinks);
+        ToggleButton tglFood = view.findViewById(R.id.toggle_food);
+        ToggleButton tglMovie = view.findViewById(R.id.toggle_movie);
+        ToggleButton tglChill = view.findViewById(R.id.toggle_chill);
+
+        ToggleButton tglExclusive = view.findViewById(R.id.toggle_exclusive);
+        ToggleButton tglPrivate = view.findViewById(R.id.toggle_private);
+        ToggleButton tglPublic = view.findViewById(R.id.toggle_public);
     }
 
     @Override
@@ -98,6 +121,11 @@ public class Create_Fragment extends Fragment implements
     @Override
     public void removeFromCheckedList(User_Model clickedUser) {
         Log.w(TAG,"REMOVE USER FROM INVITE LIST..");
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
     }
 
     private class CreateFragmentAdapter extends FragmentPagerAdapter{

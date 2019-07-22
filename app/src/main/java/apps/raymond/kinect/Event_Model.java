@@ -24,10 +24,10 @@ public class Event_Model implements Parcelable{
     public static final int PUBLIC = 2; //Open to all users.
     private String creator, name, desc;
     private double lat, lng;
-    private int privacy;
+    private int privacy = PUBLIC;
     private List<String> tags, primes;
     private String address;
-    private int attending;
+    private int attending; //Field starts at 0 by default as creation of the document in DB increments by one per user we add.
     private int invited;
     private long long1;
     private long create;
