@@ -11,9 +11,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -43,7 +48,7 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
     protected Location mLastLocation;
     protected Marker mResultMarker;
     protected Address mResultAddress;
-    protected Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>(); //Concurrent hashmap allows multiple threads to access the data should it not be accessing the same keys.
+    protected Map<LatLng, Marker> mMarkersMap = new ConcurrentHashMap<>(); //Concurrent hash-map allows multiple threads to access the data should it not be accessing the same keys.
     protected MapView mMapView;
     protected GoogleMap mMap;
 
@@ -65,7 +70,16 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map_base,container,false);
-        mMapView = v.findViewById(R.id.mapview);
+        mMapView = v.findViewById(R.id.map_view);
+        EditText textSearch = v.findViewById(R.id.text_search_map);
+        textSearch.setOnEditorActionListener((TextView view, int actionId, KeyEvent event)->{
+            if(actionId == EditorInfo.IME_ACTION_SEARCH
+                    || actionId == EditorInfo.IME_ACTION_DONE
+                    || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                geoLocate(view.getText().toString());
+            }
+            return false;
+        });
         return v;
     }
 
@@ -82,6 +96,14 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
         mMap = googleMap;
         try{
             googleMap.setMyLocationEnabled(true);
+            View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent())
+                    .findViewById(Integer.parseInt("2"));
+            RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) btnLocation.getLayoutParams();
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_END,0);
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_START,0);
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            rlp.setMargins(0, 0, 0, 40);
             getDeviceLocation();
         } catch (SecurityException e){
             //Some error

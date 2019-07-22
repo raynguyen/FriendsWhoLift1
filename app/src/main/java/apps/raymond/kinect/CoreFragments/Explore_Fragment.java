@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -80,6 +81,8 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        TextView textNullData = view.findViewById(R.id.text_explore_null);
+
         mViewModel.getUserModel().observe(requireActivity(), (@Nullable User_Model userModel) -> {
             if(userModel !=null ){
                 String userID = userModel.getEmail();
@@ -89,9 +92,14 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
         });
 
         mViewModel.getSuggestedEvents().observe(this,(@Nullable List<Event_Model> event_models)->{
-            Log.w(TAG,"Change in suggested events.");
             if(event_models != null){
+                Log.w(TAG,"Size of suggested events = "+event_models.size());
                 addEventsToMap(event_models);
+                if(event_models.size() == 0){
+                    textNullData.setVisibility(View.VISIBLE);
+                } else {
+                    textNullData.setVisibility(View.INVISIBLE);
+                }
             }
         });
     }
@@ -99,16 +107,6 @@ public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
-
-        View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent())
-                .findViewById(Integer.parseInt("2"));
-        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) btnLocation.getLayoutParams();
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_END,0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_START,0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        rlp.setMargins(0, 0, 0, 40);
-
         mMap.setOnMarkerClickListener((Marker marker)->{
             Event_Model event = (Event_Model) marker.getTag();
             LatLng latLng = new LatLng(event.getLat(), event.getLng());

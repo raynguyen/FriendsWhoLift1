@@ -3,9 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:isScrollContainer="true">
+    android:isScrollContainer="true"
+    android:animateLayoutChanges="true">
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll_create_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -38,7 +40,9 @@
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:background="@color/colorAccent"
-                android:paddingHorizontal="4dp"/>
+                android:paddingHorizontal="4dp"
+                android:clickable="true"
+                android:layout_marginBottom="4dp"/>
 
             <RelativeLayout
                 android:id="@+id/layout_create_details"
@@ -217,7 +221,8 @@
                 android:background="@color/colorAccent"
                 android:clickable="true"
                 android:paddingHorizontal="4dp"
-                android:foreground="@drawable/button_ripple">
+                android:foreground="@drawable/button_ripple"
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -265,7 +270,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_create_invitations"
                 android:background="@color/colorAccent"
-                android:paddingHorizontal="4dp">
+                android:paddingHorizontal="4dp"
+                android:clickable="true"
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:id="@+id/text_header3"
@@ -286,6 +293,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_create_locations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_header3">
