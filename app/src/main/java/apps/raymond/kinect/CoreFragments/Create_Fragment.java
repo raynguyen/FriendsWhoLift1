@@ -87,6 +87,7 @@ public class Create_Fragment extends Fragment implements
         return view;
     }
 
+    ToggleButton tglExclusive, tglPrivate, tglPublic;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -108,9 +109,12 @@ public class Create_Fragment extends Fragment implements
         ToggleButton tglMovie = view.findViewById(R.id.toggle_movie);
         ToggleButton tglChill = view.findViewById(R.id.toggle_chill);
 
-        ToggleButton tglExclusive = view.findViewById(R.id.toggle_exclusive);
-        ToggleButton tglPrivate = view.findViewById(R.id.toggle_private);
-        ToggleButton tglPublic = view.findViewById(R.id.toggle_public);
+        tglExclusive = view.findViewById(R.id.toggle_exclusive);
+        tglPrivate = view.findViewById(R.id.toggle_private);
+        tglPublic = view.findViewById(R.id.toggle_public);
+        tglExclusive.setOnCheckedChangeListener(this);
+        tglPrivate.setOnCheckedChangeListener(this);
+        tglPublic.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -125,7 +129,25 @@ public class Create_Fragment extends Fragment implements
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+        //Set the privacy for the event held by the view model.
+        if(isChecked){
+            switch (buttonView.getId()){
+                case R.id.toggle_exclusive:
+                    tglPrivate.setChecked(false);
+                    tglPublic.setChecked(false);
+                    mCreateViewModel.setEventPrivacy(Event_Model.EXCLUSIVE);
+                    return;
+                case R.id.toggle_private:
+                    tglExclusive.setChecked(false);
+                    tglPublic.setChecked(false);
+                    mCreateViewModel.setEventPrivacy(Event_Model.PRIVATE);
+                    return;
+                case R.id.toggle_public:
+                    tglExclusive.setChecked(false);
+                    tglPrivate.setChecked(false);
+                    mCreateViewModel.setEventPrivacy(Event_Model.PUBLIC);
+            }
+        }
     }
 
     private class CreateFragmentAdapter extends FragmentPagerAdapter{
