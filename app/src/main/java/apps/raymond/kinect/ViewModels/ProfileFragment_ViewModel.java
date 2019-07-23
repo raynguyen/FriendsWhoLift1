@@ -4,20 +4,19 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
+import apps.raymond.kinect.Model.DataModel;
 import apps.raymond.kinect.MapsPackage.Location_Model;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**
  * ViewModel class that holds information regarding a given profile.
  */
 public class ProfileFragment_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
+    private DataModel mRepo = new DataModel();
     private MutableLiveData<User_Model> mProfileModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mProfileConnections = new MutableLiveData<>();
     private MutableLiveData<List<Location_Model>> mProfileLocations = new MutableLiveData<>();

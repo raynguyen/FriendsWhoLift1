@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;

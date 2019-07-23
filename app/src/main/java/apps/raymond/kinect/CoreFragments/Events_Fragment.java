@@ -21,10 +21,10 @@ import android.widget.TextView;
 import java.util.List;
 
 import apps.raymond.kinect.EventDetail.EventDetail_Activity;
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.EventClickListener{

@@ -7,7 +7,7 @@
  * Add fields during registration for display name. ALTNERNATIVELY, ON LOG IN POP A USER FORM FOR USER TO SET UP THEIR ACCOUNT!!!!!!
  */
 
-package apps.raymond.kinect.UserProfile;
+package apps.raymond.kinect.ObjectModels;
 
 import android.os.Parcel;
 import android.os.Parcelable;

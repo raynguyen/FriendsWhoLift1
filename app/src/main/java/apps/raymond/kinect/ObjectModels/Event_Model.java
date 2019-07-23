@@ -1,5 +1,5 @@
 
-package apps.raymond.kinect;
+package apps.raymond.kinect.ObjectModels;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -19,12 +19,12 @@ public class Event_Model implements Parcelable{
     public static final String MOVIE = "movies";
     public static final String CHILL = "chill";
     public static final String CONCERT = "concert";
-    public static final int EXCLUSIVE = 0; //Invitation only. Not visible on map.
-    public static final int PRIVATE = 1; //Invitation only. Can request to attend.
-    public static final int PUBLIC = 2; //Open to all users.
+    public static final int EXCLUSIVE = 1; //Invitation only. Not visible on map.
+    public static final int PRIVATE = 2; //Invitation only. Can request to attend.
+    public static final int PUBLIC = 3; //Open to all users.
     private String creator, name, desc;
     private double lat, lng;
-    private int privacy = PUBLIC;
+    private int privacy = 0;
     private List<String> tags, primes;
     private String address;
     private int attending; //Field starts at 0 by default as creation of the document in DB increments by one per user we add.

@@ -33,7 +33,7 @@
  *
  */
 
-package apps.raymond.kinect.FireBaseRepo;
+package apps.raymond.kinect.Model;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
@@ -64,18 +64,18 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.EventDetail.Message_Model;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**
  * Repository class to abstract data communication between the application and Firebase backend.
  *
  * ToDo: Check to see how many times this Repo is instantiated. We want it to be only once, when the CoreActivity loads. -> Static utility class // injection?
  */
-public class Core_FireBaseRepo {
-    private static final String TAG = "Core_FireBaseRepo";
+public class DataModel {
+    private static final String TAG = "DataModel";
     private static final String USERS = "Users";
     private static final String VISIBILITY = "visibility";
     private static final String PUBLIC = "public";
@@ -99,12 +99,12 @@ public class Core_FireBaseRepo {
     private CollectionReference userCollection = mStore.collection(USERS);
     private CollectionReference eventCollection = mStore.collection(EVENTS);
 
-    private MutableLiveData<QuerySnapshot> mPubLicEvents = new MutableLiveData<>();
+    private MutableLiveData<QuerySnapshot> mSuggestedEvents = new MutableLiveData<>();
 
     /*ToDo: There should be no Java code in the Repository class.
         This method should not hold the mUserEmail or curUserMode, these should be passed as required to repository calls.
     */
-    public Core_FireBaseRepo() {
+    public DataModel() {
     }
 
     //GOOD
@@ -432,7 +432,7 @@ public class Core_FireBaseRepo {
         return query.get().continueWith((@NonNull Task<QuerySnapshot> task)-> {
             List<Event_Model> result = new ArrayList<>();
             if(task.isSuccessful() && task.getResult()!=null){
-                mPubLicEvents.setValue(task.getResult());
+                mSuggestedEvents.setValue(task.getResult());
                 for(QueryDocumentSnapshot document: task.getResult()){
                     result.add(document.toObject(Event_Model.class));
                 }

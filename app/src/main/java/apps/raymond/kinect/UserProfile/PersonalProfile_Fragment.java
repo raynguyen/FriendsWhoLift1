@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.StartUp.Login_Activity;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;

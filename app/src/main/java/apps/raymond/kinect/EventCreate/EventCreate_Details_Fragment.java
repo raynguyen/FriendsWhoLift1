@@ -46,9 +46,9 @@ import java.util.List;
 import java.util.Locale;
 
 import apps.raymond.kinect.CoreFragments.AddUsers_Adapter;
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 public class EventCreate_Details_Fragment extends Fragment implements
         AddUsers_Adapter.CheckProfileInterface, Spinner.OnItemSelectedListener,
@@ -119,7 +119,7 @@ public class EventCreate_Details_Fragment extends Fragment implements
         });
         txtDateStart.setText(mDateFormat.format(mGregCalendar.getTime()));
 
-        CalendarView calendarView = view.findViewById(R.id.calendar_view);
+        CalendarView calendarView = view.findViewById(R.id.calendar_create_event);
         calendarView.setOnDateChangeListener((CalendarView cView, int year, int month, int monthDay)-> {
             txtDateStart.setText(mDateFormat.format(mGregCalendar.getTime()));
             mGregCalendar.set(year,month,monthDay);

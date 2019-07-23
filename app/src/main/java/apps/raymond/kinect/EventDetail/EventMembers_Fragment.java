@@ -22,7 +22,7 @@ import java.util.List;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 public class EventMembers_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener{

@@ -8,12 +8,12 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.kinect.Event_Model;
-import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
+import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 public class EventDetail_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepository;
+    private DataModel mRepository;
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<Event_Model> mEventModel = new MutableLiveData<>();
     private MutableLiveData<List<Message_Model>> mEventMessages = new MutableLiveData<>();
@@ -21,7 +21,7 @@ public class EventDetail_ViewModel extends ViewModel {
     private MutableLiveData<List<User_Model>> mEventInvitedList = new MutableLiveData<>();
 
     public EventDetail_ViewModel(){
-        mRepository = new Core_FireBaseRepo();
+        mRepository = new DataModel();
     }
 
             public void setUserModel(User_Model user){

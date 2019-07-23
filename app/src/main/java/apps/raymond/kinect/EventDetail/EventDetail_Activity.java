@@ -34,10 +34,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 //Todo: On Scroll of messages, animate the information hover bar so that it is hidden and all that
 // remains is the information icon on the right panel.

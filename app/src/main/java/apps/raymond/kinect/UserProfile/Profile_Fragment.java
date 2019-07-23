@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;

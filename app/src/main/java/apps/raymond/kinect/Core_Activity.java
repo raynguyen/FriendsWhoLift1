@@ -66,8 +66,9 @@ import apps.raymond.kinect.CoreFragments.Events_Fragment;
 import apps.raymond.kinect.CoreFragments.Explore_Fragment;
 import apps.raymond.kinect.EventCreate.EventCreate_Activity;
 import apps.raymond.kinect.Invitations.PersonalMessages_Fragment;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 /**
@@ -214,10 +215,6 @@ public class Core_Activity extends AppCompatActivity {
                         .commit();
                 return true;
             case R.id.action_event_create:
-                Intent eventCreateIntent = new Intent(this, EventCreate_Activity.class);
-                eventCreateIntent.putExtra("user",mViewModel.getUserModel().getValue());
-                startActivityForResult(eventCreateIntent,EVENTCREATE);
-                overridePendingTransition(R.anim.slide_in_down,R.anim.slide_out_down);
                 return true;
         }
         return false;

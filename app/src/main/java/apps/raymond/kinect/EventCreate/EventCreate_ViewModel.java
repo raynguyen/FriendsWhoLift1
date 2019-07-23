@@ -8,14 +8,14 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Event_Model;
-import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
+import apps.raymond.kinect.ObjectModels.Event_Model;
+import apps.raymond.kinect.Model.DataModel;
 import apps.raymond.kinect.MapsPackage.Location_Model;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 //Create more fields that are set from the EventDetails and Map fragments. When the user clicks create event
 //from the activity, get all the required fields from this viewmodel and create the event from the activity.
 public class EventCreate_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepo = new Core_FireBaseRepo();
+    private DataModel mRepo = new DataModel();
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
     private MutableLiveData<String> mEventName = new MutableLiveData<>();
     private MutableLiveData<String> mEventDesc = new MutableLiveData<>();

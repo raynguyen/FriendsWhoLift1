@@ -25,6 +25,7 @@ import java.util.Locale;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.MapsPackage.Location_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 public class ConnectionRequests_Adapter extends RecyclerView.Adapter<ConnectionRequests_Adapter.RequestViewHolder> {
 

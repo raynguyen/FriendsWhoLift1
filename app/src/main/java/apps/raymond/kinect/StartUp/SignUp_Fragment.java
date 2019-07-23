@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.Task;
 
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.VerticalTextView;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 /*
 ToDo: If the user email already exists, the app will continue to stay on the pending screen.

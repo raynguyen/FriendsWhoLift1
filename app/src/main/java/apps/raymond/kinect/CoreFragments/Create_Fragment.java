@@ -12,20 +12,27 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 import apps.raymond.kinect.ViewModels.EventCreate_ViewModel;
 
@@ -84,30 +91,116 @@ public class Create_Fragment extends Fragment implements
             layoutInvitations.setVisibility(View.GONE);
             layoutLocations.setVisibility(View.VISIBLE);
         });
-        return view;
-    }
 
-    ToggleButton tglExclusive, tglPrivate, tglPublic;
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_create_invite);
-        AddUsers_Adapter adapter = new AddUsers_Adapter(this);
-        recyclerView.setAdapter(adapter);
+        Button btnCreate = view.findViewById(R.id.button_create_event);
+        btnCreate.setOnClickListener((View v)->{
+            Log.w(TAG,"Creating event");
+        });
 
-        mViewModel.getPublicUsers().observe(requireActivity(), (List<User_Model> publicUsers) -> {
-            if(publicUsers != null){
-                adapter.setData(publicUsers);
+        mCreateViewModel.getValid().observe(this, (Boolean b)->{
+            if(b){
+                btnCreate.setVisibility(View.VISIBLE);
+            } else {
+                btnCreate.setVisibility(View.GONE);
             }
         });
 
+        CalendarView calender = view.findViewById(R.id.calendar_create_event);
+        calender.setOnDateChangeListener((@NonNull CalendarView calendar, int year, int month,
+                                          int dayOfMonth)->
+                mCreateViewModel.setEventStart(calendar.getDate()));
+        return view;
+    }
+
+    private ToggleButton tglExclusive, tglPrivate, tglPublic; //Buttons pertaining to event privacy.
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         TextInputEditText editName = view.findViewById(R.id.text_create_name);
+        editName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Do nothing.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //Do nothing.
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mCreateViewModel.setEventName(s.toString());
+            }
+        });
+
         TextInputEditText editDescription = view.findViewById(R.id.text_create_description);
+        editDescription.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Do nothing.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //Do nothing.
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mCreateViewModel.setEventDesc(s.toString());
+            }
+        });
+
         ToggleButton tglSports = view.findViewById(R.id.toggle_sports);
         ToggleButton tglDrinks = view.findViewById(R.id.toggle_drinks);
         ToggleButton tglFood = view.findViewById(R.id.toggle_food);
         ToggleButton tglMovie = view.findViewById(R.id.toggle_movie);
         ToggleButton tglChill = view.findViewById(R.id.toggle_chill);
+        ToggleButton tglConcert = view.findViewById(R.id.toggle_concert);
+        tglSports.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if(isChecked){
+                mCreateViewModel.addEventPrime(Event_Model.SPORTS);
+            } else {
+                mCreateViewModel.removeEventPrime(Event_Model.SPORTS);
+            }
+        });
+        tglDrinks.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if(isChecked){
+                mCreateViewModel.addEventPrime(Event_Model.DRINKS);
+            } else {
+                mCreateViewModel.removeEventPrime(Event_Model.DRINKS);
+            }
+        });
+        tglFood.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if(isChecked){
+                mCreateViewModel.addEventPrime(Event_Model.FOOD);
+            } else {
+                mCreateViewModel.removeEventPrime(Event_Model.FOOD);
+            }
+        });
+        tglMovie.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if(isChecked){
+                mCreateViewModel.addEventPrime(Event_Model.MOVIE);
+            } else {
+                mCreateViewModel.removeEventPrime(Event_Model.MOVIE);
+            }
+        });
+        tglChill.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if(isChecked){
+                mCreateViewModel.addEventPrime(Event_Model.CHILL);
+            } else {
+                mCreateViewModel.removeEventPrime(Event_Model.CHILL);
+            }
+        });
+        tglConcert.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if(isChecked){
+                mCreateViewModel.addEventPrime(Event_Model.CONCERT);
+            } else {
+                mCreateViewModel.removeEventPrime(Event_Model.CONCERT);
+            }
+        });
 
         tglExclusive = view.findViewById(R.id.toggle_exclusive);
         tglPrivate = view.findViewById(R.id.toggle_private);
@@ -115,6 +208,15 @@ public class Create_Fragment extends Fragment implements
         tglExclusive.setOnCheckedChangeListener(this);
         tglPrivate.setOnCheckedChangeListener(this);
         tglPublic.setOnCheckedChangeListener(this);
+
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_create_invite);
+        AddUsers_Adapter adapter = new AddUsers_Adapter(this);
+        recyclerView.setAdapter(adapter);
+        mViewModel.getPublicUsers().observe(requireActivity(), (List<User_Model> publicUsers) -> {
+            if(publicUsers != null){
+                adapter.setData(publicUsers);
+            }
+        });
     }
 
     @Override

@@ -26,9 +26,9 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Event_Model;
-import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
+import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**
  * ViewModel class for the core application. When an instance of this ViewModel is first created, we
@@ -49,7 +49,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  */
 public class Core_ViewModel extends ViewModel {
     private static final String TAG = "Core_ViewModel";
-    private Core_FireBaseRepo mRepository;
+    private DataModel mRepository;
     private MutableLiveData<String> mUserID = new MutableLiveData<>();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
@@ -65,7 +65,7 @@ public class Core_ViewModel extends ViewModel {
     private MutableLiveData<List<User_Model>> mPublicUsers = new MutableLiveData<>();
 
     public Core_ViewModel(){
-        mRepository = new Core_FireBaseRepo();
+        mRepository = new DataModel();
 
         //MediatorLiveData should be moved to the Repository class.
         mPopularEvents.addSource(mPublicEvents, (List<Event_Model> events) -> checkListForUser());

@@ -26,12 +26,12 @@ import com.google.android.gms.tasks.Task;
 import java.util.Calendar;
 
 import apps.raymond.kinect.DialogFragments.YesNoDialog;
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.MapsPackage.Locations_MapFragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.SoftInputAnimator.FluidContentResizer;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 //ToDo: The attending count is incorrect.
 public class EventCreate_Activity extends AppCompatActivity implements

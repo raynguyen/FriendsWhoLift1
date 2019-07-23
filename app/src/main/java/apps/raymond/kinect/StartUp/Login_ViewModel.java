@@ -6,8 +6,8 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.Task;
 
-import apps.raymond.kinect.FireBaseRepo.Core_FireBaseRepo;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**
  * ViewModel class for handling Login and SignUp procedures.
@@ -27,7 +27,7 @@ import apps.raymond.kinect.UserProfile.User_Model;
  *  registering a new user with the project.
  */
 public class Login_ViewModel extends ViewModel {
-    private Core_FireBaseRepo mRepository = new Core_FireBaseRepo();
+    private DataModel mRepository = new DataModel();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
 
     /**

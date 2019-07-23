@@ -12,12 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.List;
 import java.util.Map;
 
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;

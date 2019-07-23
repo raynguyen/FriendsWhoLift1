@@ -20,7 +20,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.List;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.UserProfile.User_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 public class ConnectionRequests_Fragment extends Fragment implements

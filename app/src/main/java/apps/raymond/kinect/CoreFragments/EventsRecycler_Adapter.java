@@ -19,7 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import apps.raymond.kinect.Event_Model;
+import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 
 public class EventsRecycler_Adapter extends RecyclerView.Adapter<EventsRecycler_Adapter.EventViewHolder>
