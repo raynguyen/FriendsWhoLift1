@@ -24,22 +24,23 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
 import java.util.List;
-import java.util.Locale;
 
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ObjectModels.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
-import apps.raymond.kinect.ViewModels.EventCreate_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 //ToDo: We do not bind user input to a ViewModel or something that observes life cycles. Consider
 // implementing this in the future.
 public class Create_Fragment extends Fragment implements
-    AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener {
+    AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener,
+        GoogleMap.OnMarkerClickListener {
     private static final String TAG = "CreateFragment: ";
     private Core_ViewModel mViewModel;
     private EventCreate_ViewModel mCreateViewModel;
@@ -95,6 +96,7 @@ public class Create_Fragment extends Fragment implements
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)->{
             Log.w(TAG,"Creating event");
+            mCreateViewModel.createEventModel();
         });
 
         mCreateViewModel.getValid().observe(this, (Boolean b)->{
@@ -217,16 +219,20 @@ public class Create_Fragment extends Fragment implements
                 adapter.setData(publicUsers);
             }
         });
+
+
     }
 
     @Override
     public void addToCheckedList(User_Model clickedUser) {
         Log.w(TAG,"ADD THE USER TO THE LIST TO INVITE..");
+        mCreateViewModel.addInvitedUser(clickedUser);
     }
 
     @Override
     public void removeFromCheckedList(User_Model clickedUser) {
         Log.w(TAG,"REMOVE USER FROM INVITE LIST..");
+        mCreateViewModel.removeInvitedUser(clickedUser);
     }
 
     @Override
@@ -250,6 +256,15 @@ public class Create_Fragment extends Fragment implements
                     mCreateViewModel.setEventPrivacy(Event_Model.PUBLIC);
             }
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Log.w(TAG,"Clicked on marker!");
+        LatLng latLng = marker.getPosition();
+        mCreateViewModel.setEventLat(latLng.latitude);
+        mCreateViewModel.setEventLng(latLng.longitude);
+        return true;
     }
 
     private class CreateFragmentAdapter extends FragmentPagerAdapter{

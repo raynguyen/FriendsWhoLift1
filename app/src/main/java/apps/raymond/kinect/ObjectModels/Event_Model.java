@@ -48,39 +48,34 @@ public class Event_Model implements Parcelable{
     }
 
     public Event_Model(String creator, String name, String desc, int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited){
+                       ArrayList<String> primes){
         this.creator = creator;
         this.name = name;
         this.desc = desc;
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
-        this.invited = invited;
     }
 
     public Event_Model(String creator, String name, String desc,int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited, long long1){
+                       ArrayList<String> primes, long long1){
         this.creator = creator;
         this.name = name;
         this.desc = desc;
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
-        this.invited = invited;
         this.long1 = long1;
     }
 
     public Event_Model(String creator, String name, String desc, int privacy, ArrayList<String> tags,
-                       ArrayList<String> primes, int invited, String address, double lat, double lng,
-                       long long1) {
+                       ArrayList<String> primes, long long1, double lat, double lng) {
         this.creator = creator;
         this.name = name;
         this.desc = desc;
         this.privacy = privacy;
         this.tags = tags;
         this.primes = primes;
-        this.invited = invited;
-        this.address = address;
         this.lat = lat;
         this.lng = lng;
         this.long1 = long1;

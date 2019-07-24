@@ -21,7 +21,7 @@ import java.util.List;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ObjectModels.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 public class EventInvitations_Fragment extends Fragment implements
         EventInvitations_Adapter.EventInvitationInterface{

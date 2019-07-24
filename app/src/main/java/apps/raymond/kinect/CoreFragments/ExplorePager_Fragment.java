@@ -24,7 +24,7 @@ import java.util.Map;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 
 public class ExplorePager_Fragment extends Fragment implements

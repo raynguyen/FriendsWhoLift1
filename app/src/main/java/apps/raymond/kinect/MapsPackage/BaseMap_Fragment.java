@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import apps.raymond.kinect.CoreFragments.Create_Fragment;
 import apps.raymond.kinect.R;
 
 /**
@@ -83,7 +84,6 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
         return v;
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -94,6 +94,10 @@ public class BaseMap_Fragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if(getParentFragment() instanceof GoogleMap.OnMarkerClickListener){
+            mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) getParentFragment());
+        }
+
         try{
             googleMap.setMyLocationEnabled(true);
             View btnLocation = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent())

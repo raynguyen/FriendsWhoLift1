@@ -54,7 +54,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,12 +63,10 @@ import java.util.List;
 import apps.raymond.kinect.CoreFragments.Create_Fragment;
 import apps.raymond.kinect.CoreFragments.Events_Fragment;
 import apps.raymond.kinect.CoreFragments.Explore_Fragment;
-import apps.raymond.kinect.EventCreate.EventCreate_Activity;
 import apps.raymond.kinect.Invitations.PersonalMessages_Fragment;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.UserProfile.Profile_Activity;
 import apps.raymond.kinect.ObjectModels.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
 
 /**
  * Todo:

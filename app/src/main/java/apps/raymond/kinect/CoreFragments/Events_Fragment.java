@@ -25,7 +25,7 @@ import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.ObjectModels.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.EventClickListener{
     private static final String TAG = "Events_Fragment:";

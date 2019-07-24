@@ -18,7 +18,7 @@ import apps.raymond.kinect.EventDetail.EventDetail_Activity;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ObjectModels.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 /**
  * Fragment that is inflated as required by the ExplorePager_Adapter. This is a simple Fragment that

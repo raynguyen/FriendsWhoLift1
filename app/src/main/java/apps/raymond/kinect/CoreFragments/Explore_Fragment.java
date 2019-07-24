@@ -41,7 +41,7 @@ import apps.raymond.kinect.Interfaces.ExploreEventsInterface;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ObjectModels.User_Model;
-import apps.raymond.kinect.ViewModels.Core_ViewModel;
+import apps.raymond.kinect.Core_ViewModel;
 
 /*
 ToDo:

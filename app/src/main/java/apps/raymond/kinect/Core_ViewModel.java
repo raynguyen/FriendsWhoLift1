@@ -11,7 +11,7 @@ relevant information and filtering.
  */
 
 
-package apps.raymond.kinect.ViewModels;
+package apps.raymond.kinect;
 
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
