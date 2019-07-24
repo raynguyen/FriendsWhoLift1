@@ -2,6 +2,7 @@ package apps.raymond.kinect.CoreFragments;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class EventCreate_ViewModel extends ViewModel {
     private int eventPrivacy = 0;
     private long eventStart = 0;
     private List<String> eventPrimes = new ArrayList<>(5);
-    private List<User_Model> invitedUsers;
+    private List<User_Model> invitedUsers = new ArrayList<>();
 
     public EventCreate_ViewModel(){
         mRepo = new DataModel();
@@ -114,8 +115,32 @@ public class EventCreate_ViewModel extends ViewModel {
                 lat,
                 lng
         );
-
-        mRepo.createEvent(mEventModel);
+        testMethod();
+        //mRepo.createEvent(mEventModel);
         //ToDo: Add field in our Model class that is set to true for successful event creates that is observed via transform here.
+
+
+
+
+    }
+
+    public void sendInvitations(){
+        mRepo.sendEventInvites(mEventModel, invitedUsers);
+    }
+
+
+    public void testMethod(){
+        Log.w("EventCreateModel","Event model is: "+mEventModel.getName()+
+                mEventModel.getCreator() + " " +
+                mEventModel.getDesc() + " " +
+                mEventModel.getLat() + " " +
+                mEventModel.getLng() + " " +
+                mEventModel.getLong1() + " " +
+                mEventModel.getPrivacy() + " " +
+                        mEventModel.getPrimes().toString()
+                );
+
+        Log.w("EventCreateModel","List of invitees: "+ invitedUsers.size());
+
     }
 }

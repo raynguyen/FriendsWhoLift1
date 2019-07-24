@@ -9,6 +9,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
@@ -64,8 +65,6 @@ public class Create_Fragment extends Fragment implements
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
         tabLayout.setupWithViewPager(viewPager);
 
-        NestedScrollView scrollContainer = view.findViewById(R.id.scroll_create_container);
-
         TextView header1 = view.findViewById(R.id.text_header1);
         ViewGroup header2  = view.findViewById(R.id.layout_header2);
         ViewGroup header3 = view.findViewById(R.id.layout_header3);
@@ -75,19 +74,22 @@ public class Create_Fragment extends Fragment implements
         ViewGroup layoutLocations = view.findViewById(R.id.layout_create_locations);
 
         header1.setOnClickListener((View v)->{
-            scrollContainer.post(() -> scrollContainer.smoothScrollTo(0, header1.getTop()));
-            layoutDetails.setVisibility(View.VISIBLE);
-            layoutInvitations.setVisibility(View.GONE);
-            layoutLocations.setVisibility(View.GONE);
+            if(layoutDetails.getVisibility() == View.VISIBLE){
+                layoutDetails.setVisibility(View.GONE);
+                header1.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+            } else {
+                layoutDetails.setVisibility(View.VISIBLE);
+                layoutInvitations.setVisibility(View.GONE);
+                layoutLocations.setVisibility(View.GONE);
+                header1.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_up_black_24dp, 0);
+            }
         });
         header2.setOnClickListener((View v)->{
-            scrollContainer.post(() -> scrollContainer.smoothScrollTo(0, header2.getTop()));
             layoutDetails.setVisibility(View.GONE);
             layoutInvitations.setVisibility(View.VISIBLE);
             layoutLocations.setVisibility(View.GONE);
         });
         header3.setOnClickListener((View v)->{
-            scrollContainer.post(() -> scrollContainer.smoothScrollTo(0, header3.getTop()));
             layoutDetails.setVisibility(View.GONE);
             layoutInvitations.setVisibility(View.GONE);
             layoutLocations.setVisibility(View.VISIBLE);
@@ -95,7 +97,6 @@ public class Create_Fragment extends Fragment implements
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)->{
-            Log.w(TAG,"Creating event");
             mCreateViewModel.createEventModel();
         });
 
