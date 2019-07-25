@@ -1,6 +1,17 @@
 package apps.raymond.kinect.CoreFragments;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,34 +23,21 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
 import java.util.List;
 
-import apps.raymond.kinect.ObjectModels.Event_Model;
-import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
-import apps.raymond.kinect.R;
-import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
+import apps.raymond.kinect.ObjectModels.Event_Model;
+import apps.raymond.kinect.ObjectModels.User_Model;
+import apps.raymond.kinect.R;
 
 //ToDo: We do not bind user input to a ViewModel or something that observes life cycles. Consider
 // implementing this in the future.
@@ -65,9 +63,12 @@ public class Create_Fragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
         ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
-        CreateFragmentAdapter pagerAdapter = new CreateFragmentAdapter(getChildFragmentManager());
+        CreatePagerAdapter pagerAdapter = new CreatePagerAdapter(getChildFragmentManager());
         //viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
+        TabLayoutMediator tabMediator = new TabLayoutMediator(tabLayout, viewPager, ->{
+
+        });
         //tabLayout.setupWithViewPager(viewPager);
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
@@ -276,9 +277,9 @@ public class Create_Fragment extends Fragment implements
         return true;
     }
 
-    private class CreateFragmentAdapter extends FragmentPagerAdapter {
+    private class CreatePagerAdapter extends FragmentPagerAdapter {
 
-        CreateFragmentAdapter(FragmentManager fm){
+        CreatePagerAdapter(FragmentManager fm){
             super(fm);
         }
 
