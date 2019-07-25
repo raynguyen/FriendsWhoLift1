@@ -6,34 +6,33 @@
     android:layout_height="wrap_content"
     android:paddingHorizontal="4dp">
 
-    <!--
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layout_create_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:hint="@string/event_desc">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/text_create_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minLines="2"/>
-    </android.support.design.widget.TextInputLayout>
-    -->
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/text_primary_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:layout_below="@id/layout_create_desc"
         android:text="@string/primary_tags"
         android:drawableEnd="@drawable/ic_info_outline_black_24dp"
         android:drawableTint="@color/blueish"
         android:gravity="center_vertical"
         android:drawablePadding="12dp"/>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/layout_primary_tags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,21 +44,21 @@
         android:layout_marginEnd="24dp"
         android:weightSum="6">
 
-        <ToggleButton
+        <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/toggle_sports"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/toggle_fitness"
             style="@style/PrimaryToggle"/>
-        <ToggleButton
+        <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/toggle_food"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/toggle_food"
             style="@style/PrimaryToggle"/>
-        <ToggleButton
+        <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/toggle_drinks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -73,21 +72,21 @@
             android:layout_weight="1"
             android:background="@drawable/toggle_movie"
             style="@style/PrimaryToggle"/>
-        <ToggleButton
+        <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/toggle_chill"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/toggle_chill"
             style="@style/PrimaryToggle"/>
-        <ToggleButton
+        <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/toggle_concert"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/toggle_concert"
             style="@style/PrimaryToggle"/>
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <TextView
         android:id="@+id/text_privacy_header"

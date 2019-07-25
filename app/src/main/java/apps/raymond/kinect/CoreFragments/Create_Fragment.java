@@ -4,12 +4,13 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -63,17 +64,16 @@ public class Create_Fragment extends Fragment implements
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
-        ViewPager viewPager = view.findViewById(R.id.pager_create_locations);
+        ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
         CreateFragmentAdapter pagerAdapter = new CreateFragmentAdapter(getChildFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
+        //viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
-        tabLayout.setupWithViewPager(viewPager);
+        //tabLayout.setupWithViewPager(viewPager);
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)-> mCreateViewModel.createEventModel());
 
         mCreateViewModel.getValid().observe(this, (Boolean b)->{
-            Log.w(TAG,"ARE YOU FUCKED?");
             if(b){
                 btnCreate.setVisibility(View.VISIBLE);
             } else {
@@ -97,8 +97,6 @@ public class Create_Fragment extends Fragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        /*
         TextInputEditText editName = view.findViewById(R.id.text_create_name);
         editName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -115,9 +113,8 @@ public class Create_Fragment extends Fragment implements
             public void afterTextChanged(Editable s) {
                 mCreateViewModel.setEventName(s.toString());
             }
-        });*/
+        });
 
-        /*
         TextInputEditText editDescription = view.findViewById(R.id.text_create_description);
         editDescription.addTextChangedListener(new TextWatcher() {
             @Override
@@ -134,7 +131,7 @@ public class Create_Fragment extends Fragment implements
             public void afterTextChanged(Editable s) {
                 mCreateViewModel.setEventDesc(s.toString());
             }
-        });*/
+        });
 
         ToggleButton tglSports = view.findViewById(R.id.toggle_sports);
         ToggleButton tglDrinks = view.findViewById(R.id.toggle_drinks);
@@ -209,8 +206,8 @@ public class Create_Fragment extends Fragment implements
         ViewGroup layoutInvitations = view.findViewById(R.id.layout_create_invitations);
         ViewGroup layoutLocations = view.findViewById(R.id.layout_create_locations);
 
-        LinearLayout.LayoutParams show = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1.0f);
-        LinearLayout.LayoutParams hide = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.0f);
+        LinearLayoutCompat.LayoutParams show = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1.0f);
+        LinearLayoutCompat.LayoutParams hide = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f);
         /*
         ToDo: There is a Fatal error when hiding the locations view that crashes the app.
          Possible to do with hiding fragments?

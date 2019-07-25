@@ -14,7 +14,6 @@
             android:paddingHorizontal="4dp"
             android:fitsSystemWindows="true">
 
-        <!--
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_event_name"
                 android:layout_width="match_parent"
@@ -27,7 +26,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="22sp" />
             </com.google.android.material.textfield.TextInputLayout>
-            -->
 
             <TextView
                 android:id="@+id/text_header1"
@@ -105,21 +103,22 @@
                     android:layout_height="wrap_content">
                 </androidx.appcompat.widget.SearchView>
 
-                <androidx.viewpager.widget.ViewPager
+                <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/flipper_create_invitations"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/search_invite_users"
                     android:layout_alignParentBottom="true">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_create_invite"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
-                    </androidx.recyclerview.widget.RecyclerView>
+                </androidx.viewpager2.widget.ViewPager2>
 
-                </androidx.viewpager.widget.ViewPager>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_create_invite"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/search_invite_users"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+                </androidx.recyclerview.widget.RecyclerView>
 
             </RelativeLayout>
 
@@ -166,14 +165,15 @@
                     android:layout_height="wrap_content">
                 </com.google.android.material.tabs.TabLayout>
 
-                <androidx.core.view.ViewPager
+
+                <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/pager_create_locations"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_below="@id/tabs_create_locations"
                     android:layout_alignParentBottom="true"
                     android:padding="4dp">
-                </androidx.core.view.ViewPager>
+                </androidx.viewpager2.widget.ViewPager2>
             </RelativeLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
