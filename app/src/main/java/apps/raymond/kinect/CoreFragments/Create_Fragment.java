@@ -98,6 +98,7 @@ public class Create_Fragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        /*
         TextInputEditText editName = view.findViewById(R.id.text_create_name);
         editName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -114,8 +115,9 @@ public class Create_Fragment extends Fragment implements
             public void afterTextChanged(Editable s) {
                 mCreateViewModel.setEventName(s.toString());
             }
-        });
+        });*/
 
+        /*
         TextInputEditText editDescription = view.findViewById(R.id.text_create_description);
         editDescription.addTextChangedListener(new TextWatcher() {
             @Override
@@ -132,7 +134,7 @@ public class Create_Fragment extends Fragment implements
             public void afterTextChanged(Editable s) {
                 mCreateViewModel.setEventDesc(s.toString());
             }
-        });
+        });*/
 
         ToggleButton tglSports = view.findViewById(R.id.toggle_sports);
         ToggleButton tglDrinks = view.findViewById(R.id.toggle_drinks);
