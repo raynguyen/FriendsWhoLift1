@@ -3,9 +3,10 @@ package apps.raymond.kinect.SoftInputAnimator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 public class FluidContentResizer {
 

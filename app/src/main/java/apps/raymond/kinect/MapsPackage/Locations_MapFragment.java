@@ -1,15 +1,17 @@
 package apps.raymond.kinect.MapsPackage;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -36,7 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /*
 ToDo: When searching the Locations_Model recycler, slide up to hide the MapView and only show recycler.
@@ -78,12 +80,12 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
     }
 
     //private String mUserID;
-    private ProfileActivity_ViewModel mViewModel;
+    private Profile_ViewModel mViewModel;
     private boolean mFlagProfile;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
+        mViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
         if(getArguments()!=null){
             //mUserID = getArguments().getString("userid");
             mFlagProfile = getArguments().getBoolean("flag");
@@ -155,7 +157,6 @@ public class Locations_MapFragment extends BaseMap_Fragment implements OnMapRead
 
         final RecyclerView recyclerView = view.findViewById(R.id.recycler_locations);
         SearchView mSearchView = view.findViewById(R.id.searchview_locations);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new Locations_Adapter(this);
         recyclerView.setAdapter(mAdapter);
 

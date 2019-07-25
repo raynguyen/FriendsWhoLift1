@@ -3,7 +3,8 @@ package apps.raymond.kinect.MapsPackage;
 import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 

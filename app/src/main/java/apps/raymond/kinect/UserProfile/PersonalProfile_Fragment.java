@@ -1,33 +1,37 @@
 package apps.raymond.kinect.UserProfile;
 
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.material.tabs.TabLayout;
+
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.StartUp.Login_Activity;
-import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class PersonalProfile_Fragment extends Fragment {
-    private ProfileActivity_ViewModel mActivityViewModel;
+    private Profile_ViewModel mActivityViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivityViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
+        mActivityViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
     }
 
     @Nullable
@@ -84,7 +88,7 @@ public class PersonalProfile_Fragment extends Fragment {
         }
     }
 
-    private class ProfilePersonalAdapter extends FragmentStatePagerAdapter{
+    private class ProfilePersonalAdapter extends FragmentStatePagerAdapter {
 
         private ProfilePersonalAdapter(FragmentManager fm){
             super(fm);

@@ -1,11 +1,13 @@
 package apps.raymond.kinect.UserProfile;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,7 @@ import apps.raymond.kinect.DialogFragments.YesNoDialog;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 public class Profile_Fragment extends Fragment implements
@@ -31,7 +33,7 @@ public class Profile_Fragment extends Fragment implements
     private static final String PROFILE_ID = "profileID";
     private static final String YESNO_DIALOG = "dialog";
     private ProfileFragment_ViewModel mFragViewModel;
-    private ProfileActivity_ViewModel mActivityViewModel;
+    private Profile_ViewModel mActivityViewModel;
     private ViewProfileInterface mInterface;
 
     public interface ViewProfileInterface {
@@ -65,7 +67,7 @@ public class Profile_Fragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragViewModel = ViewModelProviders.of(this).get(ProfileFragment_ViewModel.class);
-        mActivityViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
+        mActivityViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
         try{
             User_Model profileModel = (User_Model) getArguments().get(PROFILE_MODEL);
             mFragViewModel.setProfileModel(profileModel);

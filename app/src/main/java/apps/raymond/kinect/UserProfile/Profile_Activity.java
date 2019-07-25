@@ -1,18 +1,19 @@
 package apps.raymond.kinect.UserProfile;
 
 import android.app.PendingIntent;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.gms.tasks.Task;
 
@@ -27,7 +28,7 @@ import apps.raymond.kinect.ImageBroadcastReceiver;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 /**
  * Activity class that is loaded when we want to view a User's profile. If the activity is loaded
@@ -50,13 +51,13 @@ public class Profile_Activity extends AppCompatActivity implements
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     private ImageView profilePic;
-    private ProfileActivity_ViewModel mViewModel;
+    private Profile_ViewModel mViewModel;
     private User_Model mUserModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        mViewModel = ViewModelProviders.of(this).get(ProfileActivity_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(Profile_ViewModel.class);
 
         try {
             /*
@@ -129,7 +130,7 @@ public class Profile_Activity extends AppCompatActivity implements
         //ToDo:CHECK IF THE LOCATION EXISTS IN THE USER'S LOCATIONSET, IF YES PROMPT TO ADD, IF NO PROMOPT TO DELETE
         //If the prompt returns a positive click, increment the Text on locations button after we
         //increment number of locations in the user document.
-        //In the activity result, use the ViewModel held by THIS ACTIVITY (ProfileActivity_ViewModel)
+        //In the activity result, use the ViewModel held by THIS ACTIVITY (Profile_ViewModel)
         Log.w(TAG,"PROMPT TO ADD A LOOKUP NAME");
         location.setLookup("TEMPLOOKUP");
         User_Model userModel = mViewModel.getUserModel().getValue();

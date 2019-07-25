@@ -4,10 +4,11 @@ package apps.raymond.kinect.ObjectModels;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 

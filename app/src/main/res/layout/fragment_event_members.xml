@@ -21,14 +21,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginBottom="8dp" />
 
-    <android.support.v7.widget.SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/search_members"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_members_heading">
-    </android.support.v7.widget.SearchView>
+    </androidx.appcompat.widget.SearchView>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/search_members"
@@ -62,5 +62,5 @@
             app:layout_constraintTop_toTopOf="parent">
         </android.support.v7.widget.RecyclerView>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.ConstraintLayout>
 </RelativeLayout>

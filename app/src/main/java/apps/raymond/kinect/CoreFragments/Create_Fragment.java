@@ -1,16 +1,16 @@
 package apps.raymond.kinect.CoreFragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,6 +28,8 @@ import android.widget.ToggleButton;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
 import java.util.List;
@@ -68,9 +70,7 @@ public class Create_Fragment extends Fragment implements
         tabLayout.setupWithViewPager(viewPager);
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
-        btnCreate.setOnClickListener((View v)->{
-            mCreateViewModel.createEventModel();
-        });
+        btnCreate.setOnClickListener((View v)-> mCreateViewModel.createEventModel());
 
         mCreateViewModel.getValid().observe(this, (Boolean b)->{
             Log.w(TAG,"ARE YOU FUCKED?");
@@ -277,7 +277,7 @@ public class Create_Fragment extends Fragment implements
         return true;
     }
 
-    private class CreateFragmentAdapter extends FragmentPagerAdapter{
+    private class CreateFragmentAdapter extends FragmentPagerAdapter {
 
         CreateFragmentAdapter(FragmentManager fm){
             super(fm);

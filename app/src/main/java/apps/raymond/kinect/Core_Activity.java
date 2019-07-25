@@ -44,19 +44,21 @@
 package apps.raymond.kinect;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
@@ -207,7 +209,7 @@ public class Core_Activity extends AppCompatActivity {
             case R.id.action_invitations:
                 PersonalMessages_Fragment fragment = new PersonalMessages_Fragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_core_container,fragment,INV_FRAG)
+                        .replace(R.id.frame_core_container, fragment, INV_FRAG)
                         .addToBackStack(INV_FRAG)
                         .commit();
                 return true;

@@ -35,10 +35,11 @@
 
 package apps.raymond.kinect.ObjectModels;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,10 +65,8 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.EventDetail.Message_Model;
-import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**
  * Repository class to abstract data communication between the application and Firebase backend.

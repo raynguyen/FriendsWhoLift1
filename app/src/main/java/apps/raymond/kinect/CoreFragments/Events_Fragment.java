@@ -1,20 +1,20 @@
 package apps.raymond.kinect.CoreFragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -52,11 +52,10 @@ public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.
         TextView textNull = view.findViewById(R.id.text_events_null);
         SearchView searchView = view.findViewById(R.id.search_events);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
-        ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         EventsRecycler_Adapter adapter = new EventsRecycler_Adapter(this);
         Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView(requireActivity());
 
-        searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
+        //searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(dividerDecoration);
         recyclerView.setAdapter(adapter);

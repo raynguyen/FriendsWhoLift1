@@ -1,24 +1,26 @@
 package apps.raymond.kinect.UserProfile;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class ProfileSettings_Fragment extends Fragment {
-    private ProfileActivity_ViewModel mActivityViewModel;
+    private Profile_ViewModel mActivityViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivityViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
+        mActivityViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
     }
 
     @Nullable

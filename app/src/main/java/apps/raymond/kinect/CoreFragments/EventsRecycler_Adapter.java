@@ -1,8 +1,5 @@
 package apps.raymond.kinect.CoreFragments;
 
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +7,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ import java.util.Locale;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 
+/**
+ * Adapter class that generates the item views for the RecyclerView that contains a user's accepted
+ * events.
+ */
 public class EventsRecycler_Adapter extends RecyclerView.Adapter<EventsRecycler_Adapter.EventViewHolder>
     implements Filterable {
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM dd",Locale.getDefault());

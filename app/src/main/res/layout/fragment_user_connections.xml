@@ -29,12 +29,12 @@
             android:layout_gravity="center_vertical"
             android:tint="@color/blueish"/>
 
-        <android.support.v7.widget.SearchView
+        <androidx.appcompat.widget.SearchView
             android:id="@+id/search_view_connections"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1">
-        </android.support.v7.widget.SearchView>
+        </androidx.appcompat.widget.SearchView>
     </LinearLayout>
 
     <TextView
@@ -50,12 +50,13 @@
         android:layout_height="0dp"
         android:layout_weight=".8">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_suggest_connections"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
-        </android.support.v7.widget.RecyclerView>
+            android:background="@color/white"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+        </androidx.recyclerview.widget.RecyclerView>
 
         <ProgressBar
             android:id="@+id/progress_suggested_connections"
@@ -90,12 +91,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_connections"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
-        </android.support.v7.widget.RecyclerView>
+            android:background="@color/white"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+        </androidx.recyclerview.widget.RecyclerView>
 
         <ProgressBar
             android:id="@+id/progress_events"

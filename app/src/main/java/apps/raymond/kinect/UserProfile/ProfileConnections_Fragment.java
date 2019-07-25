@@ -1,28 +1,28 @@
 package apps.raymond.kinect.UserProfile;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.ProfileRecyclerAdapter;
 import apps.raymond.kinect.R;
-import apps.raymond.kinect.ViewModels.ProfileActivity_ViewModel;
+import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 /**
@@ -32,12 +32,12 @@ import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 public class ProfileConnections_Fragment extends Fragment implements
         ProfileRecyclerAdapter.ProfileClickListener {
 
-    private ProfileActivity_ViewModel mActViewModel;
+    private Profile_ViewModel mActViewModel;
     private ProfileFragment_ViewModel mFragViewModel;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActViewModel = ViewModelProviders.of(requireActivity()).get(ProfileActivity_ViewModel.class);
+        mActViewModel = ViewModelProviders.of(requireActivity()).get(Profile_ViewModel.class);
         if(getParentFragment()!=null){
             mFragViewModel = ViewModelProviders.of(getParentFragment()).get(ProfileFragment_ViewModel.class);
         }
@@ -64,9 +64,6 @@ public class ProfileConnections_Fragment extends Fragment implements
 
         ProfileRecyclerAdapter mConnectionsAdapter = new ProfileRecyclerAdapter(this);
         ProfileRecyclerAdapter mSuggestedAdapter = new ProfileRecyclerAdapter(this);
-
-        recyclerConnections.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerSuggested.setLayoutManager(new LinearLayoutManager(getContext()));
 
         recyclerConnections.setAdapter(mConnectionsAdapter);
         recyclerSuggested.setAdapter(mSuggestedAdapter);

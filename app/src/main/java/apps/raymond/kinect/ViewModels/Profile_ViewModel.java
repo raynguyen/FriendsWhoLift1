@@ -1,9 +1,10 @@
 package apps.raymond.kinect.ViewModels;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,7 +18,7 @@ import apps.raymond.kinect.ObjectModels.User_Model;
 /**
  * ViewModel class that handles database transactions for the current user's profile.
  */
-public class ProfileActivity_ViewModel extends ViewModel {
+public class Profile_ViewModel extends ViewModel {
     private DataModel mRepo = new DataModel();
     private MutableLiveData<User_Model> mUserModel = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mConnections = new MutableLiveData<>();
@@ -25,7 +26,7 @@ public class ProfileActivity_ViewModel extends ViewModel {
     private MutableLiveData<List<User_Model>> mFilteredPublicUsers = new MutableLiveData<>(); //List of public users that are not connected with current user.
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
 
-    public ProfileActivity_ViewModel(){}
+    public Profile_ViewModel(){}
 
     public void setUserModel(User_Model userModel){
         mUserModel.setValue(userModel);
