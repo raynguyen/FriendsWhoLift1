@@ -2,7 +2,11 @@ package apps.raymond.kinect.CoreFragments;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +34,12 @@ public class EventCreate_ViewModel extends ViewModel {
     private long eventStart = 0;
     private List<String> eventPrimes = new ArrayList<>(5);
     private List<User_Model> invitedUsers = new ArrayList<>();
+    private MutableLiveData<Boolean> created = new MutableLiveData<>();
 
     public EventCreate_ViewModel(){
         mRepo = new DataModel();
         mValidEvent.setValue(false);
+        created.setValue(false);
     }
 
     public void setEventName(String eventName) {
@@ -61,6 +67,7 @@ public class EventCreate_ViewModel extends ViewModel {
 
     public void setEventStart(long eventStart){
         this.eventStart = eventStart;
+        validateEventModel();
     }
 
     public void addInvitedUser(User_Model user){
@@ -82,7 +89,6 @@ public class EventCreate_ViewModel extends ViewModel {
     public MutableLiveData<List<Location_Model>> getUserLocations(){
         return mLocations;
     }
-
 
     public MutableLiveData<Boolean> getValid(){
         return mValidEvent;
@@ -116,18 +122,24 @@ public class EventCreate_ViewModel extends ViewModel {
                 lng
         );
         testMethod();
-        //mRepo.createEvent(mEventModel);
-        //ToDo: Add field in our Model class that is set to true for successful event creates that is observed via transform here.
+        mRepo.createEvent(mEventModel).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    created.setValue(true);
+                }
+            }
+        });
+        //ToDo: Add field in our Model class that is set to true for successful event creates that is observed via transform here
+    }
 
-
-
-
+    public MutableLiveData<Boolean> checkCreated(){
+        return created;
     }
 
     public void sendInvitations(){
         mRepo.sendEventInvites(mEventModel, invitedUsers);
     }
-
 
     public void testMethod(){
         Log.w("EventCreateModel","Event model is: "+mEventModel.getName()+

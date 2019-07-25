@@ -22,7 +22,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -56,7 +58,8 @@ public class Create_Fragment extends Fragment implements
     //UI animations are set in the onCreateView callback whereas input control is set in onViewCreated.
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
         ViewPager viewPager = view.findViewById(R.id.pager_create_locations);
@@ -65,42 +68,13 @@ public class Create_Fragment extends Fragment implements
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
         tabLayout.setupWithViewPager(viewPager);
 
-        TextView header1 = view.findViewById(R.id.text_header1);
-        ViewGroup header2  = view.findViewById(R.id.layout_header2);
-        ViewGroup header3 = view.findViewById(R.id.layout_header3);
-
-        ViewGroup layoutDetails = view.findViewById(R.id.layout_create_details);
-        ViewGroup layoutInvitations = view.findViewById(R.id.layout_create_invitations);
-        ViewGroup layoutLocations = view.findViewById(R.id.layout_create_locations);
-
-        header1.setOnClickListener((View v)->{
-            if(layoutDetails.getVisibility() == View.VISIBLE){
-                layoutDetails.setVisibility(View.GONE);
-                header1.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-            } else {
-                layoutDetails.setVisibility(View.VISIBLE);
-                layoutInvitations.setVisibility(View.GONE);
-                layoutLocations.setVisibility(View.GONE);
-                header1.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_up_black_24dp, 0);
-            }
-        });
-        header2.setOnClickListener((View v)->{
-            layoutDetails.setVisibility(View.GONE);
-            layoutInvitations.setVisibility(View.VISIBLE);
-            layoutLocations.setVisibility(View.GONE);
-        });
-        header3.setOnClickListener((View v)->{
-            layoutDetails.setVisibility(View.GONE);
-            layoutInvitations.setVisibility(View.GONE);
-            layoutLocations.setVisibility(View.VISIBLE);
-        });
-
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)->{
             mCreateViewModel.createEventModel();
         });
 
         mCreateViewModel.getValid().observe(this, (Boolean b)->{
+            Log.w(TAG,"ARE YOU FUCKED?");
             if(b){
                 btnCreate.setVisibility(View.VISIBLE);
             } else {
@@ -221,18 +195,50 @@ public class Create_Fragment extends Fragment implements
             }
         });
 
+        TextView header1 = view.findViewById(R.id.text_header1);
+        ViewGroup header2  = view.findViewById(R.id.layout_header2);
+        ViewGroup header3 = view.findViewById(R.id.layout_header3);
 
+        ViewGroup layoutDetails = view.findViewById(R.id.layout_create_details);
+        ViewGroup layoutInvitations = view.findViewById(R.id.layout_create_invitations);
+        ViewGroup layoutLocations = view.findViewById(R.id.layout_create_locations);
+
+        LinearLayout.LayoutParams show = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1.0f);
+        LinearLayout.LayoutParams hide = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.0f);
+        /*
+        ToDo: There is a Fatal error when hiding the locations view that crashes the app.
+         Possible to do with hiding fragments?
+         */
+        header1.setOnClickListener((View v)->{
+            layoutDetails.setLayoutParams(show);
+            layoutInvitations.setLayoutParams(hide);
+            //layoutLocations.setLayoutParams(hide);
+        });
+        header2.setOnClickListener((View v)->{
+            layoutDetails.setLayoutParams(hide);
+            layoutInvitations.setLayoutParams(show);
+            //layoutLocations.setLayoutParams(hide);
+        });
+        header3.setOnClickListener((View v)->{
+            layoutDetails.setLayoutParams(hide);
+            layoutInvitations.setLayoutParams(hide);
+            layoutLocations.setLayoutParams(show);
+        });
+
+        mCreateViewModel.checkCreated().observe(this, (Boolean b)->{
+            if(b) {
+                Toast.makeText(getContext(), "Created new event", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
     public void addToCheckedList(User_Model clickedUser) {
-        Log.w(TAG,"ADD THE USER TO THE LIST TO INVITE..");
         mCreateViewModel.addInvitedUser(clickedUser);
     }
 
     @Override
     public void removeFromCheckedList(User_Model clickedUser) {
-        Log.w(TAG,"REMOVE USER FROM INVITE LIST..");
         mCreateViewModel.removeInvitedUser(clickedUser);
     }
 
@@ -261,7 +267,6 @@ public class Create_Fragment extends Fragment implements
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Log.w(TAG,"Clicked on marker!");
         LatLng latLng = marker.getPosition();
         mCreateViewModel.setEventLat(latLng.latitude);
         mCreateViewModel.setEventLng(latLng.longitude);
