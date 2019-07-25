@@ -33,7 +33,7 @@
  *
  */
 
-package apps.raymond.kinect.Model;
+package apps.raymond.kinect.ObjectModels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;

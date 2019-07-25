@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.ObjectModels.Event_Model;
-import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.DataModel;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 //Create more fields that are set from the EventDetails and Map fragments. When the user clicks create event

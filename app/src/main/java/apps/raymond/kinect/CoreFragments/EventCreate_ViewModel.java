@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.MapsPackage.Location_Model;
-import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.DataModel;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 
@@ -22,7 +22,7 @@ import apps.raymond.kinect.ObjectModels.User_Model;
  */
 public class EventCreate_ViewModel extends ViewModel {
     private DataModel mRepo;
-    private Event_Model mEventModel;
+    private Event_Model mEventModel = new Event_Model();
     private MutableLiveData<Boolean> mValidEvent = new MutableLiveData<>();
     private MutableLiveData<List<User_Model>> mPublicUsers = new MutableLiveData<>();
     private MutableLiveData<List<Location_Model>> mLocations = new MutableLiveData<>();
@@ -34,12 +34,14 @@ public class EventCreate_ViewModel extends ViewModel {
     private long eventStart = 0;
     private List<String> eventPrimes = new ArrayList<>(5);
     private List<User_Model> invitedUsers = new ArrayList<>();
+    private MutableLiveData<Integer> invitedCount = new MutableLiveData<>();
     private MutableLiveData<Boolean> created = new MutableLiveData<>();
 
     public EventCreate_ViewModel(){
         mRepo = new DataModel();
         mValidEvent.setValue(false);
         created.setValue(false);
+        invitedCount.setValue(0);
     }
 
     public void setEventName(String eventName) {
@@ -70,12 +72,32 @@ public class EventCreate_ViewModel extends ViewModel {
         validateEventModel();
     }
 
+    public MutableLiveData<Integer> getInvitedCount(){
+        return invitedCount;
+    }
+
     public void addInvitedUser(User_Model user){
         invitedUsers.add(user);
+        if(invitedCount.getValue() == null){
+            invitedCount.setValue(0);
+        }
+        int i = invitedCount.getValue();
+        i += 1;
+        invitedCount.setValue(i);
     }
 
     public void removeInvitedUser(User_Model user){
         invitedUsers.remove(user);
+        if(invitedCount.getValue() == null){
+            invitedCount.setValue(0);
+            return;
+        }
+        int i = invitedCount.getValue();
+        if(i>0){
+            i -= 1;
+            invitedCount.setValue(i);
+        }
+
     }
 
     public void setEventLat(double lat){
@@ -99,9 +121,14 @@ public class EventCreate_ViewModel extends ViewModel {
      * an Event_Model.
      */
     private void validateEventModel(){
-        if(eventName == null || eventDesc == null || eventStart == 0 ){
+        if(eventName == null || eventDesc == null){
             return;
         }
+
+        if(eventStart == 0){
+
+        }
+
         if(eventName.length() > 0 && eventDesc.length() >0 && eventPrivacy != 0){
             mValidEvent.postValue(true);
         } else {
@@ -110,17 +137,6 @@ public class EventCreate_ViewModel extends ViewModel {
     }
 
     public void createEventModel(){
-        mEventModel = new Event_Model(
-                "me",
-                eventName,
-                eventDesc,
-                eventPrivacy,
-                null,
-                (ArrayList) eventPrimes,
-                eventStart,
-                lat,
-                lng
-        );
         testMethod();
         mRepo.createEvent(mEventModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

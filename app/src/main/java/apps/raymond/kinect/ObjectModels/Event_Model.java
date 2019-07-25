@@ -234,4 +234,9 @@ public class Event_Model implements Parcelable{
         }
         return ((Event_Model) obj).getName().equals(this.name);
     }
+
+    private boolean validateModel(){
+
+        return true;
+    }
 }

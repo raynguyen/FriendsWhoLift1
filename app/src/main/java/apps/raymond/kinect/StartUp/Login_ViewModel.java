@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.Task;
 
-import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.DataModel;
 import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**

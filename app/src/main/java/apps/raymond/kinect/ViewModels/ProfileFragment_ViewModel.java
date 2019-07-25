@@ -8,7 +8,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.DataModel;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 

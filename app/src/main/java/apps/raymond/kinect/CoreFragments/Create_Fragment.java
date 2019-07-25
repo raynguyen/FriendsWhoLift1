@@ -9,9 +9,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.Calendar;
 import java.util.List;
 
 import apps.raymond.kinect.ObjectModels.Event_Model;
@@ -83,9 +82,14 @@ public class Create_Fragment extends Fragment implements
         });
 
         CalendarView calender = view.findViewById(R.id.calendar_create_event);
+        calender.setMinDate(Calendar.getInstance().getTimeInMillis());
         calender.setOnDateChangeListener((@NonNull CalendarView calendar, int year, int month,
                                           int dayOfMonth)->
                 mCreateViewModel.setEventStart(calendar.getDate()));
+
+        TextView textInviteCount = view.findViewById(R.id.text_create_invited_count);
+        mCreateViewModel.getInvitedCount().observe(this, (Integer count) ->
+                textInviteCount.setText(String.valueOf(count)));
         return view;
     }
 

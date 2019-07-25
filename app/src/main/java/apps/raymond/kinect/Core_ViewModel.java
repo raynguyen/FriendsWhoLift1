@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import apps.raymond.kinect.ObjectModels.Event_Model;
-import apps.raymond.kinect.Model.DataModel;
+import apps.raymond.kinect.ObjectModels.DataModel;
 import apps.raymond.kinect.ObjectModels.User_Model;
 
 /**
