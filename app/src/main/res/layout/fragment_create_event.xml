@@ -104,7 +104,7 @@
                 </androidx.appcompat.widget.SearchView>
 
                 <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/flipper_create_invitations"
+                    android:id="@+id/viewPager_invitations"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/search_invite_users"
@@ -116,7 +116,7 @@
                     android:id="@+id/recycler_create_invite"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/search_invite_users"
+                    android:layout_below="@id/viewPager_invitations"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
                 </androidx.recyclerview.widget.RecyclerView>
 

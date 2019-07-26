@@ -19,8 +19,10 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -42,8 +44,8 @@ import apps.raymond.kinect.R;
 //ToDo: We do not bind user input to a ViewModel or something that observes life cycles. Consider
 // implementing this in the future.
 public class Create_Fragment extends Fragment implements
-    AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener,
-        GoogleMap.OnMarkerClickListener {
+        AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener,
+        GoogleMap.OnMarkerClickListener, TabLayoutMediator.OnConfigureTabCallback {
     private static final String TAG = "CreateFragment: ";
     private Core_ViewModel mViewModel;
     private EventCreate_ViewModel mCreateViewModel;
@@ -63,13 +65,12 @@ public class Create_Fragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
 
         ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
-        CreatePagerAdapter pagerAdapter = new CreatePagerAdapter(getChildFragmentManager());
-        //viewPager.setAdapter(pagerAdapter);
-        TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
-        TabLayoutMediator tabMediator = new TabLayoutMediator(tabLayout, viewPager, ->{
+        TestAdapter adapter = new TestAdapter(this);
+        viewPager.setAdapter(adapter);
 
-        });
-        //tabLayout.setupWithViewPager(viewPager);
+        TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
+        TabLayoutMediator tabMediator = new TabLayoutMediator(tabLayout, viewPager, this);
+        tabMediator.attach();
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)-> mCreateViewModel.createEventModel());
@@ -237,6 +238,10 @@ public class Create_Fragment extends Fragment implements
     }
 
     @Override
+    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+    }
+
+    @Override
     public void addToCheckedList(User_Model clickedUser) {
         mCreateViewModel.addInvitedUser(clickedUser);
     }
@@ -277,38 +282,22 @@ public class Create_Fragment extends Fragment implements
         return true;
     }
 
-    private class CreatePagerAdapter extends FragmentPagerAdapter {
+    private class TestAdapter extends FragmentStateAdapter{
 
-        CreatePagerAdapter(FragmentManager fm){
-            super(fm);
+        TestAdapter(Fragment frag){
+            super(frag);
         }
 
+        @NonNull
         @Override
-        public Fragment getItem(int i) {
-            switch (i){
-                case 0:
-                    return new BaseMap_Fragment();
-                case 1:
-                    return new CreateLocations_Fragment();
-            }
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position){
-                case 0:
-                    return "Map";
-                case 1:
-                    return "Saved Locations";
-            }
+        public Fragment createFragment(int position) {
             return null;
         }
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return 2;
         }
     }
+
 }
