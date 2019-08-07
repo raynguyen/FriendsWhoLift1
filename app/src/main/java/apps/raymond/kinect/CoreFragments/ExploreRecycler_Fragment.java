@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +24,18 @@ import apps.raymond.kinect.R;
 import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.Core_ViewModel;
 
-public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycler_Adapter.ExploreAdapterInterface {
+public class ExploreRecycler_Fragment extends Fragment implements
+        ExploreRecycler_Adapter.ExploreAdapterInterface {
     private static final String TAG = "ExploreRecycler";
     private Core_ViewModel mViewModel;
-    private ExploreEventsInterface mInterface;
+    private ExploreEventsInterface mExploreInterface;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         try{
-            mInterface = (ExploreEventsInterface) getParentFragment();
+            mExploreInterface = (ExploreEventsInterface) getParentFragment();
         } catch (ClassCastException e){
             //Do something??
         }
@@ -67,16 +69,22 @@ public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycle
 
     @Override
     public void onItemViewClick(Event_Model event, int position, View transitionView) {
-        mInterface.setItemPosition(position);
-        mInterface.animateMapToLocation();
-
-        getFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .addSharedElement(transitionView, transitionView.getTransitionName())
-                .replace(R.id.container_explore_fragments, new ExplorePager_Fragment(),
-                        ExplorePager_Fragment.class.getSimpleName())
-                .addToBackStack(null)
-                .commit();
+        mExploreInterface.setItemPosition(position);
+        mExploreInterface.animateMapToLocation();
+        Log.w(TAG,"Hello, we should switch fragments to from the recycler to the viewpager.");
+        /*
+        When an event card is clicked in the recycler fragment, we want to transition from the
+        recycler view of public events to a view pager of public events.
+         */
+        if(getFragmentManager() != null){
+            getFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addSharedElement(transitionView, transitionView.getTransitionName())
+                    .replace(R.id.container_explore_fragments, new ExplorePager_Fragment(),
+                            ExplorePager_Fragment.class.getSimpleName())
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     /**
@@ -100,7 +108,7 @@ public class ExploreRecycler_Fragment extends Fragment implements ExploreRecycle
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 //Grab a handle on the view that we want to animate when transitioning to the pager.
                 RecyclerView.ViewHolder selectedViewHolder = mRecycler
-                        .findViewHolderForAdapterPosition(mInterface.getItemPosition());
+                        .findViewHolderForAdapterPosition(mExploreInterface.getItemPosition());
 
                 if(selectedViewHolder == null){
                     return;

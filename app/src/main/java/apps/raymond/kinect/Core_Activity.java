@@ -228,6 +228,8 @@ public class Core_Activity extends AppCompatActivity {
                 acceptedEvents.add(event);
                 mViewModel.setMyEvents(acceptedEvents);
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

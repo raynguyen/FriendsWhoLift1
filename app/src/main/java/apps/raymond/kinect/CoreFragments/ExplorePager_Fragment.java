@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -34,10 +36,10 @@ public class ExplorePager_Fragment extends Fragment implements
         PagerEvent_Fragment.PagerEventInterface {
     private static final String TAG = ExplorePager_Fragment.class.getSimpleName();
     private ExploreEventsInterface mInterface;
-    private ViewPager viewPager;
+    private ViewPager2 viewPager;
     private TextView textFooter;
     private Core_ViewModel mViewModel;
-    private ExplorePager_Adapter mPagerAdapter;
+    private ExplorePager2_Adapter mPager2Adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,27 +63,26 @@ public class ExplorePager_Fragment extends Fragment implements
         int padding = (int) Math.ceil(4 * metrics.density);
         viewPager.setPadding(padding, 0, padding, 0);
 
-        mPagerAdapter = new ExplorePager_Adapter(this);
-        viewPager.setAdapter(mPagerAdapter);
+        mPager2Adapter = new ExplorePager2_Adapter(this);
+        viewPager.setAdapter(mPager2Adapter);
 
         mViewModel.getSuggestedEvents().observe(requireActivity(), (List<Event_Model>  events)->{
             if(events != null){
-                mPagerAdapter.setData(events);
+                mPager2Adapter.setData(events);
                 setFooter();
             }
         });
 
         viewPager.setCurrentItem(mInterface.getItemPosition());
         //Page change listener added so that we can reflect user scrolling in the parent recycler.
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            public void onPageSelected(int i) {
-                mInterface.setItemPosition(i);
+            public void onPageSelected(int position) {
+                mInterface.setItemPosition(position);
                 mInterface.animateMapToLocation();
                 setFooter();
             }
         });
-
 
         setEnterTransitionAnimation();
 
@@ -89,7 +90,6 @@ public class ExplorePager_Fragment extends Fragment implements
         /*if (savedInstanceState == null) {
             postponeEnterTransition();
         }*/
-
         return view;
     }
 
@@ -106,14 +106,15 @@ public class ExplorePager_Fragment extends Fragment implements
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 if(viewPager.getAdapter() != null){
-                    Fragment currentFragment = (Fragment) viewPager.getAdapter()
-                            .instantiateItem(viewPager, mInterface.getItemPosition());
+                    /*
+                    Fragment currentFragment = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, mInterface.getItemPosition());
 
                     View view = currentFragment.getView();
                     if(view == null){
                         return;
                     }
                     sharedElements.put(names.get(0), view.findViewById(R.id.text_event_name));
+                    */
                 }
             }
         });
@@ -148,43 +149,36 @@ public class ExplorePager_Fragment extends Fragment implements
      * load the contents to the correct position (i.e. the  mPagerAdapter position of the recycler view item
      * that was clicked).
      */
-    public class ExplorePager_Adapter extends FragmentStatePagerAdapter {
 
-        private List<Event_Model> eventSet;
-        ExplorePager_Adapter(Fragment fragment){
-            super(fragment.getChildFragmentManager());
+    private class ExplorePager2_Adapter extends FragmentStateAdapter{
+        private List<Event_Model> dataSet;
+
+        ExplorePager2_Adapter(Fragment fragment){
+            super(fragment);
         }
 
         public void setData(List<Event_Model> newDataSet){
-            if(eventSet == null){
-                eventSet = new ArrayList<>(newDataSet);
+            if(dataSet == null){
+                dataSet = new ArrayList<>(newDataSet);
             } else {
-                eventSet.clear();
-                eventSet.addAll(newDataSet);
+                dataSet.clear();
+                dataSet.addAll(newDataSet);
             }
-            notifyDataSetChanged();
+            notifyItemRangeChanged(0, dataSet.size());
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return PagerEvent_Fragment.newInstance(dataSet.get(position), position);
         }
 
         @Override
-        public int getItemPosition(@NonNull Object object) {
-            return PagerAdapter.POSITION_NONE;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            if(eventSet.size() == 0 ){
-                return null;
+        public int getItemCount() {
+            if(dataSet != null){
+                return dataSet.size();
             }
-            return PagerEvent_Fragment.newInstance(eventSet.get(i), i);
-        }
-
-        @Override
-        public int getCount() {
-            if(eventSet!=null){
-                return eventSet.size();
-            } else {
-                return 0;
-            }
+            return 0;
         }
     }
 
