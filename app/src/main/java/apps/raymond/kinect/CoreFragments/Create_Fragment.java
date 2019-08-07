@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import apps.raymond.kinect.Core_ViewModel;
+import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
@@ -285,7 +286,14 @@ public class Create_Fragment extends Fragment implements
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return null;
+            switch (position){
+                case 0:
+                    return new BaseMap_Fragment();
+                case 1:
+                    return null;
+                default:
+                    return null;
+            }
         }
 
         @Override
@@ -293,5 +301,11 @@ public class Create_Fragment extends Fragment implements
             return 2;
         }
     }
+
+    /*
+    ToDo:
+    RecyclerView.Adapter that instantiates a MapView Lite.
+    Create a copy of the BaseMap's geolocate function to provide a location for the mapview.
+     */
 
 }
