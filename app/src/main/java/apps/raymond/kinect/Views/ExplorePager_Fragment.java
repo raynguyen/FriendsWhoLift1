@@ -1,4 +1,4 @@
-package apps.raymond.kinect.CoreFragments;
+package apps.raymond.kinect.Views;
 
 import android.os.Bundle;
 
@@ -6,10 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -39,7 +36,6 @@ public class ExplorePager_Fragment extends Fragment implements
     private ViewPager2 viewPager;
     private TextView textFooter;
     private Core_ViewModel mViewModel;
-    private ExplorePager2_Adapter mPager2Adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,7 +50,7 @@ public class ExplorePager_Fragment extends Fragment implements
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pager_explore, container, false);
+        View view = inflater.inflate(R.layout.fragment_explore_pager, container, false);
         viewPager = view.findViewById(R.id.pager_explore);
         textFooter = view.findViewById(R.id.text_pages_footer);
 
@@ -63,7 +59,7 @@ public class ExplorePager_Fragment extends Fragment implements
         int padding = (int) Math.ceil(4 * metrics.density);
         viewPager.setPadding(padding, 0, padding, 0);
 
-        mPager2Adapter = new ExplorePager2_Adapter(this);
+        ExplorePager2_Adapter mPager2Adapter = new ExplorePager2_Adapter(this);
         viewPager.setAdapter(mPager2Adapter);
 
         mViewModel.getSuggestedEvents().observe(requireActivity(), (List<Event_Model>  events)->{
@@ -106,15 +102,13 @@ public class ExplorePager_Fragment extends Fragment implements
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 if(viewPager.getAdapter() != null){
-                    /*
-                    Fragment currentFragment = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, mInterface.getItemPosition());
-
+                    FragmentStateAdapter adapter = (FragmentStateAdapter) viewPager.getAdapter();
+                    Fragment currentFragment = adapter.createFragment(mInterface.getItemPosition());
                     View view = currentFragment.getView();
                     if(view == null){
                         return;
                     }
                     sharedElements.put(names.get(0), view.findViewById(R.id.text_event_name));
-                    */
                 }
             }
         });

@@ -17,9 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -36,7 +33,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import apps.raymond.kinect.Core_ViewModel;
-import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
@@ -63,14 +59,12 @@ public class Create_Fragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
-
         ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
-        TestAdapter adapter = new TestAdapter(this);
+        CreatePagerAdapter adapter = new CreatePagerAdapter(this);
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
-        TabLayoutMediator tabMediator = new TabLayoutMediator(tabLayout, viewPager, this);
-        tabMediator.attach();
+        new TabLayoutMediator(tabLayout, viewPager, this).attach();
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)-> mCreateViewModel.createEventModel());
@@ -282,9 +276,9 @@ public class Create_Fragment extends Fragment implements
         return true;
     }
 
-    private class TestAdapter extends FragmentStateAdapter{
+    private class CreatePagerAdapter extends FragmentStateAdapter{
 
-        TestAdapter(Fragment frag){
+        CreatePagerAdapter(Fragment frag){
             super(frag);
         }
 

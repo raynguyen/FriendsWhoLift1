@@ -12,7 +12,7 @@
  * ToDo:
  * Filter out events that the user is already in attendance or invited to.
  */
-package apps.raymond.kinect.CoreFragments;
+package apps.raymond.kinect.Views;
 //https://github.com/google/android-transition-examples/tree/master/GridToPager
 
 import android.os.Bundle;
@@ -55,7 +55,7 @@ ToDo:
 public class Explore_Fragment extends BaseMap_Fragment implements OnMapReadyCallback,
         ExploreEventsInterface {
     private static final String TAG = "EventsSearchFragment";
-    public static int mCurrentPosition;
+    private static int mCurrentPosition;
 
     private Core_ViewModel mViewModel;
     @Override

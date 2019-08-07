@@ -63,8 +63,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.List;
 
 import apps.raymond.kinect.CoreFragments.Create_Fragment;
-import apps.raymond.kinect.CoreFragments.Events_Fragment;
-import apps.raymond.kinect.CoreFragments.Explore_Fragment;
+import apps.raymond.kinect.Views.Events_Fragment;
+import apps.raymond.kinect.Views.Explore_Fragment;
 import apps.raymond.kinect.Invitations.PersonalMessages_Fragment;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.UserProfile.Profile_Activity;

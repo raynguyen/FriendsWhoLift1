@@ -1,4 +1,4 @@
-package apps.raymond.kinect.CoreFragments;
+package apps.raymond.kinect.Views;
 
 import android.os.Bundle;
 
@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
@@ -47,22 +48,24 @@ public class ExploreRecycler_Fragment extends Fragment implements
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mRecycler = (RecyclerView) inflater.inflate(R.layout.fragment_explore_recycler, container, false);
+        View view = inflater.inflate(R.layout.fragment_explore_recycler, container, false);
+        mRecycler = view.findViewById(R.id.recycler_explore_events);
         mRecycler.addItemDecoration(new Margin_Decoration_RecyclerView(requireActivity()));
         mAdapter = new ExploreRecycler_Adapter(this);
         mRecycler.setAdapter(mAdapter);
 
         setExitTransitionAnimation();
-        return mRecycler;
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        TextView textView = view.findViewById(R.id.text_explore_count);
         mViewModel.getSuggestedEvents().observe(requireActivity(), (List<Event_Model> events)->{
             if(events != null){
                 mAdapter.setData(events);
+                textView.setText(String.valueOf(events.size()));
             }
         });
     }

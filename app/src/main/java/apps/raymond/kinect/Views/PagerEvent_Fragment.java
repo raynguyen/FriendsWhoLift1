@@ -1,4 +1,4 @@
-package apps.raymond.kinect.CoreFragments;
+package apps.raymond.kinect.Views;
 
 import android.content.Context;
 import android.content.Intent;

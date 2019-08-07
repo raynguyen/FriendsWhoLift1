@@ -1,4 +1,4 @@
-package apps.raymond.kinect.CoreFragments;
+package apps.raymond.kinect.Views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,7 +27,7 @@ import apps.raymond.kinect.UIResources.Margin_Decoration_RecyclerView;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.Core_ViewModel;
 
-public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.EventClickListener{
+public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.EventClickListener {
     private static final String TAG = "Events_Fragment:";
     private Core_ViewModel mViewModel;
 

@@ -90,11 +90,12 @@
                     android:textColor="@color/white"/>
             </LinearLayout>
 
+            <!--Body of invite users body.-->
             <RelativeLayout
                 android:id="@+id/layout_create_invitations"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:layout_marginBottom="4dp">
 
                 <androidx.appcompat.widget.SearchView
@@ -122,6 +123,7 @@
 
             </RelativeLayout>
 
+            <!--Header for the location section.-->
             <RelativeLayout
                 android:id="@+id/layout_header3"
                 android:layout_width="match_parent"
@@ -151,11 +153,12 @@
                     android:visibility="gone"/>
             </RelativeLayout>
 
+            <!--Body for location section-->
             <RelativeLayout
                 android:id="@+id/layout_create_locations"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0"
+                android:layout_weight="1"
                 android:layout_marginBottom="4dp"
                 android:layout_gravity="bottom">
 
@@ -164,7 +167,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 </com.google.android.material.tabs.TabLayout>
-
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/pager_create_locations"

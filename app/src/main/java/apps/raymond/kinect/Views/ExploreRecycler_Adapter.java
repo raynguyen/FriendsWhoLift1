@@ -1,4 +1,4 @@
-package apps.raymond.kinect.CoreFragments;
+package apps.raymond.kinect.Views;
 
 import android.view.LayoutInflater;
 import android.view.View;
