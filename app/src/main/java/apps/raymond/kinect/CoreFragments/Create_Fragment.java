@@ -42,7 +42,7 @@ import apps.raymond.kinect.R;
 // implementing this in the future.
 public class Create_Fragment extends Fragment implements
         AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener,
-        GoogleMap.OnMarkerClickListener, TabLayoutMediator.OnConfigureTabCallback {
+        GoogleMap.OnMarkerClickListener {
     private static final String TAG = "CreateFragment: ";
     private Core_ViewModel mViewModel;
     private EventCreate_ViewModel mCreateViewModel;
@@ -65,7 +65,13 @@ public class Create_Fragment extends Fragment implements
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
-        new TabLayoutMediator(tabLayout, viewPager, this).attach();
+        new TabLayoutMediator(tabLayout, viewPager, (@NonNull TabLayout.Tab tab, int position)->{
+            if(position ==0 ){
+                tab.setText("ZERO");
+            } else {
+                tab.setText("UNO");
+            }
+        }).attach();
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)-> mCreateViewModel.createEventModel());
@@ -233,10 +239,6 @@ public class Create_Fragment extends Fragment implements
     }
 
     @Override
-    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-    }
-
-    @Override
     public void addToCheckedList(User_Model clickedUser) {
         mCreateViewModel.addInvitedUser(clickedUser);
     }
@@ -288,6 +290,7 @@ public class Create_Fragment extends Fragment implements
         public Fragment createFragment(int position) {
             switch (position){
                 case 0:
+                    //ToDo: Add the correct fragments?
                     return new BaseMap_Fragment();
                 case 1:
                     return null;
@@ -305,7 +308,6 @@ public class Create_Fragment extends Fragment implements
     /*
     ToDo:
     RecyclerView.Adapter that instantiates a MapView Lite.
-    Create a copy of the BaseMap's geolocate function to provide a location for the mapview.
+    Create a copy of the BaseMap's geo locate function to provide a location for the map view.
      */
-
 }
