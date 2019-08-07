@@ -1,16 +1,14 @@
 package apps.raymond.kinect.UserProfile;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
@@ -27,6 +26,9 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 
 public class PersonalProfile_Fragment extends Fragment {
     private Profile_ViewModel mActivityViewModel;
+    private int[] arrayIcons = new int[]{R.drawable.ic_settings_black_24dp,
+            R.drawable.ic_group_black_24dp, R.drawable.ic_map_black_24dp,
+            R.drawable.ic_favorite_black_24dp};
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class PersonalProfile_Fragment extends Fragment {
         //Views that display information pertaining to the profile.
         TextView txtName = view.findViewById(R.id.text_profile_name);
 
-        if(userModel.getName()!=null){
+        if(userModel.getName()!= null){
             String name = userModel.getName() + " " + userModel.getName2();
             txtName.setText(name);
         } else {
@@ -70,33 +72,25 @@ public class PersonalProfile_Fragment extends Fragment {
         });
 
         TabLayout tabs = view.findViewById(R.id.tab_layout_profile);
-        ViewPager viewPager = view.findViewById(R.id.viewpager_profile_details);
-        ProfilePersonalAdapter adapter = new ProfilePersonalAdapter(getChildFragmentManager());
+        ViewPager2 viewPager = view.findViewById(R.id.viewpager_profile_details);
+        PersonalAdapter adapter = new PersonalAdapter(this);
         viewPager.setAdapter(adapter);
-        tabs.setupWithViewPager(viewPager);
-        setTabIcons(tabs);
+        TabLayoutMediator tabMediator = new TabLayoutMediator(tabs, viewPager,
+                (@NonNull TabLayout.Tab tab, int position) -> tab.setIcon(arrayIcons[position]));
+        tabMediator.attach();
 
     }
 
-    private void setTabIcons(TabLayout tabLayout){
-        int[] test = new int[]{R.drawable.ic_settings_black_24dp, R.drawable.ic_group_black_24dp,
-                R.drawable.ic_map_black_24dp, R.drawable.ic_favorite_black_24dp};
+    private class PersonalAdapter extends FragmentStateAdapter{
 
-        for(int i =0; i < tabLayout.getTabCount(); i++ ){
-            TabLayout.Tab tab = tabLayout.getTabAt(i);
-            tab.setIcon(test[i]);
-        }
-    }
-
-    private class ProfilePersonalAdapter extends FragmentStatePagerAdapter {
-
-        private ProfilePersonalAdapter(FragmentManager fm){
-            super(fm);
+        private PersonalAdapter(@NonNull Fragment fragment) {
+            super(fragment);
         }
 
+        @NonNull
         @Override
-        public Fragment getItem(int i) {
-            switch (i){
+        public Fragment createFragment(int position) {
+            switch (position){
                 case 0:
                     ProfileSettings_Fragment settingsFragment = new ProfileSettings_Fragment();
                     return settingsFragment;
@@ -109,17 +103,27 @@ public class PersonalProfile_Fragment extends Fragment {
                 case 3:
                     ProfileConnections_Fragment test2 = new ProfileConnections_Fragment();
                     return test2;
-                    default:
-                        return null;
+                default:
+                    return null;
             }
         }
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return 4;
         }
-
-
     }
 
 }
+
+/*
+    private void setTabIcons(TabLayout tabLayout){
+        int[] test = new int[]{R.drawable.ic_settings_black_24dp, R.drawable.ic_group_black_24dp,
+                R.drawable.ic_map_black_24dp, R.drawable.ic_favorite_black_24dp};
+
+        for(int i =0; i < tabLayout.getTabCount(); i++ ){
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            tab.setIcon(test[i]);
+        }
+    }
+ */
