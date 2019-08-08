@@ -17,12 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import apps.raymond.kinect.Interfaces.LocationsListenerInterface;
 import apps.raymond.kinect.MapsPackage.Location_Model;
-import apps.raymond.kinect.MapsPackage.Locations_Adapter;
+import apps.raymond.kinect.Adapters.Locations_Adapter;
 import apps.raymond.kinect.R;
 
 public class CreateLocations_Fragment extends Fragment implements
-        Locations_Adapter.LocationClickInterface{
+        LocationsListenerInterface {
     private static final String TAG = "CreateLocationsFragment";
     private EventCreate_ViewModel mViewModel;
 
@@ -34,7 +35,8 @@ public class CreateLocations_Fragment extends Fragment implements
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_simple_recycler, container, false);
     }
 
@@ -65,5 +67,10 @@ public class CreateLocations_Fragment extends Fragment implements
     @Override
     public void onLocationClick(Location_Model location) {
         Log.w(TAG,"Clicked on a location.");
+    }
+
+    @Override
+    public void setLocations(List<Location_Model> locations) {
+
     }
 }

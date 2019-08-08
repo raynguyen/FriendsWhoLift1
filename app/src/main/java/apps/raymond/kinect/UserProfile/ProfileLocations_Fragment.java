@@ -17,7 +17,7 @@ import java.util.List;
 
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.MapsPackage.Location_Model;
-import apps.raymond.kinect.MapsPackage.Locations_Adapter;
+import apps.raymond.kinect.Adapters.Locations_Adapter;
 import apps.raymond.kinect.R;
 import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
