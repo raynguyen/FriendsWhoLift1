@@ -10,4 +10,5 @@
     <color name="gray">#BABABA</color>
     <color name="white">#ffff</color>
     <color name="blueish">#189ea5</color>
+    <color name="map_editable">#44ffffff</color>
 </resources>

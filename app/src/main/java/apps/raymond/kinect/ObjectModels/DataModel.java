@@ -71,7 +71,11 @@ import apps.raymond.kinect.EventDetail.Message_Model;
 /**
  * Repository class to abstract data communication between the application and Firebase backend.
  *
- * ToDo: Check to see how many times this Repo is instantiated. We want it to be only once, when the CoreActivity loads. -> Static utility class // injection?
+ * ToDo: Check to see how many times this Repo is instantiated. We want it to be only once, when the
+ *  CoreActivity loads. -> Static utility class // injection?
+ *  This DataModel so query for everything we need from the data base. The ViewModels simply observe
+ *  the data queried by this datamodel and reflect the changes upstream via LiveData observer's held
+ *  by the individual views as required.
  */
 public class DataModel {
     private static final String TAG = "DataModel";

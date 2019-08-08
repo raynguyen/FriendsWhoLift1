@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -61,15 +62,17 @@ public class Create_Fragment extends Fragment implements
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
         ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
+        viewPager.setUserInputEnabled(false);
+
         CreatePagerAdapter adapter = new CreatePagerAdapter(this);
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
         new TabLayoutMediator(tabLayout, viewPager, (@NonNull TabLayout.Tab tab, int position)->{
             if(position ==0 ){
-                tab.setText("ZERO");
+                tab.setIcon(R.drawable.ic_map_black_24dp);
             } else {
-                tab.setText("UNO");
+                tab.setIcon(R.drawable.ic_list_black_24dp);
             }
         }).attach();
 
@@ -293,7 +296,7 @@ public class Create_Fragment extends Fragment implements
                     //ToDo: Add the correct fragments?
                     return new BaseMap_Fragment();
                 case 1:
-                    return null;
+                    return new BaseMap_Fragment();
                 default:
                     return null;
             }
