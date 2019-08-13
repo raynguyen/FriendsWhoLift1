@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import apps.raymond.kinect.Interfaces.LocationsListenerInterface;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.Adapters.Locations_Adapter;
@@ -38,7 +37,7 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 public class ProfileLocations_Fragment extends BaseMap_Fragment implements
-        LocationsListenerInterface {
+        Locations_Adapter.LocationsListenerInterface {
     private Profile_ViewModel mActViewModel;
     private ProfileFragment_ViewModel mFragViewModel;
 
@@ -90,7 +89,6 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
 
     }
 
-
     @Override
     public void onLocationClick(Location_Model location) {
         if(!(mMapView.getHeight() > 0)){
@@ -100,8 +98,4 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
         }
     }
 
-    @Override
-    public void setLocations(List<Location_Model> locations) {
-
-    }
 }

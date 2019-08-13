@@ -17,13 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.raymond.kinect.Interfaces.LocationsListenerInterface;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.R;
 
 public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.LocationViewHolder> {
     private List<Location_Model> mLocationSet;
     private LocationsListenerInterface mLocationsInterface;
+
+    public interface LocationsListenerInterface {
+        void onLocationClick(Location_Model location);
+    }
 
     public Locations_Adapter(LocationsListenerInterface clickInterface){
         mLocationsInterface = clickInterface;

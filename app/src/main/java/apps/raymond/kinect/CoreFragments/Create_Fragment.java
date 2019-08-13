@@ -37,6 +37,7 @@ import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
+import apps.raymond.kinect.Views.LocationsRecycler_Fragment;
 
 //ToDo: We do not bind user input to a ViewModel or something that observes life cycles. Consider
 // implementing this in the future.
@@ -295,7 +296,7 @@ public class Create_Fragment extends Fragment implements
                     //ToDo: Add the correct fragments?
                     return new BaseMap_Fragment();
                 case 1:
-                    return new BaseMap_Fragment();
+                    return new LocationsRecycler_Fragment();
                 default:
                     return null;
             }
@@ -307,9 +308,4 @@ public class Create_Fragment extends Fragment implements
         }
     }
 
-    /*
-    ToDo:
-     RecyclerView.Adapter that instantiates a MapView Lite.
-     Create a copy of the BaseMap's geo locate function to provide a location for the map view.
-     */
 }

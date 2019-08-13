@@ -23,17 +23,29 @@ import java.util.List;
 
 import apps.raymond.kinect.Adapters.Locations_Adapter;
 import apps.raymond.kinect.CoreFragments.EventCreate_ViewModel;
-import apps.raymond.kinect.Interfaces.LocationsListenerInterface;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.R;
 
-public class LocationsRecycler_Fragment extends Fragment implements LocationsListenerInterface {
+public class LocationsRecycler_Fragment extends Fragment implements
+        Locations_Adapter.LocationsListenerInterface {
     private static final String TAG = "CreationLocationsRecycler";
     private EventCreate_ViewModel mViewModel;
     private RecyclerView recyclerView;
     private TextView textNull;
     private ProgressBar progressBar;
     private Locations_Adapter mAdapter;
+
+    public interface LocationsRecyclerInterface{
+        /*
+        Interface to cascade interactions with adapter items upstream to the parent fragment.
+         */
+    }
+    @NonNull
+    public LocationsRecycler_Fragment newInstance(){
+        LocationsRecycler_Fragment fragment = new LocationsRecycler_Fragment();
+
+        return fragment
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +66,7 @@ public class LocationsRecycler_Fragment extends Fragment implements LocationsLis
         textNull = view.findViewById(R.id.text_null_simple);
         progressBar = view.findViewById(R.id.progress_simple);
 
+        Locations_Adapter adapter = new Locations_Adapter(this);
 
         return view;
     }
@@ -65,12 +78,14 @@ public class LocationsRecycler_Fragment extends Fragment implements LocationsLis
     }
 
     @Override
-    public void setLocations(List<Location_Model> locations) {
-
-    }
-
-    @Override
     public void onLocationClick(Location_Model location) {
-
+        /*
+        ToDo: Cascade the location click up to the parent fragment.
+            1. Event Create Fragment: Instantiate a new BaseMap Fragment underneath the LocationsRecyclerFragment.
+            We want to still display the list, but now want to add a an interactable mapview so that
+            the user has the ability to search for a location viewing panning.
+            2. Profile Fragment: Simply pan the map to the clicked location and display the information
+            as required.
+         */
     }
 }
