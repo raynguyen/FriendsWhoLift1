@@ -1,3 +1,17 @@
+/*
+ Fragment class with the purpose of containing the relevant information regarding a user's Locations.
+ This Fragment extends the BaseMap_Fragment as we previously had a map in order for the user to interact
+ with.
+
+ ToDo:
+  Consider updating the profile fragment to utilize an instance of the BaseMap fragment and a
+  LocationsRecycler_Fragment. This allows us to reuse the LocationsRecycler_Fragment for both event
+  creation and for viewing a user's locations.
+
+ ToDo:
+  Consider reformatting the Explore_Fragment's map usage so that we can simply use the same Map_Fragment
+  for both profile viewing and for exploration?
+ */
 package apps.raymond.kinect.UserProfile;
 
 import android.os.Bundle;
@@ -15,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import apps.raymond.kinect.Interfaces.LocationsListenerInterface;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
 import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.Adapters.Locations_Adapter;
@@ -23,7 +38,7 @@ import apps.raymond.kinect.ViewModels.Profile_ViewModel;
 import apps.raymond.kinect.ViewModels.ProfileFragment_ViewModel;
 
 public class ProfileLocations_Fragment extends BaseMap_Fragment implements
-        Locations_Adapter.LocationClickInterface {
+        LocationsListenerInterface {
     private Profile_ViewModel mActViewModel;
     private ProfileFragment_ViewModel mFragViewModel;
 
@@ -75,6 +90,7 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
 
     }
 
+
     @Override
     public void onLocationClick(Location_Model location) {
         if(!(mMapView.getHeight() > 0)){
@@ -82,5 +98,10 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
                     ViewGroup.LayoutParams.MATCH_PARENT,0,1.0f);
             mMapView.setLayoutParams(params);
         }
+    }
+
+    @Override
+    public void setLocations(List<Location_Model> locations) {
+
     }
 }

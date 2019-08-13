@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -310,7 +309,7 @@ public class Create_Fragment extends Fragment implements
 
     /*
     ToDo:
-    RecyclerView.Adapter that instantiates a MapView Lite.
-    Create a copy of the BaseMap's geo locate function to provide a location for the map view.
+     RecyclerView.Adapter that instantiates a MapView Lite.
+     Create a copy of the BaseMap's geo locate function to provide a location for the map view.
      */
 }

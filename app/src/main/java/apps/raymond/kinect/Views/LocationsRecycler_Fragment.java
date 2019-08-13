@@ -1,3 +1,8 @@
+/*
+ * Fragment class whose Layout contains a RecyclerView that is to be populated with a Location_Model
+ * data set. We expect that this fragment will be utilized in both the CreateEvent_Fragment and the
+ * Profile_Fragment to display a user's stored Location set.
+ */
 package apps.raymond.kinect.Views;
 
 import android.os.Bundle;
@@ -20,7 +25,6 @@ import apps.raymond.kinect.Adapters.Locations_Adapter;
 import apps.raymond.kinect.CoreFragments.EventCreate_ViewModel;
 import apps.raymond.kinect.Interfaces.LocationsListenerInterface;
 import apps.raymond.kinect.MapsPackage.Location_Model;
-import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.R;
 
 public class LocationsRecycler_Fragment extends Fragment implements LocationsListenerInterface {
@@ -61,7 +65,12 @@ public class LocationsRecycler_Fragment extends Fragment implements LocationsLis
     }
 
     @Override
-    public void setLocations(List<Event_Model> events) {
+    public void setLocations(List<Location_Model> locations) {
+
+    }
+
+    @Override
+    public void onLocationClick(Location_Model location) {
 
     }
 }
