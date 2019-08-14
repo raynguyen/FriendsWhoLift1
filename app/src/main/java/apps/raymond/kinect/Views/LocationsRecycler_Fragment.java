@@ -5,6 +5,7 @@
  */
 package apps.raymond.kinect.Views;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,32 +32,27 @@ import apps.raymond.kinect.R;
 public class LocationsRecycler_Fragment extends Fragment implements
         Locations_Adapter.LocationsListenerInterface {
     private static final String TAG = "CreationLocationsRecycler";
-    private EventCreate_ViewModel mViewModel;
     private RecyclerView recyclerView;
     private TextView textNull;
     private ProgressBar progressBar;
     private Locations_Adapter mAdapter;
+    private LocationsRecyclerInterface mInterface;
 
     public interface LocationsRecyclerInterface{
         /*
         Interface to cascade interactions with adapter items upstream to the parent fragment.
          */
-    }
-    @NonNull
-    public LocationsRecycler_Fragment newInstance(){
-        LocationsRecycler_Fragment fragment = new LocationsRecycler_Fragment();
-
-        return fragment
+        void listenForLocations();
+        void clickLocationTest();
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try{
-            mViewModel = ViewModelProviders.of(getParentFragment()).get(EventCreate_ViewModel.class);
-        } catch (NullPointerException npe){
-            Log.w(TAG,"Error getting parent fragment.");
+    public LocationsRecycler_Fragment(Fragment fragment){
+        try {
+            mInterface = (LocationsRecyclerInterface) fragment;
+        } catch (ClassCastException cce){
+            Log.w(TAG,"ClassCastException on calling parent.");
         }
+
     }
 
     @Nullable
@@ -66,15 +64,16 @@ public class LocationsRecycler_Fragment extends Fragment implements
         textNull = view.findViewById(R.id.text_null_simple);
         progressBar = view.findViewById(R.id.progress_simple);
 
-        Locations_Adapter adapter = new Locations_Adapter(this);
+        mAdapter = new Locations_Adapter(this);
+        recyclerView.setAdapter(mAdapter);
 
+        mInterface.listenForLocations();
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
@@ -87,5 +86,14 @@ public class LocationsRecycler_Fragment extends Fragment implements
             2. Profile Fragment: Simply pan the map to the clicked location and display the information
             as required.
          */
+        mInterface.clickLocationTest();
+    }
+
+    public void setAdapterData(List<Location_Model> locations){
+        Log.w(TAG,"Calling on the adapter to set a list of locations.");
+        if(locations != null){
+            Log.w(TAG,"Size of locations = "+ locations.size());
+            mAdapter.setData(locations);
+        }
     }
 }

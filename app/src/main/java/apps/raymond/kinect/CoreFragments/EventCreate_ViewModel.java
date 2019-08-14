@@ -43,6 +43,7 @@ public class EventCreate_ViewModel extends ViewModel {
         mValidEvent.setValue(false);
         created.setValue(false);
         invitedCount.setValue(0);
+        loadUserLocations();
     }
 
     public void setEventName(String eventName) {
@@ -77,6 +78,10 @@ public class EventCreate_ViewModel extends ViewModel {
         return invitedCount;
     }
 
+    public MutableLiveData<List<User_Model>> getPublicUsers(){
+        return mPublicUsers;
+    }
+
     public void addInvitedUser(User_Model user){
         invitedUsers.add(user);
         if(invitedCount.getValue() == null){
@@ -107,6 +112,13 @@ public class EventCreate_ViewModel extends ViewModel {
 
     public void setEventLng(double lng){
         this.lng = lng;
+    }
+
+    public void loadUserLocations(){
+        String userID = "raynguyen64@gmail.com";
+        mRepo.getUsersLocations(userID).addOnCompleteListener((Task<List<Location_Model>> task)->
+                mLocations.setValue(task.getResult())
+        );
     }
 
     public MutableLiveData<List<Location_Model>> getUserLocations(){

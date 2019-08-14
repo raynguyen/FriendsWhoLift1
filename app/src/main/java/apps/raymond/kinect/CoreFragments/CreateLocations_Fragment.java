@@ -23,7 +23,7 @@ import apps.raymond.kinect.Adapters.Locations_Adapter;
 import apps.raymond.kinect.R;
 
 public class CreateLocations_Fragment extends Fragment implements
-        LocationsListenerInterface {
+        Locations_Adapter.LocationsListenerInterface {
     private static final String TAG = "CreateLocationsFragment";
     private EventCreate_ViewModel mViewModel;
 
@@ -69,8 +69,4 @@ public class CreateLocations_Fragment extends Fragment implements
         Log.w(TAG,"Clicked on a location.");
     }
 
-    @Override
-    public void setLocations(List<Location_Model> locations) {
-
-    }
 }

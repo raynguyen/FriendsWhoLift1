@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.tasks.Task;
 
@@ -95,7 +96,7 @@ public class SignUp_Fragment extends Fragment implements View.OnClickListener{
                 }
                 break;
             case R.id.vtext_login:
-                ViewPager viewPager = requireActivity().findViewById(R.id.viewpager_login);
+                ViewPager2 viewPager = requireActivity().findViewById(R.id.viewpager_login);
                 viewPager.setCurrentItem(0);
                 break;
         }

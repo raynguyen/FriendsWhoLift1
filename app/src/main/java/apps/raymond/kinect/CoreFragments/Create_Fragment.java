@@ -3,12 +3,14 @@ package apps.raymond.kinect.CoreFragments;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -20,13 +22,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
@@ -34,6 +33,7 @@ import java.util.List;
 
 import apps.raymond.kinect.Core_ViewModel;
 import apps.raymond.kinect.MapsPackage.BaseMap_Fragment;
+import apps.raymond.kinect.MapsPackage.Location_Model;
 import apps.raymond.kinect.ObjectModels.Event_Model;
 import apps.raymond.kinect.ObjectModels.User_Model;
 import apps.raymond.kinect.R;
@@ -43,15 +43,13 @@ import apps.raymond.kinect.Views.LocationsRecycler_Fragment;
 // implementing this in the future.
 public class Create_Fragment extends Fragment implements
         AddUsers_Adapter.CheckProfileInterface, CompoundButton.OnCheckedChangeListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener, LocationsRecycler_Fragment.LocationsRecyclerInterface {
     private static final String TAG = "CreateFragment: ";
-    private Core_ViewModel mViewModel;
     private EventCreate_ViewModel mCreateViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(Core_ViewModel.class);
         mCreateViewModel = ViewModelProviders.of(this).get(EventCreate_ViewModel.class);
     }
 
@@ -61,20 +59,6 @@ public class Create_Fragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
-        ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
-        viewPager.setUserInputEnabled(false);
-
-        CreatePagerAdapter adapter = new CreatePagerAdapter(this);
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
-        new TabLayoutMediator(tabLayout, viewPager, (@NonNull TabLayout.Tab tab, int position)->{
-            if(position ==0 ){
-                tab.setIcon(R.drawable.ic_map_black_24dp);
-            } else {
-                tab.setIcon(R.drawable.ic_list_black_24dp);
-            }
-        }).attach();
 
         Button btnCreate = view.findViewById(R.id.button_create_event);
         btnCreate.setOnClickListener((View v)-> mCreateViewModel.createEventModel());
@@ -196,11 +180,11 @@ public class Create_Fragment extends Fragment implements
         tglPublic.setOnCheckedChangeListener(this);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_create_invite);
-        AddUsers_Adapter adapter = new AddUsers_Adapter(this);
-        recyclerView.setAdapter(adapter);
-        mViewModel.getPublicUsers().observe(requireActivity(), (List<User_Model> publicUsers) -> {
+        AddUsers_Adapter inviteAdapter = new AddUsers_Adapter(this);
+        recyclerView.setAdapter(inviteAdapter);
+        mCreateViewModel.getPublicUsers().observe(requireActivity(), (List<User_Model> publicUsers) -> {
             if(publicUsers != null){
-                adapter.setData(publicUsers);
+                inviteAdapter.setData(publicUsers);
             }
         });
 
@@ -210,7 +194,12 @@ public class Create_Fragment extends Fragment implements
 
         ViewGroup layoutDetails = view.findViewById(R.id.layout_create_details);
         ViewGroup layoutInvitations = view.findViewById(R.id.layout_create_invitations);
-        ViewGroup layoutLocations = view.findViewById(R.id.layout_create_locations);
+        FrameLayout layoutLocations = view.findViewById(R.id.frame_create_locations);
+
+        LocationsRecycler_Fragment locationsFragment = new LocationsRecycler_Fragment(this);
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.frame_create_locations, locationsFragment, "testTag")
+                .commit();
 
         LinearLayoutCompat.LayoutParams show = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1.0f);
         LinearLayoutCompat.LayoutParams hide = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f);
@@ -221,12 +210,12 @@ public class Create_Fragment extends Fragment implements
         header1.setOnClickListener((View v)->{
             layoutDetails.setLayoutParams(show);
             layoutInvitations.setLayoutParams(hide);
-            //layoutLocations.setLayoutParams(hide);
+            layoutLocations.setLayoutParams(hide);
         });
         header2.setOnClickListener((View v)->{
             layoutDetails.setLayoutParams(hide);
             layoutInvitations.setLayoutParams(show);
-            //layoutLocations.setLayoutParams(hide);
+            layoutLocations.setLayoutParams(hide);
         });
         header3.setOnClickListener((View v)->{
             layoutDetails.setLayoutParams(hide);
@@ -282,7 +271,46 @@ public class Create_Fragment extends Fragment implements
         return true;
     }
 
-    private class CreatePagerAdapter extends FragmentStateAdapter{
+    /**
+     * Interface method called by LocationsRecycler_Fragment. We want an interface method to call the
+     * ViewModel to listen for changes in the location data set because we have to wait until the
+     * adapter is instantiated and ready to retrieve data. If we start listening too early, the
+     * adapter is null and we encounter a NPE.
+     */
+    @Override
+    public void listenForLocations() {
+        LocationsRecycler_Fragment locationsFragment = (LocationsRecycler_Fragment) getChildFragmentManager().findFragmentByTag("testTag");
+        mCreateViewModel.getUserLocations().observe(this, (List<Location_Model> locations) ->{
+            Log.w(TAG,"Change in locations list detected.");
+            locationsFragment.setAdapterData(locations);
+        });
+    }
+
+    @Override
+    public void clickLocationTest() {
+        Log.w(TAG,"This is a test to determine if was can cascade location click upstream.");
+    }
+}
+
+ /*
+        ViewPager2 viewPager = view.findViewById(R.id.pager_create_locations);
+        viewPager.setUserInputEnabled(false);
+
+        CreatePagerAdapter adapter = new CreatePagerAdapter(this);
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = view.findViewById(R.id.tabs_create_locations);
+        new TabLayoutMediator(tabLayout, viewPager, (@NonNull TabLayout.Tab tab, int position)->{
+            if(position ==0 ){
+                tab.setIcon(R.drawable.ic_map_black_24dp);
+            } else {
+                tab.setIcon(R.drawable.ic_list_black_24dp);
+            }
+        }).attach();
+        */
+
+/*
+ * private class CreatePagerAdapter extends FragmentStateAdapter{
 
         CreatePagerAdapter(Fragment frag){
             super(frag);
@@ -306,6 +334,4 @@ public class Create_Fragment extends Fragment implements
         public int getItemCount() {
             return 2;
         }
-    }
-
-}
+    }*/

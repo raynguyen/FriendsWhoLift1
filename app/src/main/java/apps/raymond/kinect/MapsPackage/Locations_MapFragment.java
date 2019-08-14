@@ -46,7 +46,7 @@ ToDo: When searching the Locations_Model recycler, slide up to hide the MapView 
  if yes change the marker color of the old location back to red/cyan depending on what it is.
  */
 public class Locations_MapFragment extends BaseMap_Fragment implements OnMapReadyCallback,
-        Locations_Adapter.LocationClickInterface {
+        Locations_Adapter.LocationsListenerInterface{
     public static final boolean EVENT_ACTIVITY = false; //Flag to determine of this map fragment instance is related to Event creation or detail.
     public static final boolean EVENT_PROFILE = true; //Flag to determine of this map fragment instance is related to viewing a profile.
     private MapCardViewClick mPositiveCallback;

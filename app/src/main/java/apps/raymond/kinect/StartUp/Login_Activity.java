@@ -23,13 +23,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import apps.raymond.kinect.Core_Activity;
 import apps.raymond.kinect.R;
@@ -42,8 +46,8 @@ public class Login_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceStance);
         setContentView(R.layout.activity_login);
 
-        LoginPagerAdapter loginAdapter = new LoginPagerAdapter(getSupportFragmentManager());
-        ViewPager mViewPager = findViewById(R.id.viewpager_login);
+        LoginPagerAdapter loginAdapter = new LoginPagerAdapter(this);
+        ViewPager2 mViewPager = findViewById(R.id.viewpager_login);
         mViewPager.setAdapter(loginAdapter);
 
         Login_ViewModel mViewModel = ViewModelProviders.of(this).get(Login_ViewModel.class);
@@ -82,27 +86,28 @@ public class Login_Activity extends AppCompatActivity {
      * Adapter class that inflates the Login_Fragment and SignUp_Fragment to the Login_Activity's
      * ViewPager.
      */
-    public class LoginPagerAdapter extends FragmentPagerAdapter {
+    public class LoginPagerAdapter extends FragmentStateAdapter {
 
-        private LoginPagerAdapter(FragmentManager fm){
-            super(fm);
+        private LoginPagerAdapter(FragmentActivity fragmentActivity){
+            super(fragmentActivity);
         }
 
+        @NonNull
         @Override
-        public Fragment getItem(int position){
-            switch(position){
+        public Fragment createFragment(int position) {
+            switch (position){
                 case 0:
                     return new Login_Fragment();
                 case 1:
                     return new SignUp_Fragment();
-                default:
-                    return null;
             }
+            return null;
         }
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return 2;
         }
     }
+
 }
