@@ -278,11 +278,10 @@ public class Create_Fragment extends Fragment implements
      * adapter is null and we encounter a NPE.
      */
     @Override
-    public void listenForLocations() {
-        LocationsRecycler_Fragment locationsFragment = (LocationsRecycler_Fragment) getChildFragmentManager().findFragmentByTag("testTag");
+    public void listenForLocations(LocationsRecycler_Fragment fragment) {
         mCreateViewModel.getUserLocations().observe(this, (List<Location_Model> locations) ->{
             Log.w(TAG,"Change in locations list detected.");
-            locationsFragment.setAdapterData(locations);
+            fragment.setAdapterData(locations);
         });
     }
 

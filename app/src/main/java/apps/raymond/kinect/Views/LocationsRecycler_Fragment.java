@@ -42,7 +42,7 @@ public class LocationsRecycler_Fragment extends Fragment implements
         /*
         Interface to cascade interactions with adapter items upstream to the parent fragment.
          */
-        void listenForLocations();
+        void listenForLocations(LocationsRecycler_Fragment fragment);
         void clickLocationTest();
     }
 
@@ -67,7 +67,7 @@ public class LocationsRecycler_Fragment extends Fragment implements
         mAdapter = new Locations_Adapter(this);
         recyclerView.setAdapter(mAdapter);
 
-        mInterface.listenForLocations();
+        mInterface.listenForLocations(this);
         return view;
     }
 

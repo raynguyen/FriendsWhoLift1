@@ -115,6 +115,7 @@ public class EventCreate_ViewModel extends ViewModel {
     }
 
     public void loadUserLocations(){
+        Log.w("EventCreateVM", "Calling on model to load locations.");
         String userID = "raynguyen64@gmail.com";
         mRepo.getUsersLocations(userID).addOnCompleteListener((Task<List<Location_Model>> task)->
                 mLocations.setValue(task.getResult())
