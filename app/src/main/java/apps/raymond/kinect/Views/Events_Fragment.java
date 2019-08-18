@@ -39,7 +39,8 @@ public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_events, container, false);
     }
 
@@ -51,17 +52,14 @@ public class Events_Fragment extends Fragment implements EventsRecycler_Adapter.
         ProgressBar progressBar = view.findViewById(R.id.progress_events);
         TextView textNull = view.findViewById(R.id.text_events_null);
         SearchView searchView = view.findViewById(R.id.search_events);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_events);
+        RecyclerView attendingRecycler = view.findViewById(R.id.recycler_events);
         EventsRecycler_Adapter adapter = new EventsRecycler_Adapter(this);
         Margin_Decoration_RecyclerView dividerDecoration = new Margin_Decoration_RecyclerView(requireActivity());
 
-        //searchIcon.setColorFilter(ContextCompat.getColor(getContext(),R.color.white));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(dividerDecoration);
-        recyclerView.setAdapter(adapter);
+        attendingRecycler.addItemDecoration(dividerDecoration);
+        attendingRecycler.setAdapter(adapter);
 
         mViewModel.getMyEvents().observe(requireActivity(), (@Nullable List<Event_Model> events) -> {
-            Log.w(TAG,"Change in my events detected.");
             progressBar.setVisibility(View.GONE);
             if(events != null){
                 textAcceptedCount.setText(String.valueOf(events.size()));

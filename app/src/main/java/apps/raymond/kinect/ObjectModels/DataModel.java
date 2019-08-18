@@ -103,7 +103,7 @@ public class DataModel {
     private CollectionReference eventCollection = mStore.collection(EVENTS);
 
     private MutableLiveData<QuerySnapshot> mSuggestedEvents = new MutableLiveData<>();
-
+    private MutableLiveData<String> mUserID = new MutableLiveData<>();
     /*ToDo: There should be no Java code in the Repository class.
         This method should not hold the mUserEmail or curUserMode, these should be passed as required to repository calls.
     */
@@ -118,7 +118,8 @@ public class DataModel {
      *
      * @param eventID The event the user is attending.
      */
-    public Task<Void> addUserToEvent(String userID, User_Model userModel, String eventID, Event_Model event_model) {
+    public Task<Void> addUserToEvent(String userID, User_Model userModel, String eventID,
+                                     Event_Model event_model) {
         DocumentReference eventDocument = eventCollection.document(eventID);
         return eventDocument.collection(ACCEPTED).document(userID).set(userModel)
                 .continueWithTask((@NonNull Task<Void> task) -> {

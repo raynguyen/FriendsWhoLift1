@@ -6,6 +6,7 @@
  */
 package apps.raymond.kinect.Adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder vh, int i) {
         final Location_Model locationModel = mLocationSet.get(i);
+        Log.w("RecyclerAdapter", "Creating a view holder for the lcoation: " + locationModel.getAddress());
         vh.txtLookup.setText(locationModel.getLookup());
         vh.txtAddress.setText(locationModel.getAddress());
         vh.itemView.setOnClickListener((View v)-> mLocationsInterface.onLocationClick(locationModel));
@@ -50,17 +52,25 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
 
     @Override
     public int getItemCount() {
-        if(mLocationSet!=null){
+        if(mLocationSet != null){
             return mLocationSet.size();
         }
         return 0;
     }
 
     public void setData(List<Location_Model> locationSet){
-        if(mLocationSet==null){
+        Log.w("AdapterClass","Called setData on adapter.");
+
+        if(locationSet == null){
+            return;
+        }
+
+        if(mLocationSet == null){
+            Log.w("AdapterClass","Callekiubiubiubkjb.");
             mLocationSet = new ArrayList<>(locationSet);
             notifyItemRangeChanged(0,locationSet.size());
         } else {
+            Log.w("AdapterClass","Called setData on adapter.??????????????????");
             mLocationSet.clear();
             mLocationSet.addAll(locationSet);
             notifyItemRangeChanged(0,mLocationSet.size());
@@ -75,6 +85,5 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
             txtLookup = view.findViewById(R.id.text_lookup);
             txtAddress = view.findViewById(R.id.text_address);
         }
-
     }
 }

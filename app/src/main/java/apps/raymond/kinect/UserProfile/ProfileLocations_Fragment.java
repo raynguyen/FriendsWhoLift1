@@ -86,7 +86,6 @@ public class ProfileLocations_Fragment extends BaseMap_Fragment implements
             mFragViewModel.loadUserLocations();
         }
 
-
     }
 
     @Override

@@ -281,7 +281,7 @@ public class Create_Fragment extends Fragment implements
     public void listenForLocations(LocationsRecycler_Fragment fragment) {
         mCreateViewModel.getUserLocations().observe(this, (List<Location_Model> locations) ->{
             Log.w(TAG,"Change in locations list detected.");
-            fragment.setAdapterData(locations);
+            //fragment.setAdapterData(locations);
         });
     }
 

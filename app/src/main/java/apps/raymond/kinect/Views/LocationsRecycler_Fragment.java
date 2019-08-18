@@ -5,7 +5,6 @@
  */
 package apps.raymond.kinect.Views;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,10 +29,6 @@ import apps.raymond.kinect.R;
 public class LocationsRecycler_Fragment extends Fragment implements
         Locations_Adapter.LocationsListenerInterface {
     private static final String TAG = "CreationLocationsRecycler";
-    private RecyclerView recyclerView;
-    private TextView textNull;
-    private ProgressBar progressBar;
-    private Locations_Adapter mAdapter;
     private LocationsRecyclerInterface mInterface;
 
     public interface LocationsRecyclerInterface{
@@ -52,7 +45,6 @@ public class LocationsRecycler_Fragment extends Fragment implements
         } catch (ClassCastException cce){
             Log.w(TAG,"ClassCastException on calling parent.");
         }
-
     }
 
     @Nullable
@@ -60,14 +52,34 @@ public class LocationsRecycler_Fragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_simple_recycler, container, false);
-        recyclerView = view.findViewById(R.id.recycler_simple);
-        textNull = view.findViewById(R.id.text_null_simple);
-        progressBar = view.findViewById(R.id.progress_simple);
+        TextView textNull = view.findViewById(R.id.text_null_simple);
+        ProgressBar progressBar = view.findViewById(R.id.progress_simple);
 
-        mAdapter = new Locations_Adapter(this);
-        recyclerView.setAdapter(mAdapter);
+        RecyclerView locationsRecycler = view.findViewById(R.id.recycler_simple);
+        Locations_Adapter mAdapter = new Locations_Adapter(this);
+        locationsRecycler.setAdapter(mAdapter);
 
-        mInterface.listenForLocations(this);
+        //mInterface.listenForLocations(this);
+        EventCreate_ViewModel tempVM = ViewModelProviders.of(getParentFragment()).get(EventCreate_ViewModel.class);
+
+        tempVM.getUserLocations().observe(this, (List<Location_Model> locations) ->{
+            Log.w(TAG,"My parent is = " + getParentFragment().getClass().getSimpleName());
+
+            for(int w = 0; w < locations.size(); w++ ){
+                Log.w(TAG,"Location name = " + locations.get(w).getAddress());
+            }
+
+            progressBar.setVisibility(View.GONE);
+            if(locations == null || locations.size() < 1) {
+                Log.w(TAG,"Locations received but result is null or size is 0");
+                textNull.setVisibility(View.VISIBLE);
+            }
+            else {
+                Log.w(TAG,"Locations received that has relevant info!");
+                textNull.setVisibility(View.INVISIBLE);
+                mAdapter.setData(locations);
+            }
+        });
         return view;
     }
 
@@ -89,11 +101,15 @@ public class LocationsRecycler_Fragment extends Fragment implements
         mInterface.clickLocationTest();
     }
 
-    public void setAdapterData(List<Location_Model> locations){
+    /*public void setAdapterData(List<Location_Model> locations){
         Log.w(TAG,"Calling on the adapter to set a list of locations.");
+        progressBar.setVisibility(View.GONE);
         if(locations != null){
+            if(locations.size() < 1){
+                textNull.setVisibility(View.VISIBLE);
+            }
             Log.w(TAG,"Size of locations = "+ locations.size());
             mAdapter.setData(locations);
         }
-    }
+    }*/
 }
