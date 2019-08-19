@@ -35,7 +35,7 @@ public class LocationsRecycler_Fragment extends Fragment implements
         /*
         Interface to cascade interactions with adapter items upstream to the parent fragment.
          */
-        void listenForLocations(LocationsRecycler_Fragment fragment);
+        //void listenForLocations(LocationsRecycler_Fragment fragment);
         void clickLocationTest();
     }
 
@@ -61,21 +61,17 @@ public class LocationsRecycler_Fragment extends Fragment implements
 
         //mInterface.listenForLocations(this);
         EventCreate_ViewModel tempVM = ViewModelProviders.of(getParentFragment()).get(EventCreate_ViewModel.class);
-
         tempVM.getUserLocations().observe(this, (List<Location_Model> locations) ->{
             Log.w(TAG,"My parent is = " + getParentFragment().getClass().getSimpleName());
-
-            for(int w = 0; w < locations.size(); w++ ){
-                Log.w(TAG,"Location name = " + locations.get(w).getAddress());
-            }
-
             progressBar.setVisibility(View.GONE);
             if(locations == null || locations.size() < 1) {
                 Log.w(TAG,"Locations received but result is null or size is 0");
                 textNull.setVisibility(View.VISIBLE);
             }
             else {
-                Log.w(TAG,"Locations received that has relevant info!");
+                for(int w = 0; w < locations.size(); w++ ){
+                    Log.w(TAG,"Location name = " + locations.get(w).getAddress());
+                }
                 textNull.setVisibility(View.INVISIBLE);
                 mAdapter.setData(locations);
             }

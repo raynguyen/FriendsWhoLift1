@@ -44,7 +44,7 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder vh, int i) {
         final Location_Model locationModel = mLocationSet.get(i);
-        Log.w("RecyclerAdapter", "Creating a view holder for the lcoation: " + locationModel.getAddress());
+        Log.w("RecyclerAdapter", "Creating a view holder for the location: " + locationModel.getAddress());
         vh.txtLookup.setText(locationModel.getLookup());
         vh.txtAddress.setText(locationModel.getAddress());
         vh.itemView.setOnClickListener((View v)-> mLocationsInterface.onLocationClick(locationModel));
@@ -59,23 +59,16 @@ public class Locations_Adapter extends RecyclerView.Adapter<Locations_Adapter.Lo
     }
 
     public void setData(List<Location_Model> locationSet){
-        Log.w("AdapterClass","Called setData on adapter.");
-
-        if(locationSet == null){
-            return;
-        }
-
         if(mLocationSet == null){
             Log.w("AdapterClass","Callekiubiubiubkjb.");
-            mLocationSet = new ArrayList<>(locationSet);
-            notifyItemRangeChanged(0,locationSet.size());
+            this.mLocationSet = new ArrayList<>(locationSet);
+            notifyItemRangeChanged(0,mLocationSet.size());
         } else {
             Log.w("AdapterClass","Called setData on adapter.??????????????????");
-            mLocationSet.clear();
-            mLocationSet.addAll(locationSet);
+            this.mLocationSet.clear();
+            this.mLocationSet.addAll(locationSet);
             notifyItemRangeChanged(0,mLocationSet.size());
         }
-
     }
 
     static class LocationViewHolder extends RecyclerView.ViewHolder{
